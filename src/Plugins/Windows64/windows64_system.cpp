@@ -46,11 +46,50 @@ typedef struct texmacs_dir_t {
   bool is_find_data_valid;
 } texmacs_dir_t;
 
+void texmacs_reset_last_error() {
+  SetLastError(0);
+  errno = 0;
+}
+
+int64_t texmacs_get_last_error() {
+  DWORD errorMessageID = GetLastError();
+  if (errorMessageID != 0 && errno != 0) {
+    return errno;
+  }
+  if (errorMessageID != 0) {
+    return errorMessageID;
+  }
+  return errno;
+}
+
+string texmacs_get_last_error_str() {
+  string result = "";
+  DWORD errorMessageID = GetLastError();
+  if (errorMessageID != 0) {
+    LPWSTR messageBuffer = nullptr;
+    size_t size = FormatMessageW(
+        FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+        NULL, errorMessageID, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+        (LPWSTR)&messageBuffer, 0, NULL);
+
+    result = texmacs_wide_to_utf8(std::wstring(messageBuffer, size));
+    LocalFree(messageBuffer);
+  }
+  if (errno != 0) {
+    if (N(result) > 0) {
+      result = result * " ; ";
+    }
+    result = result * strerror(errno);
+  }
+  return result;
+}
+
 FILE* texmacs_fopen(string filename, string mode, bool lock) {
   std::wstring wide_filename = texmacs_utf8_to_wide(filename);
   std::wstring wide_mode = texmacs_utf8_to_wide(mode);
   wide_mode += L"b";
   FILE* result = _wfopen(wide_filename.c_str(), wide_mode.c_str());
+  
   return result;
 }
 

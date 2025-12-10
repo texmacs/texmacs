@@ -19,6 +19,18 @@
 #include "nowide/iostream.hpp"
 #include "win-utf8-compat.hpp"
 
+void texmacs_reset_last_error() {
+  errno = 0;
+}
+
+int64_t texmacs_get_last_error() {
+  return errno;
+}
+
+string texmacs_get_last_error_str() {
+  return strerror(errno);
+}
+
 FILE* texmacs_fopen(string filename, string mode, bool lock) {
   cout << "texmacs_fopen " << filename << " " << mode << "\r\n";
   mode = mode * "b";
