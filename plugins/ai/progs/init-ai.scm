@@ -109,9 +109,6 @@
   (:session "Llama 3")
   (:serializer ,ia-serialize))
 
-(tm-define (has-llama4?)
-  (url-exists-in-path? "ollama"))
-
 (plugin-configure llama4
   (:require (has-llama? "llama4"))
   (:cmdline ,ai-cmdline ,ai-result)
