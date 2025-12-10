@@ -40,6 +40,8 @@
 	(if (== port "6561") x
 	    (string-append x ":" port)))))
 
+(define-macro (with-post-reload . body) `(begin ,@body (revert-buffer)))
+
 (menu-bind client-remove-account-menu
   (for (x (client-accounts))
     (with (server-name port pseudo authentications) x
@@ -70,14 +72,16 @@
 
 (tm-menu (remote-home-menu server sep?)
   (when (remote-home-directory server)
-    ("Home directory" (load-document (remote-home-directory server))))
+    ("Home directory"
+     (with-post-reload (load-document (remote-home-directory server)))))
   (when (list-chat-rooms server)
-    ("Chat rooms" (load-document (list-chat-rooms server))))
+    ("Chat rooms" (with-post-reload (load-document (list-chat-rooms server)))))
   (when (list-live server)
-    ("Live documents" (load-document (list-live server))))
+    ("Live documents" (with-post-reload (load-document (list-live server)))))
   (assuming sep? ---)
   (when (list-shared server)
-    ("Shared resources" (load-document (list-shared server))))
+    ("Shared resources"
+     (with-post-reload (load-document (list-shared server)))))
   ("Synchronize resources" (remote-interactive-sync server)))
 
 (tm-menu (remote-file-menu server sep?)
@@ -117,7 +121,7 @@
   ("Open live document" (live-open-interactive server)))
 
 (tm-menu (remote-mail-menu server)
-  ("Incoming messages" (mail-box-open server))
+  ("Incoming messages" (with-post-reload (mail-box-open server)))
   ("Send message" (open-message-editor server)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
