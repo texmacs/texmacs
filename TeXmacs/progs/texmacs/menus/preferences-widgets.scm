@@ -56,12 +56,22 @@
   ("separate" "Documents in separate windows")
   ("shared" "Multiple documents share window"))
 
-(define-preference-names "gui theme"
-  ("default" "Default")
-  ("light" "Bright")
-  ("dark" "Dark")
-  ("native-light" "Native")
-  ("" "Legacy"))
+(if qt6-or-later-gui?
+    (define-preference-names "gui theme"
+      ("default" "Default")
+      ("light" "Bright")
+      ("dark" "Dark"))
+    (define-preference-names "gui theme"
+      ("default" "Default")
+      ("light" "Bright")
+      ("dark" "Dark")
+      ("native-light" "Native")
+      ("" "Legacy"))
+)
+
+(when (not qt6-or-later-gui?)
+  (when (in? (get-preference "gui theme") '("light" "dark" "default"))
+    (set-preference "gui theme" "default")))
 
 (tm-widget (general-preferences-widget)
   (aligned
@@ -98,7 +108,10 @@
             "18em"))
     (item (text "User interface theme:")
       (enum (set-pretty-preference* "gui theme" answer)
-            '("Default" "Bright" "Dark" "Native" "Legacy" "")
+            (if qt6-or-later-gui?
+                '("Default" "Bright" "Dark" "")
+                '("Default" "Bright" "Dark" "Native" "Legacy" "")
+            )
             (get-pretty-preference "gui theme")
             "18em"))))
 
