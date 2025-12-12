@@ -39,6 +39,7 @@ AC_DEFUN([LC_GNUTLS],[
       LIBS=`pkg-config --libs gnutls hogweed nettle`
       if test "$TMREPO" != "" -a "$TMREPO" != "no" -a "$CONFIG_OS" = "MINGW"; then
           AC_DEFINE(TEXMACS_FIX_1_GNUTLS, 1, [Special fix])
+          LIBS="$LIBS -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -lpthread"
       fi
       if test "$TMREPO" != "" -a "$TMREPO" != "no" -a "$CONFIG_OS" = "MACOS"; then
           LIBS="$LIBS -framework CoreFoundation -framework Security -lz"
