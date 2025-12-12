@@ -113,6 +113,10 @@ ispeller_rep::start () {
       cmd = as_string(u);
       name = "Aspell";
       cmd = "\"" * cmd * "\" -a --encoding=utf-8";
+      u = url_system ("$TEXMACS_PATH\\" ASPELL "\\lib\\aspell-0.60");
+      if (exists (u)) {
+        cmd = cmd * " --dict-dir=" * as_string(u);
+      }
       if (locale != "") cmd =  cmd * " --language-tag=" * locale;
       testdic = connect_spellchecker(cmd);
     }
