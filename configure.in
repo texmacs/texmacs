@@ -102,10 +102,13 @@ TM_STATIC
 # External libraries, functions and binaries
 #--------------------------------------------------------------------
 
+LC_PTHREAD
+LC_INTL
 LC_GUILE
 LC_DLOPEN
 LC_ICONV
 LC_FREETYPE
+LC_ASPELL
 LC_CAIRO
 LC_IMLIB2
 LC_AXEL
