@@ -737,6 +737,9 @@ texmacs_entrypoint (int argc, char** argv) {
 #if QT_VERSION >= 0x060000
     QGuiApplication::setHighDpiScaleFactorRoundingPolicy
       (Qt::HighDpiScaleFactorRoundingPolicy::Round);
+#if defined(OS_GNULINUX) || defined(OS_FREEBSD)
+    QApplication::setStyle("fusion");
+#endif
 #endif
     qtmapp= new QTMApplication (argc, argv);
   }
