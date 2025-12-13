@@ -290,12 +290,14 @@ enum_widget (command cb, array<string> vals, string v, int style, string w) {
 }
 
 widget
-choice_widget (command cb, array<string> vals, string v) {
+choice_widget (command cb, array<string> vals, string v, int style) {
+  (void) style; // FIXME: not implemented
   return abstract (choice_wk_widget (cb, vals, v));
 }
 
 widget
-choice_widget (command cb, array<string> vals, array<string> mc) {
+choice_widget (command cb, array<string> vals, array<string> mc, int style) {
+  (void) style; // FIXME: not implemented
   return abstract (choice_wk_widget (cb, vals, mc));
 }
 

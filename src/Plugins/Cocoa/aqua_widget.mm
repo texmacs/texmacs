@@ -1219,8 +1219,8 @@ widget wrapped_widget (widget w, command cmd) { return widget(); }
 //widget xpm_widget (url file_name)  { return widget(); }
 widget toggle_widget (command cmd, bool on, int style)  { return widget(); }
 widget enum_widget (command cmd, array<string> vals, string val, int style, string width)  { return widget(); }
-widget choice_widget (command cmd, array<string> vals, array<string> chosen) { return widget(); }
-widget choice_widget (command cmd, array<string> vals, string cur) { return widget(); }
+widget choice_widget (command cmd, array<string> vals, array<string> chosen, int style) { return widget(); }
+widget choice_widget (command cmd, array<string> vals, string cur, int style) { return widget(); }
 widget choice_widget (command cmd, array<string> vals, string cur, string filter)  { return widget(); }
 widget user_canvas_widget (widget wid, int style)  { return widget(); }
 widget resize_widget (widget w, int style, string w1, string h1,

@@ -5139,7 +5139,7 @@ source code.
   </explain>
 
   <\explain>
-    <scm|(widget-choice <scm-arg|command> <scm-arg|array_string> <scm-arg|string>)>
+    <scm|(widget-choice <scm-arg|command> <scm-arg|array_string> <scm-arg|string> <scm-arg|int>)>
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|choice_widget> which returns
@@ -5147,7 +5147,7 @@ source code.
   </explain>
 
   <\explain>
-    <scm|(widget-choices <scm-arg|command> <scm-arg|array_string> <scm-arg|array_string>)>
+    <scm|(widget-choices <scm-arg|command> <scm-arg|array_string> <scm-arg|array_string> <scm-arg|int>)>
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|choice_widget> which returns

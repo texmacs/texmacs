@@ -491,18 +491,20 @@ widget enum_widget (command cmd, array<string> vals, string val, int style,
                                              cmd, vals, val, style, width);
   return abstract (wid);
 }
-widget choice_widget (command cmd, array<string> vals, array<string> chosen) {
+widget choice_widget (command cmd, array<string> vals, array<string> chosen,
+		      int style) {
   if (headless_mode) return headless_widget ();
   qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::choice_widget,
-                                             cmd, vals, chosen, true);
+                                             cmd, vals, chosen, true, style);
   return abstract (wid);
 }
-widget choice_widget (command cmd, array<string> vals, string cur) {
+widget choice_widget (command cmd, array<string> vals, string cur,
+		      int style) {
   if (headless_mode) return headless_widget ();
   array<string> chosen (1);
   chosen[0]= cur;
   qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::choice_widget,
-                                             cmd, vals, chosen, false);
+                                             cmd, vals, chosen, false, style);
   return abstract (wid);
 }
 widget choice_widget (command cmd, array<string> vals, string cur, string filter) {
