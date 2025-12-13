@@ -1196,8 +1196,9 @@ QTMListView::QTMListView (const command& cmd,
                           bool multiple,
                           bool scroll,
                           bool filtered,
+			  int style2,
                           QWidget* parent)
-: QListView (parent) {
+: style (style2), QListView (parent) {
   
   stringModel = new QStringListModel (strings, this);
   filterModel = new QSortFilterProxyModel (this);
@@ -1208,7 +1209,10 @@ QTMListView::QTMListView (const command& cmd,
   
   setModel (filterModel);
   
-  setSelectionMode (multiple ? ExtendedSelection : SingleSelection);
+  if (style & WIDGET_STYLE_INERT)
+    setSelectionMode (QAbstractItemView::NoSelection);
+  else
+    setSelectionMode (multiple ? ExtendedSelection : SingleSelection);
   setEditTriggers (NoEditTriggers);
 
     // NOTE: using selectionModel()->select(item, QItemSelection::SelectCurrent)

@@ -726,8 +726,8 @@
   (widget-input input_text_widget
 		(widget command string array_string int string))
   (widget-enum enum_widget (widget command array_string string int string))
-  (widget-choice choice_widget (widget command array_string string))
-  (widget-choices choice_widget (widget command array_string array_string))
+  (widget-choice choice_widget (widget command array_string string int))
+  (widget-choices choice_widget (widget command array_string array_string int))
   (widget-filtered-choice choice_widget
     (widget command array_string string string))
   (widget-tree-view tree_view_widget (widget command tree tree))

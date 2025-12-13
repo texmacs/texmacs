@@ -299,12 +299,12 @@
 (define (make-choice p style)
   "Make @(choice :%3) item."
   (with (tag cmd vals val) p
-    (widget-choice (object->command (menu-protect cmd)) (vals) (val))))
+    (widget-choice (object->command (menu-protect cmd)) (vals) (val) style)))
 
 (define (make-choices p style)
   "Make @(choices :%3) item."
   (with (tag cmd vals mc) p
-    (widget-choices (object->command (menu-protect cmd)) (vals) (mc))))
+    (widget-choices (object->command (menu-protect cmd)) (vals) (mc) style)))
 
 (define (make-filtered-choice p style)
   "Make @(filtered-choice :%4) item."
