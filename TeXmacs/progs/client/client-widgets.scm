@@ -899,6 +899,29 @@
                   (resize "250px" "100px"
                     (text ""))))))))))
 
+(tm-widget ((entry-permissions-viewer server id attrs users enc dec perms) quit)
+  (inert (padded
+    (tabs
+      (loop (attr attrs)
+        (tab (text (upcase-first attr))
+          (padded
+            (hlist
+              (toggle (begin
+                        (noop)
+                        (refresh-now "permission-checklist"))
+                      (in? "all" (get-permissions perms dec server id attr)))
+              // //
+              (text "All users") >>)
+            ===
+            (refreshable "permission-checklist"
+              (if (nin? "all" (get-permissions perms dec server id attr))
+                  (choices (noop)
+                           (sort (map (cut ahash-ref dec <>) users) string<=?)
+                           (get-permissions perms dec server id attr)))
+              (if (in? "all" (get-permissions perms dec server id attr))
+                  (resize "250px" "100px"
+                    (text "")))))))))))
+
 (tm-define (open-entry-permissions-editor server id attrs)
   (:interactive #t)
   (with-remote-search-user users server (list)
@@ -921,9 +944,14 @@
                             (ahash-set! enc full user))))
                       users pseudos names)
             (set! users (list-difference users (list "all")))
-            (dialogue-window (entry-permissions-editor server id attrs
-                                                       users enc dec perms)
-                             noop "Change permissions")))))))
+	    (if (in? (client-find-server-pseudo server)
+			      (ahash-ref perms "owner"))
+	      (dialogue-window (entry-permissions-editor server id attrs
+							 users enc dec perms)
+			       noop "Change permissions")
+	      (dialogue-window (entry-permissions-viewer server id attrs
+							    users enc dec perms)
+			       noop "View permissions"))))))))
 
 (tm-define (open-permissions-editor server u)
   (:interactive #t)

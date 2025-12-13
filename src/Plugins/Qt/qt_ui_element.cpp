@@ -1080,10 +1080,10 @@ qt_ui_element_rep::as_qwidget (QWidget* parent_widget) {
       // select one or multiple values from a list
     case choice_widget:
     {
-      typedef quartet<command, array<string>, array<string>, bool> T;
+      typedef quintuple<command, array<string>, array<string>, bool, int> T;
       T  x = open_box<T>(load);
       qwid = new QTMListView (x.x1, to_qstringlist(x.x2), to_qstringlist(x.x3),
-                              x.x4, true, false, parent_widget);
+                              x.x4, true, false, x.x5, parent_widget);
     }
       break;
 
@@ -1099,7 +1099,7 @@ qt_ui_element_rep::as_qwidget (QWidget* parent_widget) {
 
       QTMListView* choiceWidget = new QTMListView (x.x1, to_qstringlist (x.x2),
                                                    QStringList (to_qstring (x.x3)),
-                                                   false, true, true, qwid);
+                                                   false, true, true, 0, qwid);
 
       QTMLineEdit* lineEdit = new QTMLineEdit (qwid, "string", "1w");
 #if QT_VERSION < 0x060000

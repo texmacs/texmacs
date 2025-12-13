@@ -390,11 +390,11 @@ class QTMListView : public QListView {
 
   QStringListModel*      stringModel;
   QSortFilterProxyModel* filterModel;
-
+  int style;
 public:
   QTMListView (const command& cmd, const QStringList& vals, const QStringList&,
                bool multiple, bool scroll = false, bool filtered = false,
-               QWidget* parent = NULL);
+               int style2= 0, QWidget* parent = NULL);
   
   QSortFilterProxyModel* filter() const { return filterModel; }
   bool isScrollable() const {

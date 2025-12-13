@@ -142,7 +142,11 @@
 
 (tm-define (std-client-error msg)
   ;;(texmacs-error "client-remote-error" "remote error ~S" msg)
-  (display-err* "Remote error: " msg "\n"))
+  (with t (if (string-ends? msg "\n") msg (string-append msg "\n"))
+    (with s (if (string-starts? msg "Error: ") (substring t 7) t)
+      (if (headless?)
+	  (display-err* "Remote error: " s)
+	  (debug-message "remote-error" s)))))
 
 (tm-define (client-remote-eval server cmd cont . opt-err-handler)
   (when (debug-get "remote")
