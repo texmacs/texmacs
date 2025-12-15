@@ -245,6 +245,9 @@
 /* Dynamic linking function name */
 #undef TM_DYNAMIC_LINKING
 
+/* Use aspell library */
+#undef USE_ASPELL
+
 /* Use axel library */
 #undef USE_AXEL
 
