@@ -703,7 +703,6 @@ SIGNTOOL
 MAKEAPPX
 WIN_ARCH
 CV2PDB
-ASPELL_CMD
 XTRA_CMD
 MACOSX_TARGET
 OSXVERMIN
@@ -26913,15 +26912,6 @@ then :
 
       XTRA_CMD=$TMREPO/windows/bin
 
-      if test -d $TMREPO/windows/aspell
-then :
-
-        ASPELL_CMD=$TMREPO/windows/aspell
-
-
-printf "%s\n" "#define ASPELL \"plugins/aspell\"" >>confdefs.h
-
-fi
 
 fi
 

@@ -9,9 +9,6 @@
 /* Enable experimental Cocoa port */
 #undef AQUATEXMACS
 
-/* embedded aspell location */
-#undef ASPELL
-
 /* If there is a static plugin Cocoa */
 #undef CocoaPlugin
 
