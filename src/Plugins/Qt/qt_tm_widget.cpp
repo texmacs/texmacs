@@ -43,7 +43,7 @@
 int menu_count = 0;  // zero if no menu is currently being displayed
 list<qt_tm_widget_rep*> waiting_widgets;
 
-#if QT_VERSION < 0x060000
+#if DISABLE_QTMTOOLBAR
 static void
 replaceActions (QWidget* dest,  QList<QAction*>* src) {
   //NOTE: the parent hierarchy of the actions is not modified while installing
@@ -218,7 +218,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
 
   mw->setStatusBar (bar);
  
-#if QT_VERSION >= 0x060000
+#if !DISABLE_QTMTOOLBAR
   if (tmapp()->useNewToolbar() && !use_native_menubar) {
     menuToolBar   = new QTMToolbar ("menu toolbar", QSize (), mw);
   }
@@ -366,7 +366,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   sideTools->setObjectName ("sideTools");
   leftTools->setObjectName ("leftTools");
 
-#if QT_VERSION >= 0x060000
+#if !DISABLE_QTMTOOLBAR
   if (tmapp()->useNewToolbar() && !use_native_menubar) {
     menuToolBar->setObjectName ("menuToolBar");
     mw->addToolBar (menuToolBar);
@@ -968,7 +968,7 @@ qt_tm_widget_rep::query (slot s, int type_id) {
 
 void
 qt_tm_widget_rep::install_main_menu () {
-#if QT_VERSION >= 0x060000
+#if !DISABLE_QTMTOOLBAR
   if (!tmapp()->useNewToolbar() || use_native_menubar) {
 #endif
 
@@ -986,7 +986,7 @@ qt_tm_widget_rep::install_main_menu () {
         // this is the reason we add a dummy action before inserting the menu
         a->menu()->addAction("native menubar trick");
         dest->addAction(a->menu()->menuAction());
-  #if QT_VERSION < 0x060000
+  #if DISABLE_QTMTOOLBAR
         QObject::connect (a->menu(),         SIGNAL (aboutToShow()),
                           the_gui->gui_helper, SLOT (aboutToShowMainMenu()));
         QObject::connect (a->menu(),         SIGNAL (aboutToHide()),
@@ -1000,7 +1000,7 @@ qt_tm_widget_rep::install_main_menu () {
       }
     }
 
-#if QT_VERSION >= 0x060000
+#if !DISABLE_QTMTOOLBAR
   } else {
 
     if (main_menu_widget == waiting_main_menu_widget) return;
@@ -1017,7 +1017,7 @@ qt_tm_widget_rep::install_main_menu () {
       QAction* a = (*src)[i];
       if (a->menu()) {
         dest->addAction(a->menu()->menuAction());
-  #if QT_VERSION < 0x060000
+  #if DISABLE_QTMTOOLBAR
         QObject::connect (a->menu(),         SIGNAL (aboutToShow()),
                           the_gui->gui_helper, SLOT (aboutToShowMainMenu()));
         QObject::connect (a->menu(),         SIGNAL (aboutToHide()),
@@ -1090,7 +1090,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       main_icons_widget = concrete (w);
       QList<QAction*>* list = main_icons_widget->get_qactionlist();
       if (list) {
-#if QT_VERSION >= 0x060000
+#if !DISABLE_QTMTOOLBAR
         mainToolBar->replaceButtons (list);
 #else
         replaceButtons (mainToolBar, list);
@@ -1106,7 +1106,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       mode_icons_widget = concrete (w);
       QList<QAction*>* list = mode_icons_widget->get_qactionlist();
       if (list) {
-#if QT_VERSION >= 0x060000
+#if !DISABLE_QTMTOOLBAR
         modeToolBar->replaceButtons (list);
 #else
         replaceButtons (modeToolBar, list);
@@ -1138,7 +1138,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
         focus_icons_widget = concrete (w);
         QList<QAction*>* list = focus_icons_widget->get_qactionlist();
         if (list) {
-#if QT_VERSION >= 0x060000
+#if !DISABLE_QTMTOOLBAR
           focusToolBar->replaceButtons (list);
 #else
           replaceButtons (focusToolBar, list);
@@ -1155,7 +1155,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       user_icons_widget = concrete (w);
       QList<QAction*>* list = user_icons_widget->get_qactionlist();
       if (list) {
-#if QT_VERSION >= 0x060000
+#if !DISABLE_QTMTOOLBAR
         userToolBar->replaceButtons (list);
 #else
         replaceButtons (userToolBar, list);
@@ -1168,7 +1168,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
     case SLOT_SIDE_TOOLS:
       check_type_void (index, s);
     {
-#if QT_VERSION >= 0x060000
+#if !DISABLE_QTMTOOLBAR
       side_tools_widget = concrete (w);
       QWidget* new_qwidget = side_tools_widget->as_qwidget(mainwindow());
       QWidget* old_qwidget = dynamic_cast<QScrollArea*>(sideTools->widget())->widget();
