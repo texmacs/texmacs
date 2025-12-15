@@ -56,7 +56,7 @@ class qt_tm_widget_rep: public qt_window_widget_rep {
    */
   QLabel*       rightLabel;
   QLabel*        leftLabel;
-#if QT_VERSION >= 0x060000
+#if !DISABLE_QTMTOOLBAR
   QTMToolbar*    menuToolBar;
   QTMToolbar*    mainToolBar;
   QTMToolbar*    modeToolBar;
