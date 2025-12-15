@@ -64,6 +64,13 @@ ispeller_rep::start () {
   string locale = language_to_locale (lan);
   
   config = new_aspell_config ();
+
+  url aspell_path = url_system ("$TEXMACS_PATH/aspell-0.60");
+  if (exists (aspell_path)) {
+    cout << "Found aspell path: " << concretize(aspell_path) << "\n";
+    aspell_config_replace (config, "data-dir", as_charp(concretize(aspell_path)));
+    aspell_config_replace (config, "dict-dir", as_charp(concretize(aspell_path)));
+  }
   
   if (locale != "") {
     char* c_locale = as_charp(locale);
