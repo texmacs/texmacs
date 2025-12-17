@@ -51,6 +51,7 @@ public:
   inline ~hashmap_rep () { tm_delete_array (a); }
   void resize (int n);
   void reset (T x);
+  void clear ();
   void generate (void (*routine) (T));
   bool contains (T x);
   bool empty ();
