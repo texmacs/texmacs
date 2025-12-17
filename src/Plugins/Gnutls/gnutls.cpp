@@ -283,8 +283,8 @@ as_string_gnutls_crt (const gnutls_x509_crt_t crt) {
 
 #define _GET_DN_OID(name, print) \
     do { \
-      char name[GNUTLS_X509_ ## name ## _SIZE] = {0}; \
-      len = GNUTLS_X509_ ## name ## _SIZE; \
+      char name[GNUTLS_X509_ ## name ## _SIZE + 1] = {0}; \
+      len = sizeof (name); \
       err = gnutls_x509_crt_get_dn_by_oid (crt, \
           GNUTLS_OID_X520_ ## name, 0, 0, name, &len); \
       if (err == GNUTLS_E_REQUESTED_DATA_NOT_AVAILABLE) { \
@@ -579,41 +579,22 @@ generate_self_signed (tree cfg_tree, url cert_path, url key_path)
 
   CHECK_GNUTLS_BRETURN (ret, gnutls_x509_crt_init (&crt));
 
-  if (cfg->contains ("country")) {
-    c_string _country (cfg["country"]);
-    CHECK_GNUTLS_BRETURN (ret, gnutls_x509_crt_set_dn_by_oid (crt,
-          GNUTLS_OID_X520_COUNTRY_NAME, 0, _country, N (cfg["country"])));
-  }
+#define _SET_DN_OID(name, key) \
+    do { \
+      if (cfg->contains (key)) { \
+        c_string _tmp (cfg[key]); \
+        CHECK_GNUTLS_BRETURN (ret, gnutls_x509_crt_set_dn_by_oid (crt, \
+              GNUTLS_OID_X520_ ## name, 0, _tmp, \
+              GNUTLS_X509_ ## name ## _SIZE)); \
+      } \
+    } while (0)
 
-  if (cfg->contains ("locality")) {
-    c_string _loc (cfg["locality"]);
-    CHECK_GNUTLS_BRETURN (ret, gnutls_x509_crt_set_dn_by_oid (crt,
-          GNUTLS_OID_X520_LOCALITY_NAME, 0, _loc, N (cfg["locality"])));
-  }
-
-  if (cfg->contains ("state")) {
-    c_string _st (cfg["state"]);
-    CHECK_GNUTLS_BRETURN (ret, gnutls_x509_crt_set_dn_by_oid (crt,
-          GNUTLS_OID_X520_STATE_OR_PROVINCE_NAME, 0, _st, N (cfg["state"])));
-  }
-
-  if (cfg->contains ("organization")) {
-    c_string _org (cfg["organization"]);
-    CHECK_GNUTLS_BRETURN (ret, gnutls_x509_crt_set_dn_by_oid (crt,
-          GNUTLS_OID_X520_ORGANIZATION_NAME, 0, _org, N (cfg["organization"])));
-  }
-
-  if (cfg->contains ("unit")) {
-    c_string _unit (cfg["unit"]);
-    CHECK_GNUTLS_BRETURN (ret, gnutls_x509_crt_set_dn_by_oid (crt,
-          GNUTLS_OID_X520_ORGANIZATIONAL_UNIT_NAME, 0, _unit, N (cfg["unit"])));
-  }
-
-  if (cfg->contains ("cn")) {
-    c_string _cn (cfg["cn"]);
-    CHECK_GNUTLS_BRETURN (ret, gnutls_x509_crt_set_dn_by_oid (crt,
-          GNUTLS_OID_X520_COMMON_NAME, 0, _cn, N (cfg["cn"])));
-  }
+  _SET_DN_OID (COMMON_NAME, "cn");
+  _SET_DN_OID (ORGANIZATION_NAME, "organization");
+  _SET_DN_OID (ORGANIZATIONAL_UNIT_NAME, "unit");
+  _SET_DN_OID (COUNTRY_NAME, "country");
+  _SET_DN_OID (STATE_OR_PROVINCE_NAME, "state");
+  _SET_DN_OID (LOCALITY_NAME, "locality");
 
   CHECK_GNUTLS_BRETURN (ret, gnutls_x509_crt_set_pubkey (crt, pubkey));
   gnutls_pubkey_deinit (pubkey);
