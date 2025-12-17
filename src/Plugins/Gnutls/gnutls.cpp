@@ -453,7 +453,7 @@ struct x509_certificate {
   inline bool valid () { return cert != NULL; }
 };
 
-static hashmap<string,pointer> certificates_verified;
+static hashmap<string,pointer> certificates_verified (NULL);
 
 static string server_certificate_serial = "";
 
@@ -1147,8 +1147,7 @@ tls_client_contact_rep::start (int io2) {
     if (timeout == 0)
       GNUTLS_LOGW ("client connection timeout is disabled");
     gnutls_handshake_set_timeout (s, timeout);
-    certificates_verified->~hashmap_rep();
-    certificates_verified = hashmap<string,pointer>();
+    certificates_verified->clear ();
   } else {
     s= (gnutls_session_t) ptr;
   }
