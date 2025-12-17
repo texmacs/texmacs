@@ -125,7 +125,8 @@
         (begin
           (tree-set! mt `(document ""))
           (client-remote-eval server cmd ignore))
-        (set-message "this chat room is read only" "send message"))))
+        (set-message "this chat room is read only" "send message"))
+    (revert-buffer)))
 
 (tm-define (kbd-control-return)
   (:require (inside? 'chat-input))
