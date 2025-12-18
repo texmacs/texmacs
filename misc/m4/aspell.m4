@@ -23,9 +23,9 @@ AC_DEFUN([LC_ASPELL],[
     AC_CHECK_HEADER(aspell.h, [
       LC_CHECK_LIB([aspell],[new_aspell_config],[
           LC_DEFINE(USE_ASPELL, 1, [Use aspell library])
-          ASPELL_LIBS=" -laspell"
+          ASPELL_LIBS=" -laspell ${[$0]_extralibs}"
           LC_COMBINE_FLAGS([ASPELL])
-      ],[:],[],[$0_extralibs])
+      ],[:],[-lintl],[$0_extralibs])
     ])
 
     if [[[ $USE_ASPELL ]]]

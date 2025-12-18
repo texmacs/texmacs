@@ -12,7 +12,16 @@
 #--------------------------------------------------------------------
 
 AC_DEFUN([LC_INTL],[
+  unset USE_INTL
   LC_CHECK_LIB([intl],[libintl_snprintf],[
+    LC_DEFINE(USE_INTL, 1, [Use intl library])
     LC_APPEND_FLAG([-lintl],[LDFLAGS])
   ],[:],[],[$0_extralibs])
+  if [[[ $USE_INTL ]]]
+  then
+    AC_MSG_NOTICE([intl library support enabled])
+  else
+    AC_MSG_NOTICE([intl library support disabled])
+  fi
+  LC_SUBST([INTL])
 ])
