@@ -15,6 +15,8 @@
 #include "tm_link.hpp"
 #include "sys_utils.hpp"
 
+#include <ctime>
+
 bool rescue_mode= false;
 
 /******************************************************************************
