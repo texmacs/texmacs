@@ -25,6 +25,21 @@ typedef void* TEXMACS_DIR;
 typedef struct stat struct_stat;
 
 /*
+ * @brief Reset the last error code
+ */
+void texmacs_reset_last_error();
+
+/*
+ * @brief Get the last error code (from posix errno)
+ */
+int64_t texmacs_get_last_error();
+
+/*
+ * @brief Get the last error string (from posix strerror)
+ */
+string texmacs_get_last_error_str();
+
+/*
  * @brief Structure to represent a directory entry
  */
 typedef struct texmacs_dirent {
