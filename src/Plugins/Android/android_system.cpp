@@ -29,6 +29,18 @@ extern "C" {
 #include "libguile/fports.h"
 }
 
+void texmacs_reset_last_error() {
+  errno = 0;
+}
+
+int64_t texmacs_get_last_error() {
+  return errno;
+}
+
+string texmacs_get_last_error_str() {
+  return strerror(errno);
+}
+
 inline QString texmacs_string_to_qstring(string utf8_string) {
   return QString::fromUtf8(&utf8_string[0], N(utf8_string));
 }
