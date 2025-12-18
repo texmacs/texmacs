@@ -266,6 +266,9 @@
 /* Use imlib2 library */
 #undef USE_IMLIB2
 
+/* Use intl library */
+#undef USE_INTL
+
 /* Use Sparkle framework */
 #undef USE_SPARKLE
 

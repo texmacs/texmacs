@@ -773,6 +773,11 @@ GUILE_CONFIG
 GUILE_STATIC
 CLNGUILE
 MKGUILE
+INTL_LIBS
+INTL_LDFLAGS
+INTL_CFLAGS
+INTL_CPP
+INTL_CXX
 CONFIG_CP
 CONFIG_ARCHS
 CONFIG_DATE
@@ -8897,6 +8902,7 @@ fi
 
 
 
+  unset USE_INTL
 
   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for libintl_snprintf in -lintl" >&5
 printf %s "checking for libintl_snprintf in -lintl... " >&6; }
@@ -8936,6 +8942,12 @@ fi
 printf "%s\n" "$ac_cv_lib_intl_libintl_snprintf" >&6; }
 if test "x$ac_cv_lib_intl_libintl_snprintf" = xyes
 then :
+
+
+  typeset USE_INTL="1"
+
+printf "%s\n" "#define USE_INTL 1" >>confdefs.h
+
 
 
   if [[ "-lintl" =~ $(echo '^-Wl,') ]]
@@ -9029,6 +9041,12 @@ then :
       LC_INTL_extralibs=""
 
 
+  typeset USE_INTL="1"
+
+printf "%s\n" "#define USE_INTL 1" >>confdefs.h
+
+
+
   if [[ "-lintl" =~ $(echo '^-Wl,') ]]
   then LDFLAGS+=" -lintl"
   elif [[ "-lintl" =~ $(echo '^-l') ]]
@@ -9082,6 +9100,40 @@ fi
    ;;
 esac
 fi
+
+
+  if [[ $USE_INTL ]]
+  then
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: intl library support enabled" >&5
+printf "%s\n" "$as_me: intl library support enabled" >&6;}
+  else
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: intl library support disabled" >&5
+printf "%s\n" "$as_me: intl library support disabled" >&6;}
+  fi
+
+  INTL_CXX=$INTL_CXXFLAGS
+
+  INTL_CPP=$INTL_CPPFLAGS
+
+  if [[ $enable_dumpflags =~ $(echo "(^|[[:space:]])(INTL|ALL)($|[[:space:]])") ]]
+  then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: INTL_CFLAGS:$INTL_CFLAGS" >&5
+printf "%s\n" "$as_me: INTL_CFLAGS:$INTL_CFLAGS" >&6;}
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: INTL_CXXFLAGS:$INTL_CXXFLAGS" >&5
+printf "%s\n" "$as_me: INTL_CXXFLAGS:$INTL_CXXFLAGS" >&6;}
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: INTL_CPPFLAGS:$INTL_CPPFLAGS" >&5
+printf "%s\n" "$as_me: INTL_CPPFLAGS:$INTL_CPPFLAGS" >&6;}
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: INTL_LIBS:$INTL_LIBS" >&5
+printf "%s\n" "$as_me: INTL_LIBS:$INTL_LIBS" >&6;}
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: INTL_LDFLAGS:$INTL_LDFLAGS" >&5
+printf "%s\n" "$as_me: INTL_LDFLAGS:$INTL_LDFLAGS" >&6;}
+
+
+  fi
+# adaptation layer remove when finished
+  INTL_CFLAGS="$INTL_CXXFLAGS $INTL_CPPFLAGS"
+
+
 
 
 
@@ -21462,7 +21514,7 @@ then :
 printf "%s\n" "#define USE_ASPELL 1" >>confdefs.h
 
 
-          ASPELL_LIBS=" -laspell"
+          ASPELL_LIBS=" -laspell ${LC_ASPELL_extralibs}"
 
 
 
@@ -21828,10 +21880,10 @@ else case e in #(
 # For system variable in aspell
     unset ac_cv_lib_aspell___new_aspell_config
 
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: check aspell with extra libs " >&5
-printf "%s\n" "$as_me: check aspell with extra libs " >&6;}
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: check aspell with extra libs -lintl" >&5
+printf "%s\n" "$as_me: check aspell with extra libs -lintl" >&6;}
     _LC_CHECK_LIB_libs=$LIBS
-    LIBS+=" "
+    LIBS+=" -lintl"
     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for new_aspell_config in -laspell" >&5
 printf %s "checking for new_aspell_config in -laspell... " >&6; }
 if test ${ac_cv_lib_aspell_new_aspell_config+y}
@@ -21872,7 +21924,7 @@ if test "x$ac_cv_lib_aspell_new_aspell_config" = xyes
 then :
 
       LIBS=$_LC_CHECK_LIB_libs
-      LC_ASPELL_extralibs=""
+      LC_ASPELL_extralibs="-lintl"
 
 
   typeset USE_ASPELL="1"
@@ -21880,7 +21932,7 @@ then :
 printf "%s\n" "#define USE_ASPELL 1" >>confdefs.h
 
 
-          ASPELL_LIBS=" -laspell"
+          ASPELL_LIBS=" -laspell ${LC_ASPELL_extralibs}"
 
 
 
