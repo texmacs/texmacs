@@ -52,6 +52,11 @@ int64_t texmacs_get_last_error();
 string texmacs_get_last_error_str();
 
 /*
+ * @brief Check if the program is running in a MSIX package
+ */
+bool is_running_in_msix();
+
+/*
  * @brief Proxy function to call the fopen function with UTF-8 encoded strings
  * The lock parameter is used to lock the file when it is opened.
  */
@@ -99,6 +104,11 @@ texmacs_dirent texmacs_readdir(TEXMACS_DIR dirp);
  * @brief Proxy function to the stat function with UTF-8 encoded strings
  */
 int texmacs_stat(string filename, struct_stat* buf);
+
+/*
+ * @brief Return the AppData path (internal to the app for msix)
+ */
+string get_local_appdata_path();
 
 /*
  * @brief Proxy function to the getenv function with UTF-8 encoded strings

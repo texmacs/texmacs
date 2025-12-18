@@ -26,12 +26,6 @@
 #include <fcntl.h>
 #include <io.h>
 
-#ifdef PACKAGE_VERSION
-#undef PACKAGE_VERSION
-#endif
-#include <appmodel.h>
-#include <shlobj.h>
-
 #include <QApplication>
 #include <QDebug>
 #include <iostream>
@@ -75,20 +69,20 @@ void setup_texmacs_path () {
   cout << "TEXMACS_PATH is not set" << LF;
 }
 
-bool is_running_in_msix() {
-    UINT32 length = 0;
-    LONG result = GetCurrentPackageFullName(&length, NULL);
-    return result != APPMODEL_ERROR_NO_PACKAGE;
+void setup_texmacs_home_path () {
+  url appdata_path = url_system(get_local_appdata_path());
+  url texmacs_home_path = appdata_path * "TeXmacs";
+  cout << "TEXMACS_HOME_PATH is autoset to: " 
+       << texmacs_home_path << LF;
 }
 
-/*
- * @brief The entry point of the program that will make sure that texmacs 
- * run seemlessly on Windows.
- */
 int WINAPI CommonMain() {
   texmacs_attach_console();
   texmacs_initialize_displayname();
   setup_texmacs_path();
+  if (is_running_in_msix()) {
+    setup_texmacs_home_path();
+  }
   texmacs_init_guile_hooks();
 
   int argc = 0;

@@ -8,10 +8,16 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
+#include <initguid.h>
 #include <windows.h>
+#ifdef PACKAGE_VERSION
+#undef PACKAGE_VERSION
+#endif
+#include <appmodel.h>
+#include <shlobj.h>
+#include <knownfolders.h>
 #include <io.h>
 #include <fcntl.h>
-#include <io.h>
 #include <process.h>
 #include <string>
 #include <vector>
@@ -84,6 +90,12 @@ string texmacs_get_last_error_str() {
   return result;
 }
 
+bool is_running_in_msix() {
+    UINT32 length = 0;
+    LONG result = GetCurrentPackageFullName(&length, NULL);
+    return result != APPMODEL_ERROR_NO_PACKAGE;
+}
+
 FILE* texmacs_fopen(string filename, string mode, bool lock) {
   std::wstring wide_filename = texmacs_utf8_to_wide(filename);
   std::wstring wide_mode = texmacs_utf8_to_wide(mode);
@@ -150,6 +162,18 @@ texmacs_dirent texmacs_readdir(TEXMACS_DIR dirp) {
 
 int texmacs_stat(string filename, struct_stat* buf) {
   return _wstat64(texmacs_utf8_to_wide(filename).c_str(), buf);
+}
+
+string get_local_appdata_path() {
+  PWSTR path = NULL;  
+  HRESULT hr = SHGetKnownFolderPath(FOLDERID_LocalAppData, 0, NULL, &path);  
+  if (SUCCEEDED(hr)) {
+    string result = texmacs_wide_to_utf8(std::wstring(path));
+    CoTaskMemFree(path);
+    return result;
+  }
+  FAILED("Could not get AppData path");
+  return "";
 }
 
 bool texmacs_getenv(string var_name, string &var_value) {
