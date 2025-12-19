@@ -50,7 +50,7 @@
         `(concat "The resource " ,h " has been shared with you."))))
 
 (define (message->document msg)
-  (with (action pseudo full-name date doc) msg
+  (with (action pseudo full-name date doc to) msg
     (let* ((date* (pretty-time (string->number date)))
            (full-name* (utf8->cork full-name)))
       (cond ((== action "share")
@@ -109,6 +109,14 @@
                (fname (string-append "tmfs://chat/" sname "/" name)))
       (chat-room-insert fname msg)
       (chat-room-modified fname)
+      #t)))
+
+(tm-call-back (notify-new-message name msg mid)
+  (with (server msg-id) envelope
+    (and-let* ((sname (client-find-server-name server))
+               (fname (string-append "tmfs://chat/" sname "/" name))
+               (notif-name (string-append fname ";" mid)))
+      (add-notification notif-name 'message (lambda () (mail-box-open server)))
       #t)))
 
 (tm-define (chat-room-send)
@@ -229,19 +237,19 @@
   (in? type (list "read")))
 
 (define (list-shared? t msg)
-  (with (action pseudo full-name date doc) msg
+  (with (action pseudo full-name date doc to) msg
     (and (== action "share")
          (and (not (ahash-ref t doc)) (ahash-set! t doc #t)))))
 
 (define (list-shared-name msg)
-  (with (action pseudo full-name date doc) msg
+  (with (action pseudo full-name date doc to) msg
     (utf8->cork full-name)))
 
 (define (list-shared-links l name)
   (with f (list-filter l (lambda (m) (== (list-shared-name m) name)))
     `((subsection* ,name)
       ,@(map (lambda (m)
-               (with (action pseudo full-name date u) m
+               (with (action pseudo full-name date u to) m
                  `(hlink ,(url->string (url-tail u))
                          ,(url->string u))))
              f))))
