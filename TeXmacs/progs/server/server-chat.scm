@@ -61,19 +61,27 @@
   (let* ((action (db-get-field-first mid "action" "unknown"))
          (msg (db-get-field-first mid "message" "unknown"))
          (from (db-get-field-first mid "from" "unknown"))
+         (to (db-get-field-first mid "to" "unknown"))
          (pseudo (db-get-field-first from "pseudo" "unknown"))
+         (pseudo-to (db-get-field-first to "owner" "unknown"))
          (full (db-get-field-first from "name" "unknown"))
          (date (db-get-field-first mid "date" "unknown")))
     (when (== action "send")
       (with doc (string-load (repository-get msg))
         (set! msg (convert doc "texmacs-snippet" "texmacs-stree"))))
-    (list action pseudo full date msg)))
+    (list action pseudo full date msg pseudo-to)))
 
 (define (chat-room-retrieve crid)
   (with l (db-search `(("type" "chat-message")
                        ("to" ,crid)
                        (:order "date" #t)))
     (map chat-message-retrieve l)))
+
+(define (chat-messages-sent uid pred?)
+  (with l (db-search `(("type" "chat-message")
+                       ("from" ,uid)
+                       (:order "date" #t)))
+        (list-filter (map chat-message-retrieve l) pred?)))
 
 (define (chat-room-initialize crid)
   (when (not (ahash-ref chat-room-messages crid))
@@ -115,15 +123,31 @@
           (ahash-set! chat-room-present crid (cons client l))))
       (server-return envelope (ahash-ref chat-room-messages crid)))))
 
+(define (list-shared? t msg)
+  (with (action pseudo full-name date doc to) msg
+    (and (== action "share")
+         (and (not (ahash-ref t to)) (ahash-set! t to #t)))))
+
 (define (chat-room-notify mid)
   ;; Notify the arrival of a new message to all participants
   (let* ((crid (db-get-field-first mid "to" "unknown"))
          (name (db-get-field-first crid "name" "unknown"))
+         (owner (db-get-field-first crid "owner" "unknown"))
          (dummy (chat-room-initialize crid))
          (old-l (ahash-ref chat-room-messages crid))
          (new-m (chat-message-retrieve mid))
-         (new-l (rcons old-l new-m)))
+         (new-l (rcons old-l new-m))
+         (users (make-ahash-table))
+         (shared-with (chat-messages-sent owner (cut list-shared? users <>))))
     (ahash-set! chat-room-messages crid new-l)
+    (for (client (active-clients))
+         (for (msg shared-with)
+              (with (action pseudo full-name date doc to) msg
+                    (when (server-logged? client pseudo)
+                      (server-remote-eval
+                        client
+                        `(notify-new-message ,pseudo ,new-m ,mid)
+                        (lambda (ok?) (noop)))))))
     (for (client (ahash-ref chat-room-present crid))
       (server-remote-eval client `(chat-room-receive ,name ,new-m)
         (lambda (ok?) (noop))))))
