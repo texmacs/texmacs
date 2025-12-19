@@ -13,54 +13,88 @@
 
 (texmacs-module (notification notification-base))
 
-(define notifications-table (make-ahash-table))
+;; server -> state
+;; state:
+;;  - payloads : nid -> notif-record
+;;  - actions  : nid -> thunk
+;;  - kinds    : nid -> kind(symbol)
+;;  - counts   : kind(symbol) -> int
+(define notifications-by-serv (make-ahash-table))
 
-(define (get-notif key) (ahash-ref notifications-table key))
-(define (get-notif-act name type) (get-notif `(,name . ,type)))
-(define (get-notif-cnt type) (get-notif type))
+(define (make-notif-state)
+  `((payloads . ,(make-ahash-table))
+    (actions  . ,(make-ahash-table))
+    (kinds    . ,(make-ahash-table))
+    (counts   . ,(make-ahash-table))))
 
-(define (set-notif key val) (ahash-set! notifications-table key val))
-(define (set-notif-act name type act) (set-notif `(,name . ,type) act))
-(define (inc-notif-count type)
-  (with c (get-notif-cnt type)
-    (if c (set-notif type (+ c 1)) (set-notif type 1))
-    (get-notif-cnt type)))
+(define (state-ref st k) (cdr (assq k st)))
 
-(define (dec-notif-count type n)
-  (with c (get-notif-cnt type)
-    (if c (set-notif type (- c n)) (set-notif type 0))
-    (get-notif-cnt type)))
+(define (get-or-make-state server)
+  (with st (ahash-ref notifications-by-serv server)
+    (if st st
+      (begin
+        (ahash-set! notifications-by-serv server (make-notif-state))
+        (ahash-ref notifications-by-serv server)))))
 
-(tm-define (has-notifications?) (positive? (ahash-size notifications-table)))
+(define (payloads-table server) (state-ref (get-or-make-state server) 'payloads))
+(define (actions-table  server) (state-ref (get-or-make-state server) 'actions))
+(define (kinds-table    server) (state-ref (get-or-make-state server) 'kinds))
+(define (counts-table   server) (state-ref (get-or-make-state server) 'counts))
 
-(tm-define (add-notification name type action)
-  (if (get-notif-act name type) #f
-    (begin
-      (set-notif-act name type action)
-      (inc-notif-count type))))
+(define (inc-count! server kind n)
+  (let* ((counts (counts-table server))
+         (c      (ahash-ref counts kind)))
+    (ahash-set! counts kind (+ n (or c 0)))
+    (ahash-ref counts kind)))
 
-(tm-define (notification-action name type) (get-notif-act name type))
-(tm-define (notification-count type)
-  (with c (get-notif-cnt type)
-    (if c c 0)))
-(tm-define (notification-total-count)
+(define (dec-count! server kind n)
+  (let* ((counts (counts-table server))
+         (c      (ahash-ref counts kind)))
+    (ahash-set! counts kind (max 0 (- (or c 0) n)))
+    (ahash-ref counts kind)))
+
+(tm-define (notification-count server kind)
+  (or (ahash-ref (counts-table server) kind) 0))
+
+(tm-define (notification-total-count server)
+  (ahash-fold (lambda (k v acc) (+ acc (or v 0))) 0 (counts-table server)))
+
+(tm-define (notification-counts server)
+  (ahash-fold (lambda (k v l) (acons k (or v 0) l)) '() (counts-table server)))
+
+(tm-define (has-notifications? server kind)
+  (> (notification-count server kind) 0))
+
+(tm-define (add-notification server nid kind action payload)
+  (let* ((actions  (actions-table server))
+         (payloads (payloads-table server))
+         (kinds    (kinds-table server)))
+    (if (ahash-ref actions nid) #f
+      (begin
+        (ahash-set! actions  nid action)
+        (ahash-set! payloads nid payload)
+        (ahash-set! kinds    nid kind)
+        (inc-count! server kind 1)
+        #t))))
+
+(tm-define (notification-action server nid)
+  (ahash-ref (actions-table server) nid))
+
+(tm-define (notification-payload server nid)
+  (ahash-ref (payloads-table server) nid))
+
+(tm-define (notification-kind server nid)
+  (ahash-ref (kinds-table server) nid))
+
+(tm-define (get-notifications server kind)
   (ahash-fold
-    (lambda (k v c) (if (symbol? k) (+ c (get-notif-cnt k)) c))
-    0 notifications-table))
+    (lambda (nid k acc) (if (== k kind) (cons nid acc) acc))
+    '() (kinds-table server)))
 
-(tm-define (notification-counts)
-  (ahash-fold
-    (lambda (k v l) (if (symbol? k) (acons k (get-notif-cnt k) l) l))
-    '() notifications-table))
-
-(tm-define (get-notifications type)
-  (ahash-fold
-    (lambda (key value l)
-      (if (and (pair? key) (== (cdr key) type)) (cons key l) l))
-    '() notifications-table))
-
-(tm-define (clear-notifications type)
-  (with todelete (get-notifications type)
-    (for (k todelete)
-         (ahash-remove! notifications-table k))
-    (dec-notif-count type (length todelete))))
+(tm-define (clear-notifications server kind)
+  (with todel (get-notifications server kind)
+    (for (nid todel)
+      (ahash-remove! (actions-table server) nid)
+      (ahash-remove! (payloads-table server) nid)
+      (ahash-remove! (kinds-table server) nid))
+    (dec-count! server kind (length todel))))

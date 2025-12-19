@@ -122,7 +122,7 @@
 
 (tm-menu (remote-mail-menu server)
   (eval (notifiable-entry
-          'message "Incoming messages"
+          server 'message "Incoming messages"
           (lambda () (with-post-reload (mail-box-open server)))))
   ("Send message" (open-message-editor server)))
 
@@ -247,10 +247,10 @@
   (if (live-list-url? (current-buffer))
       (=> (balloon (icon "tm_cloud_dir.xpm") "Live documents")
 	  (dynamic (remote-live-list-menu server))))
-  (=> (balloon (eval (notifiable-icon 'message
+  (=> (balloon (eval (notifiable-icon server 'message
                                       "tm_cloud_mail.xpm"
                                       "tm_cloud_mail_new.xpm"))
-               (eval (notif-count-label 'message "Messages")))
+               (eval (notif-count-label server 'message "Messages")))
       (dynamic (remote-mail-menu server))))
 
 (menu-bind remote-icons

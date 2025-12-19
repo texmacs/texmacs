@@ -130,6 +130,11 @@
     (server-log-write `info
       (string-append "Mail command set to " val))))
 
+(define (notify-server-service-notifications var val)
+  (when (server-started?)
+    (server-log-write `info
+      (string-append "Allowing to pull/push notifications " val))))
+
 (define-preferences
   ("server port" "6561"
    notify-server-port-preferences)
@@ -164,7 +169,9 @@
   ("server reset-credentials delay" "3600" ;; 1h
    notify-server-reset-credentials-delay)
   ("server mail command" ""
-   notify-server-mail-command))
+   notify-server-mail-command)
+  ("server service notifications" "on"
+   notify-server-service-notifications))
 
 (tm-define (server-get-port)
   (:synopsis "Port to run the server")
