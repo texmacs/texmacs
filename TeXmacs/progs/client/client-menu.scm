@@ -121,7 +121,9 @@
   ("Open live document" (live-open-interactive server)))
 
 (tm-menu (remote-mail-menu server)
-  ("Incoming messages" (with-post-reload (mail-box-open server)))
+  (eval (notifiable-entry
+          'message "Incoming messages"
+          (lambda () (with-post-reload (mail-box-open server)))))
   ("Send message" (open-message-editor server)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -245,7 +247,10 @@
   (if (live-list-url? (current-buffer))
       (=> (balloon (icon "tm_cloud_dir.xpm") "Live documents")
 	  (dynamic (remote-live-list-menu server))))
-  (=> (balloon (icon "tm_cloud_mail.xpm") "Messages")
+  (=> (balloon (eval (notifiable-icon 'message
+                                      "tm_cloud_mail.xpm"
+                                      "tm_cloud_mail_new.xpm"))
+               (eval (notif-count-label 'message "Messages")))
       (dynamic (remote-mail-menu server))))
 
 (menu-bind remote-icons
