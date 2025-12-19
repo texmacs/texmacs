@@ -746,11 +746,13 @@
       (server-set-user-last-login-address-uid uid (server-client-address client))
       (server-set-user-failed-login-counter-uid uid 0)
       (ahash-set! server-logged-table client uid)
+      (ahash-set! server-logged-table uid client)
       (server-log-write `log-notice (string-append "user " pseudo
 	" logged in client " (number->string client)))))
 
 (tm-define (server-failed-login-uid uid client pseudo)
   (ahash-remove! server-logged-table client)
+  (ahash-remove! server-logged-table uid)
   (server-set-user-last-failed-login-time-uid uid (current-time))
   (server-set-user-last-failed-login-address-uid
    uid (server-client-address client))
@@ -774,6 +776,10 @@
 (tm-define (server-logged? client pseudo)
   (and-with uid (server-find-user pseudo)
     (== (ahash-ref server-logged-table client) uid)))
+
+(tm-define (uid-logged? uid) (ahash-ref server-logged-table uid))
+(tm-define (pseudo-logged? pseudo)
+  (and-with uid (server-find-user pseudo) (uid-logged? uid)))
 
 ;; detect 128 byte salt (old, wrong standard)
 (define (server-salt-update salt)
@@ -872,7 +878,9 @@
 (tm-define (server-logout client pseudo)
   (when (server-logged? client pseudo)
     (client-stop client)
-    (ahash-remove! server-logged-table client)
+    (and-with uid (ahash-ref server-logged-table client)
+      (ahash-remove! server-logged-table client)
+      (ahash-remove! server-logged-table uid))
     (server-log-write `log-info (string-append "user " pseudo
       " logged out client " (number->string client)))))
 

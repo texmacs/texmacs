@@ -17,7 +17,8 @@
   (:use (client client-tmfs)
         (client client-sync)
         (client client-chat)
-        (client client-live)))
+        (client client-live)
+        (client client-notifications)))
 
 (tm-define (tm-servers)
   ;(list "server.texmacs.org" "texmacs.math.unc.edu" "localhost"))
@@ -383,6 +384,7 @@
                                          pseudo authentication)
                                    credential))
                      (load-buffer (remote-home-directory server))
+                     (client-sync-remote-notifications server)
                      (cb-done)))))
               ((== ret "pending")
                (add-active-connection server server-name port pseudo)
@@ -690,7 +692,8 @@
                 (add-active-connection server server-name port pseudo)
                 (set! remote-client-list (client-active-servers))
                 (load-buffer (remote-home-directory server))
-                (open-account-editor server))
+                (open-account-editor server)
+                (client-sync-remote-notifications server))
              (else
                (when server (client-logout server))
                (client-open-error

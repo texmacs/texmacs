@@ -111,14 +111,6 @@
       (chat-room-modified fname)
       #t)))
 
-(tm-call-back (notify-new-message name msg mid)
-  (with (server msg-id) envelope
-    (and-let* ((sname (client-find-server-name server))
-               (fname (string-append "tmfs://chat/" sname "/" name))
-               (notif-name (string-append fname ";" mid)))
-      (add-notification notif-name 'message (lambda () (mail-box-open server)))
-      #t)))
-
 (tm-define (chat-room-send)
   (and-let* ((t (tree-innermost 'chat-input))
              (mt (tm-ref t 0))
