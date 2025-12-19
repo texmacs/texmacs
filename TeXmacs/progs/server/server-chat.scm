@@ -12,7 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (server server-chat)
-  (:use (server server-tmfs)))
+  (:use (server server-tmfs)
+        (server server-notifications)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Chat rooms
@@ -139,15 +140,12 @@
          (new-l (rcons old-l new-m))
          (users (make-ahash-table))
          (shared-with (chat-messages-sent owner (cut list-shared? users <>))))
+    (display* "got notify room with name " name " owner " owner " shared with " shared-with "\n")
     (ahash-set! chat-room-messages crid new-l)
-    (for (client (active-clients))
-         (for (msg shared-with)
-              (with (action pseudo full-name date doc to) msg
-                    (when (server-logged? client pseudo)
-                      (server-remote-eval
-                        client
-                        `(notify-new-message ,pseudo ,new-m ,mid)
-                        (lambda (ok?) (noop)))))))
+    (if (string-starts? name "mail-")
+      (server-push-message (rcons new-m mid))
+      (for (msg shared-with)
+           (server-push-message (rcons new-m mid))))
     (for (client (ahash-ref chat-room-present crid))
       (server-remote-eval client `(chat-room-receive ,name ,new-m)
         (lambda (ok?) (noop))))))
