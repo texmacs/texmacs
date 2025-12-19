@@ -469,6 +469,10 @@
 (lazy-tmfs-handler (client client-tmfs) remote-file)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 ;(display* "memory: " (texmacs-memory) " bytes\n")
+(lazy-define (notification notification-menu)
+             notifiable-icon notifiable-entry notif-count-label)
+(lazy-define (notification notification-base)
+             has-notifications? add-notification notification-count)
 
 ;(display "Booting linking facilities\n")
 (lazy-menu (link link-menu) link-menu)
