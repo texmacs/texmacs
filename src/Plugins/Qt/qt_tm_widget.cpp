@@ -1168,7 +1168,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
     case SLOT_SIDE_TOOLS:
       check_type_void (index, s);
     {
-#if !DISABLE_QTMTOOLBAR
+#if QT_VERSION >= 0x060000
       side_tools_widget = concrete (w);
       QWidget* new_qwidget = side_tools_widget->as_qwidget(mainwindow());
       QWidget* old_qwidget = dynamic_cast<QScrollArea*>(sideTools->widget())->widget();
