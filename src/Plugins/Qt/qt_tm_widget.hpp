@@ -27,7 +27,11 @@
 #include <QStackedWidget>
 #include <QLayout>
 
+#if QT_VERSION >= 0x050000
 #define DISABLE_QTMTOOLBAR 0
+#else
+#define DISABLE_QTMTOOLBAR 1
+#endif
 
 class QLabel; 
 class QTMInteractivePrompt;
