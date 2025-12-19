@@ -74,6 +74,7 @@ void setup_texmacs_home_path () {
   url texmacs_home_path = appdata_path * "TeXmacs";
   cout << "TEXMACS_HOME_PATH is autoset to: " 
        << texmacs_home_path << LF;
+  texmacs_setenv("TEXMACS_HOME_PATH", concretize(texmacs_home_path));
 }
 
 int WINAPI CommonMain() {
