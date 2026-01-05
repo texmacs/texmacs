@@ -81,9 +81,9 @@ int WINAPI CommonMain() {
   texmacs_attach_console();
   texmacs_initialize_displayname();
   setup_texmacs_path();
-  if (is_running_in_msix()) {
-    setup_texmacs_home_path();
-  }
+  //if (is_running_in_msix()) {
+  //  setup_texmacs_home_path();
+  //}
   texmacs_init_guile_hooks();
 
   int argc = 0;
