@@ -13,11 +13,12 @@
     <DisplayName>GNU TeXmacs</DisplayName>
     <Description>TeXmacs is a free scientific text editor and typesetting system.</Description>
     <PublisherDisplayName>Liza Belos</PublisherDisplayName>
-    <Logo>misc/images/texmacs-128.png</Logo>
+    <Logo>misc/images/windows/StoreLogo.png</Logo>
   </Properties>
 
   <Dependencies>
     <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.17763.0" MaxVersionTested="10.0.22621.0"/>
+    <TargetDeviceFamily Name="MSIXCore.Desktop" MinVersion="6.1.7601.0" MaxVersionTested="10.0.17763.0"/>
   </Dependencies>
 
   <Resources>
@@ -32,16 +33,18 @@
       <uap:VisualElements DisplayName="GNU TeXmacs"
                           Description="A free scientific text editor and typesetting system."
                           BackgroundColor="transparent"
-                          Square150x150Logo="misc/images/texmacs-128.png"
-                          Square44x44Logo="misc/images/texmacs-32.png">
-        <uap:SplashScreen Image="misc/images/texmacs-128.png"/>
+                          Square150x150Logo="misc/images/windows/Square150x150Logo.png"
+                          Square44x44Logo="misc/images/windows/Square44x44Logo.png">
+      <uap:SplashScreen Image="misc/images/windows/SplashScreen.png"/>
+      <uap:DefaultTile Wide310x150Logo="misc/images/windows/Wide310x150Logo.png"
+                       Square310x310Logo="misc/images/windows/LargeTile.png"/>
       </uap:VisualElements>
 
       <Extensions>
         <uap:Extension Category="windows.fileTypeAssociation">
           <uap:FileTypeAssociation Name="texmacsfile">
             <uap:DisplayName>TeXmacs File</uap:DisplayName>
-            <uap:Logo>misc/images/texmacs-128.png</uap:Logo>
+            <uap:Logo>misc/images/windows/Square150x150Logo.png</uap:Logo>
             <uap:SupportedFileTypes>
               <uap:FileType>.tm</uap:FileType>
             </uap:SupportedFileTypes>
