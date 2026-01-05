@@ -166,7 +166,7 @@ int texmacs_stat(string filename, struct_stat* buf) {
 
 string get_local_appdata_path() {
   PWSTR path = NULL;  
-  HRESULT hr = SHGetKnownFolderPath(FOLDERID_LocalAppData, 0, NULL, &path);  
+  HRESULT hr = SHGetKnownFolderPath(FOLDERID_LocalAppData, KF_FLAG_CREATE, NULL, &path);  
   if (SUCCEEDED(hr)) {
     string result = texmacs_wide_to_utf8(std::wstring(path));
     CoTaskMemFree(path);
