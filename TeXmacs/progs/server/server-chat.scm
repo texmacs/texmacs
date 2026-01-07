@@ -111,6 +111,10 @@
     (ahash-set! chat-room-messages crid (chat-room-retrieve crid))
     (ahash-set! chat-room-present  crid (list))))
 
+(tm-service (chat-rooms-reset-messages)
+  (set! chat-room-messages (make-ahash-table))
+  (server-return envelope "ok"))
+
 (tm-service (remote-chat-room-open name)
   ;; Connect client to a chat room and return list of past messages
   ;;(display* "remote-chat-room-open " name "\n")
