@@ -6,7 +6,7 @@
 
   <Identity Name="LizaBelos.GNUTeXmacs"
             ProcessorArchitecture="@WIN_ARCH@"
-            Publisher="CN=501DD98C-BA15-4652-84D9-828AD8F1F714"
+            Publisher="CN=Centre national de la recherche scientifique, O=Centre national de la recherche scientifique, S=Paris, C=FR"
             Version="@ALTERNATIVE_VERSION@.0" />
 
   <Properties>
