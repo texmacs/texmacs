@@ -282,7 +282,7 @@ bool QTMKeyboardEvent::handleQtKeyMap () {
   mTexmacsKeyCombination = mKeyboard.keymap()[mKey];
 #if defined(OS_MINGW) && QT_VERSION >= 0x060000
   // e.g. azerty keyboard: AltGr tilde followed by Space
-  if (mKey == 32) {
+  if (mKey == 32 && mEvent.text() != " ") {
     QByteArray buf = mEvent.text().toUtf8();
     mTexmacsKeyCombination = string (buf.data(), buf.size());
   }
