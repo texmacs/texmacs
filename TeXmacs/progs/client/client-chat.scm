@@ -242,8 +242,9 @@
     `((subsection* ,name)
       ,@(map (lambda (m)
                (with (action pseudo full-name date u to) m
-                 `(hlink ,(url->string (url-tail u))
-                         ,(url->string u))))
+                 (resource-link (tmfs-type u)
+                                (url->string (url-tail u))
+                                (url->string u))))
              f))))
 
 (define (list-shared-document l)
