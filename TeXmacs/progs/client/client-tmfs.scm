@@ -244,15 +244,32 @@
           (remote-create-dir server fname)))
     (list "Name" "string")))
 
+(tm-define (tmfs-type u)
+  (with head (tmfs-car (url->string (url-unroot u)))
+    (if (string-starts? head "remote-") (string-drop head 7) head)))
+
+(define (get-icon-path name)
+  (let* ((base "$TEXMACS_PATH/misc/pixmaps/light/")
+         (url (url-resolve (url-append base name) "fr")))
+    (url->string
+      (if (url-none? url)
+        (url-resolve (url-append base "tm_focus_help.svg") "fr")
+        url))))
+
+(tm-define (resource-link type short link)
+  (let* ((icon-name (if (== type "chat") "mail" type))
+         (icon-file-name (string-append "tm_cloud_" icon-name ".svg"))
+         (path (get-icon-path icon-file-name)))
+    `(concat (image ,path "12pt" "" "" "-0.666ex") (hlink ,short ,link))))
+
 (define (dir-line sname entry)
   (with (short-name full-name dir? props) entry
-    (let* ((type (if dir? "remote-dir" "remote-file"))
-           (name (string-append "tmfs://" type "/" sname "/" full-name))
-           (hlink `(hlink ,short-name ,name)))
-      hlink)))
+    (let* ((type (if dir? "dir" "file"))
+           (link (string-append "tmfs://remote-" type "/" sname "/" full-name)))
+      (resource-link type short-name link))))
 
 (define (dir-page sname entries)
-  (generic-document `(document (section* "File list")
+  (generic-document `(document (section* "My Files")
                                ,@(map (cut dir-line sname <>) entries))))
 
 (tmfs-load-handler (remote-dir name)
