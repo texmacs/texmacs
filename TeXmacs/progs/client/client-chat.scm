@@ -228,11 +228,6 @@
 (tmfs-permission-handler (shared sname type)
   (in? type (list "read")))
 
-(define (list-shared? t msg)
-  (with (action pseudo full-name date doc to) msg
-    (and (== action "share")
-         (and (not (ahash-ref t doc)) (ahash-set! t doc #t)))))
-
 (define (list-shared-name msg)
   (with (action pseudo full-name date doc to) msg
     (utf8->cork full-name)))
@@ -249,16 +244,15 @@
 
 (define (list-shared-document l)
   (let* ((doc-table (make-ahash-table))
-         (f (list-filter l (cut list-shared? doc-table <>)))
-         (names (list-remove-duplicates (map list-shared-name f))))
+         (names (list-remove-duplicates (map list-shared-name l))))
     `(document
        (section* "Shared resources")
-       ,@(append-map (cut list-shared-links f <>) names))))
+       ,@(append-map (cut list-shared-links l <>) names))))
 
 (tmfs-load-handler (shared sname)
   (let* ((u (string-append "tmfs://shared/" sname))
          (server (client-find-server sname)))
-    (client-remote-eval server `(remote-mail-open)
+    (client-remote-eval server `(remote-shared)
       (lambda (l)
         (with doc (list-shared-document l)
           (buffer-set-body u (fix-links sname doc))

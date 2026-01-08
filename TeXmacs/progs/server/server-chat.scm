@@ -58,6 +58,10 @@
 (define chat-room-messages (make-ahash-table))
 (define chat-room-present  (make-ahash-table))
 
+(define (msg-is-shared? msg)
+  (with (action pseudo full-name date doc to) msg
+    (== action "share")))
+
 (define (resolve-resource-id rid old-url)
   ;; Given a resource database ID, resolve it to the current URL
   (and-let* ((rtype (db-get-field-first rid "type" #f))
@@ -111,6 +115,12 @@
     (ahash-set! chat-room-messages crid (chat-room-retrieve crid))
     (ahash-set! chat-room-present  crid (list))))
 
+(define (ensure-chat-room client crid)
+  (chat-room-initialize crid)
+  (with l (ahash-ref chat-room-present crid)
+    (when (nin? client l)
+      (ahash-set! chat-room-present crid (cons client l)))))
+
 (tm-service (chat-rooms-reset-messages)
   (set! chat-room-messages (make-ahash-table))
   (server-return envelope "ok"))
@@ -128,10 +138,7 @@
             ((not (db-allow? crid uid "readable"))
              (server-error envelope "Error: access to chat room denied"))
             (else
-             (chat-room-initialize crid)
-             (with l (ahash-ref chat-room-present crid)
-               (when (nin? client l)
-                 (ahash-set! chat-room-present crid (cons client l))))
+             (ensure-chat-room client crid)
              (let* ((ms (ahash-ref chat-room-messages crid))
                     (w? (db-allow? crid uid "writable")))
                (server-return envelope (list w? ms))))))))
@@ -144,11 +151,19 @@
            (pseudo (or (user->pseudo uid) uid))
            (name (string-append "mail-" pseudo))
            (crid (or (chat-room-id name) (chat-room-create uid name))))
-      (chat-room-initialize crid)
-      (with l (ahash-ref chat-room-present crid)
-        (when (nin? client l)
-          (ahash-set! chat-room-present crid (cons client l))))
+      (ensure-chat-room client crid)
       (server-return envelope (ahash-ref chat-room-messages crid)))))
+
+(tm-service (remote-shared)
+  (with (client msg-id) envelope
+    (let* ((uid (server-get-user envelope))
+           (pseudo (or (user->pseudo uid) uid))
+           (name (string-append "mail-" pseudo))
+           (crid (or (chat-room-id name) (chat-room-create uid name))))
+      (ensure-chat-room client crid)
+      (server-return
+        envelope
+        (list-filter (ahash-ref chat-room-messages crid) msg-is-shared?)))))
 
 (define (list-shared? t msg)
   (with (action pseudo full-name date doc to) msg
