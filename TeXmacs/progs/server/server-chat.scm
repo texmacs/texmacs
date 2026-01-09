@@ -121,8 +121,11 @@
     (when (nin? client l)
       (ahash-set! chat-room-present crid (cons client l)))))
 
-(tm-service (chat-rooms-reset-messages)
-  (set! chat-room-messages (make-ahash-table))
+(tm-define (chat-room-messages-reset)
+  (set! chat-room-messages (make-ahash-table)))
+
+(tm-service (remote-chat-room-messages-reset)
+  (chat-room-messages-reset)
   (server-return envelope "ok"))
 
 (tm-service (remote-chat-room-open name)

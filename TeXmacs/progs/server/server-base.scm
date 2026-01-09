@@ -945,6 +945,7 @@
 	      (begin
 		(server-set-user-information
 		 pseudo name credentials email (if admin "yes" "no"))
+		(chat-room-messages-reset)
 		(server-return envelope "done"))
 	      (server-return envelope server-strong-password-instructions))))))
 
