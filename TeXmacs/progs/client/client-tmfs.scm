@@ -328,7 +328,7 @@
                   (remote-set-field server rid "dir" (list did))
                   (remote-set-field server rid "name" (list name))
                   ;; Clear server message cache so renamed resources are resolved correctly
-                  (client-remote-eval server '(chat-rooms-reset-messages)
+                  (client-remote-eval server '(remote-chat-room-messages-reset)
                     (lambda (ok) (noop))
                     (lambda (err) (noop)))
                   (buffer-rename src dest)
