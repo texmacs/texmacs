@@ -93,7 +93,7 @@
 ;; (set! primitive-load new-primitive-load)
 
 ;(display "Booting TeXmacs kernel functionality\n")
-(if (os-mingw?)
+(if (and (os-mingw?) (string= (gui-version) "qt4"))
     (load "kernel/boot/boot.scm")
     (load (url-concretize "$TEXMACS_PATH/progs/kernel/boot/boot.scm")))
 (inherit-modules (kernel boot compat) (kernel boot abbrevs)
