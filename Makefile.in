@@ -575,7 +575,10 @@ WINDOWS_APPX_STORE:
 		$(RM) $(WINDOWS_BUILD_DIR)/AppxManifest.xml; \
 		$(RM) $(WINDOWS_BUILD_DIR)/TeXmacsStore.msix; \
 		$(CP) packages/msix/AppxManifestStore.xml $(WINDOWS_BUILD_DIR)/AppxManifest.xml; \
-		cd $(WINDOWS_BUILD_DIR); powershell.exe -Command "& '@MAKEAPPX@' pack /d . /p ../windows/TeXmacsStore.msix"; \
+		cd $(WINDOWS_BUILD_DIR); \ 
+		powershell.exe -Command "& '@MAKEPRI@' createconfig /cf priconfig.xml /dq en-US"; \
+		powershell.exe -Command "& '@MAKEPRI@' new /pr . /cf priconfig.xml"; \
+		powershell.exe -Command "& '@MAKEAPPX@' pack /d . /p ../windows/TeXmacsStore.msix"; \
 	}; fi
 
 WINDOWS_APPX: WINDOWS_BUNDLE WINDOWS_PACKAGE WINDOWS_APPX_CNRS WINDOWS_APPX_STORE

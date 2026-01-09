@@ -44,12 +44,19 @@ AC_DEFUN([TM_WINDOWS],[
     AC_SUBST([WIN_ARCH])
 
     MAKEAPPX_PATH=$(find "C:/Program Files (x86)/Windows Kits/10/bin/" -type f -iname makeappx.exe | grep "/$WIN_ARCH/" | head -n 1)
+    MAKEPRI_PATH=$(find "C:/Program Files (x86)/Windows Kits/10/bin/" -type f -iname makepri.exe | grep "/$WIN_ARCH/" | head -n 1)
     SIGNTOOL_PATH=$(find "C:/Program Files (x86)/Windows Kits/10/bin/" -type f -iname signtool.exe | grep "/$WIN_ARCH/" | head -n 1)
 
     if test -n "$MAKEAPPX_PATH"; then
       AC_SUBST([MAKEAPPX],[$MAKEAPPX_PATH])
       AC_DEFINE([MAKEAPPX],["$MAKEAPPX_PATH"],[makeappx location])
       AC_MSG_RESULT([makeappx found at $MAKEAPPX_PATH])
+    fi
+
+    if test -n "$MAKEPRI_PATH"; then
+      AC_SUBST([MAKEPRI],[$MAKEPRI_PATH])
+      AC_DEFINE([MAKEPRI],["$MAKEPRI_PATH"],[makepri location])
+      AC_MSG_RESULT([makepri found at $MAKEPRI_PATH])
     fi
 
     if test -n "$SIGNTOOL_PATH"; then

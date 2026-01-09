@@ -132,6 +132,9 @@
 /* makeappx location */
 #undef MAKEAPPX
 
+/* makepri location */
+#undef MAKEPRI
+
 /* Max fast alloc // WORD_LENGTH more than power of 2 */
 #undef MAX_FAST
 

@@ -700,6 +700,7 @@ UIC
 MOC
 QMAKE
 SIGNTOOL
+MAKEPRI
 MAKEAPPX
 WIN_ARCH
 CV2PDB
@@ -27035,6 +27036,7 @@ printf "%s\n" "disabling cv2pdb" >&6; }
 
 
     MAKEAPPX_PATH=$(find "C:/Program Files (x86)/Windows Kits/10/bin/" -type f -iname makeappx.exe | grep "/$WIN_ARCH/" | head -n 1)
+    MAKEPRI_PATH=$(find "C:/Program Files (x86)/Windows Kits/10/bin/" -type f -iname makepri.exe | grep "/$WIN_ARCH/" | head -n 1)
     SIGNTOOL_PATH=$(find "C:/Program Files (x86)/Windows Kits/10/bin/" -type f -iname signtool.exe | grep "/$WIN_ARCH/" | head -n 1)
 
     if test -n "$MAKEAPPX_PATH"; then
@@ -27045,6 +27047,16 @@ printf "%s\n" "#define MAKEAPPX \"\$MAKEAPPX_PATH\"" >>confdefs.h
 
       { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: makeappx found at $MAKEAPPX_PATH" >&5
 printf "%s\n" "makeappx found at $MAKEAPPX_PATH" >&6; }
+    fi
+
+    if test -n "$MAKEPRI_PATH"; then
+      MAKEPRI=$MAKEPRI_PATH
+
+
+printf "%s\n" "#define MAKEPRI \"\$MAKEPRI_PATH\"" >>confdefs.h
+
+      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: makepri found at $MAKEPRI_PATH" >&5
+printf "%s\n" "makepri found at $MAKEPRI_PATH" >&6; }
     fi
 
     if test -n "$SIGNTOOL_PATH"; then
