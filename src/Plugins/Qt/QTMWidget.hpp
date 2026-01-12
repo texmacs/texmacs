@@ -80,8 +80,8 @@ protected:
   virtual void tabletEvent (QTabletEvent* event) override;
 #endif
   virtual void gestureEvent (QGestureEvent* event);
-  virtual void resizeEvent (QResizeEvent *event) override;
-  virtual void resizeEventBis (QResizeEvent *e) override;
+  virtual void resizeEvent (QResizeEvent* event) override;
+  virtual void resizeEventBis () override;
   virtual void dragEnterEvent(QDragEnterEvent *event) override;
   //virtual void dragMoveEvent (QDragMoveEvent *event) override;
   virtual void dropEvent(QDropEvent *event) override;

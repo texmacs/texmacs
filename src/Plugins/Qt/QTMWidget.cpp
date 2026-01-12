@@ -139,8 +139,8 @@ QTMWidget::resizeEvent (QResizeEvent* event) {
 }
 
 void
-QTMWidget::resizeEventBis (QResizeEvent *event) {
-  coord2 s = from_qsize (event->size());
+QTMWidget::resizeEventBis () {
+  coord2 s = from_qsize (surface()->size());
   the_gui -> process_resize (tm_widget(), s.x1, s.x2);
 }
 

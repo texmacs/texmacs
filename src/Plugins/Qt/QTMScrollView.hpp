@@ -14,6 +14,7 @@
 
 #include <QAbstractScrollArea>
 #include <QRect>
+#include "QTMDelayedMethodCall.hpp"
 
 class QResizeEvent;
 class QPaintEvent;
@@ -60,8 +61,9 @@ protected:
   
   void updateScrollBars();
   void scrollContentsBy (int dx, int dy);
+  void onResizeEvent ();
   
-  virtual void resizeEventBis (QResizeEvent *e);
+  virtual void resizeEventBis ();
   virtual bool viewportEvent (QEvent *e);
   virtual bool surfaceEvent (QEvent *e);
   virtual bool event (QEvent *e);
@@ -72,6 +74,8 @@ protected:
 
   friend class QTMSurface;
   friend class qt_simple_widget_rep;
+
+  QTM_DECL_DELAYED(onResizeEvent);
 };
 
 
