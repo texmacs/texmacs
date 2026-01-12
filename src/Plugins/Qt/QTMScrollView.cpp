@@ -297,9 +297,7 @@ QTMScrollView::event (QEvent *event) {
     case QEvent::Resize:
     {
       bool res = QAbstractScrollArea::event(event);
-      QResizeEvent *re = static_cast<QResizeEvent*> (event);
-      updateScrollBars();
-      resizeEventBis (re);
+      QTM_CALL_DELAYED(onResizeEvent);
       return res;
     }
     default:
@@ -309,8 +307,13 @@ QTMScrollView::event (QEvent *event) {
 }
 
 void
-QTMScrollView::resizeEventBis (QResizeEvent *event) {
-  (void) event;
+QTMScrollView::onResizeEvent () {
+  updateScrollBars();
+  resizeEventBis ();
+}
+
+void
+QTMScrollView::resizeEventBis () {
 }
 
 /*
