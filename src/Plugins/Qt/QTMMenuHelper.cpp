@@ -565,11 +565,12 @@ void initkeymap ();
 void
 QTMLineEdit::keyPressEvent (QKeyEvent* ev)
 {
-#if QT_VERSION >= 0x060000
+#if QT_VERSION >= 0x050000
   if (ev == QKeySequence::Copy ||
       ev == QKeySequence::Paste ||
       ev == QKeySequence::Cut) {
     QLineEdit::keyPressEvent (ev);
+    return;
   }
 #endif
  
