@@ -20,16 +20,16 @@
 ;; Useful subroutines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (generic-document doc)
+(tm-define (remote-file-browser-document doc)
   `(document
      (TeXmacs ,(texmacs-version))
-     (style (tuple "generic"))
+     (style (tuple "generic" "remote-file-browser"))
      (body ,doc)))
 
 (define (empty-document)
-  (generic-document '(document "")))
+  (remote-file-browser-document '(document "")))
 
-(define (buffer-set-stm u doc)
+(tm-define (buffer-set-stm u doc)
   (let* ((s (object->tmstring doc))
          (t (tree-import-loaded s u "stm")))
     (buffer-set u t)
@@ -248,29 +248,42 @@
   (with head (tmfs-car (url->string (url-unroot u)))
     (if (string-starts? head "remote-") (string-drop head 7) head)))
 
-(define (get-icon-path name)
-  (let* ((base "$TEXMACS_PATH/misc/pixmaps/light/")
-         (url (url-resolve (url-append base name) "fr")))
-    (url->string
-      (if (url-none? url)
-        (url-resolve (url-append base "tm_focus_help.svg") "fr")
-        url))))
-
-(tm-define (resource-link type short link)
-  (let* ((icon-name (if (== type "chat") "mail" type))
-         (icon-file-name (string-append "tm_cloud_" icon-name ".svg"))
-         (path (get-icon-path icon-file-name)))
-    `(concat (image ,path "12pt" "" "" "-0.666ex") (hlink ,short ,link))))
-
-(define (dir-line sname entry)
+(define (directory-entry sname server entry)
   (with (short-name full-name dir? props) entry
     (let* ((type (if dir? "dir" "file"))
-           (link (string-append "tmfs://remote-" type "/" sname "/" full-name)))
-      (resource-link type short-name link))))
+           (icon-name (string-append "tm_cloud_" type ".svg"))
+           (link (prepend-dir server short-name (string-append "remote-" type)))
+           (share-action (build-table-share-action server link)))
+      `(row (cell (dir-entry ,icon-name ,short-name ,link ,share-action))))))
 
-(define (dir-page sname entries)
-  (generic-document `(document (section* "My Files")
-                               ,@(map (cut dir-line sname <>) entries))))
+(tm-define (build-table-share-action server u)
+  (with action-cmd
+    (string-append "(open-permissions-editor "
+                   (number->string server) " \""
+                   u "\")")
+    `(action (dir-entry-icon "tm_cloud_share.svg" "Share...") ,action-cmd)))
+
+(tm-define (build-dir-table title content)
+  `(wide-tabular
+     (tformat
+       (cwith "1" "1" "1" "-1" "cell-background" "dark grey")
+       (cwith "2" "-1" "1" "-1" "cell-background"
+              (if (equal (mod (value "cell-row-nr") "2") "0") "#f4f4ff" ""))
+       (cwith "1" "-1" "1" "-1" "cell-lsep" "1spc")
+       (cwith "1" "-1" "1" "-1" "cell-rsep" "1spc")
+       (cwith "1" "-1" "1" "-1" "cell-tsep" "0.5spc")
+       (cwith "1" "-1" "1" "-1" "cell-bsep" "0.5spc")
+       (table (row (cell (samp (with "color" "white" "locus-color"
+                                     "preserve" ,title))))
+              ,@content))))
+
+(define (directory-table sname server entries)
+  (build-dir-table "My Files" (map (cut directory-entry sname server <>) entries)))
+
+(define (dir-page sname server entries)
+  (remote-file-browser-document
+    `(document
+       (dir-list ,(directory-table sname server entries)))))
 
 (tmfs-load-handler (remote-dir name)
   ;;(display* "Loading remote dir " name "\n")
@@ -282,7 +295,7 @@
         (begin
           (client-remote-eval server `(remote-dir-load ,name)
             (lambda (entries)
-              (remote-dir-set name (dir-page sname entries))
+              (remote-dir-set name (dir-page sname server entries))
               (set-message "retrieved contents" "remote directory"))
             (lambda (err)
               (set-message err "remote directory")))
