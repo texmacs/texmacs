@@ -182,31 +182,41 @@
 ;; List of live documents
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tmfs-permission-handler (live-list name type)
-  (in? type (list "read")))
+(tmfs-permission-handler (live-list sname type)
+  (and (client-find-server sname) (in? type (list "read"))))
+
+(define (live-documents sname server entries)
+  (remote-file-browser-document
+    `(document
+       (dir-list ,(live-table "Live documents" sname server entries)))))
 
 (tmfs-load-handler (live-list sname)
   (let* ((u (string-append "tmfs://live-list/" sname))
-         (base (string-append "tmfs://live/" sname))
          (server (client-find-server sname)))
     (client-remote-eval server `(remote-list-live)
       (lambda (l)
-        (with hyp (lambda (c) `(hlink ,c ,(string-append base "/" c)))
-          (with doc `(document (section* "Live documents") ,@(map hyp l))
-            (buffer-set-body u doc)
-            (buffer-pretend-saved u)
-            (set-message "retrieved contents" "list of live documents"))))
+        (with doc (live-documents sname server l)
+          (buffer-set-stm u doc)
+          (set-message "retrieved contents" "list of live documents")))
       (lambda (err)
         (set-message err "list of live documents")))
     (set-message "loading..." "list of live documents")
     `(document
        (TeXmacs ,(texmacs-version))
-       (style (tuple "generic"))
+       (style (tuple "generic" "remote-file-browser"))
        (body (document "")))))
 
 (tm-define (list-live server)
   (and-with sname (client-find-server-name server)
     (string-append "tmfs://live-list/" sname)))
+
+(define (live-table-entry sname server name)
+  (with link (string-append "tmfs://live/" sname "/" name)
+    `(row (cell (dir-entry "tm_cloud_live.svg" ,name ,link
+                           ,(build-table-share-action server link))))))
+
+(tm-define (live-table title sname server entries)
+  (build-dir-table title (map (cut live-table-entry sname server <>) entries)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Live discussions as documents
