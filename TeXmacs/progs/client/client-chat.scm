@@ -226,7 +226,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tmfs-permission-handler (shared sname type)
-  (in? type (list "read")))
+  (and (client-find-server sname) (in? type (list "read"))))
 
 (define (list-shared-name msg)
   (with (action pseudo full-name date doc to) msg
@@ -242,24 +242,32 @@
                                 (url->string u))))
              f))))
 
-(define (list-shared-document l)
-  (let* ((doc-table (make-ahash-table))
-         (names (list-remove-duplicates (map list-shared-name l))))
-    `(document
-       (section* "Shared resources")
-       ,@(append-map (cut list-shared-links l <>) names))))
+(define (shared-table-entry item)
+  (with (action pseudo full-name date u to) item
+    (let* ((type (if (== (tmfs-type u) "chat") "mail" (tmfs-type u)))
+           (icon-name (string-append "tm_cloud_" type ".svg"))
+           (name (url->string (url-tail u)))
+           (link (url->string u)))
+      `(row (cell (dir-entry ,icon-name ,name ,link ""))))))
+
+(tm-define (shared-table title entries)
+  (build-dir-table title (map shared-table-entry entries)))
+
+(define (shared-documents entries)
+  (remote-file-browser-document
+     `(document
+        (dir-list ,(shared-table "Shared with me" entries)))))
 
 (tmfs-load-handler (shared sname)
   (let* ((u (string-append "tmfs://shared/" sname))
          (server (client-find-server sname)))
     (client-remote-eval server `(remote-shared)
       (lambda (l)
-        (with doc (list-shared-document l)
-          (buffer-set-body u (fix-links sname doc))
-          (buffer-pretend-saved u)
-          (set-message "retrieved contents" "list of shared resources")))
+        (with doc (shared-documents l)
+              (buffer-set-stm u doc)
+              (set-message "retrieved contents" "list of shared resources")))
       (lambda (err)
-        (set-message err "list of chat rooms")))
+        (set-message err "list of shared resources")))
     (set-message "loading..." "list of shared resources")
     (empty-document)))
 
