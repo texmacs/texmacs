@@ -198,8 +198,22 @@
               (lambda (h)
                 `(hlink ,(tm-ref h 0) ,(fix-link sname (tm-ref h 1))))))
 
-(tmfs-permission-handler (chat-rooms name type)
-  (in? type (list "read")))
+(tmfs-permission-handler (chat-rooms sname type)
+  (and (client-find-server sname) (in? type (list "read"))))
+
+(define (chat-room-table-entry sname server name)
+  (with link (string-append "tmfs://chat/" sname "/" name)
+    `(row (cell (dir-entry "tm_cloud_mail.svg" ,name ,link
+                           ,(build-table-share-action server link))))))
+
+(tm-define (chat-rooms-table title sname server entries)
+  (build-dir-table title
+                   (map (cut chat-room-table-entry sname server <>) entries)))
+
+(define (chat-rooms-document sname server entries)
+  (remote-file-browser-document
+    `(document
+       (dir-list ,(chat-rooms-table "My Chat Rooms" sname server entries)))))
 
 (tmfs-load-handler (chat-rooms sname)
   (let* ((u (string-append "tmfs://chat-rooms/" sname))
@@ -207,11 +221,9 @@
          (server (client-find-server sname)))
     (client-remote-eval server `(remote-list-chat-rooms)
       (lambda (l)
-        (with hyp (lambda (c) `(hlink ,c ,(string-append base "/" c)))
-          (with doc `(document (section* "My chat rooms") ,@(map hyp l))
-            (buffer-set-body u (fix-links sname doc))
-            (buffer-pretend-saved u)
-            (set-message "retrieved contents" "list of chat rooms"))))
+        (with doc (chat-rooms-document sname server l)
+          (buffer-set-stm u doc)
+          (set-message "retrieved contents" "list of chat rooms")))
       (lambda (err)
         (set-message err "list of chat rooms")))
     (set-message "loading..." "list of chat rooms")
