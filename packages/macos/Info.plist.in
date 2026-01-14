@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-  <dict>
+<dict>
     <key>CFBundleDevelopmentRegion</key>
-    <string>English</string>
+    <string>en</string>
     <key>CFBundleDocumentTypes</key>
     <array>
       <dict>
@@ -16,7 +16,9 @@
         <key>CFBundleTypeIconFile</key>
         <string>TeXmacs-document.icns</string>
         <key>CFBundleTypeMIMETypes</key>
-        <string>text/x-texmacs</string>
+        <array>
+          <string>text/x-texmacs</string>
+        </array>
         <key>CFBundleTypeName</key>
         <string>TeXmacs Document</string>
         <key>CFBundleTypeRole</key>
@@ -28,7 +30,7 @@
     <key>CFBundleExecutable</key>
     <string>TeXmacs</string>
     <key>CFBundleIconFile</key>
-    <string>AppIcon</string> 
+    <string>AppIcon</string>
     <key>CFBundleIdentifier</key>
     <string>org.texmacs.TeXmacs</string>
     <key>CFBundleInfoDictionaryVersion</key>
@@ -41,6 +43,8 @@
     <string>@DEVEL_VERSION@</string>
     <key>CFBundleVersion</key>
     <string>@DEVEL_VERSION@</string>
+    <key>LSApplicationCategoryType</key>
+    <string>public.app-category.productivity</string>
     <key>SUFeedURL</key>
     <string>@APPCAST@</string>
     <key>SUEnableAutomaticChecks</key>
@@ -58,8 +62,8 @@
     <key>LSMinimumSystemVersion</key>
     <string>@OSXVERMIN@</string>
     <key>NSRequiresAquaSystemAppearance</key>
-    <string>true</string>
+    <true/>
     <key>NSHumanReadableCopyright</key>
     <string>Copyright © 1998-2019 Joris van der Hoeven and others</string>
-  </dict>
+</dict>
 </plist>
