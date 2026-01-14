@@ -461,27 +461,38 @@
 (define (line-feed-universal s)
   (string-replace s "\n" "<#0A>"))
 
+(tm-widget ((certificate-warning-confirm msg cont) quit)
+  (padded
+    ======
+    (centered (text msg))
+    ======
+    (bottom-buttons
+      >>
+      ("Cancel" (quit)) // //
+      ("Confirm" (cont) (quit)))))
+
 (tm-define (trust-certificate-interactive crt-desc crt-pem)
-  (:interactive #t)
-  (with msg (line-feed-universal
+  (let ((msg (line-feed-universal
               (string-append "The server certificate issuer is unknown\n"
-                             "Do you still want to trust it ?\n\n" crt-desc))
-    (user-confirm msg #f
-      (lambda (answ) (when answ (trust-certificate crt-pem))))))
+                             "Do you still want to trust it ?\n\n" crt-desc))))
+    (dialogue-window
+      (certificate-warning-confirm msg (lambda () (trust-certificate crt-pem)))
+      noop
+      "Certificate warning")))
 
 (tm-define (disable-certificate-time-checks-interactive crt-desc)
-  (:interactive #t)
-  (with msg (line-feed-universal
-              (string-append "The certificate presented is either expired or"
-                             " not yet active.  By disabling time verification"
-                             " checks, you will allow all certificates"
-                             " to bypass time validations, which may expose"
-                             " your connection to security risks.\n\n"
-                             "Do you want to proceed with disabling time"
-                             " verification for all trusted certificates?\n\n"
-                             crt-desc))
-    (user-confirm msg #f
-      (lambda (answ) (when answ (disable-certificate-time-checks))))))
+  (let ((msg (line-feed-universal
+               (string-append "The certificate presented is either expired or"
+                              " not yet active.  By disabling time verification"
+                              " checks, you will allow all certificates"
+                              " to bypass time validations, which may expose"
+                              " your connection to security risks.\n\n"
+                              "Do you want to proceed with disabling time"
+                              " verification for all trusted certificates?\n\n"
+                              crt-desc))))
+    (dialogue-window
+      (certificate-warning-confirm msg disable-certificate-time-checks) noop
+      "Certificate warning")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Account edition
