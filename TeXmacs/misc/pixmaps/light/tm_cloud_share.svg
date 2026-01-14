@@ -1,103 +1,22 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg
-   id="svg5375"
-   width="24"
-   height="24"
-   version="1.1"
-   sodipodi:docname="tm_cloud_share.svg"
-   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:dc="http://purl.org/dc/elements/1.1/">
-  <defs
-     id="defs1" />
-  <sodipodi:namedview
-     id="namedview1"
-     pagecolor="#505050"
-     bordercolor="#eeeeee"
-     borderopacity="1"
-     inkscape:showpageshadow="0"
-     inkscape:pageopacity="0"
-     inkscape:pagecheckerboard="0"
-     inkscape:deskcolor="#505050"
-     inkscape:zoom="40.666667"
-     inkscape:cx="12"
-     inkscape:cy="12"
-     inkscape:window-width="2194"
-     inkscape:window-height="1162"
-     inkscape:window-x="0"
-     inkscape:window-y="0"
-     inkscape:window-maximized="1"
-     inkscape:current-layer="svg5375" />
-  <metadata
-     id="metadata5380">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <g
-     id="layer1"
-     fill="#fff"
-     fill-opacity=".87843">
-    <!-- Document rectangle -->
-    <path
-       id="path5385"
-       d="m6.5 3.5h11v13h-11v-8.5z"
-       stroke="#000"
-       stroke-opacity=".50222" />
-    <path
-       style="fill:#0059ff;fill-opacity:1;stroke:#808080;stroke-width:0.722911;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
-       d="M 10.841429,8.9421776 12.721687,7.0619202"
-       id="link-top" />
-    <!-- Classic share icon: 3 nodes connected by lines -->
-    <!-- Connecting lines (drawn first so nodes appear on top) -->
-    <!-- Left node (center-left) -->
-    <circle
-       id="share-left"
-       cx="9.8000002"
-       cy="9.999999"
-       r="1.3"
-       fill="#4a90e2"
-       stroke="#808080"
-       stroke-width="0.4" />
-    <!-- Top-right node -->
-    <circle
-       id="share-top"
-       cx="13.8"
-       cy="6"
-       r="1.3"
-       fill="#4a90e2"
-       stroke="#808080"
-       stroke-width="0.4" />
-    <!-- Bottom-right node -->
-    <circle
-       id="share-bottom"
-       cx="13.8"
-       cy="13.999999"
-       r="1.3"
-       fill="#4a90e2"
-       stroke="#808080"
-       stroke-width="0.4" />
-    <!-- Cloud at the bottom -->
-    <path
-       id="cloud"
-       d="m6.5 14.5v2h11v-2.5s2.9659-0.10518 3.7233 0.63342c1.0535 1.0275 0.92266 1.8624 0.86605 2.446-0.089304 0.92055-0.45535 1.2954-1.3386 1.661-1.033 0.42757-2.7507 0.25957-2.7507 0.25957s-0.75908 2.0893-4.4814 2.3214c-3.2713 0.20397-5.0186-1.8214-5.0186-1.8214s-0.71443 1-2.0667 1.0039c-1.0713 0.003088-2.4333-1.0039-2.4333-2.5039-1.5 0-2.5 0-2.1874-2.027 0.18812-1.22 1.3853-2.3301 2.3759-2.3916 1.3116-0.081425 2.3116 0.91858 2.3116 0.91858z"
-       stroke="#808080"
-       stroke-width="1px" />
-    <path
-       style="fill:#0059ff;fill-opacity:1;stroke:#808080;stroke-width:0.722911;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
-       d="M 12.621714,13.041715 10.741456,11.161456"
-       id="link-bottom"
-       inkscape:label="link-bottom" />
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24" height="24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+ <metadata>
+  <rdf:RDF>
+   <cc:Work rdf:about="">
+    <dc:format>image/svg+xml</dc:format>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <g fill="#fff" fill-opacity=".87843">
+  <path d="m6.5 3.5h11v13h-11v-8.5z" stroke="#000" stroke-opacity=".50222"/>
+  <path id="link-top" d="m10.841 8.9422 1.8803-1.8803" fill="#0059ff" fill-opacity="1" stroke="#808080" stroke-linecap="round" stroke-linejoin="round" stroke-width=".72291"/>
+  <g fill="#4a90e2" stroke="#808080" stroke-width=".4">
+   <circle id="share-left" cx="9.8" cy="10" r="1.3"/>
+   <circle id="share-top" cx="13.8" cy="6" r="1.3"/>
+   <circle id="share-bottom" cx="13.8" cy="14" r="1.3"/>
   </g>
+  <path id="cloud" d="m6.5 14.5v2h11v-2.5s2.9659-0.10518 3.7233 0.63342c1.0535 1.0275 0.92266 1.8624 0.86605 2.446-0.0893 0.92055-0.45535 1.2954-1.3386 1.661-1.033 0.42757-2.7507 0.25957-2.7507 0.25957s-0.75908 2.0893-4.4814 2.3214c-3.2713 0.20397-5.0186-1.8214-5.0186-1.8214s-0.71443 1-2.0667 1.0039c-1.0713 0.0031-2.4333-1.0039-2.4333-2.5039-1.5 0-2.5 0-2.1874-2.027 0.18812-1.22 1.3853-2.3301 2.3759-2.3916 1.3116-0.08143 2.3116 0.91858 2.3116 0.91858z" stroke="#808080" stroke-width="1px"/>
+  <path id="link-bottom" d="m12.622 13.042-1.8803-1.8803" fill="#0059ff" fill-opacity="1" stroke="#808080" stroke-linecap="round" stroke-linejoin="round" stroke-width=".72291"/>
+ </g>
 </svg>
