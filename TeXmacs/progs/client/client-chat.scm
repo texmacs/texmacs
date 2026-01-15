@@ -305,8 +305,7 @@
          (server (chat-room-server fname))
          (room (chat-room-name fname)))
     (cond ((not server)
-           ;; FIXME: better error handling
-           (texmacs-error "chat" "invalid server"))
+           (client-open-error "invalid server"))
           ((not (string-starts? room "mail-"))
            (client-remote-eval server `(remote-chat-room-open ,room)
              (lambda (ret)
