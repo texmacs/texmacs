@@ -24,7 +24,7 @@
 #include <QScrollerProperties>
 #endif // QT_VERSION >= 0x050000
 
-#define QTMTOOLBAR_MARGIN 2
+#define QTMTOOLBAR_MARGIN 4
 
 QTMToolbar::QTMToolbar (const QString& title, QSize iconSize, QWidget* parent)
   : QToolBar (title, parent)
