@@ -22920,7 +22920,10 @@ fi
 printf "%s\n" "disabling GnuTLS support" >&6; }
   else
       CPPFLAGS=`pkg-config --cflags gnutls hogweed nettle`
-      LIBS=`pkg-config --static --libs gnutls hogweed nettle`
+      LIBS=`pkg-config --libs gnutls hogweed nettle`
+      if test "$CONFIG_OS" = "MINGW"; then
+          LIBS=`pkg-config --libs --static gnutls hogweed nettle`
+      fi
       if test "$TMREPO" != "" -a "$TMREPO" != "no" -a "$CONFIG_OS" = "MINGW"; then
 
 printf "%s\n" "#define TEXMACS_FIX_1_GNUTLS 1" >>confdefs.h
