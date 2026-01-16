@@ -269,7 +269,9 @@ tex_font_metric_rep::get_xpositions (int* s, int n, double unit,
 	  int a   = code>>2;
 	  int b   = (code>>1)&1;
 	  int c   = code&1;
-	  if (b==0) SKIP;
+	  if (b==0) {
+      SKIP;
+    }
 	  stack [sp++]= byte3 (instr);
 	  if (c!=0) stack [sp++]= cur_char;
 	  SKIP;
@@ -279,7 +281,9 @@ tex_font_metric_rep::get_xpositions (int* s, int n, double unit,
 	else { ADVANCE (kern [word1x (instr)]); break; }
       }
     }
-    else ADVANCE (0);
+    else {
+      ADVANCE (0);
+    }
     /***************** end ligature-kerning program ******************/
 
     if ((bp>=m-2) || (sp>=m-2)) {
