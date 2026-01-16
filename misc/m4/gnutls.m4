@@ -36,7 +36,10 @@ AC_DEFUN([LC_GNUTLS],[
       AC_MSG_RESULT([disabling GnuTLS support])
   else
       CPPFLAGS=`pkg-config --cflags gnutls hogweed nettle`
-      LIBS=`pkg-config --static --libs gnutls hogweed nettle`
+      LIBS=`pkg-config --libs gnutls hogweed nettle`
+      if test "$CONFIG_OS" = "MINGW"; then
+          LIBS=`pkg-config --libs --static gnutls hogweed nettle`
+      fi
       if test "$TMREPO" != "" -a "$TMREPO" != "no" -a "$CONFIG_OS" = "MINGW"; then
           AC_DEFINE(TEXMACS_FIX_1_GNUTLS, 1, [Special fix])
           LIBS="$LIBS -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -lpthread"
