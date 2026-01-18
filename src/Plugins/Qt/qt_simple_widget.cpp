@@ -381,7 +381,7 @@ qt_simple_widget_rep::read (slot s, blackbox index) {
 #if QT_VERSION < 0x060000
 static QPixmap
 impress (qt_simple_widget_rep* wid) {
-  int width, height;
+  SI width, height;
   wid->handle_get_size_hint (width, height);
   QSize s = to_qsize (width, height);
   QSize phys_s = s; phys_s *= retina_factor;
