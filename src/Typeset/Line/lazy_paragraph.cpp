@@ -279,7 +279,7 @@ lazy_paragraph_rep::increase_kerning (SI dw, SI the_width) {
   SI tot_spc= 0;
   for (int i=cur_start; i<N(items)-1; i++)
     tot_spc += spcs[i]->max;
-  dw= (((long int) dw) * (the_width - tot_spc)) / the_width;
+  dw= (((long long int) dw) * (the_width - tot_spc)) / the_width;
 
   int first, last;
   find_first_last_text (first, last);
@@ -305,7 +305,7 @@ lazy_paragraph_rep::decrease_kerning (SI dw, SI the_width) {
   SI tot_spc= 0;
   for (int i=cur_start; i<N(items)-1; i++)
     tot_spc += spcs[i]->min;
-  dw= (((long int) dw) * (the_width - tot_spc)) / the_width;
+  dw= (((long long int) dw) * (the_width - tot_spc)) / the_width;
 
   int first, last;
   find_first_last_text (first, last);
@@ -331,7 +331,7 @@ lazy_paragraph_rep::expand_glyphs (SI dw, SI the_width) {
   SI tot_spc= 0;
   for (int i=cur_start; i<N(items)-1; i++)
     tot_spc += spcs[i]->max;
-  dw= (((long int) dw) * (the_width - tot_spc)) / the_width;
+  dw= (((long long int) dw) * (the_width - tot_spc)) / the_width;
   SI xdw= (SI) (dw * (expansion / (kstretch + expansion)));
   SI mdw= (SI) (expansion * the_width);
   int stages= 8;
@@ -362,7 +362,7 @@ lazy_paragraph_rep::contract_glyphs (SI dw, SI the_width) {
   SI tot_spc= 0;
   for (int i=cur_start; i<N(items)-1; i++)
     tot_spc += spcs[i]->min;
-  dw= (((long int) dw) * (the_width - tot_spc)) / the_width;
+  dw= (((long long int) dw) * (the_width - tot_spc)) / the_width;
   SI xdw= (SI) (dw * (contraction / (kreduce + contraction)));
   SI mdw= (SI) (contraction * the_width);
   int stages= 8;
