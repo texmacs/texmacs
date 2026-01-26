@@ -585,7 +585,7 @@ generate_self_signed (tree cfg_tree, url cert_path, url key_path)
         c_string _tmp (cfg[key]); \
         CHECK_GNUTLS_BRETURN (ret, gnutls_x509_crt_set_dn_by_oid (crt, \
               GNUTLS_OID_X520_ ## name, 0, _tmp, \
-              GNUTLS_X509_ ## name ## _SIZE)); \
+              N (cfg[key]))); \
       } \
     } while (0)
 
