@@ -570,7 +570,6 @@ QTMLineEdit::keyPressEvent (QKeyEvent* ev)
       ev == QKeySequence::Paste ||
       ev == QKeySequence::Cut) {
     QLineEdit::keyPressEvent (ev);
-    return;
   }
 #endif
  
