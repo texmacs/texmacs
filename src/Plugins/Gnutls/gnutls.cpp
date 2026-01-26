@@ -467,8 +467,6 @@ static int cert_out_callback (gnutls_x509_crt_t cert,
   int ret;
   string serial = as_string_cert_serial (cert);
   string issuer_serial = issuer ? as_string_cert_serial (issuer) : "";
-	char dnsname[GNUTLS_X509_COMMON_NAME_SIZE] = {0};
-	size_t dnsnamesize;
 
   GNUTLS_LOG ("\tCertificate:\n" * as_string_gnutls_crt (cert));
 
@@ -495,10 +493,6 @@ static int cert_out_callback (gnutls_x509_crt_t cert,
   GNUTLS_LOG ("verification status (" * as_string (verification_output) * "): "
       * as_string_gnutls_datum (txt));
   gnutls_free (txt.data);
-
-  ret = gnutls_x509_crt_get_dn_by_oid
-    (cert, GNUTLS_OID_X520_COMMON_NAME, 0, 0, dnsname,
-     &dnsnamesize);
 
   certificates_verified (serial)=
     new x509_certificate(cert, verification_output);
