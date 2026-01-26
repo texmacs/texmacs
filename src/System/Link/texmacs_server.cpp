@@ -73,7 +73,7 @@ bool
 server_can_start () {
   if (gnutls_present() && !certificate_present ()) {
     io_error << "cannot start the server, missing certificate: "
-        << certificate_path ();
+        << certificate_path () << LF;
     return false;
   }
   return true;
