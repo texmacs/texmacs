@@ -50,10 +50,11 @@ public:
   qt_simple_widget_rep* tm_widget () const;
   
   bool isPreediting () { return preediting; }
-#if QT_VERSION >= 0x060000
+#if QT_VERSION >= 0x050000
   static QTMWidget *getLastFocusedWidget();
   static void setFocusToLast();
-
+#endif
+#if QT_VERSION >= 0x060000
 protected slots:
   void devicePixelRatioChanged ();
 #endif
