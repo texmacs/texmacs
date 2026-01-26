@@ -569,7 +569,9 @@ QTMLineEdit::keyPressEvent (QKeyEvent* ev)
   if (ev == QKeySequence::Copy ||
       ev == QKeySequence::Paste ||
       ev == QKeySequence::Cut) {
-    QLineEdit::keyPressEvent (ev);
+        if (continuous ()) {
+          QLineEdit::keyPressEvent (ev);
+      }
   }
 #endif
  
