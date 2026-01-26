@@ -788,7 +788,7 @@ QTMWidget::event (QEvent* event) {
   return QTMScrollView::event (event);
 }
 
-#if QT_VERSION >= 0x060000
+#if QT_VERSION >= 0x050000
 QTMWidget *last_focused_widget = nullptr;
 
 QTMWidget *QTMWidget::getLastFocusedWidget() {
@@ -814,7 +814,7 @@ void QTMWidget::setFocusToLast() {
 
 void
 QTMWidget::focusInEvent (QFocusEvent * event) {
-#if QT_VERSION >= 0x060000
+#if QT_VERSION >= 0x050000
   if (!is_nil (tmwid)) {
     last_focused_widget = this;
   }

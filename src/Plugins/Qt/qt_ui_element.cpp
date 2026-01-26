@@ -59,7 +59,7 @@ public:
       std_warning << "qt_key_command_rep::apply(): empty key sequence" << LF;
       return;
     }
-#if QT_VERSION >= 0x060000
+#if QT_VERSION >= 0x050000
     QTMWidget *w = QTMWidget::getLastFocusedWidget();
 #else
     QTMWidget *w = qobject_cast<QTMWidget*>(qApp->focusWidget());
