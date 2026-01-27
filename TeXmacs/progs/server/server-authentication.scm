@@ -385,7 +385,7 @@
 (define (password-correct-pbkdf2? p hidden)
   (let* ((salt (third hidden))
          (enc  (fourth hidden)))
-    (with l (password-encode-pbkdf2 p salt)
+    (and-with l (password-encode-pbkdf2 p salt)
           ; (display* "pwd to check: " p ", hash to check: " l ", hidden: " hidden "\n")
           (and (>= (length l) 4) (== (fourth l) enc)))))
 
