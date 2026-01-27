@@ -8,7 +8,9 @@ fi
 if [ -z $APPDIR ]; then APPDIR=$(readlink -f $(dirname "$0")); export APPDIR; fi
 
 export LD_LIBRARY_PATH="$APPDIR"/usr/lib
-export LD_PRELOAD="$APPDIR"/usr/optional/exec.so
+
+#todo : only do it on specific distros
+#export LD_PRELOAD="$APPDIR"/usr/optional/exec.so
 
 prefix="$APPDIR"/usr/
 exec_prefix="${prefix}"
