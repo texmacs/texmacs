@@ -778,9 +778,22 @@ socket_server_rep::connection (int s) {
   else
     authentications << _anonymous;
 
-  tm_contact contact= (get_preference ("tls-server") == string ("on")) ?
+  bool is_tls_server = get_preference ("tls-server") == string ("on");
+  tm_contact contact= is_tls_server ?
     make_tls_server_contact (authentications) :
     make_socket_server_contact (authentications);
+
+  if (!contact.rep) {
+    SLOGE ("contact creation failed from " * string_from_socket_address (&cltadd)
+        * " at socket " * as_string (client));
+    CLOSE(client);
+    if (!gnutls_present() && is_tls_server) {
+    SLOGW ("tls-server preference is on but GnuTLS is missing, either disable"
+        " tls-server preference or use a TeXmacs version with GnuTLS");
+    }
+    return;
+  }
+
   ::start (contact, client);
 
   if (!is_alive (contact)) {
