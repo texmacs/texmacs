@@ -22920,25 +22920,25 @@ fi
 printf "%s\n" "disabling GnuTLS support" >&6; }
   else
       CPPFLAGS=`pkg-config --cflags gnutls hogweed nettle`
-      LIBS=`pkg-config --libs gnutls hogweed nettle`
-      if test "$CONFIG_OS" = "MINGW"; then
-          LIBS=`pkg-config --libs --static gnutls hogweed nettle`
-      fi
+      GNUTLS_EXTRA_LIBS=""
+
       if test "$TMREPO" != "" -a "$TMREPO" != "no" -a "$CONFIG_OS" = "MINGW"; then
 
 printf "%s\n" "#define TEXMACS_FIX_1_GNUTLS 1" >>confdefs.h
 
-          LIBS="$LIBS -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -lpthread"
+          GNUTLS_EXTRA_LIBS="$GNUTLS_EXTRA_LIBS -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -lpthread"
       fi
       if test "$TMREPO" != "" -a "$TMREPO" != "no" -a "$CONFIG_OS" = "MACOS"; then
-          LIBS="$LIBS -framework CoreFoundation -framework Security -lz"
+          GNUTLS_EXTRA_LIBS="$GNUTLS_EXTRA_LIBS -framework CoreFoundation -framework Security -lz"
       fi
       if test "$TMREPO" != "" -a "$TMREPO" != "no" -a "$CONFIG_OS" = "GNU_LINUX"; then
-          LIBS="$LIBS -lz"
+          GNUTLS_EXTRA_LIBS="$GNUTLS_EXTRA_LIBS -lz"
       fi
       if test "$TMREPO" != "" -a "$TMREPO" != "no" -a "$CONFIG_OS" = "ANDROID"; then
-          LIBS="$LIBS -lz"
+          GNUTLS_EXTRA_LIBS="$GNUTLS_EXTRA_LIBS -lz"
       fi
+      GNUTLS_BASE_LIBS=`pkg-config --libs gnutls hogweed nettle`
+      LIBS="$GNUTLS_BASE_LIBS $GNUTLS_EXTRA_LIBS"
       { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for GnuTLS version >= 3 (https://www.gnutls.org)" >&5
 printf %s "checking for GnuTLS version >= 3 (https://www.gnutls.org)... " >&6; }
       cat confdefs.h - <<_ACEOF >conftest.$ac_ext
@@ -22978,9 +22978,57 @@ printf "%s\n" "#define USE_GNUTLS 1" >>confdefs.h
 
 else case e in #(
   e)
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no, trying static linking..." >&5
+printf "%s\n" "no, trying static linking..." >&6; }
+
+        GNUTLS_BASE_LIBS=`pkg-config --libs --static gnutls hogweed nettle`
+        LIBS="$GNUTLS_BASE_LIBS $GNUTLS_EXTRA_LIBS"
+
+        cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <gnutls/gnutls.h>
+int
+main (void)
+{
+
+    gnutls_global_init ();
+    gnutls_global_deinit ();
+#if GNUTLS_VERSION_NUMBER >= 0x030000
+    exit (0);
+#else
+    __dummy_error;
+#endif
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"
+then :
+
+            { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+printf "%s\n" "yes" >&6; }
+            { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: enabling GnuTLS support (static)" >&5
+printf "%s\n" "enabling GnuTLS support (static)" >&6; }
+
+printf "%s\n" "#define USE_GNUTLS 1" >>confdefs.h
+
+            GNUTLS_CPPFLAGS="$CPPFLAGS"
+            GNUTLS_LDFLAGS="$LIBS"
+
+else case e in #(
+  e)
+            { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
 printf "%s\n" "no" >&6; }
-	as_fn_error $? "Cannot find a GnuTLS library version >=3 (https://www.gnutls.org)" "$LINENO" 5
+            as_fn_error $? "Cannot find a GnuTLS library version >=3 (https://www.gnutls.org)" "$LINENO" 5
+         ;;
+esac
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam \
+    conftest$ac_exeext conftest.$ac_ext
       ;;
 esac
 fi

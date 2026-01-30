@@ -36,23 +36,23 @@ AC_DEFUN([LC_GNUTLS],[
       AC_MSG_RESULT([disabling GnuTLS support])
   else
       CPPFLAGS=`pkg-config --cflags gnutls hogweed nettle`
-      LIBS=`pkg-config --libs gnutls hogweed nettle`
-      if test "$CONFIG_OS" = "MINGW"; then
-          LIBS=`pkg-config --libs --static gnutls hogweed nettle`
-      fi
+      GNUTLS_EXTRA_LIBS=""
+      
       if test "$TMREPO" != "" -a "$TMREPO" != "no" -a "$CONFIG_OS" = "MINGW"; then
           AC_DEFINE(TEXMACS_FIX_1_GNUTLS, 1, [Special fix])
-          LIBS="$LIBS -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -lpthread"
+          GNUTLS_EXTRA_LIBS="$GNUTLS_EXTRA_LIBS -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -lpthread"
       fi
       if test "$TMREPO" != "" -a "$TMREPO" != "no" -a "$CONFIG_OS" = "MACOS"; then
-          LIBS="$LIBS -framework CoreFoundation -framework Security -lz"
+          GNUTLS_EXTRA_LIBS="$GNUTLS_EXTRA_LIBS -framework CoreFoundation -framework Security -lz"
       fi
       if test "$TMREPO" != "" -a "$TMREPO" != "no" -a "$CONFIG_OS" = "GNU_LINUX"; then
-          LIBS="$LIBS -lz"
+          GNUTLS_EXTRA_LIBS="$GNUTLS_EXTRA_LIBS -lz"
       fi
       if test "$TMREPO" != "" -a "$TMREPO" != "no" -a "$CONFIG_OS" = "ANDROID"; then
-          LIBS="$LIBS -lz"
+          GNUTLS_EXTRA_LIBS="$GNUTLS_EXTRA_LIBS -lz"
       fi
+      GNUTLS_BASE_LIBS=`pkg-config --libs gnutls hogweed nettle`
+      LIBS="$GNUTLS_BASE_LIBS $GNUTLS_EXTRA_LIBS"
       AC_MSG_CHECKING(for GnuTLS version >= 3 (https://www.gnutls.org))
       AC_LINK_IFELSE([LM_GNUTLS_3],[
         AC_MSG_RESULT(yes)
@@ -61,8 +61,21 @@ AC_DEFUN([LC_GNUTLS],[
         GNUTLS_CPPFLAGS="$CPPFLAGS"
         GNUTLS_LDFLAGS="$LIBS"
        ],[
-        AC_MSG_RESULT(no)
-	AC_MSG_ERROR([Cannot find a GnuTLS library version >=3 (https://www.gnutls.org)])
+        AC_MSG_RESULT([no, trying static linking...])
+        
+        GNUTLS_BASE_LIBS=`pkg-config --libs --static gnutls hogweed nettle`
+        LIBS="$GNUTLS_BASE_LIBS $GNUTLS_EXTRA_LIBS"
+        
+        AC_LINK_IFELSE([LM_GNUTLS_3],[
+            AC_MSG_RESULT(yes)
+            AC_MSG_RESULT([enabling GnuTLS support (static)])
+            AC_DEFINE(USE_GNUTLS, 1, [Use GnuTLS library version >= 3])
+            GNUTLS_CPPFLAGS="$CPPFLAGS"
+            GNUTLS_LDFLAGS="$LIBS"
+        ],[
+            AC_MSG_RESULT(no)
+            AC_MSG_ERROR([Cannot find a GnuTLS library version >=3 (https://www.gnutls.org)])
+        ])
      ])
   fi
 
