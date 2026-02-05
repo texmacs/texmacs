@@ -30,6 +30,8 @@
 
   <assign|dir-entry-icon|<macro|name|tip|<with|icon|<image|<find-file|$TEXMACS_PATH/misc/pixmaps/light|$TEXMACS_PATH/misc/pixmaps/modern/24x24/main|$TEXMACS_PATH/misc/pixmaps/modern/16x16/focus|<arg|name>>||12pt||-0.666ex>|<if|<equal|<arg|tip>|>|<value|icon>|<help-balloon|<value|icon>|<arg|tip>|left|Bottom>>>>>
 
+  <assign|phantom-icon|<macro|<phantom|<dir-entry-icon|tm_cloud_share.svg|>>>>
+
   <\active*>
     <\src-comment>
       Column headers
