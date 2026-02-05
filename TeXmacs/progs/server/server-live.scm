@@ -60,14 +60,17 @@
     (string-save doc fname)))
 
 (tm-service (remote-list-live)
-  ;; Return list of live documents owned by the user
-  ;;(display* "remote-list-chat-rooms\n")
+  ;; Return list of live documents owned by the user as (name date) pairs
+  ;;(display* "remote-list-live\n")
   (with (client msg-id) envelope
     (let* ((uid (server-get-user envelope))
            (l (db-search `(("type" "live")
                            ("owner" ,uid))))
-           (get-name (lambda (id) (db-get-field-first id "name" #f)))
-           (r (map get-name l)))
+           (get-entry (lambda (id)
+                        (let* ((name (db-get-field-first id "name" #f))
+                               (date (db-get-field-first id "date" "")))
+                          (list name date))))
+           (r (map get-entry l)))
       (server-return envelope r))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
