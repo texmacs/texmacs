@@ -185,7 +185,7 @@
 (tmfs-permission-handler (live-list sname type)
   (and (client-find-server sname) (in? type (list "read"))))
 
-(define (live-documents sname server entries)
+(tm-define (live-documents sname server entries)
   (remote-file-browser-document
     `(document
        (dir-list ,(live-table "Live documents" sname server entries)))))
@@ -195,6 +195,7 @@
          (server (client-find-server sname)))
     (client-remote-eval server `(remote-list-live)
       (lambda (l)
+        (cache-dir-entries u sname server l)
         (with doc (live-documents sname server l)
           (buffer-set-stm u doc)
           (set-message "retrieved contents" "list of live documents")))
@@ -221,8 +222,9 @@
                 ,(build-table-share-action server link))))
 
 (tm-define (live-table title sname server entries)
-  (build-dir-table title "Created"
-                   (map (cut live-table-entry sname server <>) entries) #t))
+  (let ((sorted (sort-name-entries entries)))
+    (build-dir-table title "Created"
+                     (map (cut live-table-entry sname server <>) sorted) #t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Live discussions as documents
