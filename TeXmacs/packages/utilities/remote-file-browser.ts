@@ -38,7 +38,11 @@
     </src-comment>
   </active*>
 
-  <assign|dir-header|<\macro|type-label|type-action|name-label|name-action|date-label|date-action|action-label>
+  <assign|dir-header|<\macro|breadcrumbs>
+    <compact|<concat|<phantom-icon><dir-entry-icon|tm_cloud_dir.svg><hspace|12pt><arg|breadcrumbs>|<vspace|0.6fn>>>
+  </macro>>
+
+  <assign|dir-labels|<\macro|type-label|type-action|name-label|name-action|date-label|date-action|action-label>
     <wide-underlined|0.5ln|0.2em|<concat|<action|<arg|type-label>|<arg|type-action>>|<hspace|12pt><action|<arg|name-label>|<arg|name-action>>|<htab|5mm>|<action|<arg|date-label>|<arg|date-action>><hspace|2em><arg|action-label>>>
   </macro>>
 
