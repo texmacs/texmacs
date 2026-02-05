@@ -807,6 +807,30 @@ qt_pretty_time (int t) {
   return from_qstring (s);
 }
 
+string
+qt_pretty_date (int t, string fm) {
+#if QT_VERSION >= 0x060000
+  QDateTime dt= QDateTime::fromSecsSinceEpoch (t);
+#else
+  QDateTime dt= QDateTime::fromTime_t (t);
+#endif
+
+  QLocale loc = QLocale (to_qstring (get_locale_language ()));
+#if (QT_VERSION >= 0x040400)
+  QString s ("");
+  if (fm == "short") {
+    s = loc.toString (dt.date (), QLocale::FormatType::ShortFormat);
+  } else if (fm == "") {
+    s = loc.toString (dt.date (), QLocale::FormatType::LongFormat);
+  } else {
+    s = loc.toString (dt.date (), to_qstring (fm));
+  }
+#else
+  QString s = dt.date ().toString ("MMM dd yyyy");
+#endif
+  return from_qstring (s);
+}
+
 #ifndef _MBD_EXPERIMENTAL_PRINTER_WIDGET  // this is in qt_printer_widget
 
 #if QT_VERSION >= 0x060000

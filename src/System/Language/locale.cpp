@@ -272,6 +272,11 @@ string
 pretty_time (int t) {
   return qt_pretty_time (t);
 }
+
+string
+pretty_date (int t, string fm) {
+  return qt_pretty_date (t, fm);
+}
 #else
 
 static bool
@@ -331,6 +336,12 @@ get_date (string lan, string fm) {
 
 string
 pretty_time (int t) {
+  return var_eval_system ("date -r " * as_string (t));
+}
+
+string
+pretty_date (int t, string fm) {
+  (void) fm;
   return var_eval_system ("date -r " * as_string (t));
 }
 #endif

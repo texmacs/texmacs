@@ -79,6 +79,7 @@
 "language-to-locale"
 "texmacs-time"
 "pretty-time"
+"pretty-date"
 "texmacs-memory"
 "bench-print"
 "bench-print-all"
