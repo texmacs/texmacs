@@ -38,6 +38,11 @@
     </src-comment>
   </active*>
 
+  <assign|dir-title|<\macro|name>
+    <surround||<vspace|0.6fn>|<block*|<tformat|<cwith|1|1|1|1|cell-background|pastel
+    blue>|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-lsep|1spc>|<cwith|1|1|1|1|cell-rsep|1spc>|<cwith|1|1|1|1|cell-bsep|1spc>|<cwith|1|1|1|1|cell-tsep|1spc>|<table|<row|<cell|<strong|<arg|name>>>>>>>>
+  </macro>>
+
   <assign|dir-header|<\macro|breadcrumbs>
     <compact|<concat|<phantom-icon><dir-entry-icon|tm_cloud_dir.svg><hspace|12pt><arg|breadcrumbs>|<vspace|0.6fn>>>
   </macro>>
