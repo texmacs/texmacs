@@ -444,13 +444,7 @@
            (if is-current?
              (if asc? '<blacktriangleup> '<blacktriangledown>)
              '<vartriangleright>)))
-    (cond
-      ;; Type field: show indicator in 12pt-wide box
-      ((== field "type")
-       `(resize ,indicator "" "" "12pt" ""))
-      ;; Other fields: show label + indicator
-      (else
-       `(concat ,label " " ,indicator)))))
+    `(concat ,label " " ,indicator)))
 
 ;; Build clickable sort action
 (tm-define (sort-header-action field)
