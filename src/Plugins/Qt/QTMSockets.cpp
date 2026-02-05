@@ -18,6 +18,7 @@
 #include "boot.hpp"
 #include "server_log.hpp"
 #include "gnutls.hpp"
+#include "tm_timer.hpp"
 #include <cctype>
 
 #if defined(OS_MACOS)
@@ -580,8 +581,13 @@ socket_link_rep::ready_to_send (int s) {
 
 void
 socket_link_rep::listen (int msecs) {
-  (void) msecs;
-  FAILED ("not implemented");
+  if (!alive) return;
+  time_t start = texmacs_time();
+  int initial_len = N(input_buffer);
+  while (alive && N(input_buffer) == initial_len) {
+    qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
+    if (msecs > 0 && (texmacs_time() - start >= msecs)) break;
+  }
 }
 
 /******************************************************************************
