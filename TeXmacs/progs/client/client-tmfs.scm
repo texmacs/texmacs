@@ -254,7 +254,7 @@
            (icon-name (string-append "tm_cloud_" type ".svg"))
            (link (prepend-dir server short-name (string-append "remote-" type)))
            (share-action (build-table-share-action server link)))
-      `(row (cell (dir-entry ,icon-name ,short-name ,link ,share-action))))))
+      `(dir-entry ,icon-name ,short-name ,link ,share-action))))
 
 (tm-define (build-table-share-action server u)
   (with action-cmd
@@ -264,18 +264,7 @@
     `(action (dir-entry-icon "tm_cloud_share.svg" "Share...") ,action-cmd)))
 
 (tm-define (build-dir-table title content)
-  `(wide-tabular
-     (tformat
-       (cwith "1" "1" "1" "-1" "cell-background" "dark grey")
-       (cwith "2" "-1" "1" "-1" "cell-background"
-              (if (equal (mod (value "cell-row-nr") "2") "0") "#f4f4ff" ""))
-       (cwith "1" "-1" "1" "-1" "cell-lsep" "1spc")
-       (cwith "1" "-1" "1" "-1" "cell-rsep" "1spc")
-       (cwith "1" "-1" "1" "-1" "cell-tsep" "0.5spc")
-       (cwith "1" "-1" "1" "-1" "cell-bsep" "0.5spc")
-       (table (row (cell (samp (with "color" "white" "locus-color"
-                                     "preserve" ,title))))
-              ,@content))))
+  `(compact (document (tmfs-title ,title) (dir-header "Name" "") ,@content)))
 
 (define (directory-table sname server entries)
   (build-dir-table "My Files" (map (cut directory-entry sname server <>) entries)))

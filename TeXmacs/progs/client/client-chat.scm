@@ -203,12 +203,11 @@
 
 (define (chat-room-table-entry sname server name)
   (with link (string-append "tmfs://chat/" sname "/" name)
-    `(row (cell (dir-entry "tm_cloud_chat.svg" ,name ,link
-                           ,(build-table-share-action server link))))))
+    `(dir-entry "tm_cloud_chat.svg" ,name ,link
+                ,(build-table-share-action server link))))
 
 (tm-define (chat-rooms-table title sname server entries)
-  (build-dir-table title
-                   (map (cut chat-room-table-entry sname server <>) entries)))
+  (build-dir-table title (map (cut chat-room-table-entry sname server <>) entries)))
 
 (define (chat-rooms-document sname server entries)
   (remote-file-browser-document
@@ -260,7 +259,7 @@
            (icon-name (string-append "tm_cloud_" type ".svg"))
            (name (url->string (url-tail u)))
            (link (url->string u)))
-      `(row (cell (dir-entry ,icon-name ,name ,link ""))))))
+      `(dir-entry ,icon-name ,name ,link ""))))
 
 (tm-define (shared-table title entries)
   (build-dir-table title (map shared-table-entry entries)))

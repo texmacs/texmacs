@@ -32,6 +32,16 @@
 
   <\active*>
     <\src-comment>
+      Column headers
+    </src-comment>
+  </active*>
+
+  <assign|dir-header|<\macro|name-label|action-label>
+    <wide-underlined|0.5ln|0.2em|<concat|<hspace|12pt>|<hspace|1.5spc><arg|name-label>|<htab|5mm>|<arg|action-label>>>
+  </macro>>
+
+  <\active*>
+    <\src-comment>
       Entry macros
     </src-comment>
   </active*>

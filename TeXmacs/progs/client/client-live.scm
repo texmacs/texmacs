@@ -212,8 +212,8 @@
 
 (define (live-table-entry sname server name)
   (with link (string-append "tmfs://live/" sname "/" name)
-    `(row (cell (dir-entry "tm_cloud_live.svg" ,name ,link
-                           ,(build-table-share-action server link))))))
+    `(dir-entry "tm_cloud_live.svg" ,name ,link
+                ,(build-table-share-action server link))))
 
 (tm-define (live-table title sname server entries)
   (build-dir-table title (map (cut live-table-entry sname server <>) entries)))
