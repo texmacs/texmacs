@@ -398,12 +398,12 @@
     (let* ((type (if dir? "dir" "file"))
            (icon-name (string-append "tm_cloud_" type ".svg"))
            (link (prepend-dir server short-name (string-append "remote-" type)))
-           (share-action (build-table-share-action server link))
+           (actions (build-actions-bar server link))
            (date-raw (assoc-ref props "date"))
            (date (if (and date-raw (pair? date-raw))
                      (pretty-time (string->number (car date-raw)))
                      "")))
-      `(dir-entry ,icon-name ,short-name ,link ,date ,share-action))))
+      `(dir-entry ,icon-name ,short-name ,link ,date ,actions))))
 
 (tm-define (build-table-share-action server u)
   (with action-cmd
@@ -426,10 +426,15 @@
                    u "\")")
     `(action (dir-entry-icon "tm_focus_delete.svg") ,action-cmd)))
 
-(tm-define (build-actions-bar)
+(tm-define (build-actions-hdr share?)
+  (if share? `(concat (phantom-icon) (phantom-icon) (phantom-icon)) ""))
+
+(tm-define (build-actions-bar server link)
   (let* ((share-action (build-table-share-action server link))
-         (rename ()))
-   `(document ,share-action)))
+         (rename-action (build-table-rename-action server link))
+         (remove-action (build-table-remove-action server link)))
+    `(concat ,share-action (hspace "0.5em") ,rename-action (hspace "0.5em")
+             ,remove-action)))
 
 (tm-define (sort-header-label field label)
   (let* ((current-field (get-sort-field))
@@ -461,7 +466,7 @@
          (name-action (sort-header-action "name"))
          (date-hdr-label (sort-header-label "date" date-label))
          (date-action (sort-header-action "date"))
-         (share-hdr-label (if share? 'phantom-icon "")))
+         (share-hdr-label (build-actions-hdr share?)))
     `(compact (document (tmfs-title ,title)
                         (dir-header ,type-label ,type-action
                                     ,name-label ,name-action
