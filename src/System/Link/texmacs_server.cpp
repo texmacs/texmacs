@@ -71,6 +71,11 @@ server_port_in_use () {
 
 bool
 server_can_start () {
+  if (get_preference ("tls-server") == string ("off")) {
+    io_warning << "TLS is disabled. Legacy/weak encryption is used; "
+      "use TLS to secure connections." << LF;
+    return true;
+  }
   if (gnutls_present() && !certificate_present ()) {
     io_error << "cannot start the server, missing certificate: "
         << certificate_path () << LF;

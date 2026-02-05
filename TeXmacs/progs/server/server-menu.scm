@@ -21,13 +21,18 @@
         (server server-chat)))
 
 (tm-define (server-safe-start)
-  (if (supports-gnutls?)
+  (if (and (supports-gnutls?) (== (get-preference "tls-server") "on"))
     (if (server-certificate-exists?)
-      (server-start)
+      (begin
+        (server-start)
+        (server-log-write `info "started server with TLS support"))
       (open-certificate-warning "No certificate detected." #f))
     (begin
       (server-start)
-      (server-log-write `log-warning "started server without TLS support"))))
+      (server-log-write
+        `warning (string-append "started server without TLS support. "
+                                "Legacy/weak encryption is used; "
+                                "Use TLS to secure connections.")))))
 
 (menu-bind server-start-menu
   ("Start server" (server-safe-start)))
