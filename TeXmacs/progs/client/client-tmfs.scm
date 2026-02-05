@@ -401,7 +401,7 @@
            (actions (build-actions-bar server link))
            (date-raw (assoc-ref props "date"))
            (date (if (and date-raw (pair? date-raw))
-                     (pretty-time (string->number (car date-raw)))
+                     (pretty-date (string->number (car date-raw)) "short")
                      "")))
       `(dir-entry ,icon-name ,short-name ,link ,date ,actions))))
 
