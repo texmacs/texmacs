@@ -412,6 +412,24 @@
                    u "\")")
     `(action (dir-entry-icon "tm_cloud_share.svg" "Share...") ,action-cmd)))
 
+(tm-define (build-table-rename-action server u)
+  (with action-cmd
+    (string-append "(remote-rename-interactive "
+                   (number->string server) " \""
+                   u "\")")
+    `(action "Rename" ,action-cmd)))
+
+(tm-define (build-table-remove-action server u)
+  (with action-cmd
+    (string-append "(remote-remove-interactive "
+                   (number->string server) " \""
+                   u "\")")
+    `(action (dir-entry-icon "tm_focus_delete.svg") ,action-cmd)))
+
+(tm-define (build-actions-bar)
+  (let* ((share-action (build-table-share-action server link))
+         (rename ()))
+   `(document ,share-action)))
 
 (tm-define (sort-header-label field label)
   (let* ((current-field (get-sort-field))
