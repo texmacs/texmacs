@@ -846,27 +846,27 @@
 ;; Operations on files
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (remote-rename-interactive server)
+(tm-define (remote-rename-interactive server u)
   (:interactive #t)
-  (with dir? (remote-directory? (current-buffer))
+  (with dir? (remote-directory? u)
     (open-remote-file-browser
      server
-     (current-buffer)
+     u
      (list (if dir? :save-directory :save-file) "Rename as:")
      (if dir? "Rename directory" "Rename file")
      (lambda (new-name)
        (when (url? new-name)
-         (remote-rename (current-buffer) new-name))))))
+         (remote-rename u new-name))))))
 
-(tm-define (remote-remove-interactive server)
+(tm-define (remote-remove-interactive server u)
   (:interactive #t)
-  (with msg (if (remote-directory? (current-buffer))
+  (with msg (if (remote-directory? u)
                 "Really remove directory and its recursive contents?"
                 "Really remove file?")
     (user-confirm msg #f
       (lambda (answ)
         (when answ
-          (remote-remove (current-buffer)))))))
+          (remote-remove u))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Permissions editor
