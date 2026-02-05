@@ -210,13 +210,19 @@
   (and-with sname (client-find-server-name server)
     (string-append "tmfs://live-list/" sname)))
 
-(define (live-table-entry sname server name)
-  (with link (string-append "tmfs://live/" sname "/" name)
-    `(dir-entry "tm_cloud_live.svg" ,name ,link
+(define (live-table-entry sname server entry)
+  (let* ((name (if (pair? entry) (car entry) entry))
+         (date-raw (if (pair? entry) (cadr entry) ""))
+         (date (if (and date-raw (not (equal? date-raw "")))
+                   (pretty-time (string->number date-raw))
+                   ""))
+         (link (string-append "tmfs://live/" sname "/" name)))
+    `(dir-entry "tm_cloud_live.svg" ,name ,link ,date
                 ,(build-table-share-action server link))))
 
 (tm-define (live-table title sname server entries)
-  (build-dir-table title (map (cut live-table-entry sname server <>) entries)))
+  (build-dir-table title "Created"
+                   (map (cut live-table-entry sname server <>) entries) #t))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Live discussions as documents

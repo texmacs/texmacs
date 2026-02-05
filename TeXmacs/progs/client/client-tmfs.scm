@@ -253,8 +253,12 @@
     (let* ((type (if dir? "dir" "file"))
            (icon-name (string-append "tm_cloud_" type ".svg"))
            (link (prepend-dir server short-name (string-append "remote-" type)))
-           (share-action (build-table-share-action server link)))
-      `(dir-entry ,icon-name ,short-name ,link ,share-action))))
+           (share-action (build-table-share-action server link))
+           (date-raw (assoc-ref props "date"))
+           (date (if (and date-raw (pair? date-raw))
+                     (pretty-time (string->number (car date-raw)))
+                     "")))
+      `(dir-entry ,icon-name ,short-name ,link ,date ,share-action))))
 
 (tm-define (build-table-share-action server u)
   (with action-cmd
@@ -263,11 +267,15 @@
                    u "\")")
     `(action (dir-entry-icon "tm_cloud_share.svg" "Share...") ,action-cmd)))
 
-(tm-define (build-dir-table title content)
-  `(compact (document (tmfs-title ,title) (dir-header "Name" "") ,@content)))
+
+(tm-define (build-dir-table title date-label content share?)
+  (with share-hdr-label (if share? 'phantom-icon "")
+        `(compact (document (tmfs-title ,title)
+                            (dir-header "Name" ,date-label ,share-hdr-label)
+                            ,@content))))
 
 (define (directory-table sname server entries)
-  (build-dir-table "My Files" (map (cut directory-entry sname server <>) entries)))
+  (build-dir-table "My Files" "Date" (map (cut directory-entry sname server <>) entries) #t))
 
 (define (dir-page sname server entries)
   (remote-file-browser-document
