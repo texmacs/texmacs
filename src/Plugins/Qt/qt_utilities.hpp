@@ -107,6 +107,7 @@ void qt_image_to_pdf (url image, url pdf, int w_pt =0, int h_pt =0, int dpi =0);
 string qt_application_directory ();
 string qt_get_date (string lan, string fm);
 string qt_pretty_time (int t);
+string qt_pretty_date (int t, string fm);
 
 bool qt_print (bool&, bool&, string&, url&, string&, string&, string&);
 
