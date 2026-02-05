@@ -453,7 +453,7 @@
 	  (with credential (wallet-get (list "remote" server-name port
 					     pseudo authentication))
 	    (if credential
-		(client-login-home server-name port pseudo credential (lambda () (quit)))
+		(client-login-home server-name port pseudo credential noop)
 		(dialogue-window (remote-login-widget server-name port pseudo
 						      authentication)
 				 noop "Remote login")))))))
