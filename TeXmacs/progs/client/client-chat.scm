@@ -205,7 +205,7 @@
   (let* ((name (if (pair? entry) (car entry) entry))
          (date-raw (if (pair? entry) (cadr entry) ""))
          (date (if (and date-raw (not (equal? date-raw "")))
-                   (pretty-time (string->number date-raw))
+                   (pretty-date (string->number date-raw) "short")
                    ""))
          (link (string-append "tmfs://chat/" sname "/" name)))
     `(dir-entry "tm_cloud_chat.svg" ,name ,link ,date
@@ -268,7 +268,7 @@
            (name (url->string (url-tail u)))
            (link (url->string u))
            (date* (if (and date (not (equal? date "")))
-                      (pretty-time (string->number date))
+                      (pretty-date (string->number date) "short")
                       "")))
       `(dir-entry ,icon-name ,name ,link ,date* ""))))
 
