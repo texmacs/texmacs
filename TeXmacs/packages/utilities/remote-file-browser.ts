@@ -38,8 +38,8 @@
     </src-comment>
   </active*>
 
-  <assign|dir-header|<\macro|name-label|date-label|action-label>
-    <wide-underlined|0.5ln|0.2em|<concat|<hspace|12pt>|<hspace|1.5spc><arg|name-label>|<htab|5mm>|<arg|date-label><hspace|1em><phantom-icon>>>
+  <assign|dir-header|<\macro|type-label|type-action|name-label|name-action|date-label|date-action|action-label>
+    <wide-underlined|0.5ln|0.2em|<concat|<action|<arg|type-label>|<arg|type-action>>|<hspace|12pt><action|<arg|name-label>|<arg|name-action>>|<htab|5mm>|<action|<arg|date-label>|<arg|date-action>><hspace|1em><phantom-icon>>>
   </macro>>
 
   <\active*>
@@ -49,7 +49,7 @@
   </active*>
 
   <assign|dir-entry|<\macro|icon-name|name|link|date|share-action>
-    <concat|<dir-entry-icon|<arg|icon-name>|>|<hspace|1.5spc><hlink|<arg|name>|<arg|link>>|<htab|5mm>|<arg|date><hspace|1em><arg|share-action>>
+    <concat|<dir-entry-icon|<arg|icon-name>|>|<hspace|12pt><hlink|<arg|name>|<arg|link>>|<htab|5mm>|<arg|date><hspace|1em><arg|share-action>>
   </macro>>
 
   <\active*>

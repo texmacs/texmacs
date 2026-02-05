@@ -17,6 +17,151 @@
         (version version-tmfs)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Directory entries cache (to avoid refetching on sort change)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define dir-entries-cache (make-ahash-table))
+
+(tm-define (cache-dir-entries url sname server entries)
+  (ahash-set! dir-entries-cache url (list sname server entries)))
+
+(tm-define (get-cached-dir-entries url)
+  (ahash-ref dir-entries-cache url))
+
+(tm-define (clear-cached-dir-entries url)
+  (ahash-remove! dir-entries-cache url))
+
+(define (rebuild-from-cache url)
+  (and-with cached (get-cached-dir-entries url)
+    (let ((sname   (car cached))
+          (server  (cadr cached))
+          (entries (caddr cached)))
+      (cond
+        ((string-starts? url "tmfs://remote-dir/")
+         (with name (substring url 18 (string-length url))
+           (remote-dir-set name (dir-page sname server entries))
+           #t))
+        ((string-starts? url "tmfs://shared/")
+         (buffer-set-stm url (shared-documents entries))
+         #t)
+        ((string-starts? url "tmfs://chat-rooms/")
+         (buffer-set-stm url (chat-rooms-document sname server entries))
+         #t)
+        ((string-starts? url "tmfs://live-list/")
+         (buffer-set-stm url (live-documents sname server entries))
+         #t)
+        (else #f)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Directory sorting
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (notify-sort-change pref val)
+  (when (buffer-exists? (current-buffer))
+    (with u (url->string (current-buffer))
+      (when (or (string-starts? u "tmfs://remote-dir/")
+                (string-starts? u "tmfs://shared/")
+                (string-starts? u "tmfs://chat-rooms/")
+                (string-starts? u "tmfs://live-list/"))
+        (rebuild-from-cache u)))))
+
+(define-preferences
+  ("remote-file-browser:sort-field" "type" notify-sort-change)
+  ("remote-file-browser:sort-direction" "asc" notify-sort-change))
+
+(tm-define (entry-type-priority type-str)
+  (cond ((== type-str "dir") 0)
+        ((== type-str "file") 1)
+        ((== type-str "chat") 2)
+        ((== type-str "live") 3)
+        (else 4)))
+
+;; Generic comparator that respects sort direction
+(define (make-comparator cmp ascending?)
+  (if ascending? cmp (lambda (a b) (cmp b a))))
+
+;; Sort by name (case-insensitive)
+(define (compare-by-name name-a name-b)
+  (string<? (string-downcase name-a) (string-downcase name-b)))
+
+;; Sort by type, then by name within same type
+(define (compare-by-type type-a name-a type-b name-b)
+  (let ((prio-a (entry-type-priority type-a))
+        (prio-b (entry-type-priority type-b)))
+    (if (== prio-a prio-b)
+        (compare-by-name name-a name-b)
+        (< prio-a prio-b))))
+
+;; Sort by date (timestamps as strings or numbers)
+(define (compare-by-date date-a date-b)
+  (let ((num-a (cond ((number? date-a) date-a)
+                     ((string? date-a) (or (string->number date-a) 0))
+                     (else 0)))
+        (num-b (cond ((number? date-b) date-b)
+                     ((string? date-b) (or (string->number date-b) 0))
+                     (else 0))))
+    (< num-a num-b)))
+
+(tm-define (get-sort-field)
+  (get-preference "remote-file-browser:sort-field"))
+
+(tm-define (get-sort-direction)
+  (get-preference "remote-file-browser:sort-direction"))
+
+(tm-define (sort-ascending?)
+  (== (get-sort-direction) "asc"))
+
+(tm-define (toggle-sort-direction)
+  (set-preference "remote-file-browser:sort-direction"
+                  (if (sort-ascending?) "desc" "asc")))
+
+(tm-define (set-sort-field field)
+  (set-preference "remote-file-browser:sort-field" field))
+
+;; Generic sort function with accessor functions
+;; get-name: extracts name from entry
+;; get-type: extracts type from entry (or #f if not applicable)
+;; get-date: extracts date from entry
+(tm-define (sort-entries entries get-name get-type get-date)
+  (let* ((field (get-sort-field))
+         (asc? (sort-ascending?))
+         (cmp (cond
+               ((== field "name")
+                (lambda (a b)
+                  (compare-by-name (get-name a) (get-name b))))
+               ((and (== field "type") get-type)
+                (lambda (a b)
+                  (compare-by-type (get-type a) (get-name a)
+                                   (get-type b) (get-name b))))
+               ((== field "date")
+                (lambda (a b)
+                  (compare-by-date (get-date a) (get-date b))))
+               (else
+                (lambda (a b)
+                  (compare-by-name (get-name a) (get-name b))))))
+         (final-cmp (make-comparator cmp asc?)))
+    (list-sort entries final-cmp)))
+
+;; Sort directory entries
+;; Entry format: (short-name full-name dir? props)
+(define (sort-directory-entries entries)
+  (sort-entries entries
+    (lambda (e) (car e))
+    (lambda (e) (if (caddr e) "dir" "file"))
+    (lambda (e)
+      (and-let* ((props (cadddr e))
+                 (date-raw (assoc-ref props "date")))
+        (if (pair? date-raw) (car date-raw) date-raw)))))
+
+;; Sort entries by name/date (for chat rooms, live docs)
+;; Entry format: (name date) or just name
+(tm-define (sort-name-entries entries)
+  (sort-entries entries
+    (lambda (e) (if (pair? e) (car e) e))
+    #f
+    (lambda (e) (if (pair? e) (cadr e) #f))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Useful subroutines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -268,14 +413,46 @@
     `(action (dir-entry-icon "tm_cloud_share.svg" "Share...") ,action-cmd)))
 
 
+(tm-define (sort-header-label field label)
+  (let* ((current-field (get-sort-field))
+         (asc? (sort-ascending?))
+         (is-current? (== field current-field))
+         (indicator
+           (if is-current?
+             (if asc? '<blacktriangleup> '<blacktriangledown>)
+             '<vartriangleright>)))
+    (cond
+      ;; Type field: show indicator in 12pt-wide box
+      ((== field "type")
+       `(resize ,indicator "" "" "12pt" ""))
+      ;; Other fields: show label + indicator
+      (else
+       `(concat ,label " " ,indicator)))))
+
+;; Build clickable sort action
+(tm-define (sort-header-action field)
+  (let ((current-field (get-sort-field)))
+    (if (== field current-field)
+        "(toggle-sort-direction)"
+        (string-append "(set-sort-field \"" field "\")"))))
+
 (tm-define (build-dir-table title date-label content share?)
-  (with share-hdr-label (if share? 'phantom-icon "")
-        `(compact (document (tmfs-title ,title)
-                            (dir-header "Name" ,date-label ,share-hdr-label)
-                            ,@content))))
+  (let* ((type-label (sort-header-label "type" "Type"))
+         (type-action (sort-header-action "type"))
+         (name-label (sort-header-label "name" "Name"))
+         (name-action (sort-header-action "name"))
+         (date-hdr-label (sort-header-label "date" date-label))
+         (date-action (sort-header-action "date"))
+         (share-hdr-label (if share? 'phantom-icon "")))
+    `(compact (document (tmfs-title ,title)
+                        (dir-header ,type-label ,type-action
+                                    ,name-label ,name-action
+                                    ,date-hdr-label ,date-action ,share-hdr-label)
+                        ,@content))))
 
 (define (directory-table sname server entries)
-  (build-dir-table "My Files" "Date" (map (cut directory-entry sname server <>) entries) #t))
+  (let ((sorted (sort-directory-entries entries)))
+    (build-dir-table "My Files" "Date" (map (cut directory-entry sname server <>) sorted) #t)))
 
 (define (dir-page sname server entries)
   (remote-file-browser-document
@@ -292,6 +469,7 @@
         (begin
           (client-remote-eval server `(remote-dir-load ,name)
             (lambda (entries)
+              (cache-dir-entries fname sname server entries)
               (remote-dir-set name (dir-page sname server entries))
               (set-message "retrieved contents" "remote directory"))
             (lambda (err)
