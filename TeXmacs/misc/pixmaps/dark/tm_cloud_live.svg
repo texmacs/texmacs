@@ -8,20 +8,14 @@
    </cc:Work>
   </rdf:RDF>
  </metadata>
- <g fill-opacity=".87843">
-  <!-- Document rectangle -->
-  <path d="m6.4831 3.4831h11.034v12.1h-11.034v-7.9115z" fill-opacity="1" stroke="#000" stroke-opacity=".50222" stroke-width=".96624"/>
-  <!-- Live broadcast indicator: red dot with waves -->
-  <circle id="live-dot" cx="11.975" cy="9.5599" r="1.5" fill="#f33"/>
-  <g fill="none" stroke="#f33" stroke-linecap="round" stroke-width=".7">
-   <!-- Broadcast waves (left side) -->
-   <path d="m9.4748 9.5599c0-1.4 1.1-2.5 2.5-2.5"/>
-   <path d="m8.4748 9.5599c0-2 1.6-3.5 3.5-3.5" stroke-opacity=".6"/>
-   <!-- Broadcast waves (right side) -->
-   <path d="m14.475 9.5599c0 1.4-1.1 2.5-2.5 2.5"/>
-   <path d="m15.475 9.5599c0 2-1.6 3.5-3.5 3.5" stroke-opacity=".6"/>
-   <!-- Cloud at the bottom -->
-  </g>
-  <path id="cloud" d="m6.5 13.5v2h11v-2.5s2.9659-0.10518 3.7233 0.63342c1.0535 1.0275 0.92266 1.8624 0.86605 2.446-0.089304 0.92055-0.45535 1.2954-1.3386 1.661-1.033 0.42757-2.7507 0.25957-2.7507 0.25957s-0.75908 2.0893-4.4814 2.3214c-3.2713 0.20397-5.0186-1.8214-5.0186-1.8214s-0.71443 1-2.0667 1.0039c-1.0713 0.003088-2.4333-1.0039-2.4333-2.5039-1.5 0-2.5 0-2.1874-2.027 0.18812-1.22 1.3853-2.3301 2.3759-2.3916 1.3116-0.081425 2.3116 0.91858 2.3116 0.91858z" fill-opacity="1" stroke="#808080" stroke-width="1px"/>
+ <path d="m5 3h14v18h-14z"/>
+ <g fill="none" stroke="#4a90e2" stroke-linecap="round" stroke-width="1.3">
+  <path d="m5.6562 6.1562a2.5 2.5 0 0 0 2.5-2.5"/>
+  <path d="m5.6562 9.1562a5.5 5.5 0 0 0 5.5-5.5" stroke-opacity=".65"/>
+  <path d="m5.6562 12.156a8.5 8.5 0 0 0 8.5-8.5" stroke-opacity=".35"/>
+  <path d="m18.369 17.869a2.5 2.5 0 0 0-2.5 2.5"/>
+  <path d="m18.369 14.869a5.5 5.5 0 0 0-5.5 5.5" stroke-opacity=".65"/>
+  <path d="m18.344 11.844a8.5 8.5 0 0 0-8.5 8.5" stroke-opacity=".35"/>
  </g>
+ <path d="m5 3h14v18h-14z" fill="none" stroke="#fff" stroke-opacity=".5"/>
 </svg>

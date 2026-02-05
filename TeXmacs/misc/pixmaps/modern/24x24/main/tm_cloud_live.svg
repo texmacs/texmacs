@@ -6,6 +6,9 @@
    version="1.1"
    sodipodi:docname="tm_cloud_live.svg"
    inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   inkscape:export-filename="tm_cloud_live.svg"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -32,7 +35,16 @@
      inkscape:window-x="0"
      inkscape:window-y="0"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg5375" />
+     inkscape:current-layer="svg5375">
+    <inkscape:page
+       x="0"
+       y="0"
+       width="24"
+       height="24"
+       id="page2"
+       margin="0"
+       bleed="0" />
+  </sodipodi:namedview>
   <metadata
      id="metadata5380">
     <rdf:RDF>
@@ -46,61 +58,67 @@
     </rdf:RDF>
   </metadata>
   <g
-     id="layer1"
-     fill="#fff"
-     fill-opacity=".87843">
-    <!-- Document rectangle -->
+     id="layer1">
+    <!-- Document background -->
     <path
-       id="path5385"
-       d="M 6.4826564,3.4826564 H 17.517344 V 15.558353 H 6.4826564 V 7.6627053 Z"
+       id="document-bg"
+       d="M 5,3 H 19 V 21 H 5 Z"
+       fill="#ffffff" />
+    <!-- WiFi-style waves from top-left corner -->
+    <path
+       id="wave-topleft-1"
+       d="m 6.1608833,6.6608833 a 2.5,2.5 0 0 0 2.5,-2.5"
+       fill="none"
+       stroke="#4a90e2"
+       stroke-width="1.3"
+       stroke-linecap="round" />
+    <path
+       id="wave-topleft-2"
+       d="m 6.1356467,9.6356467 a 5.5,5.5 0 0 0 5.5000003,-5.5"
+       fill="none"
+       stroke="#4a90e2"
+       stroke-width="1.3"
+       stroke-linecap="round"
+       stroke-opacity="0.65" />
+    <path
+       id="wave-topleft-3"
+       d="M 6.1861199,12.61041 A 8.5,8.5 0 0 0 14.68612,4.1104101"
+       fill="none"
+       stroke="#4a90e2"
+       stroke-width="1.3"
+       stroke-linecap="round"
+       stroke-opacity="0.35" />
+    <!-- WiFi-style waves from bottom-right corner -->
+    <path
+       id="wave-bottomright-1"
+       d="m 17.864353,17.364353 a 2.5,2.5 0 0 0 -2.5,2.5"
+       fill="none"
+       stroke="#4a90e2"
+       stroke-width="1.3"
+       stroke-linecap="round" />
+    <path
+       id="wave-bottomright-2"
+       d="m 17.839117,14.339117 a 5.5,5.5 0 0 0 -5.5,5.5"
+       fill="none"
+       stroke="#4a90e2"
+       stroke-width="1.3"
+       stroke-linecap="round"
+       stroke-opacity="0.65" />
+    <path
+       id="wave-bottomright-3"
+       d="m 17.88959,11.38959 a 8.5,8.5 0 0 0 -8.5000001,8.5"
+       fill="none"
+       stroke="#4a90e2"
+       stroke-width="1.3"
+       stroke-linecap="round"
+       stroke-opacity="0.35" />
+    <!-- Document border -->
+    <path
+       id="document"
+       d="M 5,3 H 19 V 21 H 5 Z"
+       fill="none"
        stroke="#000000"
-       stroke-opacity="0.50222"
-       style="stroke-width:0.965313" />
-    <!-- Live broadcast indicator: red dot with waves -->
-    <circle
-       id="live-dot"
-       cx="11.974764"
-       cy="9.5599365"
-       r="1.5"
-       fill="#ff3333"
-       stroke="none" />
-    <!-- Broadcast waves (left side) -->
-    <path
-       id="wave-left-1"
-       d="m 9.4747634,9.5599369 c 0,-1.4 1.0999996,-2.5 2.4999996,-2.5"
-       fill="none"
-       stroke="#ff3333"
-       stroke-width="0.7"
-       stroke-linecap="round" />
-    <path
-       id="wave-left-2"
-       d="m 8.4747634,9.5599369 c 0,-2 1.5999996,-3.5 3.4999996,-3.5"
-       fill="none"
-       stroke="#ff3333"
-       stroke-width="0.7"
-       stroke-linecap="round"
-       stroke-opacity="0.6" />
-    <!-- Broadcast waves (right side) -->
-    <path
-       id="wave-right-1"
-       d="m 14.474763,9.5599369 c 0,1.4000001 -1.1,2.5000001 -2.5,2.5000001"
-       fill="none"
-       stroke="#ff3333"
-       stroke-width="0.7"
-       stroke-linecap="round" />
-    <path
-       id="wave-right-2"
-       d="m 15.474763,9.5599369 c 0,2.0000001 -1.6,3.5000001 -3.5,3.5000001"
-       fill="none"
-       stroke="#ff3333"
-       stroke-width="0.7"
-       stroke-linecap="round"
-       stroke-opacity="0.6" />
-    <!-- Cloud at the bottom -->
-    <path
-       id="cloud"
-       d="m6.5 13.5v2h11v-2.5s2.9659-0.10518 3.7233 0.63342c1.0535 1.0275 0.92266 1.8624 0.86605 2.446-0.089304 0.92055-0.45535 1.2954-1.3386 1.661-1.033 0.42757-2.7507 0.25957-2.7507 0.25957s-0.75908 2.0893-4.4814 2.3214c-3.2713 0.20397-5.0186-1.8214-5.0186-1.8214s-0.71443 1-2.0667 1.0039c-1.0713 0.003088-2.4333-1.0039-2.4333-2.5039-1.5 0-2.5 0-2.1874-2.027 0.18812-1.22 1.3853-2.3301 2.3759-2.3916 1.3116-0.081425 2.3116 0.91858 2.3116 0.91858z"
-       stroke="#808080"
-       stroke-width="1px" />
+       stroke-opacity="0.5"
+       stroke-width="1" />
   </g>
 </svg>

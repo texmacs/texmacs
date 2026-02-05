@@ -46,58 +46,49 @@
     </rdf:RDF>
   </metadata>
   <g
-     id="layer1"
-     fill="#fff"
-     fill-opacity=".87843">
-    <!-- Document rectangle -->
-    <path
-       id="path5385"
-       d="m6.5 3.5h11v13h-11v-8.5z"
-       stroke="#000"
-       stroke-opacity=".50222" />
-    <path
-       style="fill:#0059ff;fill-opacity:1;stroke:#808080;stroke-width:0.722911;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
-       d="M 10.841429,8.9421776 12.721687,7.0619202"
-       id="link-top" />
-    <!-- Classic share icon: 3 nodes connected by lines -->
+     id="layer1">
+    <!-- Standard share icon: left node connected to two right nodes -->
     <!-- Connecting lines (drawn first so nodes appear on top) -->
-    <!-- Left node (center-left) -->
+    <path
+       id="link-top"
+       d="M 7.5,12 L 16.5,6"
+       fill="none"
+       stroke="#808080"
+       stroke-width="1.2"
+       stroke-linecap="round" />
+    <path
+       id="link-bottom"
+       d="M 7.5,12 L 16.5,18"
+       fill="none"
+       stroke="#808080"
+       stroke-width="1.2"
+       stroke-linecap="round" />
+    <!-- Left node (center) -->
     <circle
        id="share-left"
-       cx="9.8000002"
-       cy="9.999999"
-       r="1.3"
+       cx="6"
+       cy="12"
+       r="2.5"
        fill="#4a90e2"
        stroke="#808080"
-       stroke-width="0.4" />
+       stroke-width="0.6" />
     <!-- Top-right node -->
     <circle
        id="share-top"
-       cx="13.8"
+       cx="18"
        cy="6"
-       r="1.3"
+       r="2.5"
        fill="#4a90e2"
        stroke="#808080"
-       stroke-width="0.4" />
+       stroke-width="0.6" />
     <!-- Bottom-right node -->
     <circle
        id="share-bottom"
-       cx="13.8"
-       cy="13.999999"
-       r="1.3"
+       cx="18"
+       cy="18"
+       r="2.5"
        fill="#4a90e2"
        stroke="#808080"
-       stroke-width="0.4" />
-    <!-- Cloud at the bottom -->
-    <path
-       id="cloud"
-       d="m6.5 14.5v2h11v-2.5s2.9659-0.10518 3.7233 0.63342c1.0535 1.0275 0.92266 1.8624 0.86605 2.446-0.089304 0.92055-0.45535 1.2954-1.3386 1.661-1.033 0.42757-2.7507 0.25957-2.7507 0.25957s-0.75908 2.0893-4.4814 2.3214c-3.2713 0.20397-5.0186-1.8214-5.0186-1.8214s-0.71443 1-2.0667 1.0039c-1.0713 0.003088-2.4333-1.0039-2.4333-2.5039-1.5 0-2.5 0-2.1874-2.027 0.18812-1.22 1.3853-2.3301 2.3759-2.3916 1.3116-0.081425 2.3116 0.91858 2.3116 0.91858z"
-       stroke="#808080"
-       stroke-width="1px" />
-    <path
-       style="fill:#0059ff;fill-opacity:1;stroke:#808080;stroke-width:0.722911;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1"
-       d="M 12.621714,13.041715 10.741456,11.161456"
-       id="link-bottom"
-       inkscape:label="link-bottom" />
+       stroke-width="0.6" />
   </g>
 </svg>
