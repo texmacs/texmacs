@@ -28,6 +28,7 @@ namespace win32 {
 #endif
 string get_date (string lan, string fm);
 string pretty_time (int t);
+string pretty_date (int t, string fm);
 
 #endif // LOCALE_HPP
 

@@ -70,6 +70,7 @@
   (language-to-locale language_to_locale (string string))
   (texmacs-time texmacs_time (int))
   (pretty-time pretty_time (string int))
+  (pretty-date pretty_date (string int string))
   (texmacs-memory mem_used (int))
   (bench-print bench_print (void string))
   (bench-print-all bench_print (void))
