@@ -44,15 +44,19 @@
   (chat-room-id (url->string (url-tail u))))
 
 (tm-service (remote-list-chat-rooms)
-  ;; Return list of chat rooms owned by the user
+  ;; Return list of chat rooms owned by the user as (name date) pairs
   ;;(display* "remote-list-chat-rooms\n")
   (with (client msg-id) envelope
     (let* ((uid (server-get-user envelope))
            (l (db-search `(("type" "chat-room")
                            ("owner" ,uid))))
-           (get-name (lambda (id) (db-get-field-first id "name" #f)))
-           (r (list-filter (map get-name l)
-                           (lambda (s) (not (string-starts? s "mail-"))))))
+           (get-entry (lambda (id)
+                        (let* ((name (db-get-field-first id "name" #f))
+                               (date (db-get-field-first id "date" "")))
+                          (list name date))))
+           (entries (map get-entry l))
+           (r (list-filter entries
+                           (lambda (e) (not (string-starts? (car e) "mail-"))))))
       (server-return envelope r))))
 
 (define chat-room-messages (make-ahash-table))
