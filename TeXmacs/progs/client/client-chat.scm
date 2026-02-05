@@ -201,13 +201,19 @@
 (tmfs-permission-handler (chat-rooms sname type)
   (and (client-find-server sname) (in? type (list "read"))))
 
-(define (chat-room-table-entry sname server name)
-  (with link (string-append "tmfs://chat/" sname "/" name)
-    `(dir-entry "tm_cloud_chat.svg" ,name ,link
+(define (chat-room-table-entry sname server entry)
+  (let* ((name (if (pair? entry) (car entry) entry))
+         (date-raw (if (pair? entry) (cadr entry) ""))
+         (date (if (and date-raw (not (equal? date-raw "")))
+                   (pretty-time (string->number date-raw))
+                   ""))
+         (link (string-append "tmfs://chat/" sname "/" name)))
+    `(dir-entry "tm_cloud_chat.svg" ,name ,link ,date
                 ,(build-table-share-action server link))))
 
 (tm-define (chat-rooms-table title sname server entries)
-  (build-dir-table title (map (cut chat-room-table-entry sname server <>) entries)))
+  (build-dir-table title "Created"
+                   (map (cut chat-room-table-entry sname server <>) entries) #t))
 
 (define (chat-rooms-document sname server entries)
   (remote-file-browser-document
@@ -258,11 +264,14 @@
     (let* ((type (tmfs-type u))
            (icon-name (string-append "tm_cloud_" type ".svg"))
            (name (url->string (url-tail u)))
-           (link (url->string u)))
-      `(dir-entry ,icon-name ,name ,link ""))))
+           (link (url->string u))
+           (date* (if (and date (not (equal? date "")))
+                      (pretty-time (string->number date))
+                      "")))
+      `(dir-entry ,icon-name ,name ,link ,date* ""))))
 
 (tm-define (shared-table title entries)
-  (build-dir-table title (map shared-table-entry entries)))
+  (build-dir-table title "Shared" (map shared-table-entry entries) #f))
 
 (define (shared-documents entries)
   (remote-file-browser-document
