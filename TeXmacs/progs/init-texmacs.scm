@@ -253,6 +253,7 @@
            text-icons text-block-icons text-inline-icons)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 ;(display* "memory: " (texmacs-memory) " bytes\n")
+(lazy-define (text text-drd) tm-register-new-list-tag)
 
 ;(display "Booting math mode\n")
 (lazy-keyboard (math math-kbd) in-math?)
