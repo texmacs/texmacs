@@ -417,7 +417,7 @@
     (string-append "(remote-rename-interactive "
                    (number->string server) " \""
                    u "\")")
-    `(action "Rename" ,action-cmd)))
+    `(action (dir-entry-icon "tm_replace.svg") ,action-cmd)))
 
 (tm-define (build-table-remove-action server u)
   (with action-cmd
