@@ -215,7 +215,7 @@
   (let* ((name (if (pair? entry) (car entry) entry))
          (date-raw (if (pair? entry) (cadr entry) ""))
          (date (if (and date-raw (not (equal? date-raw "")))
-                   (pretty-time (string->number date-raw))
+                   (pretty-date (string->number date-raw) "short")
                    ""))
          (link (string-append "tmfs://live/" sname "/" name)))
     `(dir-entry "tm_cloud_live.svg" ,name ,link ,date
