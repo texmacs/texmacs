@@ -212,10 +212,11 @@
                 ,(build-table-share-action server link))))
 
 (tm-define (chat-rooms-table title sname server entries)
-  (build-dir-table title "Created"
-                   (map (cut chat-room-table-entry sname server <>) entries) #t))
+  (let ((sorted (sort-name-entries entries)))
+    (build-dir-table title "Created"
+                     (map (cut chat-room-table-entry sname server <>) sorted) #t)))
 
-(define (chat-rooms-document sname server entries)
+(tm-define (chat-rooms-document sname server entries)
   (remote-file-browser-document
     `(document
        (dir-list ,(chat-rooms-table "My Chat Rooms" sname server entries)))))
@@ -226,6 +227,7 @@
          (server (client-find-server sname)))
     (client-remote-eval server `(remote-list-chat-rooms)
       (lambda (l)
+        (cache-dir-entries u sname server l)
         (with doc (chat-rooms-document sname server l)
           (buffer-set-stm u doc)
           (set-message "retrieved contents" "list of chat rooms")))
@@ -270,10 +272,18 @@
                       "")))
       `(dir-entry ,icon-name ,name ,link ,date* ""))))
 
-(tm-define (shared-table title entries)
-  (build-dir-table title "Shared" (map shared-table-entry entries) #f))
+;; Sort shared entries - format: (action pseudo full-name date u to)
+(define (sort-shared-entries entries)
+  (sort-entries entries
+    (lambda (e) (url->string (url-tail (list-ref e 4))))
+    (lambda (e) (tmfs-type (list-ref e 4)))
+    (lambda (e) (list-ref e 3))))
 
-(define (shared-documents entries)
+(tm-define (shared-table title entries)
+  (let ((sorted (sort-shared-entries entries)))
+    (build-dir-table title "Shared" (map shared-table-entry sorted) #f)))
+
+(tm-define (shared-documents entries)
   (remote-file-browser-document
      `(document
         (dir-list ,(shared-table "Shared with me" entries)))))
@@ -283,6 +293,7 @@
          (server (client-find-server sname)))
     (client-remote-eval server `(remote-shared)
       (lambda (l)
+        (cache-dir-entries u sname server l)
         (with doc (shared-documents l)
               (buffer-set-stm u doc)
               (set-message "retrieved contents" "list of shared resources")))
