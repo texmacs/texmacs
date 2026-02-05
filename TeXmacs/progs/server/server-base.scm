@@ -173,7 +173,7 @@
 	(for (pseudo l)
 	  (with u (ahash-ref server-pending-users pseudo)
 	    (when (< (string->number (fifth u)) t)
-	      (server-log-write `log-notice
+	      (server-log-write `notice
 	       (string-append "removing pending user " pseudo))
 	      (ahash-remove! server-pending-users pseudo)))))
       (server-save-pending-users))))
@@ -732,7 +732,7 @@
   (let ((now (current-time))
 	(n (server-get-user-failed-login-counter-uid uid))
 	(t (server-get-user-last-failed-login-time-uid uid)))
-    (server-log-write `log-notice
+    (server-log-write `notice
       (format #f
           "user ~A: ~A failed logins, ~A last failure, suspended: ~A\n"
           uid n (strftime "%c" (localtime t)) (server-user-suspended? uid)))
@@ -747,7 +747,7 @@
       (server-set-user-failed-login-counter-uid uid 0)
       (ahash-set! server-logged-table client uid)
       (ahash-set! server-logged-table uid client)
-      (server-log-write `log-notice (string-append "user " pseudo
+      (server-log-write `notice (string-append "user " pseudo
 	" logged in client " (number->string client)))))
 
 (tm-define (server-failed-login-uid uid client pseudo)
@@ -758,7 +758,7 @@
    uid (server-client-address client))
   (server-set-user-failed-login-counter-uid uid
    (+ 1 (server-get-user-failed-login-counter-uid uid)))
-  (server-log-write `log-notice (string-append "user " pseudo
+  (server-log-write `notice (string-append "user " pseudo
      " failed to log at client " (number->string client))))
 
 (tm-define (server-can-login? pseudo)
@@ -881,7 +881,7 @@
     (and-with uid (ahash-ref server-logged-table client)
       (ahash-remove! server-logged-table client)
       (ahash-remove! server-logged-table uid))
-    (server-log-write `log-info (string-append "user " pseudo
+    (server-log-write `info (string-append "user " pseudo
       " logged out client " (number->string client)))))
 
 (tm-define (server-logout-client client)
