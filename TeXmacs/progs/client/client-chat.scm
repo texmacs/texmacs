@@ -203,7 +203,7 @@
 
 (define (chat-room-table-entry sname server name)
   (with link (string-append "tmfs://chat/" sname "/" name)
-    `(row (cell (dir-entry "tm_cloud_mail.svg" ,name ,link
+    `(row (cell (dir-entry "tm_cloud_chat.svg" ,name ,link
                            ,(build-table-share-action server link))))))
 
 (tm-define (chat-rooms-table title sname server entries)
@@ -256,7 +256,7 @@
 
 (define (shared-table-entry item)
   (with (action pseudo full-name date u to) item
-    (let* ((type (if (== (tmfs-type u) "chat") "mail" (tmfs-type u)))
+    (let* ((type (tmfs-type u))
            (icon-name (string-append "tm_cloud_" type ".svg"))
            (name (url->string (url-tail u)))
            (link (url->string u)))
