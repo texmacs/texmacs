@@ -35,7 +35,9 @@
      (ai-translate lan (get-preference "ai")))))
 
 (tm-menu (tools-equation-editor-menu)
-  ("Enable" (toggle-preference "equation-editor")))
+  ("Enable" (begin 
+              (toggle-preference "equation-editor")
+              (reinit-plugin-cache))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; The Tools menu

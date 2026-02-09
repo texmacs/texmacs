@@ -198,6 +198,10 @@
   (set-boolean-preference "equation-editor-server" on?)
   (refresh-now "equ-ed-config"))
 
+(tm-widget (plugin-preferences-widget name)
+  (:require (== name "equation-editor"))
+  (dynamic (equation-editor-preferences-widget)))  
+
 (tm-widget (equation-editor-preferences-widget . cmd)
   (padded
     ======
