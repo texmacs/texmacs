@@ -2,7 +2,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; MODULE      : equation-editor.scm
 ;; DESCRIPTION : main implementation of the equation-editor plug-in
-;; COPYRIGHT   : (C) 2016-2022  Philippe Joyez
+;; COPYRIGHT   : (C) 2016-2026  Philippe Joyez
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (equation-editor))
@@ -16,43 +16,45 @@
 ;; Do (server-start) automatically at boot-up if preferences are set so
 ;; to enable incoming connections
 
-(if (get-boolean-preference "equation-editor-server")
-  (begin 
-    (import-from (server server-base)) ;; define tm-service for use below
-    (with srv (client-start "localhost")
-      (if (== srv -1) 
-        (begin (display "starting server\n") (server-start))
-        (begin (display "found local server\n")(client-stop srv)
-        )))
+(when (get-boolean-preference "equation-editor-server")
+  (or (cpp-has-preference? "tls-server") (set-preference "tls-server" "off"))
+  (or (get-boolean-preference "tls-server") ; using socket communication of this plugin is presently (2026) incompatible with using the tls server
+    (begin 
+      (import-from (server server-base)) ;; define tm-service for use below
+      (with srv (legacy-client-start "localhost" 6561)
+        (if (< srv 0) 
+          (begin (display "starting server\n") (server-start))
+          (begin (display "found local server\n")(client-stop srv)
+          )))
 
 ;; need a login for connecting to texmac's server
-    (server-set-user-information "inkscape" "inkscape-modify-equation" "inkscape" "" "no")
+  (server-set-user-information "inkscape" "inkscape-modify-equation" '((password "clear" "inkscape")) "" "no")
 
 ;; service where inkscape connects, sending the path of a temporary file
 ;; with the equation to be edited and (possibly) a latex code of the equation
 ;; (for compatibility with latex-based inkscape extensions)
-    (tm-service (remote-equ file latex)
-(display "tm-service\n")
-      (set! current-envelope envelope)
-      (set! current-equ-url (system->url file))
-        ;;(display* "remote-equ envelope = " current-envelope "\n")
-        (load-buffer-in-new-window current-equ-url)
-        (window-focus (buffer->window current-equ-url))
-        ;(display* (window-to-buffer (current-window)) "\n")
-        (equ-edit-start)
-        ; sometimes, the buffer shown in the new window spuriously changes
-        ; use this hack to be sure we show what we want
-        (delayed (:idle 300) (if (not (== (buffer->window current-equ-url) (current-window))) (begin (window-set-buffer (current-window) current-equ-url) 
-      (window-focus (buffer->window current-equ-url))))
-      (if (== (url-suffix current-equ-url) "html")
-      ; converting a LO Math equation from its mathml code
-              (buffer-set-default-style))
-        
-      (if (!= latex "") 
-          (insert (latex->texmacs (parse-latex (string-append "\\[" latex "\\]")))))
-        )
-    )
-  ))
+  (tm-service (remote-equ file latex)
+    (display "tm-service\n")
+    (set! current-envelope envelope)
+    (set! current-equ-url (system->url file))
+      ;;(display* "remote-equ envelope = " current-envelope "\n")
+      (load-buffer-in-new-window current-equ-url)
+      (window-focus (buffer->window current-equ-url))
+      ;(display* (window-to-buffer (current-window)) "\n")
+      (equ-edit-start)
+      ; sometimes, the buffer shown in the new window spuriously changes
+      ; use this hack to be sure we show what we want
+      (delayed (:idle 300) (if (not (== (buffer->window current-equ-url) (current-window))) (begin (window-set-buffer (current-window) current-equ-url) 
+    (window-focus (buffer->window current-equ-url))))
+    (if (== (url-suffix current-equ-url) "html")
+    ; converting a LO Math equation from its mathml code
+            (buffer-set-default-style))
+      
+    (if (!= latex "") 
+        (insert (latex->texmacs (parse-latex (string-append "\\[" latex "\\]")))))
+      )
+  )
+)))
 
 
 (define (current-envelope) #f)
@@ -107,7 +109,6 @@
             ;; warn user one way or the other
           ))
         (equ-edit-toolbar))))
-
 
 ;;;;;;;;;;;;
 ;; Toolbar
@@ -196,7 +197,6 @@
 (define (set-equation-editor-server on?)
   (set-boolean-preference "equation-editor-server" on?)
   (refresh-now "equ-ed-config"))
-  
 
 (tm-widget (equation-editor-preferences-widget . cmd)
   (padded
@@ -204,85 +204,76 @@
     (bold (centered  (text "Equation Editor for Inkscape or LibreOffice")))
     ===
     (refreshable "equ-ed-config"
-     (if (not (svg-converter-available))
-      (hlist  (text "Svg converter not available") >>> 
-               (explicit-buttons ("get converter" (get-svg-converter))) //
-               (explicit-buttons ("Help" (load-help-buffer "main/convert/man-graphics-export")))))
+      (if (not (svg-converter-available))
+        (hlist  (text "Svg converter not available") >>> 
+                 (explicit-buttons ("get converter" (get-svg-converter))) //
+                 (explicit-buttons ("Help" (load-help-buffer "main/convert/man-graphics-export")))))
            
-    (if (svg-converter-available) 
-    ======
-    (bold (text "Inkscape"))
-    ===        
-          ;; tests in "assuming" not refreshed, must use "if" construct instead         
-      (if (not (inkscape-detected)) 
-             (centered (text "Inkscape not detected") ))
-      (if (and (inkscape-detected) (not (inkscape-prefs-found)))
-        (aligned (meti (hlist  // (text "Inkscape user prefs found") >>> 
-            (if (not (inkscape-prefs-found))
-              (explicit-buttons (
-                            (eval (if (os-mingw?) "help" "create (start Inkscape)"))
-                  (start-inkscape))) ))
-            (inert (toggle (noop) (inkscape-prefs-found))))))
-      (if (inkscape-ready?)
-        (aligned (meti (text "Inkscape extension installed")           
-              (inert (toggle (noop) (inkscape-extension-installed)))))
+      (if (svg-converter-available) 
+        ======
+        (bold (text "Inkscape"))
+        ===        
+        ;; tests in "assuming" not refreshed, must use "if" construct instead         
+        (if (not (inkscape-detected)) 
+               (centered (text "Inkscape not detected") ))
+        (if (and (inkscape-detected) (not (inkscape-prefs-found)))
+          (aligned (meti (hlist  // (text "Inkscape user prefs found") >>> 
+              (if (not (inkscape-prefs-found))
+                (explicit-buttons (
+                              (eval (if (os-mingw?) "help" "create (start Inkscape)"))
+                    (start-inkscape))) ))
+              (inert (toggle (noop) (inkscape-prefs-found))))))
+        (if (inkscape-ready?)
+          (aligned (meti (text "Inkscape extension installed")           
+                (inert (toggle (noop) (inkscape-extension-installed)))))
+          ===
+          (centered  (explicit-buttons ("install/update extension" (install-inkscape-extension)) ) ))
+        ======
+        (bold (text "LibreOffice"))
+        ===        
+        (centered (explicit-buttons ("install/update LibreOffice extension" (install-libreoffice-extension)) ) )
         ===
-    (centered  (explicit-buttons ("install/update extension" (install-inkscape-extension)) ) ))
-      ======
-    (bold (text "LibreOffice"))
-    ===        
-     (centered (explicit-buttons ("install/update LibreOffice extension" (install-libreoffice-extension)) ) )
-    ===
-     (centered (text "-------------------------------------"))
-    ===
-      (aligned (meti (hlist  // (text "Enable socket communications (faster)"))              
-              (toggle (set-equation-editor-server answer)
-                (get-equation-editor-server))))
+        (centered (text "-------------------------------------"))
+        ===
+        (aligned (meti (hlist  // (text "Enable socket communications (faster)"))              
+                  (toggle (set-equation-editor-server answer)
+                    (get-equation-editor-server))))
+      )
     )
-    )
-  
     ======
-        (centered
-         (hlist  /// (explicit-buttons ("Refresh" (refresh-now "equ-ed-config")))
-             /// (explicit-buttons ("Help" (load-help-buffer "equation-editor")))))
+    (centered
+      (hlist  /// (explicit-buttons ("Refresh" (refresh-now "equ-ed-config")))
+         /// (explicit-buttons ("Help" (load-help-buffer "equation-editor")))))
   ))
 
+(tm-define (open-equation-editor-widget)
+  (:interactive #t)
+    (dialogue-window equation-editor-preferences-widget noop "Equation editor plugin settings"))
 
-(if (not (defined? 'plugins-with-pref-widget)) ;see https://savannah.gnu.org/patch/?10177
-;; no preference tab widgets for plugins: setup a menu in the tools menu
+(tm-menu (equation-editor-menu)
+  (if (not (svg-converter-available))
+        ("get svg converter" (get-svg-converter)))          
+  (if (svg-converter-available)
+    ("server mode" (toggle-preference "equation-editor-server"))
+    (-> "External clients"
+      (if (inkscape-ready?) ("install/update Inkscape extension" (install-inkscape-extension)))
+      (if (not (inkscape-ready?)) 
+        (when #f  ("Inkscape extension not instalable" (noop)))
+        (if (not (inkscape-detected))
+          (when #f  ("(Inkscape not detected)" (noop))))
+        (if (and (inkscape-detected) (not (inkscape-prefs-found)))
+          ("create Inkscape user prefs (start inkscape)" (start-inkscape))))
+      ("install/update LibreOffice extension" (install-libreoffice-extension))))
+  ("Help" (load-help-buffer "equation-editor")))
 
-  (begin 
-
-    (tm-define (open-equation-editor-widget)
-      (:interactive #t)
-        (dialogue-window equation-editor-preferences-widget noop "Equation editor plugin settings"))
-      
-
-    (tm-menu (equation-editor-menu)
-      (if (not (svg-converter-available))
-            ("get svg converter" (get-svg-converter)))          
-      (if (svg-converter-available)
-        ("server mode" (toggle-preference "equation-editor-server"))
-        (-> "External clients"
-          (if (inkscape-ready?) ("install/update Inkscape extension" (install-inkscape-extension)))
-          (if (not (inkscape-ready?)) 
-            (when #f  ("Inkscape extension not instalable" (noop)))
-            (if (not (inkscape-detected))
-              (when #f  ("(Inkscape not detected)" (noop))))
-            (if (and (inkscape-detected) (not (inkscape-prefs-found)))
-              ("create Inkscape user prefs (start inkscape)" (start-inkscape))))
-          ("install/update LibreOffice extension" (install-libreoffice-extension))))
-      ("Help" (load-help-buffer "equation-editor")))
-
-    (delayed (:idle 2000)
-      (tm-menu (tools-equation-editor-menu)
-        (former)
-        (when (get-boolean-preference "equation-editor")
-          (if (use-popups?) 
-              ("Equation editor plugin"
-               (open-equation-editor-widget)))
-          (if (use-menus?)
-              (-> "Equation editor plugin"
-                  (link equation-editor-menu))))
-      ))
-))
+(delayed (:idle 2000)
+  (tm-menu (tools-equation-editor-menu)
+    (former)
+    (when (get-boolean-preference "equation-editor")
+      (if (use-popups?) 
+          ("Equation editor plugin"
+           (open-equation-editor-widget)))
+      (if (use-menus?)
+          (-> "Equation editor plugin"
+              (link equation-editor-menu))))
+  ))
