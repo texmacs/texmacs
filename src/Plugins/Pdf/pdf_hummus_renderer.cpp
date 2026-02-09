@@ -1750,7 +1750,6 @@ pdf_image_rep::flush (PDFWriter& pdfw)
     }
   } 
   else {
-    temp= url_temp (".pdf");
     // first try to work out inclusion using our own tools
     // note that we have to return since flush_raster and flush_jpg
     // already build the appopriate Form XObject into the PDF
@@ -1761,7 +1760,8 @@ pdf_image_rep::flush (PDFWriter& pdfw)
     if (s == "png")
       if (flush_png(pdfw, name)) return;
 #endif
-    // other formats we generate a pdf (with available converters) that we'll embbed
+    // other formats we generate a either pdf or png that we'll embbed
+    temp= url_temp (".pdf");
     image_to_pdf (name, temp, w, h, 300);
     // the 300 dpi setting is the maximum dpi of raster images that will be generated:
     // images that are to dense will de downsampled to keep file small
@@ -1769,6 +1769,13 @@ pdf_image_rep::flush (PDFWriter& pdfw)
     // dpi DOES NOT apply for vector images that we know how to handle : eps, svg(if inkscape present)
     // 
     // TODO: make the max dpi setting smarter (printer resolution, preference ...)
+    if (! exists(temp)) {
+        // nothing worked for pdf, then embed png (if we could display the image, we can use png)
+        temp= url_temp (".png");
+        image_to_png (name, temp, w, h);
+        if (flush_png(pdfw, temp)) return;
+    }
+
   }
   EStatusCode status = PDFHummus::eFailure;
   DocumentContext& dc = pdfw.GetDocumentContext();
