@@ -214,7 +214,7 @@ as_tree (object obj) {
 }
 
 scheme_tree
-as_tmscm_tree (object obj) {
+as_scheme_tree (object obj) {
   tmscm t= object_to_tmscm (obj);
   return tmscm_to_scheme_tree (t);
 }
