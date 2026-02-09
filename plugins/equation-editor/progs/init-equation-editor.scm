@@ -41,7 +41,8 @@
 ;;(import-from (debug debug-menu))(debug-toggle "io")
 
 (plugin-configure equation-editor 
-  (:require #t)) ;set to #f if you want to permanently disable the plugin
+  (:require #t) ;set to #f if you want to permanently disable the plugin <- FIXME actually this does not work! 
+  (:preferences (get-boolean-preference "equation-editor")))
 
 (define initialized-equation-editor? #f)
 
