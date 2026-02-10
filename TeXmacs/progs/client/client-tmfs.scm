@@ -417,14 +417,14 @@
     (string-append "(remote-rename-interactive "
                    (number->string server) " \""
                    u "\")")
-    `(action (dir-entry-icon "tm_replace.svg") ,action-cmd)))
+    `(action (dir-entry-icon "tm_replace.svg" "Rename") ,action-cmd)))
 
 (tm-define (build-table-remove-action server u)
   (with action-cmd
     (string-append "(remote-remove-interactive "
                    (number->string server) " \""
                    u "\")")
-    `(action (dir-entry-icon "tm_focus_delete.svg") ,action-cmd)))
+    `(action (dir-entry-icon "tm_focus_delete.svg" "Delete") ,action-cmd)))
 
 (tm-define (build-actions-hdr share?)
   (if share? `(concat (phantom-icon) (phantom-icon) (phantom-icon)) ""))
