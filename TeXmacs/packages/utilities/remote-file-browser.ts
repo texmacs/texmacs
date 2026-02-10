@@ -57,8 +57,12 @@
     </src-comment>
   </active*>
 
+  <assign|dir-entry-name-max-len|60>
+
+  <assign|dir-entry-name|<macro|name|link|<if|<greater|<length|<arg|name>>|<value|dir-entry-name-max-len>>|<hlink|<concat|<range|<arg|name>|0|<minus|<value|dir-entry-name-max-len>|3>>|\<ldots\>>|<arg|link>>|<hlink|<arg|name>|<arg|link>>>>>
+
   <assign|dir-entry|<\macro|icon-name|name|link|date|actions>
-    <concat|<dir-entry-icon|<arg|icon-name>|>|<hspace|12pt><hlink|<arg|name>|<arg|link>>|<htab|5mm>|<arg|date><hspace|1em><arg|actions>>
+    <concat|<dir-entry-icon|<arg|icon-name>|>|<hspace|12pt><dir-entry-name|<arg|name>|<arg|link>>|<htab|5mm>|<arg|date><hspace|1em><arg|actions>>
   </macro>>
 
   <\active*>
