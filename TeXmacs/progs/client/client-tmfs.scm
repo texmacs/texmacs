@@ -112,10 +112,12 @@
   (== (get-sort-direction) "asc"))
 
 (tm-define (toggle-sort-direction)
+  (:secure #t)
   (set-preference "remote-file-browser:sort-direction"
                   (if (sort-ascending?) "desc" "asc")))
 
 (tm-define (set-sort-field field)
+  (:secure #t)
   (set-preference "remote-file-browser:sort-field" field))
 
 ;; Generic sort function with accessor functions
