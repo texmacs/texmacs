@@ -848,6 +848,7 @@
 
 (tm-define (remote-rename-interactive server u)
   (:interactive #t)
+  (:secure #t)
   (with dir? (remote-directory? u)
     (open-remote-file-browser
      server
@@ -860,6 +861,7 @@
 
 (tm-define (remote-remove-interactive server u)
   (:interactive #t)
+  (:secure #t)
   (with msg (if (remote-directory? u)
                 "Really remove directory and its recursive contents?"
                 "Really remove file?")
@@ -969,6 +971,7 @@
 
 (tm-define (open-permissions-editor server u)
   (:interactive #t)
+  (:secure #t)
   (with-remote-identifier rid server u
     (when rid
       (with attrs (list "readable" "writable" "owner")
