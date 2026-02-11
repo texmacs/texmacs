@@ -227,7 +227,7 @@ void QTMToolbar::addAction (QAction* action) {
       button->setIconSize (iconSize());
     }
     
-#if QT_VERSION >= 0x060000
+#if QT_VERSION >= 0x050000
     // on click finish, set the focus to the last focused widget
     connect (button, &QToolButton::clicked, []() {
       QTMWidget::setFocusToLast();
