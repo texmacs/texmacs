@@ -207,6 +207,17 @@ QTMWidget::devicePixelRatioChanged () {
 
 #else
 
+#define REDRAW_EVERYTHING 1
+
+#if REDRAW_EVERYTHING
+QTMWidget::paintEvent (QPaintEvent* event) {
+  QPainter p (surface());
+  p.drawPixmap (QRect (0, 0, surface()->width(), surface()->height()),
+                *(tm_widget()->backingPixmap),
+                QRect (0, 0, surface()->width()  * retina_factor,
+                             surface()->height() * retina_factor));
+}
+#else
 void
 QTMWidget::paintEvent (QPaintEvent* event) {
   QPainter p (surface());
@@ -221,6 +232,7 @@ QTMWidget::paintEvent (QPaintEvent* event) {
                          retina_factor * qr.height()));
   }
 }
+#endif
 
 #endif
 
