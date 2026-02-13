@@ -210,6 +210,7 @@ QTMWidget::devicePixelRatioChanged () {
 #define REDRAW_EVERYTHING 1
 
 #if REDRAW_EVERYTHING
+void
 QTMWidget::paintEvent (QPaintEvent* event) {
   QPainter p (surface());
   p.drawPixmap (QRect (0, 0, surface()->width(), surface()->height()),
