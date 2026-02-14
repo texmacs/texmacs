@@ -17,16 +17,16 @@
   collaborative features. Remote resources can be:
 
   <\itemize>
-    <item>A file or directory
+    <item>a file or directory,
 
-    <item>A chat room (private messages are sent to the
-    <verbatim|mail-{username}> chat room)
+    <item>a chat room (private messages are sent to the
+    <verbatim|mail-{username}> chat room),
 
-    <item>A live document
+    <item>a live document.
   </itemize>
 
-  \ This document only describes how to interact with the remote resources,
-  for information on how to setup a server, please read <hlink|Setting up a
+  This document only describes how to interact with the remote resources, for
+  information on how to setup a server, please read <hlink|Setting up a
   <TeXmacs> server|man-server.en.tm>.
 
   <section|Remote tools>
@@ -37,29 +37,29 @@
 
   <subsection|Main menus>
 
-  <icon|tm_cloud.svg> Connection facility: Login, logout, create account,
+  <icon|tm_cloud.svg> Connection facility: login, logout, create account,
   reset credentials.
 
-  <icon|tm_cloud_home.svg> My resources on the server: Access Home, chat
-  rooms, shared resources and live documents.
+  <icon|tm_cloud_home.svg> My resources on the server: access home directory,
+  chat rooms, shared resources and live documents.
 
-  <icon|tm_cloud_mail.svg> Mail: Access and send messages.
+  <icon|tm_cloud_mail.svg> Mail: read and write messages.
 
   <subsection|Contextual menus>
 
   <icon|tm_cloud_file.svg> Interact with the current file or file-like
-  resource (remote file, live document, chat room): change permissions, share
-  with users.
+  resources (remote file, live document, chat room): change permissions,
+  share with other users.
 
   <icon|tm_cloud_dir.svg> Interact with the current directory or
   directory-like resource (remote directory, live documents list): create new
-  resources, share with users, synchronize.
+  resources, share with other users, synchronize.
 
   <section|Connecting to a TeXmacs server <icon|tm_cloud.svg>>
 
   Before using any collaborative features, you need to connect to a <TeXmacs>
   server. A server can be hosted by your institution, research group, or you
-  can connect to a public server if available.
+  can connect to a public server.
 
   To connect to a server:
 
@@ -92,25 +92,25 @@
   need to provide:
 
   <\itemize>
-    <item>A unique username (also called a pseudonym)
+    <item>a unique username (also called a pseudonym),
 
-    <item>A password (servers may enforce strong password requirements)
+    <item>a password (servers may enforce strong password requirements),
 
-    <item>Your full name
+    <item>your full name,
 
-    <item>An email address (used for password recovery and notifications)
+    <item>an email address (used for password recovery and notifications).
   </itemize>
 
   Account management features include:
 
   <\itemize>
-    <item>Changing your password through <menu|Remote|Edit account>
+    <item>changing your password through <menu|Remote|Edit account>,
 
-    <item>Recovering your password via email if you forget your credentials
+    <item>recovering your password via email if you forget your credentials,
 
-    <item>Updating account preferences and personal information
+    <item>updating account preferences and personal information,
 
-    <item>Viewing your account status and server permissions
+    <item>viewing your account status and server permissions.
   </itemize>
 
   <section|Messages and chat rooms <icon|tm_cloud_mail.svg>>
@@ -159,16 +159,16 @@
   Once inside a chat room, you can:
 
   <\itemize>
-    <item>Send text messages to all participants
+    <item>send text messages to all participants,
 
-    <item>Format messages using <TeXmacs> markup and mathematical formulas
+    <item>format messages using <TeXmacs> markup and mathematical formulas,
 
-    <item>Share resources such as documents, remote files, and live documents
-    (see <hlink|sharing below|#sharing-resources-with-users>)
+    <item>share resources such as documents, remote files, and live documents
+    (see <hlink|sharing below|#sharing-resources-with-users>),
 
-    <item>View who is currently present in the room
+    <item>view who is currently present in the room,
 
-    <item>See the history of messages and shared resources
+    <item>see the history of messages and shared resources.
   </itemize>
 
   <subsection|Sharing resources with users>
@@ -194,19 +194,19 @@
   Key characteristics of remote files:
 
   <\itemize>
-    <item><em|Versioned storage>: Every save creates a new version that can
+    <item><em|Versioned storage>. Every save creates a new version that can
     be retrieved later.
 
-    <item><em|Asynchronous collaboration>: Multiple people can work on the
+    <item><em|Asynchronous collaboration>. Multiple people can work on the
     same remote file, but not simultaneously. When you open a remote file,
     you are working with your own local copy.
 
-    <item><em|Manual conflict resolution>: If multiple people edit the same
+    <item><em|Manual conflict resolution>. If multiple people edit the same
     remote file, you will need to manually compare versions and resolve
     conflicts using the versioning tool (see <hlink|Versioning
     tools|man-versioning.en.tm>).
 
-    <item><em|Full history>: You can view the complete history of edits, see
+    <item><em|Full history>. You can view the complete history of edits, see
     who made which changes and when, and revert to any previous version.
   </itemize>
 
@@ -231,14 +231,14 @@
   Remote directories:
 
   <\itemize>
-    <item>Can contain remote files, subdirectories, and other resources
+    <item>Can contain remote files, subdirectories, and other resources.
 
-    <item>Are navigable through the <TeXmacs> interface
+    <item>Are navigable through the <TeXmacs> interface.
 
-    <item>Provide a shared organizational structure for team resources
+    <item>Provide a shared organizational structure for team resources.
 
     <item>Can be shared with users to give access to entire collections of
-    files
+    files.
   </itemize>
 
   Directory permissions control who can view and modify files within the
@@ -246,26 +246,25 @@
 
   <subsection|Live documents>
 
-  Live documents provide true real-time collaborative editing, similar to
-  tools like Google Docs. When multiple people open the same live document,
-  they can all edit simultaneously and see each other's changes appear
-  instantly.
+  Live documents provide true real-time collaborative editing. When multiple
+  people open the same live document, they can all edit simultaneously and
+  see each other's changes appear instantly.
 
   Key characteristics of live documents:
 
   <\itemize>
-    <item><em|Real-time synchronization>: Changes made by any participant are
+    <item><em|Real-time synchronization>. Changes made by any participant are
     broadcast to all connected users.
 
-    <item><em|Patch-based merging>: The system uses patch operations to
+    <item><em|Patch-based merging>. The system uses patch operations to
     combine concurrent edits. Compatible edits are automatically merged using
     a pull/rebase algorithm similar to version control systems.
 
-    <item><em|Conflict handling>: When concurrent edits conflict (e.g.,
+    <item><em|Conflict handling>. When concurrent edits conflict (e.g.,
     editing the same region), the system retracts to the latest compatible
     state and reapplies changes where possible.
 
-    <item><em|Session-based>: Live documents maintain state per connection,
+    <item><em|Session-based>. Live documents maintain state per connection,
     tracking each participant's view of the document.
   </itemize>
 
@@ -280,14 +279,14 @@
   particularly useful for:
 
   <\itemize>
-    <item>Real-time brainstorming and note-taking during meetings
+    <item>real-time brainstorming and note-taking during meetings,
 
-    <item>Pair programming or collaborative code development
+    <item>pair programming or collaborative code development,
 
-    <item>Simultaneous editing of mathematical proofs or formulas
+    <item>simultaneous editing of mathematical proofs or formulas,
 
-    <item>Any scenario where immediate feedback and synchronous work is
-    valuable
+    <item>any scenario where immediate feedback and synchronous work is
+    valuable.
   </itemize>
 
   <section|Permissions and access control><label|sec-permissions>
@@ -306,15 +305,15 @@
     can:
 
     <\itemize-dot>
-      <item>Read and write the resource content
+      <item>read and write the resource content,
 
-      <item>Modify all permissions (readable, writable, and ownership)
+      <item>modify all permissions (readable, writable, and ownership),
 
-      <item>Delete the resource
+      <item>delete the resource,
 
-      <item>Transfer ownership to other users
+      <item>transfer ownership to other users,
 
-      <item>Invite or share the resource with others
+      <item>invite or share the resource with others.
     </itemize-dot>
 
     A resource can have multiple owners. When you create a resource, you
@@ -323,13 +322,13 @@
     <item*|Readable>Users with read access can:
 
     <\itemize-dot>
-      <item>View the resource and its contents
+      <item>view the resource and its content,
 
-      <item>See the resource in listings and searches
+      <item>see the resource in listings and searches,
 
-      <item>Open the resource in <TeXmacs>
+      <item>open the resource in <TeXmacs>,
 
-      <item>For remote files: view the version history
+      <item>for remote files: view the version history.
     </itemize-dot>
 
     Read access does not allow making changes to the resource.
@@ -337,16 +336,16 @@
     <item*|Writable>Users with write access can:
 
     <\itemize-dot>
-      <item>Modify the resource content
+      <item>modify the resource content,
 
-      <item>For remote files: create new versions by saving changes
+      <item>for remote files, create new versions by saving changes,
 
-      <item>For live documents: edit the document in real-time
+      <item>for live documents, edit the document in real-time,
 
-      <item>For chat rooms: send messages and share resources
+      <item>for chat rooms, send messages and share resources,
 
-      <item>For directories: create, rename, or delete files within the
-      directory
+      <item>for directories, create, rename, or delete files within the
+      directory.
     </itemize-dot>
 
     Write access automatically includes read access. Users with write access
@@ -356,7 +355,7 @@
 
   <subsection|Public vs. private resources>
 
-  Permissions can be set to specific users or made public:
+  Permissions can be set to specific users or made public.
 
   <\itemize>
     <item><strong|Specific users>: Add individual users by their username to
@@ -368,11 +367,11 @@
     to the server. This is useful for:
 
     <\itemize-dot>
-      <item>Open chat rooms for community discussions
+      <item>open chat rooms for community discussions,
 
-      <item>Shared reference documents that everyone should read
+      <item>shared reference documents that everyone should read,
 
-      <item>Collaborative documents with broad participation
+      <item>collaborative documents with broad participation.
     </itemize-dot>
 
     Be cautious with public write access, as it allows anyone to modify the
@@ -399,11 +398,11 @@
     <item>For each permission level:
 
     <\itemize-dot>
-      <item>Select users from the list to grant them access
+      <item>select users from the list to grant them access,
 
-      <item>Deselect users to revoke their access
+      <item>deselect users to revoke their access,
 
-      <item>Select <verbatim|all> to make the permission public
+      <item>select <verbatim|all> to make the permission public.
     </itemize-dot>
 
     <item>Changes are saved automatically as you modify the selections.
@@ -416,7 +415,7 @@
 
   <TeXmacs> provides convenient ways to share resources with specific users.
 
-  <strong|Important>: Before inviting users or sharing resources, you should
+  <strong|Important.> Before inviting users or sharing resources, you should
   first set the appropriate permissions. Users cannot access a resource
   unless they have been granted read (and write, if needed) permissions on
   that resource.
@@ -458,19 +457,19 @@
   <subsection|Permission inheritance and defaults>
 
   <\itemize>
-    <item><strong|New resources>: When you create a new resource, you become
+    <item><strong|New resources.> When you create a new resource, you become
     its owner by default. Other permissions start empty unless you explicitly
     set them.
 
-    <item><strong|Chat rooms>: By default, newly created chat rooms have both
+    <item><strong|Chat rooms.> By default, newly created chat rooms have both
     readable and writable permissions set to <verbatim|all>, making them
     public. You can change this to restrict access.
 
-    <item><strong|Live documents>: By default, new live documents have public
+    <item><strong|Live documents.> By default, new live documents have public
     read and write access (<verbatim|all>). This facilitates open
     collaboration but can be restricted as needed.
 
-    <item><strong|Remote files and directories>: New remote files and
+    <item><strong|Remote files and directories.> New remote files and
     directories are private by default (only the owner has access). You must
     explicitly grant access to collaborators.
   </itemize>
@@ -478,23 +477,23 @@
   <subsection|Best practices for permissions>
 
   <\itemize>
-    <item><strong|Principle of least privilege>: Grant only the minimum
+    <item><strong|Principle of least privilege.> Grant only the minimum
     permissions necessary. If users only need to read a document, don't give
     them write access.
 
-    <item><strong|Review permissions regularly>: Periodically check who has
+    <item><strong|Review permissions regularly.> Periodically check who has
     access to your resources, especially for sensitive content.
 
-    <item><strong|Use specific users for sensitive content>: Avoid public
+    <item><strong|Use specific users for sensitive content.> Avoid public
     access (<verbatim|all>) for confidential or work-in-progress documents.
 
-    <item><strong|Multiple owners for important resources>: Consider having
+    <item><strong|Multiple owners for important resources.> Consider having
     multiple owners for critical resources to avoid single points of failure.
 
-    <item><strong|Document your sharing decisions>: When sharing resources in
+    <item><strong|Document your sharing decisions.> When sharing resources in
     chat, briefly explain who should have access and why.
 
-    <item><strong|Remove access when collaboration ends>: When a project or
+    <item><strong|Remove access when collaboration ends.> When a project or
     collaboration concludes, remove write access from users who no longer
     need it.
   </itemize>
@@ -556,9 +555,9 @@
   <TeXmacs> can receive push notifications from the server, alerting you to:
 
   <\itemize>
-    <item>New messages in chat rooms you participate in
+    <item>new messages in chat rooms you participate in,
 
-    <item>Invitations to join new chat rooms or collaborate on documents
+    <item>invitations to join new chat rooms or collaborate on documents.
   </itemize>
 
   <section|Security and privacy>
