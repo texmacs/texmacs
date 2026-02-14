@@ -15,21 +15,21 @@
   The <TeXmacs> server provides:
 
   <\itemize>
-    <item>Remote file storage with version history
+    <item>remote file storage with version history,
 
-    <item>Live collaborative document editing
+    <item>live collaborative document editing,
 
-    <item>Chat rooms and messaging
+    <item>chat rooms and messaging,
 
-    <item>User account management
+    <item>user account management,
 
-    <item>TLS encryption for secure connections
+    <item>TLS encryption for secure connections.
   </itemize>
 
   You can run a server on your local machine for personal use or testing, or
   set up a dedicated server for a team or organization. Server administration
   can be performed locally through the <TeXmacs> interface or remotely by
-  admin users.
+  administrator users.
 
   <section|Starting and stopping the server>
 
@@ -44,20 +44,21 @@
   <\enumerate>
     <item>Go to <menu|Remote|Start server>.
 
-    <item>If TLS support is available and no certificate exists, you will be
-    prompted to create one (see <hlink|TLS certificates|#sec-certificates>).
+    <item>If TLS support is available and no certificate exists, then you
+    will be prompted to create one (see <hlink|TLS
+    certificates|#sec-certificates>).
 
-    <item>If this is the first time starting the server, a default
+    <item>When the server is started for the first time, a default
     administrator account is created automatically (see <hlink|Default admin
     account|#sec-default-admin>).
   </enumerate>
 
-  Once running, the <menu|Remote> menu displays the server status, showing
+  When the server is running, the <menu|Remote> menu displays its status and
   the port number in use (e.g., <samp|Server running on port 6561>).
 
   <subsection|Stopping and restarting>
 
-  When the server is running, the following options are available in the
+  When the server is running, the following options are available at the
   <menu|Remote> menu:
 
   <\description>
@@ -91,7 +92,7 @@
   </itemize>
 
   These files are stored in <verbatim|$TEXMACS_HOME_PATH/server/> (typically
-  <verbatim|~/.TeXmacs/server/> on Linux/macOS).
+  <verbatim|~/.TeXmacs/server/> for Linux and macOS).
 
   <subsection|Creating a self-signed certificate>
 
@@ -154,8 +155,8 @@
 
   <section|Default administrator account><label|sec-default-admin>
 
-  When the server starts for the first time, it automatically creates an
-  administrator account:
+  When the server starts for the first time, an administrator account is
+  created:
 
   <\itemize>
     <item>Username: <verbatim|admin>
@@ -174,9 +175,9 @@
   <section|Server preferences>
 
   Server configuration settings are stored in <TeXmacs> preferences and can
-  be modified through the remote preferences form (for admin users connected
-  to the server) or by editing preferences directly. The settings are
-  organized into several categories.
+  be modified through the remote preferences form (for administrator users
+  connected to the server) or by editing preferences directly. The settings
+  are organized into several categories.
 
   <subsection|Connection settings>
 
@@ -286,7 +287,7 @@
 
   <subsection|User management>
 
-  Admin users can manage user accounts through the <TeXmacs> interface:
+  Administror users can manage user accounts through the <TeXmacs> interface:
 
   <\enumerate>
     <item>Connect to the server and log in with an admin account.
@@ -347,11 +348,11 @@
   message content via a temporary file. Available placeholders:
 
   <\description>
-    <item*|$USER_PSEUDO>The user's username
+    <item*|$USER_PSEUDO>The user pseudo\ 
 
-    <item*|$USER_NAME>The user's full name
+    <item*|$USER_NAME>The user full name
 
-    <item*|$USER_EMAIL>The user's email address
+    <item*|$USER_EMAIL>The user email address
 
     <item*|$USER_CODE>The confirmation or reset code
 
@@ -363,6 +364,8 @@
   <\verbatim-code>
     sendmail $USER_EMAIL \< $FILE_NAME
   </verbatim-code>
+
+  or
 
   <\verbatim-code>
     cat $FILE_NAME \| mail $USER_EMAIL -s \\"TeXmacs server Account
@@ -383,8 +386,9 @@
   </description>
 
   Templates support the same placeholders as the mail command. Default
-  templates are copied from the <TeXmacs> installation on first use. Admin
-  users can edit these templates through the remote preferences form.
+  templates are copied from the <TeXmacs> installation on first use.
+  Administrator users can edit these templates through the remote preference
+  form.
 
   <section|Server license>
 
@@ -428,9 +432,9 @@
   <verbatim|--debug-gnutls --debug-io --debug-remote --debug-sockets>
 
   Which are also available in the Debugging tool menu in the <TeXmacs>
-  interface
+  interface.
 
-  <section|Security considerations>
+  <section|Security tips>
 
   When running a <TeXmacs> server, consider the following security practices:
 
@@ -489,7 +493,8 @@
 
   <\description>
     <item*|Server fails to start>Check that the configured port is not
-    already in use. Try a different port number.
+    already in use. Wait for a previous process releases the port, or use a
+    different port number.
 
     <item*|TLS errors>Verify that the certificate and key files exist and are
     valid. Try regenerating the certificate.
