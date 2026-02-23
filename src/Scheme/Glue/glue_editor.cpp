@@ -3548,10 +3548,10 @@ tmg_idle_time () {
 tmscm
 tmg_change_time () {
   // TMSCM_DEFER_INTS;
-  int out= get_current_editor()->change_time ();
+  long long out= get_current_editor()->change_time ();
   // TMSCM_ALLOW_INTS;
 
-  return int_to_tmscm (out);
+  return long_to_tmscm (out); // FIXME should be long_long_to_tmscm ?
 }
 
 tmscm

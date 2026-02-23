@@ -628,7 +628,7 @@ edit_interface_rep::idle_time (int event_type) {
   else return 0;
 }
 
-int
+time_t
 edit_interface_rep::change_time () {
   return last_change;
 }
