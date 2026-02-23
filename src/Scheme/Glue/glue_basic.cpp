@@ -540,10 +540,10 @@ tmg_language_to_locale (tmscm arg1) {
 tmscm
 tmg_texmacs_time () {
   // TMSCM_DEFER_INTS;
-  int out= texmacs_time ();
+  long long out= texmacs_time ();
   // TMSCM_ALLOW_INTS;
 
-  return int_to_tmscm (out);
+  return long_to_tmscm (out); // FIXME long_long_to_tmscm
 }
 
 tmscm
