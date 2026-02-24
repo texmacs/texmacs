@@ -1,4 +1,4 @@
-<TeXmacs|1.99.6>
+<TeXmacs|2.1.4>
 
 <style|source>
 
@@ -42,11 +42,11 @@
 
   <assign|page-right|81pt>
 
-  <assign|page-top|<plus|78pt|13pt|16pt>>
+  <assign|page-top|<macro|<plus|78pt|13pt|16pt>>>
 
-  <assign|page-bot|<plus|114pt|2pc|0pt>>
+  <assign|page-bot|<macro|<plus|114pt|2pc|0pt>>>
 
-  <assign|page-head-sep|<plus|13pt|4pt>>
+  <assign|page-head-sep|<macro|<plus|13pt|4pt>>>
 
   <assign|page-foot-sep|2pc>
 
