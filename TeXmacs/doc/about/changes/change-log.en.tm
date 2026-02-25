@@ -45,6 +45,8 @@
     <item>Improved internationalization and execution of external commands
     for Windows (2.1.5).
 
+    <item>Progress on Android version (2.1.5).
+
     <item>Various bug fixes (2.1.5).
 
     <item>Headless option for running <TeXmacs> as a window-less script
