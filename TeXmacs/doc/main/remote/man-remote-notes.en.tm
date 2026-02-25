@@ -5,7 +5,7 @@
 <\body>
   <tmdoc-title|Notes and troubleshooting><label|sec-man-remote-notes>
 
-  <section|Versioning vs. live documents: choosing the right tool>
+  <subsection|Versioning vs. live documents: choosing the right tool>
 
   A common point of confusion is the difference between <hlink|<TeXmacs>
   versioning system|../editing/man-versioning.en.tm> and live documents. Both
@@ -60,7 +60,7 @@
   sessions and brainstorming, and remote files with versioning for more
   formal document management and long-term storage.
 
-  <section|Security and privacy>
+  <subsection|Security and privacy>
 
   When using remote tools, keep in mind:
 
@@ -80,7 +80,7 @@
     and backup procedures.
   </itemize>
 
-  <section|Troubleshooting>
+  <subsection|Troubleshooting>
 
   If you encounter connection issues:
 

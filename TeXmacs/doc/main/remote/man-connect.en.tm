@@ -3,8 +3,7 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Connecting to a <TeXmacs> server
-  <icon|tm_cloud.svg>><label|sec-man-connect>
+  <tmdoc-title|Connecting to a <TeXmacs> server><label|sec-man-connect>
 
   Before using any collaborative features, you need to connect to a <TeXmacs>
   server. A server can be hosted by your institution, research group, or you
