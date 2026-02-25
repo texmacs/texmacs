@@ -5,9 +5,48 @@
 <\body>
   <tmdoc-title|<TeXmacs> changelog>
 
-  <section|Changes from version 2.1 to 2.1.4>
+  <section|Changes from version 2.1 to 2.1.5>
 
   <\itemize>
+    <item>Qt6 based version on all supported platforms (GNU Linux, MacOS,
+    Windows) (2.1.5).
+
+    <item>Experimental support for collaborative editing (2.1.5).
+
+    <item>New Qt6 AppImage package for GNU Linux platforms (2.1.5).
+
+    <item>New native 64 bits Windows version (2.1.5).
+
+    <item>User installable MSIX package at the Windows store (2.1.5).
+
+    <item>Jupyter plugin and new R interface based on Jupyter (2.1.5).
+
+    <item>Possibility to embed the <TeXmacs> source document inside its PDF
+    export (2.1.5).
+
+    <item>New support for Aspell via its C API.
+
+    <item>Experimental interface for various AI tools (ChatGPT, Mistral AI,
+    etc.) (2.1.5).
+
+    <item>Experimental support for language tools (2.1.5).
+
+    <item>New GnuTLS support with x509 certificates for collaborative editing
+    (2.1.5).
+
+    <item>Document based server preference editor for collaborative editing
+    (2.1.5).
+
+    <item>Improved DPR (device pixel ratio) support when using multiple
+    screens (2.1.5).
+
+    <item>Horizontally scrollable toolbars (2.1.5).
+
+    <item>Improved internationalization and execution of external commands
+    for Windows (2.1.5).
+
+    <item>Various bug fixes (2.1.5).
+
     <item>Headless option for running <TeXmacs> as a window-less script
     (2.1.4).
 
