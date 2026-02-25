@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.14>
+<TeXmacs|2.1.4>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmdoc-title|The GNU <TeXmacs> manual>
@@ -32,9 +32,12 @@
     <branch|Customizing <TeXmacs>|scheme/man-scheme.en.tm>
 
     <branch|The <TeXmacs> plug-in system|../devel/plugin/plugins.en.tm>
+
+    <branch|Remote tools and collaborative
+    editing|remote/man-collaborative.en.tm>
   </traverse>
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2002|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -44,8 +47,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>
