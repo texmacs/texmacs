@@ -183,6 +183,23 @@
         (client-find-server sname))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Server lookup from tmfs path
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Find the server handle for a tmfs name like "localhost/~pseudo/..."
+;; by extracting the pseudo from the ~pseudo path component.
+(tm-define (find-server-for-name name)
+  (let* ((parts (tmfs->list name))
+         (sname (car parts))
+         (pseudo-part (and (>= (length parts) 2) (cadr parts)))
+         (pseudo (and pseudo-part (string-starts? pseudo-part "~")
+                      (substring pseudo-part 1
+                                 (string-length pseudo-part)))))
+    (if pseudo
+        (client-find-server-by-pseudo sname pseudo)
+        (client-find-server sname))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Useful subroutines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
