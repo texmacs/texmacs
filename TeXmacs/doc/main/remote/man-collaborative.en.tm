@@ -13,591 +13,74 @@
   integrate seamlessly with <TeXmacs>, making collaboration feel natural and
   intuitive.
 
-  In this document, a remote resource refers to content with remote
-  collaborative features. Remote resources can be:
+  In what follows, a <em|remote resource> refers to a document that is stored
+  and managed on a remote server and which can potentially be accessed and
+  edited simultaneously by several users. Currently, there are three types of
+  remote resources:
 
   <\itemize>
-    <item>a file or directory,
+    <item><strong|Files and directories> work in a similar way as your local
+    files and directories, except that they are stored on a remote server and
+    that one may control very precisely which other users have read and/or
+    write access to the remote documents. Moreover, version control is
+    automatically enabled for all remote files, which allows you to examine
+    the full history of such documents.
 
-    <item>a chat room (private messages are sent to the
-    <verbatim|mail-{username}> chat room),
+    <item><strong|Live documents> are files that can be accessed
+    simultaneously and in real time by several users. This is often used in
+    combination with visio conference software in order to share written
+    notes, formulas, and/or figures on-the-fly. There is an unlimited number
+    of users who can access live documents simultaneously, so this feature
+    can also be used for broadcasting a live conference or interactive
+    teaching.
 
-    <item>a live document.
+    <item><strong|Chat rooms> are a light-weight facility for instant
+    messaging. You may set up your own chat rooms for selected groups of
+    friends. Any user also has a personal mailbox (which technically works in
+    the same way as a chat room) for private messages and invitations to open
+    shared resources.
   </itemize>
 
-  This document only describes how to interact with the remote resources, for
-  information on how to setup a server, please read <hlink|Setting up a
-  <TeXmacs> server|man-server.en.tm>.
+  In order to use the remote tools, you must enable the <menu|Tools|Remote
+  tool>. This adds the <menu|Remote> menu and toolbar icons, which provide
+  all the actions to communicate with a remote server and access its
+  resources. You should next <hlink|connect to a remote <TeXmacs>
+  server|man-connect.en.tm> and create an account. After logging in, the user
+  interface is organized as follows:
 
-  <section|Remote tools>
+  <\description-dash>
+    <item*|<icon|tm_cloud.svg>> Connection facility: login, logout, create
+    account, reset credentials.
 
-  To access remote facilities, you must enable the <menu|Tools|Remote tool>.
-  This adds the <menu|Remote> menu and toolbar icons, which provide all the
-  actions to communicate with a remote server and access its resources.
+    <item*|<icon|tm_cloud_home.svg>>Remote resources: home directory, chat
+    rooms, shared resources, live documents, etc.
 
-  <subsection|Main menus>
+    <item*|<icon|tm_cloud_mail.svg>>Mail: read and write messages.
 
-  <icon|tm_cloud.svg> Connection facility: login, logout, create account,
-  reset credentials.
+    <item*|<icon|tm_cloud_file.svg>>Manage the current remote resource:
+    change permissions, sharing with friends, etc.
 
-  <icon|tm_cloud_home.svg> My resources on the server: access home directory,
-  chat rooms, shared resources and live documents.
+    <item*|<icon|tm_cloud_dir.svg>>Manage a remote directory: create new
+    resources, share with other users, synchronize.
+  </description-dash>
 
-  <icon|tm_cloud_mail.svg> Mail: read and write messages.
+  Below, we describe the remote tools from the perspective of a user. System
+  administrators or power users may also wish to <hlink|set up and manage
+  their own <TeXmacs> server|man-server.en.tm>.
 
-  <subsection|Contextual menus>
+  <\traverse>
+    <branch|Connecting to a <TeXmacs> server|connect.en.tm>
 
-  <icon|tm_cloud_file.svg> Interact with the current file or file-like
-  resources (remote file, live document, chat room): change permissions,
-  share with other users.
+    <branch|Messages and chat rooms|man-chat.en.tm>
 
-  <icon|tm_cloud_dir.svg> Interact with the current directory or
-  directory-like resource (remote directory, live documents list): create new
-  resources, share with other users, synchronize.
+    <branch|Shared resources|man-share.en.tm>
 
-  <section|Connecting to a TeXmacs server <icon|tm_cloud.svg>>
+    <branch|Permissions and access control|man-permissions.en.tm>
 
-  Before using any collaborative features, you need to connect to a <TeXmacs>
-  server. A server can be hosted by your institution, research group, or you
-  can connect to a public server.
+    <branch|Notes and troubleshooting|man-remote-notes.en.tm>
+  </traverse>
 
-  To connect to a server:
-
-  <\enumerate>
-    <item>Go to <menu|Remote|Login> (or click the <icon|tm_cloud.xpm> cloud
-    icon) to open the connection dialog.
-
-    <item>Enter the server address (hostname or IP address) and optionally
-    specify a port number if the server uses a non-standard port (the default
-    is 6561).
-
-    <item>If you already have an account, enter your username and password.
-    Otherwise, you can create a new account (see the section below).
-
-    <item>Click <menu|Connect> to establish the connection.
-  </enumerate>
-
-  Once connected, you will have access to all remote features. You can
-  disconnect at any time using <menu|Remote|Logout>.
-
-  The server supports both TLS-encrypted connections (<strong|highly
-  recommended>) and legacy unencrypted connections (<strong|not
-  recommended>). If security is important for your work, ensure that your
-  server administrator has enabled TLS support.
-
-  <subsection|Creating and managing accounts>
-
-  User accounts on a <TeXmacs> server provide access to personal storage,
-  chat rooms, and collaborative documents. When creating an account, you will
-  need to provide:
-
-  <\itemize>
-    <item>a unique username (also called a pseudonym),
-
-    <item>a password (servers may enforce strong password requirements),
-
-    <item>your full name,
-
-    <item>an email address (used for password recovery and notifications).
-  </itemize>
-
-  Account management features include:
-
-  <\itemize>
-    <item>changing your password through <menu|Remote|Edit account>,
-
-    <item>recovering your password via email if you forget your credentials,
-
-    <item>updating account preferences and personal information,
-
-    <item>viewing your account status and server permissions.
-  </itemize>
-
-  <section|Messages and chat rooms <icon|tm_cloud_mail.svg>>
-
-  Chat rooms provide a convenient way to communicate with collaborators
-  directly within <TeXmacs>. Unlike email or external messaging apps, chat
-  rooms are integrated with the document editing environment, allowing you to
-  seamlessly share resources and discuss your work.
-
-  <subsection|Creating a chat room>
-
-  To create a new chat room:
-
-  <\enumerate>
-    <item>Go to <menu|Remote|Chat rooms> to view your chat rooms list.
-
-    <item>Select <menu|Remote|New chat room> (also available via the
-    <icon|tm_cloud_dir.xpm> icon menu). This menu item appears when viewing
-    the chat rooms list.
-
-    <item>Enter a name for your chat room. Choose a descriptive name that
-    reflects the purpose or topic.
-
-    <item>The chat room will be created and you will be automatically joined
-    as the owner.
-  </enumerate>
-
-  As the owner of a chat room, you have full control over its settings and
-  can invite other users. When viewing a chat room, use <menu|Remote|Invite>
-  (also accessible via the <icon|tm_cloud_file.xpm> icon menu) to invite
-  users. See <hlink|Permissions and access control|#sec-permissions> for more
-  details on managing chat room access.
-
-  <subsection|Joining and using chat rooms>
-
-  To join an existing chat room:
-
-  <\enumerate>
-    <item>Go to <menu|Remote|Chat rooms> to view your chat rooms list.
-
-    <item>Select <menu|Remote|Join chat room>.
-
-    <item>Select the chat room you want to join from the list.
-  </enumerate>
-
-  Once inside a chat room, you can:
-
-  <\itemize>
-    <item>send text messages to all participants,
-
-    <item>format messages using <TeXmacs> markup and mathematical formulas,
-
-    <item>share resources such as documents, remote files, and live documents
-    (see <hlink|sharing below|#sharing-resources-with-users>),
-
-    <item>view who is currently present in the room,
-
-    <item>see the history of messages and shared resources.
-  </itemize>
-
-  <subsection|Sharing resources with users>
-
-  Resources can be shared with other users to facilitate collaboration. When
-  you share a resource, the selected users receive a private message with a
-  clickable link. You can only share with users who have been granted
-  permissions to access that resource.
-
-  <section|Understanding shared resources>
-
-  <TeXmacs> provides three main types of shared remote resources, each
-  designed for different collaboration scenarios. Understanding the
-  differences between these resource types will help you choose the right
-  tool for your needs.
-
-  <subsection|Remote files <icon|tm_cloud_file.svg>>
-
-  Remote files are documents stored on the <TeXmacs> server with full version
-  history. When you create or edit a remote file, the server maintains a
-  complete record of all changes over time.
-
-  Key characteristics of remote files:
-
-  <\itemize>
-    <item><em|Versioned storage>. Every save creates a new version that can
-    be retrieved later.
-
-    <item><em|Asynchronous collaboration>. Multiple people can work on the
-    same remote file, but not simultaneously. When you open a remote file,
-    you are working with your own local copy.
-
-    <item><em|Manual conflict resolution>. If multiple people edit the same
-    remote file, you will need to manually compare versions and resolve
-    conflicts using the versioning tool (see <hlink|Versioning
-    tools|man-versioning.en.tm>).
-
-    <item><em|Full history>. You can view the complete history of edits, see
-    who made which changes and when, and revert to any previous version.
-  </itemize>
-
-  Remote files are ideal for projects where you want to maintain a complete
-  audit trail of changes, or when collaborators work at different times
-  rather than simultaneously.
-
-  To create a remote file, navigate to your home directory or any remote
-  directory (<menu|Remote|Home directory>), then select <menu|Remote|New
-  remote file>. This menu item appears when viewing a remote directory.
-  Alternatively, you can save a buffer with a <samp|tmfs://remote-file/> URL.
-  By default, new remote files are private; you must grant permissions to
-  collaborators (see <hlink|Permissions and access
-  control|#sec-permissions>).
-
-  <subsection|Remote directories <icon|tm_cloud_dir.svg>>
-
-  Remote directories provide a way to organize and navigate collections of
-  remote files on the server. They function similarly to folders in a regular
-  filesystem, but exist on the server where all team members can access them.
-
-  Remote directories:
-
-  <\itemize>
-    <item>Can contain remote files, subdirectories, and other resources.
-
-    <item>Are navigable through the <TeXmacs> interface.
-
-    <item>Provide a shared organizational structure for team resources.
-
-    <item>Can be shared with users to give access to entire collections of
-    files.
-  </itemize>
-
-  Directory permissions control who can view and modify files within the
-  directory (see <hlink|Permissions and access control|#sec-permissions>).
-
-  <subsection|Live documents>
-
-  Live documents provide true real-time collaborative editing. When multiple
-  people open the same live document, they can all edit simultaneously and
-  see each other's changes appear instantly.
-
-  Key characteristics of live documents:
-
-  <\itemize>
-    <item><em|Real-time synchronization>. Changes made by any participant are
-    broadcast to all connected users.
-
-    <item><em|Patch-based merging>. The system uses patch operations to
-    combine concurrent edits. Compatible edits are automatically merged using
-    a pull/rebase algorithm similar to version control systems.
-
-    <item><em|Conflict handling>. When concurrent edits conflict (e.g.,
-    editing the same region), the system retracts to the latest compatible
-    state and reapplies changes where possible.
-
-    <item><em|Session-based>. Live documents maintain state per connection,
-    tracking each participant's view of the document.
-  </itemize>
-
-  The live document system tracks document states and uses patch-pull
-  operations to combine changes from multiple participants.
-
-  To create a live document, go to <menu|Remote|Live documents>, then select
-  <menu|Remote|New live document>. This menu item appears when viewing the
-  live documents list. By default, live documents are publicly accessible for
-  reading and writing; you can restrict access through
-  <hlink|permissions|#sec-permissions> if needed. Live documents are
-  particularly useful for:
-
-  <\itemize>
-    <item>real-time brainstorming and note-taking during meetings,
-
-    <item>pair programming or collaborative code development,
-
-    <item>simultaneous editing of mathematical proofs or formulas,
-
-    <item>any scenario where immediate feedback and synchronous work is
-    valuable.
-  </itemize>
-
-  <section|Permissions and access control><label|sec-permissions>
-
-  All remote resources in <TeXmacs> use a unified permission system that
-  controls who can access and modify your shared content. Understanding how
-  permissions work is essential for effective collaboration and maintaining
-  security of your work.
-
-  <subsection|Permission levels>
-
-  <TeXmacs> provides three levels of access control for each resource:
-
-  <\description>
-    <item*|Owner>The owner has complete control over the resource. Owners
-    can:
-
-    <\itemize-dot>
-      <item>read and write the resource content,
-
-      <item>modify all permissions (readable, writable, and ownership),
-
-      <item>delete the resource,
-
-      <item>transfer ownership to other users,
-
-      <item>invite or share the resource with others.
-    </itemize-dot>
-
-    A resource can have multiple owners. When you create a resource, you
-    automatically become its initial owner.
-
-    <item*|Readable>Users with read access can:
-
-    <\itemize-dot>
-      <item>view the resource and its content,
-
-      <item>see the resource in listings and searches,
-
-      <item>open the resource in <TeXmacs>,
-
-      <item>for remote files: view the version history.
-    </itemize-dot>
-
-    Read access does not allow making changes to the resource.
-
-    <item*|Writable>Users with write access can:
-
-    <\itemize-dot>
-      <item>modify the resource content,
-
-      <item>for remote files, create new versions by saving changes,
-
-      <item>for live documents, edit the document in real-time,
-
-      <item>for chat rooms, send messages and share resources,
-
-      <item>for directories, create, rename, or delete files within the
-      directory.
-    </itemize-dot>
-
-    Write access automatically includes read access. Users with write access
-    cannot modify permissions or delete the resource itself unless they are
-    also owners.
-  </description>
-
-  <subsection|Public vs. private resources>
-
-  Permissions can be set to specific users or made public.
-
-  <\itemize>
-    <item><strong|Specific users>: Add individual users by their username to
-    the readable or writable permission lists. This gives fine-grained
-    control over exactly who can access your resources.
-
-    <item><strong|Public access ("all")>: Setting a permission to
-    <verbatim|all> makes the resource publicly accessible to anyone connected
-    to the server. This is useful for:
-
-    <\itemize-dot>
-      <item>open chat rooms for community discussions,
-
-      <item>shared reference documents that everyone should read,
-
-      <item>collaborative documents with broad participation.
-    </itemize-dot>
-
-    Be cautious with public write access, as it allows anyone to modify the
-    content.
-  </itemize>
-
-  <subsection|Managing permissions>
-
-  As an owner of a resource, you can modify its permissions through the
-  permissions editor:
-
-  <\enumerate>
-    <item>Open the resource (remote file, directory, live document, or chat
-    room) in <TeXmacs>.
-
-    <item>Select <menu|Remote|Permissions>. This menu item appears when
-    viewing the resource (also available via the corresponding icon menu:
-    <icon|tm_cloud_file.xpm> for files and chat rooms,
-    <icon|tm_cloud_dir.xpm> for directories).
-
-    <item>In the permissions dialog, you will see three tabs for Owner,
-    Readable, and Writable permissions.
-
-    <item>For each permission level:
-
-    <\itemize-dot>
-      <item>select users from the list to grant them access,
-
-      <item>deselect users to revoke their access,
-
-      <item>select <verbatim|all> to make the permission public.
-    </itemize-dot>
-
-    <item>Changes are saved automatically as you modify the selections.
-  </enumerate>
-
-  The permissions editor displays all registered users on the server, making
-  it easy to grant access to collaborators.
-
-  <subsection|Inviting and sharing resources>
-
-  <TeXmacs> provides convenient ways to share resources with specific users.
-
-  <strong|Important.> Before inviting users or sharing resources, you should
-  first set the appropriate permissions. Users cannot access a resource
-  unless they have been granted read (and write, if needed) permissions on
-  that resource.
-
-  To share a resource with collaborators, you must first set permissions,
-  then share:
-
-  <\enumerate>
-    <item>Open the resource in <TeXmacs>.
-
-    <item>Select <menu|Remote|Permissions> and grant readable (and writable
-    if they need to edit) access to the users you want to share with.
-
-    <item>Select <menu|Remote|Share>. This menu item appears when viewing the
-    resource.
-
-    <item>Choose the users to share with from the list. Only users with
-    permissions will appear in this list.
-
-    <item>Click <menu|Send> to send the sharing notification.
-  </enumerate>
-
-  The share feature sends individual private messages to each selected user
-  with a link to the resource. These messages appear in each user's private
-  message inbox.
-
-  <subsubsection|How sharing notifications work>
-
-  When you use <menu|Remote|Share> or <menu|Remote|Invite>, the system sends
-  individual private messages to each selected user. These messages contain a
-  clickable link to the shared resource and appear in each user's private
-  message inbox (accessed via <menu|Remote|Incoming messages>).
-
-  Private messages are implemented as personal chat rooms (internally named
-  <samp|mail-{username}>), ensuring that each user receives their
-  notification privately and can access shared resources at their
-  convenience.
-
-  <subsection|Permission inheritance and defaults>
-
-  <\itemize>
-    <item><strong|New resources.> When you create a new resource, you become
-    its owner by default. Other permissions start empty unless you explicitly
-    set them.
-
-    <item><strong|Chat rooms.> By default, newly created chat rooms have both
-    readable and writable permissions set to <verbatim|all>, making them
-    public. You can change this to restrict access.
-
-    <item><strong|Live documents.> By default, new live documents have public
-    read and write access (<verbatim|all>). This facilitates open
-    collaboration but can be restricted as needed.
-
-    <item><strong|Remote files and directories.> New remote files and
-    directories are private by default (only the owner has access). You must
-    explicitly grant access to collaborators.
-  </itemize>
-
-  <subsection|Best practices for permissions>
-
-  <\itemize>
-    <item><strong|Principle of least privilege.> Grant only the minimum
-    permissions necessary. If users only need to read a document, don't give
-    them write access.
-
-    <item><strong|Review permissions regularly.> Periodically check who has
-    access to your resources, especially for sensitive content.
-
-    <item><strong|Use specific users for sensitive content.> Avoid public
-    access (<verbatim|all>) for confidential or work-in-progress documents.
-
-    <item><strong|Multiple owners for important resources.> Consider having
-    multiple owners for critical resources to avoid single points of failure.
-
-    <item><strong|Document your sharing decisions.> When sharing resources in
-    chat, briefly explain who should have access and why.
-
-    <item><strong|Remove access when collaboration ends.> When a project or
-    collaboration concludes, remove write access from users who no longer
-    need it.
-  </itemize>
-
-  <section|Versioning vs. live documents: choosing the right tool>
-
-  A common point of confusion is the difference between <TeXmacs> versioning
-  system (discussed in <hlink|Versioning tools|../editing/man-versioning.en.tm>)
-  and live documents. Both support collaboration, but they serve different
-  purposes and use different workflows.
-
-  <\wide-tabular>
-    <tformat|<cwith|1|1|1|-1|cell-background|pastel
-    grey>|<cwith|1|-1|1|1|cell-lborder|1ln>|<cwith|1|-1|2|2|cell-rborder|1ln>|<cwith|1|1|1|-1|cell-bborder|1ln>|<cwith|-1|-1|1|-1|cell-bborder|1ln>|<cwith|1|-1|1|-1|cell-tborder|1ln>|<table|<row|<\cell>
-      <strong|Versioning system (for remote files)>
-    </cell>|<\cell>
-      <strong|Live documents>
-    </cell>>|<row|<\cell>
-      <em|Use when you want:>
-
-      <\itemize-dot>
-        <item>Asynchronous collaboration
-
-        <item>Complete control over accepting or rejecting changes
-
-        <item>A permanent record of all versions and who made which changes
-
-        <item>The ability to compare versions side-by-side and selectively
-        merge
-
-        <item>Integration with external version control systems like Git or
-        Subversion
-
-        <item>To review changes before incorporating them into your document
-      </itemize-dot>
-    </cell>|<\cell>
-      <em|Use when you want:>
-
-      <\itemize-dot>
-        <item>Real-time collaboration
-
-        <item>Immediate feedback and visibility of changes
-
-        <item>Natural back-and-forth during meetings or working sessions
-
-        <item>Patch-based merging of compatible edits
-
-        <item>Faster iteration and dynamic collaboration
-      </itemize-dot>
-    </cell>>>>
-  </wide-tabular>
-
-  In practice, you can use both approaches: live documents for active working
-  sessions and brainstorming, and remote files with versioning for more
-  formal document management and long-term storage.
-
-  <section|Notifications>
-
-  <TeXmacs> can receive push notifications from the server, alerting you to:
-
-  <\itemize>
-    <item>new messages in chat rooms you participate in,
-
-    <item>invitations to join new chat rooms or collaborate on documents.
-  </itemize>
-
-  <section|Security and privacy>
-
-  When using remote tools, keep in mind:
-
-  <\itemize>
-    <item>All communication between client and server can be encrypted using
-    TLS if the server supports it.
-
-    <item>Passwords are stored using salted hashing on the server.
-
-    <item>Access control for resources (files, directories, chat rooms) can
-    be configured by resource owners.
-
-    <item>Server administrators may have access to all stored content for
-    backup and maintenance purposes.
-
-    <item>Check with your server administrator about data retention policies
-    and backup procedures.
-  </itemize>
-
-  <section|Troubleshooting>
-
-  If you encounter connection issues:
-
-  <\itemize>
-    <item>Verify that you entered the correct server address and port number.
-
-    <item>Check that your network allows outgoing connections to the server.
-
-    <item>Ensure your username and password are correct.
-
-    <item>If the server uses TLS, verify that the GnuTLS plugin is properly
-    installed.
-
-    <item>Contact your server administrator if problems persist.
-  </itemize>
-
-  <tmdoc-copyright|2025|Robin Wils>
+  <tmdoc-copyright|2025, 2026|Joris van der Hoeven|Robin Wils>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
