@@ -1,6 +1,6 @@
-<TeXmacs|1.0.3.10>
+<TeXmacs|2.1.4>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmdoc-title|GNU <TeXmacs> reference guide>
@@ -17,6 +17,8 @@
     <branch|Standard <TeXmacs> styles|styles/styles.en.tm>
 
     <branch|Compatibility with other formats|convert/man-convert.en.tm>
+
+    <branch|Setting up a <TeXmacs> server|remote/man-server.en.tm>
   </traverse>
 
   <tmdoc-copyright|2004|Joris van der Hoeven>
@@ -29,8 +31,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>

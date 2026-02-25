@@ -10,9 +10,9 @@
   permissions work is essential for effective collaboration and maintaining
   security of your work.
 
-  <subsection|Permission levels>
+  <subsection|Permissions>
 
-  <TeXmacs> provides three levels of access control for each resource:
+  <TeXmacs> provides three types of permissions for each resource:
 
   <\description>
     <item*|Owner>The owner has complete control over the resource. Owners
@@ -67,7 +67,7 @@
     also owners.
   </description>
 
-  <subsection|Public vs. private resources>
+  <subsection|Public versus private resources>
 
   Permissions can be set to specific users or made public.
 
@@ -76,14 +76,14 @@
     the readable or writable permission lists. This gives fine-grained
     control over exactly who can access your resources.
 
-    <item><strong|Public access ("all")>: Setting a permission to
+    <item><strong|Public access (\Pall\Q)>: Setting a permission to
     <verbatim|all> makes the resource publicly accessible to anyone connected
     to the server. This is useful for:
 
     <\itemize-dot>
       <item>open chat rooms for community discussions,
 
-      <item>shared reference documents that everyone should read,
+      <item>shared reference documents that everyone may read,
 
       <item>collaborative documents with broad participation.
     </itemize-dot>
@@ -109,7 +109,7 @@
     <item>In the permissions dialog, you will see three tabs for Owner,
     Readable, and Writable permissions.
 
-    <item>For each permission level:
+    <item>For each type of permission:
 
     <\itemize-dot>
       <item>select users from the list to grant them access,
