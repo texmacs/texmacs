@@ -362,7 +362,7 @@
   Examples:
 
   <\verbatim-code>
-    sendmail $USER_EMAIL \< $FILE_NAME
+    sendmail $USER_EMAIL \<less\> $FILE_NAME
   </verbatim-code>
 
   or
