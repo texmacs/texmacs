@@ -69,7 +69,7 @@
   their own <TeXmacs> server|man-server.en.tm>.
 
   <\traverse>
-    <branch|Connecting to a <TeXmacs> server|connect.en.tm>
+    <branch|Connecting to a <TeXmacs> server|man-connect.en.tm>
 
     <branch|Messages and chat rooms|man-chat.en.tm>
 

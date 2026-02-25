@@ -3,7 +3,7 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Messages and chat rooms <icon|tm_cloud_mail.svg>><label|sec-man-chat>
+  <tmdoc-title|Messages and chat rooms><label|sec-man-chat>
 
   Chat rooms provide a convenient way to communicate with collaborators
   directly within <TeXmacs>. Unlike email or external messaging apps, chat

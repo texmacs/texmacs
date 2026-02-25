@@ -10,7 +10,7 @@
   differences between these resource types will help you choose the right
   tool for your needs.
 
-  <subsection|Remote files <icon|tm_cloud_file.svg>>
+  <subsection|Remote files>
 
   Remote files are documents stored on the <TeXmacs> server with full version
   history. When you create or edit a remote file, the server maintains a
@@ -47,7 +47,7 @@
   collaborators (see <hlink|Permissions and access
   control|#sec-permissions>).
 
-  <subsection|Remote directories <icon|tm_cloud_dir.svg>>
+  <subsection|Remote directories>
 
   Remote directories provide a way to organize and navigate collections of
   remote files on the server. They function similarly to folders in a regular
