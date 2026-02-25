@@ -11,10 +11,12 @@ else
     endif
 endif
 
+TEXMACS_TIMEOUT ?= 5000
 TEXMACS_NCLIENTS ?= 1
 TEXMACS_INSTANCES ?= localhost:6561
 TESTS ?= '(TestLoad|TestServices)'
 GOTESTFLAGS := -timeout 30s -v -shuffle on \
+               -tm-timeout $(TEXMACS_TIMEOUT) \
                -run $(TESTS) \
                -nclients $(TEXMACS_NCLIENTS) \
                -instances "$(TEXMACS_INSTANCES)"
@@ -46,7 +48,7 @@ $(JSON_TESTS): $(SCENARIOS)
 %.html: %.json
 	$(GOPOGH) -in $< -out_html $@ -details "TeXmacs server scenario run"
 
-run-tests:
+run-tests: my-init-texmacs.scm
 	$(GO) test $(GOTESTFLAGS)
 
 json-tests: $(JSON_TESTS)
@@ -59,13 +61,9 @@ serve-tests: check-gopogh $(HTML_PAGE)
 my-init-texmacs.scm: $(HELPERS) $(TESTDATA)
 	cat $^ > $@
 
-certs:
-	mkdir -p certs
-
-fixtures: my-init-texmacs.scm certs
+fixtures: my-init-texmacs.scm
 
 clean:
 	$(RM) $(JSON_TESTS) $(HTML_PAGE)
 	$(RM) -r debug
-	$(RM) -r certs
 	$(RM) my-init-texmacs.scm

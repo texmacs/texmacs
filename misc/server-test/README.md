@@ -47,6 +47,11 @@ misc/server-test/
 - `docker` installed if going that route.
 - have a guile-texmacs folder in the same location as TeXmacs sources if you use docker compose to build the docker image
 
+> [!WARNING]
+> using docker compose is recommended, otherwise some tests like the tree-cache tests might not work, because of filesystem
+> atime policies. docker compose uses strictatime mount option to be able to test the atime update on read. Default mount options
+> on linux is relatime
+
 ## How it works
 
 `make` or `make check` will run the go tests.
@@ -144,3 +149,8 @@ TeXmacs] debug-io, 2026-07-19, 16:42:25, pid=460658, uid=1000, x509 Certificate 
 TeXmacs] debug-io, 2026-07-19, 16:42:25, pid=460658, uid=1000, x509 Key Path: /tmp/texmacs-client-1287419366/server/key.pem
 TeXmacs] debug-io, 2026-07-19, 16:42:25, pid=460658, uid=1000, Certificate file not found: /tmp/texmacs-client-1287419366/server/cert.pem
 ```
+
+### Server certificates not found
+
+If launching tests with `make` or `make check`, the certificate helper script in "misc/server-test/fixture/testdata/generate-cert.scm" is present in my-init-texmacs.scm automatically,
+make sure it is correctly created.
