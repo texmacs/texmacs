@@ -463,6 +463,7 @@
 
 ;(display "Booting remote facilities\n")
 (lazy-define (client client-base) client-login-then)
+(lazy-define (client client-remote-config) client-public-preferences-then)
 (lazy-define (client client-tmfs) remote-home-directory)
 (lazy-menu (server server-menu) server-start-menu server-menu)
 (lazy-menu (client client-menu) client-start-menu client-menu
