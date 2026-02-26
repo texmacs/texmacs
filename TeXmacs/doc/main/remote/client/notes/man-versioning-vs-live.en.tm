@@ -3,12 +3,10 @@
 <style|tmdoc>
 
 <\body>
-  <tmdoc-title|Notes and troubleshooting><label|sec-man-remote-notes>
-
-  <subsection|Versioning vs. live documents: choosing the right tool>
+  <tmdoc-title|Versioning vs. live documents: choosing the right tool>
 
   A common point of confusion is the difference between <hlink|<TeXmacs>
-  versioning system|../editing/man-versioning.en.tm> and live documents. Both
+  versioning system|../../../editing/man-versioning.en.tm> and live documents. Both
   support collaboration, but they serve different purposes and use different
   workflows.
 
@@ -59,43 +57,6 @@
   In practice, you can use both approaches: live documents for active working
   sessions and brainstorming, and remote files with versioning for more
   formal document management and long-term storage.
-
-  <subsection|Security and privacy>
-
-  When using remote tools, keep in mind:
-
-  <\itemize>
-    <item>All communication between client and server can be encrypted using
-    TLS if the server supports it.
-
-    <item>Passwords are stored using salted hashing on the server.
-
-    <item>Access control for resources (files, directories, chat rooms) can
-    be configured by resource owners.
-
-    <item>Server administrators may have access to all stored content for
-    backup and maintenance purposes.
-
-    <item>Check with your server administrator about data retention policies
-    and backup procedures.
-  </itemize>
-
-  <subsection|Troubleshooting>
-
-  If you encounter connection issues:
-
-  <\itemize>
-    <item>Verify that you entered the correct server address and port number.
-
-    <item>Check that your network allows outgoing connections to the server.
-
-    <item>Ensure your username and password are correct.
-
-    <item>If the server uses TLS, verify that the GnuTLS plugin is properly
-    installed.
-
-    <item>Contact your server administrator if problems persist.
-  </itemize>
 
   <tmdoc-copyright|2025|Robin Wils>
 

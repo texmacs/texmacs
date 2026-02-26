@@ -45,7 +45,7 @@
   tool>. This adds the <menu|Remote> menu and toolbar icons, which provide
   all the actions to communicate with a remote server and access its
   resources. You should next <hlink|connect to a remote <TeXmacs>
-  server|man-connect.en.tm> and create an account. After logging in, the user
+  server|client/man-connect.en.tm> and create an account. After logging in, the user
   interface is organized as follows:
 
   <\description-dash>
@@ -69,15 +69,15 @@
   their own <TeXmacs> server|man-server.en.tm>.
 
   <\traverse>
-    <branch|Connecting to a <TeXmacs> server|man-connect.en.tm>
+    <branch|Connecting to a <TeXmacs> server|client/man-connect.en.tm>
 
-    <branch|Messages and chat rooms|man-chat.en.tm>
+    <branch|Messages and chat rooms|client/man-chat.en.tm>
 
-    <branch|Shared resources|man-share.en.tm>
+    <branch|Shared resources|client/man-share.en.tm>
 
-    <branch|Permissions and access control|man-permissions.en.tm>
+    <branch|Permissions and access control|client/man-permissions.en.tm>
 
-    <branch|Notes and troubleshooting|man-remote-notes.en.tm>
+    <branch|Notes and troubleshooting|client/man-remote-notes.en.tm>
   </traverse>
 
   <tmdoc-copyright|2025, 2026|Joris van der Hoeven|Robin Wils>

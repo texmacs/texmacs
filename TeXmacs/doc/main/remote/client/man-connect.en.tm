@@ -33,33 +33,9 @@
   recommended>). If security is important for your work, ensure that your
   server administrator has enabled TLS support.
 
-  <subsection|Creating and managing accounts>
-
-  User accounts on a <TeXmacs> server provide access to personal storage,
-  chat rooms, and collaborative documents. When creating an account, you will
-  need to provide:
-
-  <\itemize>
-    <item>a unique username (also called a pseudonym),
-
-    <item>a password (servers may enforce strong password requirements),
-
-    <item>your full name,
-
-    <item>an email address (used for password recovery and notifications).
-  </itemize>
-
-  Account management features include:
-
-  <\itemize>
-    <item>changing your password through <menu|Remote|Edit account>,
-
-    <item>recovering your password via email if you forget your credentials,
-
-    <item>updating account preferences and personal information,
-
-    <item>viewing your account status and server permissions.
-  </itemize>
+  <\traverse>
+    <branch|Creating and managing accounts|connect/man-accounts.en.tm>
+  </traverse>
 
   <tmdoc-copyright|2025|Robin Wils>
 
