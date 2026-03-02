@@ -710,6 +710,9 @@
   (disable-certificate-time-checks
     disable_certificate_time_checks (void))
 
+  ;; quit with exit code
+  (quit-TeXmacs-code quit_TeXmacs_code (void int))
+
   ;; connections to extern systems
   (connection-start connection_start (string string string))
   (connection-status connection_status (int string string))

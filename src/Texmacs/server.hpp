@@ -124,6 +124,7 @@ public:
 extern bool rescue_mode;
 scheme_tree menu_merge (scheme_tree m1, scheme_tree m2);
 server get_server ();
+void quit_TeXmacs_code (int code);
 void gui_set_output_language (string lan);
 inline bool in_rescue_mode () { return rescue_mode; }
 
