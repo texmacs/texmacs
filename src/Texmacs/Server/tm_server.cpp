@@ -92,7 +92,9 @@ gui_set_output_language (string lan) {
 server_rep::server_rep () {}
 server_rep::~server_rep () {}
 
-tm_server_rep::tm_server_rep (): def_zoomf (1.0) {
+tm_server_rep::tm_server_rep ()
+  : def_zoomf (1.0),
+    idle_last_cpu_ms (0), idle_last_check_ms (0), idle_acc (0) {
   the_server= tm_new<server> (this);
   initialize_scheme ();
   gui_interpose (texmacs_interpose_handler);
@@ -142,6 +144,27 @@ tm_server_rep::refresh () {
   }
 }
 
+// CPU usage below this many ms per second of wall time is considered idle
+static const long   IDLE_CPU_THRESHOLD_MS   = 50;
+// Number of consecutive idle polls (each ~1 s apart) before firing the hook
+static const int    IDLE_CONSECUTIVE_NEEDED = 30;
+// Minimum wall-clock interval between idle polls (milliseconds)
+static const time_t IDLE_CHECK_INTERVAL_MS  = 1000;
+
+void
+tm_server_rep::idle_monitor_tick () {
+  time_t now_wall = texmacs_time ();
+  if ((now_wall - idle_last_check_ms) < IDLE_CHECK_INTERVAL_MS) return;
+  long   now_cpu  = cpu_time_ms ();
+  time_t dt_wall  = now_wall - idle_last_check_ms;
+  long   dt_cpu   = now_cpu  - idle_last_cpu_ms;
+  // Normalise to ms of CPU per second of wall time
+  long   cpu_rate = (dt_wall > 0) ? (dt_cpu * 1000L / dt_wall) : dt_cpu;
+  idle_last_cpu_ms   = now_cpu;
+  idle_last_check_ms = now_wall;
+  idle_acc = cpu_rate < IDLE_CPU_THRESHOLD_MS ? idle_acc+1 : 0;
+}
+
 void
 tm_server_rep::interpose_handler () {
 #ifdef QTTEXMACS
@@ -176,6 +199,42 @@ tm_server_rep::interpose_handler () {
     windows_refresh ();
   }
   sync_databases ();
+  idle_monitor_tick ();
+  schedule_tick ();
+}
+
+/******************************************************************************
+* Periodic task scheduler
+******************************************************************************/
+
+void
+tm_server_rep::add_on_idle_task (string cmd, long interval_ms) {
+  scheduled_task t;
+  t.cmd         = cmd;
+  t.interval_ms = interval_ms;
+  t.next_run    = texmacs_time () + interval_ms;
+  task_schedule << t;
+}
+
+void
+tm_server_rep::schedule_tick () {
+  if (idle_acc < IDLE_CONSECUTIVE_NEEDED) return;
+
+  time_t now= texmacs_time ();
+  for (int i = 0; i < N(task_schedule); i++) {
+    scheduled_task& t= task_schedule[i];
+    if ((now - t.next_run) < 0) continue; // not yet due
+    t.next_run= now + t.interval_ms;
+    idle_acc= 0; // reset so we don't launch another immediately
+    exec_delayed (scheme_cmd (t.cmd));
+    return; // one task at a time
+  }
+}
+
+void
+tm_add_on_idle_task (string cmd, int interval_ms) {
+  if (is_server_started ())
+    get_server () -> add_on_idle_task (cmd, (long) interval_ms);
 }
 
 void

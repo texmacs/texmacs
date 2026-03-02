@@ -70,6 +70,7 @@
   (language-to-locale language_to_locale (string string))
   (texmacs-time texmacs_time (int))
   (pretty-time pretty_time (string int))
+  (cpp-add-on-idle-task tm_add_on_idle_task (void string int))
   (pretty-date pretty_date (string int string))
   (texmacs-memory mem_used (int))
   (bench-print bench_print (void string))

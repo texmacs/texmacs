@@ -843,6 +843,8 @@ qt_pretty_date (int t, string fm) {
     s = loc.toString (dt.date (), QLocale::FormatType::ShortFormat);
   } else if (fm == "") {
     s = loc.toString (dt.date (), QLocale::FormatType::LongFormat);
+  } else if (fm == "iso8601") {
+    s = dt.toString (QString ("yyyy-MM-ddTHH:mm:ss"));
   } else {
     s = loc.toString (dt.date (), to_qstring (fm));
   }

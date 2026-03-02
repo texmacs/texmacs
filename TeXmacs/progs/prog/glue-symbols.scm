@@ -79,6 +79,7 @@
 "language-to-locale"
 "texmacs-time"
 "pretty-time"
+"cpp-add-on-idle-task"
 "pretty-date"
 "texmacs-memory"
 "bench-print"

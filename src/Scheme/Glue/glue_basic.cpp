@@ -560,6 +560,21 @@ tmg_pretty_time (tmscm arg1) {
 }
 
 tmscm
+tmg_cpp_add_on_idle_task (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "cpp-add-on-idle-task");
+  TMSCM_ASSERT_INT (arg2, TMSCM_ARG2, "cpp-add-on-idle-task");
+
+  string in1= tmscm_to_string (arg1);
+  int in2= tmscm_to_int (arg2);
+
+  // TMSCM_DEFER_INTS;
+  tm_add_on_idle_task (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_pretty_date (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "pretty-date");
   TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "pretty-date");
@@ -10797,7 +10812,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("language-to-locale",  tmg_language_to_locale, 1, 0, 0);
   tmscm_install_procedure ("texmacs-time",  tmg_texmacs_time, 0, 0, 0);
   tmscm_install_procedure ("pretty-time",  tmg_pretty_time, 1, 0, 0);
-  tmscm_install_procedure ("cpp-add-on-idle-task",  tmg_cpp_add_on_idle_task, 3, 0, 0);
+  tmscm_install_procedure ("cpp-add-on-idle-task",  tmg_cpp_add_on_idle_task, 2, 0, 0);
   tmscm_install_procedure ("pretty-date",  tmg_pretty_date, 2, 0, 0);
   tmscm_install_procedure ("texmacs-memory",  tmg_texmacs_memory, 0, 0, 0);
   tmscm_install_procedure ("bench-print",  tmg_bench_print, 1, 0, 0);

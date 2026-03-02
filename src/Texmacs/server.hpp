@@ -108,6 +108,7 @@ public:
   virtual bool   is_yes (string s) = 0;
   virtual void   quit () = 0;
   virtual void   shell (string s) = 0;
+  virtual void   add_on_idle_task (string cmd, long interval_ms) = 0;
 };
 
 class server {

@@ -336,3 +336,10 @@
 
 (on-entry (retrieve-learned))
 (on-exit (save-learned))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Idle task scheduling
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (add-on-idle-task cmd interval-ms)
+  (cpp-add-on-idle-task cmd interval-ms))

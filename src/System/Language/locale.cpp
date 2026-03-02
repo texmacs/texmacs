@@ -10,6 +10,7 @@
 ******************************************************************************/
 
 #include "locale.hpp"
+#include <ctime>
 
 #ifndef OS_MINGW
 #include <langinfo.h>
@@ -336,13 +337,23 @@ get_date (string lan, string fm) {
 
 string
 pretty_time (int t) {
-  return var_eval_system ("date -r " * as_string (t));
+  time_t ts= (time_t) t;
+  struct tm* lt= localtime (&ts);
+  char buf[64];
+  strftime (buf, sizeof (buf), "%X", lt);
+  return string (buf);
 }
 
 string
 pretty_date (int t, string fm) {
-  (void) fm;
-  return var_eval_system ("date -r " * as_string (t));
+  time_t ts= (time_t) t;
+  struct tm* lt= localtime (&ts);
+  char buf[64];
+  if (fm == "iso8601")
+    strftime (buf, sizeof (buf), "%Y-%m-%dT%H:%M:%S", lt);
+  else
+    strftime (buf, sizeof (buf), "%x", lt);
+  return string (buf);
 }
 #endif
 

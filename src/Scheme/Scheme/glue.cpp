@@ -29,6 +29,7 @@
 #include "Database/database.hpp"
 #include "Sqlite3/sqlite3.hpp"
 #include "Updater/tm_updater.hpp"
+#include "tm_server.hpp"
 
 tmscm 
 blackboxP (tmscm t) {
