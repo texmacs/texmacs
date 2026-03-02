@@ -86,14 +86,16 @@ tm_frame_rep::dialogue_start (string name, widget wid) {
     dialogue_wid= wid;
     dialogue_win= plain_window_widget (dialogue_wid, name);
 
-    widget win= concrete_window () -> win;
-    SI ox, oy, dx, dy, ex= 0, ey= 0;
-    get_position (win, ox, oy);
-    get_size (win, dx, dy);
-    get_size (dialogue_win, ex, ey);
-    ox += (dx - ex) >> 1;
-    oy -= (dy - ey) >> 1;
-    set_position (dialogue_win, ox, oy);
+    if (has_current_window ()) {
+      widget win= concrete_window () -> win;
+      SI ox, oy, dx, dy, ex= 0, ey= 0;
+      get_position (win, ox, oy);
+      get_size (win, dx, dy);
+      get_size (dialogue_win, ex, ey);
+      ox += (dx - ex) >> 1;
+      oy -= (dy - ey) >> 1;
+      set_position (dialogue_win, ox, oy);
+    }
     set_visibility (dialogue_win, true);
   }
 }
@@ -264,6 +266,7 @@ tm_frame_rep::interactive (object fun, scheme_tree p) {
     dialogue_start (title, wid);
     send_keyboard_focus (get_form_field (dialogue_wid, 0));
   }
+  else if (!has_current_window ()) return;
   else {
     if (concrete_window () -> get_interactive_mode ()) beep ();
     else {
