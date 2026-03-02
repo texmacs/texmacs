@@ -15,6 +15,7 @@
 #include <QLocale>
 #include "analyze.hpp"
 #include "basic.hpp"
+#include "boot.hpp"
 
 #if QT_VERSION < 0x050000
 inline bool inputMethodIsNotAnyTerritory() {
@@ -83,6 +84,12 @@ bool QTMKeyboardEvent::patchForShift() {
 #ifdef Q_OS_WIN
   shifted = (shifted && unic > 0) 
           || (unic > 0 && unic < 255 && mKey > 32 && isShift() && isControl());
+#endif
+#ifdef Q_OS_MAC
+  if (get_user_preference("use experimental keyboard patches") == "on") {
+    shifted = (shifted && unic > 0) 
+            || (unic > 0 && unic < 255 && mKey > 32 && isShift() && isMeta());
+  }
 #endif
 
   if (!shifted) {
