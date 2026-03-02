@@ -788,6 +788,9 @@ QTMWidget::event (QEvent* event) {
     if (event->type() == QEvent::ShortcutOverride) {
       cout << "ShortcutOverride event caught" << LF;
       QKeyEvent *ke = static_cast<QKeyEvent*> (event);
+      QString key_combination = QKeySequence(ke->modifiers() | ke->key()).toString();
+      string key_combination_str = from_qstring(key_combination);
+      cout << "Experimental keyboard receive: " << key_combination_str << LF;
       keyPressEvent (ke);
       event->accept();
       return true;
