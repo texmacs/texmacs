@@ -642,6 +642,7 @@
 "generate-self-signed-certificate"
 "trust-certificate"
 "disable-certificate-time-checks"
+"quit-TeXmacs-code"
 "connection-start"
 "connection-status"
 "connection-write-string"
