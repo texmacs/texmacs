@@ -112,6 +112,9 @@ mac_fix_paths () {
 
 NSEvent *
 mac_handler_body (NSEvent *event) {
+  if (get_user_preference("use experimental keyboard patches") == "on") {
+    return event;
+  }
   if (([event type] == NSKeyDown) || ([event type] == NSKeyUp)) {
     NSString *nss = [event charactersIgnoringModifiers];
     if ([nss length] > 0) {
@@ -173,6 +176,9 @@ mac_handler_body (NSEvent *event) {
   
 void 
 mac_install_filter () {
+  if (get_user_preference("use experimental keyboard patches") == "on") {
+    return;
+  }
 #if NS_BLOCKS_AVAILABLE
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
   
