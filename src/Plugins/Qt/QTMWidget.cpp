@@ -48,7 +48,6 @@
 #include <QUrl>
 #include <QFileInfo>
 
-
 static long int QTMWcounter = 0; // debugging hack
 
 /*! Constructor.
@@ -781,18 +780,33 @@ QTMWidget::event (QEvent* event) {
   }
 #endif
 
+  if (get_user_preference("use experimental keyboard patches") == "on") {
+    if (event->type() == QEvent::KeyPress) {
+      QKeyEvent *ke = static_cast<QKeyEvent*> (event);
+      return true;
+    }
+    if (event->type() == QEvent::ShortcutOverride) {
+      cout << "ShortcutOverride event caught" << LF;
+      QKeyEvent *ke = static_cast<QKeyEvent*> (event);
+      keyPressEvent (ke);
+      event->accept();
+      return true;
+    }
+  } else {
     // Catch Keypresses to avoid default handling of (Shift+)Tab keys
-  if (event->type() == QEvent::KeyPress) {
-    QKeyEvent *ke = static_cast<QKeyEvent*> (event);
-    keyPressEvent (ke);
-    return true;
-  } 
-  /* NOTE: we catch ShortcutOverride in order to disable the QKeySequences we
-   assigned to QActions while building menus, etc. In doing this, we keep the
-   shortcut text in the menus while relaying all keypresses through the editor*/
-  if (event->type() == QEvent::ShortcutOverride) {
-    event->accept();
-    return true;
+    if (event->type() == QEvent::KeyPress) {
+      QKeyEvent *ke = static_cast<QKeyEvent*> (event);
+      keyPressEvent (ke);
+      return true;
+    } 
+    /* NOTE: we catch ShortcutOverride in order to disable the QKeySequences we
+    assigned to QActions while building menus, etc. In doing this, we keep the
+    shortcut text in the menus while relaying all keypresses through the editor*/
+    if (event->type() == QEvent::ShortcutOverride) {
+      cout << "Ignoring ShortcutOverride event" << LF;
+      event->accept();
+      return true;
+    }
   }
   if (event->type() == QEvent::Gesture) {
     gestureEvent(static_cast<QGestureEvent*>(event));

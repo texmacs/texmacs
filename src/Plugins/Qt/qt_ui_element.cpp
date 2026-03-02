@@ -459,7 +459,52 @@ qt_ui_element_rep::as_qaction () {
     case menu_button:
         // a command button with an optional prefix (o, * or v) and
         // keyboard shortcut; if ok does not hold, then the button is greyed
-    {
+    if (get_user_preference("use experimental keyboard patches") == "on") {
+      typedef quintuple<widget, command, string, string, int> T;
+      T x = open_box<T> (load);
+
+      qt_widget qtw = concrete (x.x1);
+      command   cmd = x.x2;
+      string   pre  = x.x3;
+      string   ks   = x.x4;
+      int   style   = x.x5;
+      
+      QTMCommand* c;
+      act = qtw->as_qaction();
+
+      QString left_text = act->text();
+      const QKeySequence& qks = to_qkeysequence (ks);
+      if (!qks.isEmpty()) {
+        QString shortcut_text = qks.toString(QKeySequence::NativeText);
+        // on windows, replace Meta with Win
+#if defined (Q_OS_WIN)
+        shortcut_text.replace (u8"Meta", u8"Win");
+#endif
+        QString full_text = left_text + u8" \t" + shortcut_text;
+        act->setText(full_text);
+      }
+
+
+      c= new QTMCommand (act, cmd);
+#if QT_VERSION < 0x060000
+      QObject::connect (act, SIGNAL (triggered()), c, SLOT (apply()));
+#else
+      QObject::connect (act, &QAction::triggered, c, &QTMCommand::apply);
+#endif   
+
+
+      bool ok = (style & WIDGET_STYLE_INERT) == 0;
+      act->setEnabled (ok? true: false);
+      
+        // FIXME: implement complete prefix handling
+      bool check = (pre != "") || (style & WIDGET_STYLE_PRESSED);
+      act->setCheckable (check? true: false);
+      act->setChecked (check? true: false);
+      if (pre == "v") {}
+      else if (pre == "*") {}
+      // [mi setOnStateImage:[NSImage imageNamed:@"TMStarMenuBullet"]];
+      else if (pre == "o") {}
+    } else { // if "use experimental keyboard patches"
       typedef quintuple<widget, command, string, string, int> T;
       T x = open_box<T> (load);
 
