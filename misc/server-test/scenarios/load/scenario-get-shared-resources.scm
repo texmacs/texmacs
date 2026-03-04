@@ -6,7 +6,6 @@
   (lambda (server ret)
     (cond ((== ret "ready")
            (client-remote-eval server `(remote-shared)
-             server
              (lambda (l)
                (display* "shared resources: " l "\n")
                (quit-TeXmacs-code 0))))

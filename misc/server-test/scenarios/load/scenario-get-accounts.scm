@@ -5,9 +5,10 @@
   `(tls-password ,test-admin-pass)
   (lambda (server ret)
     (cond ((== ret "ready")
-           (with-remote-accounts users server 10 0
-             (display* "got users = " users " and message = " msg "\n")
-             (quit-TeXmacs-code 0)))
+           (client-get-accounts-then server 10 0
+             (lambda (users)
+               (display* "got users = " users "\n")
+               (quit-TeXmacs-code 0))))
           (else
             (display* "error: " ret "\n")
             (quit-TeXmacs-code -1)))))
