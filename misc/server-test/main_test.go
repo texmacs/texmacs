@@ -190,7 +190,7 @@ func runScenarios(t *testing.T, env *Environment, scenarioGlob string, prefixFil
 			require.NoError(tt, os.WriteFile(debugScript, []byte(script.String()), 0o644))
 			tt.Logf("script: %s", debugScript)
 
-			cmd := exec.Command(env.TMExec, "--debug-io",
+			cmd := exec.CommandContext(tt.Context(), env.TMExec, "--debug-io",
 				"--headless",
 				"--tls-no-verify",
 				"-X", "-x", script.String())
