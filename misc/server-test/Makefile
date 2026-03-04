@@ -32,13 +32,13 @@ check-gopogh:
 	}
 
 $(JSON_TESTS): $(SCENARIOS)
-	$(GO) test -json -shuffle on > $@
+	$(GO) test -timeout 30s -json -shuffle on > $@
 
 %.html: %.json
 	$(GOPOGH) -in $< -out_html $@ -details "TeXmacs server scenario run"
 
 run-tests:
-	$(GO) test -v -shuffle on
+	$(GO) test -timeout 30s -v -shuffle on
 
 json-tests: $(JSON_TESTS)
 
