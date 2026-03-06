@@ -16,6 +16,8 @@
 #include <QTabBar>
 #include <QApplication>
 #include <QMouseEvent>
+#include <QPushButton>
+#include <QHBoxLayout>
 
 QTMMainTabWindow *QTMMainTabWindow::gTopTabWindow = nullptr;
 
@@ -29,6 +31,8 @@ QTMMainTabWindow *targetTabWindow = nullptr;
 QTMMainTabWindow::QTMMainTabWindow() {
   setTabsClosable(true);
   setMovable(true);
+
+  setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
 
   // todo : keep the tab window size and position in the user preferences
 #ifndef OS_ANDROID
@@ -58,7 +62,49 @@ QTMMainTabWindow::QTMMainTabWindow() {
   tabBar()->installEventFilter(this);
 #endif
 
+  setupWindowControls();
+
   gTopTabWindow = this;
+}
+
+void QTMMainTabWindow::setupWindowControls() {
+  QWidget* controlContainer = new QWidget(this);
+  QHBoxLayout* layout = new QHBoxLayout(controlContainer);
+  
+  layout->setContentsMargins(8, 10, 8, 10); 
+  layout->setSpacing(6);
+
+  QPushButton* closeBtn = new QPushButton("", controlContainer);
+  QPushButton* minBtn = new QPushButton("", controlContainer);
+  QPushButton* maxBtn = new QPushButton("", controlContainer);
+
+  int btnSize = 12;
+  closeBtn->setFixedSize(btnSize, btnSize);
+  minBtn->setFixedSize(btnSize, btnSize);
+  maxBtn->setFixedSize(btnSize, btnSize);
+
+  closeBtn->setStyleSheet("QPushButton { background-color: #ff5f56; border-radius: 6px; } QPushButton:hover { background-color: #ff3b30; }");
+  minBtn->setStyleSheet("QPushButton { background-color: #ffbd2e; border-radius: 6px; } QPushButton:hover { background-color: #e0a82e; }");
+  maxBtn->setStyleSheet("QPushButton { background-color: #27c93f; border-radius: 6px; } QPushButton:hover { background-color: #1fac33; }");
+
+  layout->addWidget(closeBtn);
+  layout->addWidget(minBtn);
+  layout->addWidget(maxBtn);
+
+  connect(closeBtn, &QPushButton::clicked, this, &QWidget::close);
+  connect(minBtn, &QPushButton::clicked, this, &QWidget::showMinimized);
+  connect(maxBtn, &QPushButton::clicked, [this]() {
+    if (isMaximized()) showNormal();
+    else showMaximized();
+  });
+
+#ifdef OS_MACOS
+  setCornerWidget(controlContainer, Qt::TopLeftCorner);
+#else
+  setCornerWidget(controlContainer, Qt::TopRightCorner);
+#endif
+
+controlContainer->setVisible(true);
 }
 
 void QTMMainTabWindow::onWindowActivated() {
@@ -71,24 +117,54 @@ void QTMMainTabWindow::onDoubleClickOnEmptyTabBarSpace() {
 
 bool QTMMainTabWindow::eventFilterWindow(QObject *obj, QEvent *event) {
 #if QT_VERSION >= 0x060000
-  // if the window is a top level window
   if (event->type() == QEvent::WindowActivate) {
-    if (DEBUG_QT_WIDGETS) cout << "TabWindow: WindowActivated" << LF;
     onWindowActivated();
   }
 
+  // 1. Detect Mouse Press in empty tab space
   if (event->type() == QEvent::MouseButtonPress) {
-    if (DEBUG_QT_WIDGETS) cout << "TabWindow: MouseButtonPress" << LF;
     QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
     int x = mouseEvent->position().toPoint().x();
     int y = mouseEvent->position().toPoint().y();
     int tabBarWidth = tabBar()->width();
     int tabBarHeight = tabBar()->height();
-    if(x > tabBarWidth && y < tabBarHeight)
-    {
-      if (DEBUG_QT_WIDGETS) cout << "Mouse on an empty tab bar space" << LF;
-      onDoubleClickOnEmptyTabBarSpace();
+    
+    // Check if clicked in empty space to the right of tabs
+    if(x > tabBarWidth && y < tabBarHeight) {
+      if (mouseEvent->button() == Qt::LeftButton) {
+        isDraggingFramelessWindow = true;
+        dragPosition = mouseEvent->globalPosition().toPoint() - frameGeometry().topLeft();
+        event->accept();
+        return true;
+      }
     }
+  }
+
+  // 2. Handle Mouse Move to drag the window
+  if (event->type() == QEvent::MouseMove && isDraggingFramelessWindow) {
+    QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+    if (mouseEvent->buttons() & Qt::LeftButton) {
+      move(mouseEvent->globalPosition().toPoint() - dragPosition);
+      event->accept();
+      return true;
+    }
+  }
+
+  // 3. Handle Mouse Release
+  if (event->type() == QEvent::MouseButtonRelease && isDraggingFramelessWindow) {
+    isDraggingFramelessWindow = false;
+    event->accept();
+    return true;
+  }
+
+  // 4. Double click logic for "new-document*"
+  if (event->type() == QEvent::MouseButtonDblClick) {
+     QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+     if (mouseEvent->position().toPoint().x() > tabBar()->width() && 
+         mouseEvent->position().toPoint().y() < tabBar()->height()) {
+         onDoubleClickOnEmptyTabBarSpace();
+         return true;
+     }
   }
 
   return QTabWidget::eventFilter(obj, event);
