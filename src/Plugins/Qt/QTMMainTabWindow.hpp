@@ -32,6 +32,8 @@ public:
    */
   QTMMainTabWindow();
 
+  void setupWindowControls();
+
   /**
    * @brief Displays the given widget in the tab window.
    * 
@@ -158,6 +160,8 @@ private:
    * Tracks the most recently activated tab window.
    */
   static QTMMainTabWindow *gTopTabWindow;
+  QPoint dragPosition;
+  bool isDraggingFramelessWindow = false;
    
 };
 
