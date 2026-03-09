@@ -32,8 +32,6 @@ QTMMainTabWindow::QTMMainTabWindow() {
   setTabsClosable(true);
   setMovable(true);
 
-  setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
-
   // todo : keep the tab window size and position in the user preferences
 #ifndef OS_ANDROID
   setMinimumSize(800, 600);
@@ -49,7 +47,6 @@ QTMMainTabWindow::QTMMainTabWindow() {
   setDefaultStyle();
 
   connect(this, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
-  show();
 
   // move the tab window to the center of the screen
 #if !defined(OS_ANDROID) && QT_VERSION >= 0x060000
@@ -62,49 +59,96 @@ QTMMainTabWindow::QTMMainTabWindow() {
   tabBar()->installEventFilter(this);
 #endif
 
+#if QT_VERSION >= 0x050000
   setupWindowControls();
+#endif
 
   gTopTabWindow = this;
+
+  show();
 }
 
 void QTMMainTabWindow::setupWindowControls() {
+#if QT_VERSION >= 0x050000
+  setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
+
   QWidget* controlContainer = new QWidget(this);
   QHBoxLayout* layout = new QHBoxLayout(controlContainer);
-  
-  layout->setContentsMargins(8, 10, 8, 10); 
-  layout->setSpacing(6);
 
-  QPushButton* closeBtn = new QPushButton("", controlContainer);
-  QPushButton* minBtn = new QPushButton("", controlContainer);
-  QPushButton* maxBtn = new QPushButton("", controlContainer);
+  QPushButton* closeBtn = new QPushButton(controlContainer);
+  QPushButton* minBtn = new QPushButton(controlContainer);
+  QPushButton* maxBtn = new QPushButton(controlContainer);
+
+#ifdef OS_MACOS
+  layout->setContentsMargins(8, 10, 8, 10); 
+  layout->setSpacing(8);
 
   int btnSize = 12;
   closeBtn->setFixedSize(btnSize, btnSize);
   minBtn->setFixedSize(btnSize, btnSize);
   maxBtn->setFixedSize(btnSize, btnSize);
 
-  closeBtn->setStyleSheet("QPushButton { background-color: #ff5f56; border-radius: 6px; } QPushButton:hover { background-color: #ff3b30; }");
-  minBtn->setStyleSheet("QPushButton { background-color: #ffbd2e; border-radius: 6px; } QPushButton:hover { background-color: #e0a82e; }");
-  maxBtn->setStyleSheet("QPushButton { background-color: #27c93f; border-radius: 6px; } QPushButton:hover { background-color: #1fac33; }");
+  closeBtn->setStyleSheet("QPushButton { background-color: #ff5f56; border-radius: 6px; border: 1px solid #e0443e; } QPushButton:hover { background-color: #ff3b30; }");
+  minBtn->setStyleSheet("QPushButton { background-color: #ffbd2e; border-radius: 6px; border: 1px solid #dea123; } QPushButton:hover { background-color: #e0a82e; }");
+  maxBtn->setStyleSheet("QPushButton { background-color: #27c93f; border-radius: 6px; border: 1px solid #1aab29; } QPushButton:hover { background-color: #1fac33; }");
 
   layout->addWidget(closeBtn);
   layout->addWidget(minBtn);
   layout->addWidget(maxBtn);
 
-  connect(closeBtn, &QPushButton::clicked, this, &QWidget::close);
-  connect(minBtn, &QPushButton::clicked, this, &QWidget::showMinimized);
-  connect(maxBtn, &QPushButton::clicked, [this]() {
-    if (isMaximized()) showNormal();
-    else showMaximized();
-  });
-
-#ifdef OS_MACOS
   setCornerWidget(controlContainer, Qt::TopLeftCorner);
+
 #else
+  layout->setContentsMargins(0, 0, 0, 0); 
+  layout->setSpacing(0); 
+
+  QString iconFont = "font-family: 'Segoe Fluent Icons', 'Segoe MDL2 Assets', sans-serif; font-size: 8pt;";
+
+  minBtn->setText(QString(QChar(0xE921)));
+  maxBtn->setText(QString(QChar(0xE922)));
+  closeBtn->setText(QString(QChar(0xE8BB)));
+
+  int winBtnWidth = 40;
+  int winBtnHeight = 30;
+  closeBtn->setFixedSize(winBtnWidth, winBtnHeight);
+  minBtn->setFixedSize(winBtnWidth, winBtnHeight);
+  maxBtn->setFixedSize(winBtnWidth, winBtnHeight);
+
+  QString winStyle = QString("QPushButton { background-color: transparent; border: none; color: palette(window-text); %1 }"
+                             "QPushButton:hover { background-color: rgba(128, 128, 128, 0.2); }").arg(iconFont);
+  
+  QString winCloseStyle = QString("QPushButton { background-color: transparent; border: none; color: palette(window-text); %1 }"
+                                  "QPushButton:hover { background-color: #e81123; color: white; }").arg(iconFont);
+
+  minBtn->setStyleSheet(winStyle);
+  maxBtn->setStyleSheet(winStyle);
+  closeBtn->setStyleSheet(winCloseStyle);
+
+  layout->addWidget(minBtn);
+  layout->addWidget(maxBtn);
+  layout->addWidget(closeBtn);
+
   setCornerWidget(controlContainer, Qt::TopRightCorner);
 #endif
 
-controlContainer->setVisible(true);
+  connect(closeBtn, &QPushButton::clicked, this, &QWidget::close);
+  connect(minBtn, &QPushButton::clicked, this, &QWidget::showMinimized);  
+  connect(maxBtn, &QPushButton::clicked, [this, maxBtn]() {
+    if (isMaximized()) {
+        showNormal();
+#ifndef OS_MACOS
+        maxBtn->setText(QString(QChar(0xE922)));
+#endif
+    } else {
+        showMaximized();
+#ifndef OS_MACOS
+        maxBtn->setText(QString(QChar(0xE923)));
+#endif
+    }
+  });
+
+  controlContainer->setVisible(true);
+#endif
 }
 
 void QTMMainTabWindow::onWindowActivated() {
@@ -370,6 +414,8 @@ void QTMMainTabWindow::setDefaultStyle() {
     "   border-radius: 0px; "
     "   padding: 0px 16px; "
     "   text-align: left; "
+    "   border: 0px solid transparent; "
+    "   background-color: rgba(255, 255, 255, 0.1); "
     "} "
     "QTabWidget::pane { "
     "   border: 0px; "
@@ -388,6 +434,7 @@ void QTMMainTabWindow::setHoverStyle() {
     "   padding: 0px 16px; "
     "   background-color: rgba(255, 0, 0, 0.5); "
     "   text-align: left; "
+    "   border: 0px solid transparent; "
     "} "
     "QTabWidget::pane { "
     "   border: 0px; "
