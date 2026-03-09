@@ -3623,7 +3623,7 @@ function cmp_dot_number {
 
   VERSION_MAJOR="2"
   VERSION_MINOR="1"
-  VERSION_BUILD="4"
+  VERSION_BUILD="5"
 
   # the svn revision of this version
   DEVEL_REVISION="$Rev$:"
