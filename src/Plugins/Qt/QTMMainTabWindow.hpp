@@ -15,6 +15,8 @@
 
 #include <QTabWidget>
 
+#if QT_VERSION >= 0x050000
+
 /**
  * @brief A tab window that allows moving tabs between windows.
  * 
@@ -164,5 +166,7 @@ private:
   bool isDraggingFramelessWindow = false;
    
 };
+
+#endif // QT_VERSION >= 0x050000
 
 #endif // QTMMAINTABWINDOW_HPP

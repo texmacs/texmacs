@@ -70,9 +70,11 @@ public:
     return mUseNewToolbar;
   }
 
+#if QT_VERSION >= 0x050000
   inline QTMMainTabWindow &mainTabWindow() {
     return *QTMMainTabWindow::topTabWindow();
   }
+#endif
 
 private:
 #if QT_VERSION >= 0x060000
