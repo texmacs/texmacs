@@ -246,7 +246,6 @@ qt_window_widget_rep::send (slot s, blackbox val) {
 #endif
         if (qwid) qwid->setWindowTitle (to_qstring (name * "[*]"));
 #if QT_VERSION >= 0x050000
-        }
       } else {
         if (qwid) tmapp()->mainTabWindow().tabTitleChanged (qwid, to_qstring (name));
       }
