@@ -10,6 +10,8 @@
 
 #include "QTMMainTabWindow.hpp"
 
+#if QT_VERSION >= 0x050000
+
 #include "scheme.hpp"
 
 #include <QMouseEvent>
@@ -395,3 +397,6 @@ void QTMMainTabWindow::setHoverStyle() {
     "}"
   );
 }
+
+
+#endif // QT_VERSION >= 0x050000

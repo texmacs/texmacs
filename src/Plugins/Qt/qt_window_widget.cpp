@@ -200,7 +200,9 @@ qt_window_widget_rep::send (slot s, blackbox val) {
       check_type<bool> (val, s);
       bool flag = open_box<bool> (val);
       if (qwid) {
+#if QT_VERSION >= 0x050000
         if (!tmapp()->useTabWindow()) {
+#endif
           if (flag) {
             //QWidget* master = QApplication::activeWindow ();
             qwid->show();
@@ -211,6 +213,7 @@ qt_window_widget_rep::send (slot s, blackbox val) {
             //QApplication::setActiveWindow (master);
           }
           else qwid->hide();
+#if QT_VERSION >= 0x050000
         } else {
           if (flag) {
             tmapp()->mainTabWindow().showWidget(qwid);
@@ -218,6 +221,7 @@ qt_window_widget_rep::send (slot s, blackbox val) {
             tmapp()->mainTabWindow().removeWidget(qwid);
           }
         }
+#endif
       }
     }
       break;
@@ -237,11 +241,16 @@ qt_window_widget_rep::send (slot s, blackbox val) {
       check_type<string> (val, s);
       string name = open_box<string> (val);
         // The [*] is for QWidget::setWindowModified()
+#if QT_VERSION >= 0x050000
       if (!tmapp()->useTabWindow()) {
+#endif
         if (qwid) qwid->setWindowTitle (to_qstring (name * "[*]"));
+#if QT_VERSION >= 0x050000
+        }
       } else {
         if (qwid) tmapp()->mainTabWindow().tabTitleChanged (qwid, to_qstring (name));
       }
+#endif
     }
       break;
     case SLOT_MODIFIED:
