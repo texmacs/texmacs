@@ -19,7 +19,9 @@ void QTMApplication::load() {
 
   init_theme ();
 
+#if QT_VERSION >= 0x050000
   if (mUseTabWindow) new QTMMainTabWindow();
+#endif
 }
   
 
