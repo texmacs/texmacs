@@ -131,7 +131,8 @@
      (safe-getpwnam user))))
 
 (define (create-default-user)
-  (let* ((pseudo (or (getlogin) (safe-getpwuid (getuid))))
+  (let* ((pseudo (or (if (os-macos?) (getenv "USER") (getlogin))
+		     (safe-getpwuid (getuid))))
          (name (get-full-name pseudo)))
     ;;(display* "pseudo= " pseudo "\n")
     ;;(display* "name= " name "\n")
