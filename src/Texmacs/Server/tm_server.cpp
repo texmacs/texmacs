@@ -145,7 +145,7 @@ tm_server_rep::refresh () {
 }
 
 // CPU usage below this many ms per second of wall time is considered idle
-static const long   IDLE_CPU_THRESHOLD_MS   = 50;
+static const long   IDLE_CPU_THRESHOLD_MS   = 150;
 // Number of consecutive idle polls (each ~1 s apart) before firing the hook
 static const int    IDLE_CONSECUTIVE_NEEDED = 30;
 // Minimum wall-clock interval between idle polls (milliseconds)
