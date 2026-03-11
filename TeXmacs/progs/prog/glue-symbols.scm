@@ -143,6 +143,7 @@
 "players-set-speed"
 "apply-effect"
 "headless?"
+"server-mode?"
 "tt-exists?"
 "tt-dump"
 "tt-font-name"

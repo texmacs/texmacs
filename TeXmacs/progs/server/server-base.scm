@@ -15,6 +15,7 @@
 
 (texmacs-module (server server-base)
   (:use (server server-authentication)
+        (server server-backup)
         (security password)))
 
 (server-define-error-codes)

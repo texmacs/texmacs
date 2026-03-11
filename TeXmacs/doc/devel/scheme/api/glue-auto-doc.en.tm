@@ -435,7 +435,7 @@ source code.
   </explain>
 
   <\explain>
-    <scm|(cpp-add-on-idle-task <scm-arg|string> <scm-arg|bool> <scm-arg|int>)>
+    <scm|(cpp-add-on-idle-task <scm-arg|string> <scm-arg|int>)>
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|tm_add_on_idle_task> which returns
@@ -943,6 +943,14 @@ source code.
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|is_headless> which returns
+    <scm|bool>.
+  </explain>
+
+  <\explain>
+    <scm|(server-mode?)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|is_server> which returns
     <scm|bool>.
   </explain>
 

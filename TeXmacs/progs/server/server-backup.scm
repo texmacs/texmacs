@@ -54,13 +54,13 @@
 ;; Mode "d" = directories only; mode "dr" = directories + regular files.
 
 ;; Return snapshot names (strings) sorted oldest first.
-(define (snapshot-name? s)
+(tm-define (snapshot-name? s)
   (and (== (string-length s) 19)
        (char-numeric? (string-ref s 0))
        (== (string-ref s 4) #\-)
        (== (string-ref s 10) #\T)))
 
-(define (list-snapshots dest)
+(tm-define (list-snapshots dest)
   (if (not (url-exists? dest))
       '()
       (let* ((u    (string->url dest))
@@ -185,22 +185,26 @@
                   (if prev (string-append " --link-dest='" prev "'") "")
                   " '" src "/'"
                   " '" new "/'")))
-    (if (not (string-null? dest))
-      (begin
-        (system-mkdir new)
-        (server-log-write `info (string-append "Launching backup: " cmd))
-        (eval-system cmd)
-        (server-log-write `info
-                          (string-append "Backup snapshot created: " new))
-        (server-backup-prune dest))
-      (server-log-write `info "No backup destination configuration"))))
+    (cond
+      ((string-null? dest)
+       (server-log-write `notice "No backup destination configuration"))
+      (else
+        (begin
+          (system-mkdir new)
+          (server-log-write `info (string-append "Launching backup: " cmd))
+          (eval-system cmd)
+          (server-log-write `info
+                            (string-append "Backup snapshot created: " new))
+          (server-backup-prune dest))))))
 
 (tm-define (server-backup-register)
   (let* ((dest       (get-preference "server backup destination"))
          (interval-h (string->number (get-preference "server backup interval"))))
     (cond
+      ((not (server-mode?))
+       (server-log-write `info "Server backup not registered: not in server mode"))
       ((string-null? dest)
-       (server-log-write `notice "Server backup not registered: no destination"))
+       (server-log-write `info "Server backup not registered: no destination"))
       ((or (not interval-h) (<= interval-h 0))
        (server-log-write `warning "Server backup not registered: invalid interval"))
       (else
