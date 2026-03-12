@@ -163,6 +163,10 @@ tm_server_rep::idle_monitor_tick () {
   idle_last_cpu_ms   = now_cpu;
   idle_last_check_ms = now_wall;
   idle_acc = cpu_rate < IDLE_CPU_THRESHOLD_MS ? idle_acc+1 : 0;
+  if (DEBUG_IO)
+    debug_io << "idle: cpu_rate=" << cpu_rate
+             << " acc=" << idle_acc << "/" << IDLE_CONSECUTIVE_NEEDED
+             << " dt_cpu=" << dt_cpu << " dt_wall=" << dt_wall << LF;
 }
 
 void
