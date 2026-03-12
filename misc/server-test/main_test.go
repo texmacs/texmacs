@@ -35,20 +35,19 @@ type Environment struct {
 	Seed       uint64
 }
 
+// TestConfig groups the parameters that vary between test categories
+// (load, services).
+type TestConfig struct {
+	ScenarioGlob string
+	ConfigTmpl   string
+	PrefixFiles  []string
+	DebugDir     string
+}
+
 func setupEnv() (*Environment, error) {
 	tmPath := os.Getenv("TEXMACS_PATH")
 	if tmPath == "" {
 		return nil, errors.New("TEXMACS_PATH environment not set")
-	}
-
-	tmServerCert := os.Getenv("TEXMACS_SERVER_CERT")
-	if tmServerCert == "" {
-		tmServerCert = "certs/cert.pem"
-	}
-
-	certBytes, err := os.ReadFile(tmServerCert)
-	if err != nil {
-		return nil, fmt.Errorf("reading server cert %s: %w (is the server running?)", tmServerCert, err)
 	}
 
 	tmHomePath := os.Getenv("TEXMACS_HOME_PATH")
@@ -62,27 +61,17 @@ func setupEnv() (*Environment, error) {
 		}
 	}
 
-	err = os.MkdirAll(filepath.Join(tmHomePath, "system/certificates"), 0o755)
-	if err != nil {
-		return nil, err
+	host := os.Getenv("TMSERVER_HOST")
+	if host == "" {
+		host = "localhost"
 	}
-
-	err = os.WriteFile(filepath.Join(tmHomePath, "system/certificates/trusted-certificates.crt"), certBytes, 0o644)
-	if err != nil {
-		return nil, err
+	port := os.Getenv("TMSERVER_PORT")
+	if port == "" {
+		port = "6561"
 	}
-
-	tmServerHost := os.Getenv("TMSERVER_HOST")
-	if tmServerHost == "" {
-		tmServerHost = "localhost"
-	}
-	tmServerPort := os.Getenv("TMSERVER_PORT")
-	if tmServerPort == "" {
-		tmServerPort = "6561"
-	}
-	tmServerProto := os.Getenv("TMSERVER_PROTOCOL")
-	if tmServerProto == "" {
-		tmServerProto = "tls"
+	protocol := os.Getenv("TMSERVER_PROTOCOL")
+	if protocol == "" {
+		protocol = "tls"
 	}
 
 	var seed uint64
@@ -99,9 +88,9 @@ func setupEnv() (*Environment, error) {
 	}
 
 	return &Environment{
-		Host:       tmServerHost,
-		Port:       tmServerPort,
-		Protocol:   tmServerProto,
+		Host:       host,
+		Port:       port,
+		Protocol:   protocol,
 		TMPath:     tmPath,
 		TMHomePath: tmHomePath,
 		IsTmpHome:  isTmpHome,
@@ -119,18 +108,18 @@ func getAdminAccount() (*Account, error) {
 	return &Account{Username: "admin", Password: adminPwd}, nil
 }
 
-// renderConfig renders scenarios/config.tmpl.scm with the given environment
-// and writes it to debugDir/config.scm. Returns the absolute path.
-func renderConfig(t *testing.T, env *Environment, debugDir string) string {
+// renderConfig renders tc.ConfigTmpl with the given environment
+// and writes it to tc.DebugDir/config.scm. Returns the absolute path.
+func renderConfig(t *testing.T, env *Environment, tc *TestConfig) string {
 	t.Helper()
 
-	tmpl, err := template.ParseFiles("scenarios/config.tmpl.scm")
+	tmpl, err := template.ParseFiles(tc.ConfigTmpl)
 	require.NoError(t, err)
 
 	var buf bytes.Buffer
 	require.NoError(t, tmpl.Execute(&buf, env))
 
-	configPath := filepath.Join(debugDir, "config.scm")
+	configPath := filepath.Join(tc.DebugDir, "config.scm")
 	require.NoError(t, os.WriteFile(configPath, buf.Bytes(), 0o644))
 
 	absPath, err := filepath.Abs(configPath)
@@ -138,13 +127,17 @@ func renderConfig(t *testing.T, env *Environment, debugDir string) string {
 	return absPath
 }
 
-// runScenarios renders the shared config template once, then executes each
-// scenario-*.scm file found via scenarioGlob. prefixFiles are loaded (in order)
-// between the config and the scenario (e.g. client helpers for feature tests).
-func runScenarios(t *testing.T, env *Environment, scenarioGlob string, prefixFiles []string, debugDir string) {
+// runScenarios renders a config template once, then executes each
+// scenario-*.scm file found via tc.ScenarioGlob. tc.PrefixFiles are loaded
+// (in order) between the config and the scenario.
+func runScenarios(t *testing.T, env *Environment, tc *TestConfig) {
 	t.Helper()
 
-	configPath := renderConfig(t, env, debugDir)
+	require.NoError(t, os.MkdirAll(tc.DebugDir, 0o755))
+	require.NoError(t, os.WriteFile(filepath.Join(tc.DebugDir, "SEED"),
+		[]byte(strconv.FormatUint(env.Seed, 10)+"\n"), 0o644))
+
+	configPath := renderConfig(t, env, tc)
 
 	tmEnvVars := []string{
 		fmt.Sprintf("TEXMACS_HOME_PATH=%s", env.TMHomePath),
@@ -152,16 +145,16 @@ func runScenarios(t *testing.T, env *Environment, scenarioGlob string, prefixFil
 	}
 
 	// Resolve prefix files to absolute paths once.
-	absPrefixFiles := make([]string, len(prefixFiles))
-	for i, pf := range prefixFiles {
+	absPrefixFiles := make([]string, len(tc.PrefixFiles))
+	for i, pf := range tc.PrefixFiles {
 		abs, err := filepath.Abs(pf)
 		require.NoError(t, err)
 		absPrefixFiles[i] = abs
 	}
 
-	scenarios, err := filepath.Glob(scenarioGlob)
+	scenarios, err := filepath.Glob(tc.ScenarioGlob)
 	require.NoError(t, err)
-	require.NotEmpty(t, scenarios, "no scenarios matched %s", scenarioGlob)
+	require.NotEmpty(t, scenarios, "no scenarios matched %s", tc.ScenarioGlob)
 
 	for _, scPath := range scenarios {
 		scName := filepath.Base(scPath)
@@ -186,7 +179,7 @@ func runScenarios(t *testing.T, env *Environment, scenarioGlob string, prefixFil
 			}
 			fmt.Fprintf(&script, "(load \"%s\")\n", absScPath)
 
-			debugScript := filepath.Join(debugDir, testName+".scm")
+			debugScript := filepath.Join(tc.DebugDir, testName+".scm")
 			require.NoError(tt, os.WriteFile(debugScript, []byte(script.String()), 0o644))
 			tt.Logf("script: %s", debugScript)
 
@@ -216,17 +209,17 @@ func TestLoad(t *testing.T) {
 
 	t.Logf("TEST_SEED=%d", env.Seed)
 
-	debugDir := filepath.Join("debug", t.Name())
-	require.NoError(t, os.MkdirAll(debugDir, 0o755))
-	require.NoError(t, os.WriteFile(filepath.Join(debugDir, "SEED"),
-		[]byte(strconv.FormatUint(env.Seed, 10)+"\n"), 0o644))
-
-	runScenarios(t, env, "scenarios/load/scenario-*.scm", nil, debugDir)
+	runScenarios(t, env, &TestConfig{
+		ScenarioGlob: "scenarios/load/scenario-*.scm",
+		ConfigTmpl:   "scenarios/config.tmpl.scm",
+		DebugDir:     filepath.Join("debug", t.Name()),
+	})
 }
 
-// TestFeatures runs feature scenarios from scenarios/features/.
-// Each scenario asserts correct server behaviour and fails the test on mismatch.
-func TestFeatures(t *testing.T) {
+// TestServices runs service scenarios from scenarios/services/.
+// Each scenario tests tm-service definitions through client-server RPC
+// and fails the test on assertion mismatch.
+func TestServices(t *testing.T) {
 	env, err := setupEnv()
 	require.NoError(t, err)
 
@@ -236,11 +229,10 @@ func TestFeatures(t *testing.T) {
 
 	t.Logf("TEST_SEED=%d", env.Seed)
 
-	debugDir := filepath.Join("debug", t.Name())
-	require.NoError(t, os.MkdirAll(debugDir, 0o755))
-	require.NoError(t, os.WriteFile(filepath.Join(debugDir, "SEED"),
-		[]byte(strconv.FormatUint(env.Seed, 10)+"\n"), 0o644))
-
-	runScenarios(t, env, "scenarios/features/scenario-*.scm",
-		[]string{"fixture/helpers/client-helpers.scm"}, debugDir)
+	runScenarios(t, env, &TestConfig{
+		ScenarioGlob: "scenarios/services/scenario-*.scm",
+		ConfigTmpl:   "scenarios/config.tmpl.scm",
+		PrefixFiles:  []string{"fixture/helpers/test-helpers.scm", "fixture/helpers/client-helpers.scm"},
+		DebugDir:     filepath.Join("debug", t.Name()),
+	})
 }
