@@ -8,6 +8,7 @@ RUN apt-get update && \
 	ccache \
 	autoconf \
 	automake \
+	autopoint \
 	libtool \
 	pkg-config \
 	cmake \
@@ -61,16 +62,15 @@ USER ubuntu
 
 # Copy TeXmacs source from the build context (current directory = src/).
 # Exclude build artefacts so rebuilds do not drag in stale objects.
-COPY --chown=ubuntu:ubuntu \
-	--exclude=*.o \
-	--exclude=*.so \
-	--exclude=*.a \
-	--exclude=tm-guile188 \
-	. /opt/texmacs/src/
+COPY --chown=ubuntu:ubuntu . /opt/texmacs/src/
 
 # Copy guile-texmacs from the named build context.
 # Provide it with: --build-context guile-src=../guile-texmacs
-COPY --chown=ubuntu:ubuntu --from=guile-src . /opt/texmacs/src/tm-guile188/
+COPY --chown=ubuntu:ubuntu --from=guile-src \
+	--exclude=*.o \
+	--exclude=*.so \
+	--exclude=*.a \
+    . /opt/texmacs/src/tm-guile188/
 
 ENV QMAKE=/usr/lib/qt6/bin/qmake6
 
