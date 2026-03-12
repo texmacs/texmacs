@@ -682,6 +682,8 @@
   (client-write client_write (int int string))
   (enter-secure-mode enter_secure_mode (void int))
   (server-client-address server_client_address (string int))
+  (cpp-check-online tm_check_online (void scheme_tree int))
+  (cpp-get-online-status tm_get_online_status (scheme_tree))
 
   ;; TeXmacs servers logs
   (server-log-write-int server_log_write (void int string))

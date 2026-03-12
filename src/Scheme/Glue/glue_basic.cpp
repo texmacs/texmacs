@@ -8279,6 +8279,30 @@ tmg_server_client_address (tmscm arg1) {
 }
 
 tmscm
+tmg_cpp_check_online (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_SCHEME_TREE (arg1, TMSCM_ARG1, "cpp-check-online");
+  TMSCM_ASSERT_INT (arg2, TMSCM_ARG2, "cpp-check-online");
+
+  scheme_tree in1= tmscm_to_scheme_tree (arg1);
+  int in2= tmscm_to_int (arg2);
+
+  // TMSCM_DEFER_INTS;
+  tm_check_online (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_cpp_get_online_status () {
+  // TMSCM_DEFER_INTS;
+  scheme_tree out= tm_get_online_status ();
+  // TMSCM_ALLOW_INTS;
+
+  return scheme_tree_to_tmscm (out);
+}
+
+tmscm
 tmg_server_log_write_int (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "server-log-write-int");
   TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "server-log-write-int");
@@ -11378,6 +11402,8 @@ initialize_glue_basic () {
   tmscm_install_procedure ("client-write",  tmg_client_write, 2, 0, 0);
   tmscm_install_procedure ("enter-secure-mode",  tmg_enter_secure_mode, 1, 0, 0);
   tmscm_install_procedure ("server-client-address",  tmg_server_client_address, 1, 0, 0);
+  tmscm_install_procedure ("cpp-check-online",  tmg_cpp_check_online, 2, 0, 0);
+  tmscm_install_procedure ("cpp-get-online-status",  tmg_cpp_get_online_status, 0, 0, 0);
   tmscm_install_procedure ("server-log-write-int",  tmg_server_log_write_int, 2, 0, 0);
   tmscm_install_procedure ("supports-gnutls?",  tmg_supports_gnutlsP, 0, 0, 0);
   tmscm_install_procedure ("gnutls-random-number",  tmg_gnutls_random_number, 1, 0, 0);

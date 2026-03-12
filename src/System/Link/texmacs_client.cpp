@@ -16,6 +16,9 @@
 #include "iterator.hpp"
 #include "analyze.hpp"
 #include "hashmap.hpp"
+#include <thread>
+#include <atomic>
+#include <cstring>
 
 #ifdef QTTEXMACS
 #include "Qt/QTMSockets.hpp"
@@ -183,6 +186,98 @@ client_listen_connections (int msecs) {
     if (c != NULL)
       c->listen (msecs);
   }
+}
+
+static std::thread checker_thread;
+static std::atomic<bool> checker_running (false);
+
+void
+tm_check_online (scheme_tree endpoints, int timeout_ms) {
+  tm_addr addrs[64];
+  int n= 0;
+  for (int i= 0; i < N(endpoints) && n < 64; i++) {
+    if (!is_tuple (endpoints[i]) || N(endpoints[i]) < 2) continue;
+    if (!is_string (endpoints[i][0])) continue;
+    if (!is_string (endpoints[i][1])) continue;
+    string host= scm_unquote (as_string (endpoints[i][0]));
+    string port= scm_unquote (as_string (endpoints[i][1]));
+    c_string c_host (host);
+    c_string c_port (port);
+    snprintf (addrs[n].host, sizeof (addrs[n].host), "%s", (char*) c_host);
+    snprintf (addrs[n].port, sizeof (addrs[n].port), "%s", (char*) c_port);
+    n++;
+  }
+  if (n > 0)
+    check_online (addrs, n, timeout_ms);
+}
+
+class network_availability_checker {
+public:
+  tm_addr addrs[64];
+  bool reachable[64];
+  int n;
+  int timeout_ms;
+
+  network_availability_checker () : n (0), timeout_ms (5000) {
+    memset (reachable, 0, sizeof (reachable));
+  }
+
+  void operator() () {
+    for (int i= 0; i < n; i++) {
+      char errbuf[256];
+      int fd= try_connect (addrs[i].host, addrs[i].port,
+          timeout_ms, errbuf, sizeof (errbuf));
+      reachable[i]= (fd >= 0);
+      if (fd >= 0) {
+        cout << "got reachable for " << addrs[i].host << ":" << addrs[i].port <<" number " << i << ", " << n << " addrs" << LF;
+#ifdef OS_MINGW
+        using namespace wsoc;
+        wsoc::closesocket (fd);
+#else
+        close (fd);
+#endif
+      }
+    }
+    checker_running.store (false);
+  }
+};
+
+static network_availability_checker checker;
+
+scheme_tree
+tm_get_online_status () {
+  if (checker_running.load ()) return tree (TUPLE);
+  if (checker_thread.joinable ())
+    checker_thread.join ();
+  tree result (TUPLE);
+  for (int i= 0; i < checker.n; i++) {
+    if (checker.reachable[i]) {
+      tree entry (TUPLE);
+      tree key (TUPLE);
+      key << scm_quote (checker.addrs[i].host)
+        << scm_quote (checker.addrs[i].port);
+      entry << key
+        <<  (checker.reachable[i] ? string ("#t") : string ("#f"));
+      result << entry;
+    }
+  }
+  return result;
+}
+
+void
+check_online (tm_addr* addrs, int addr_len, int timeout_ms) {
+  if (checker_running.load ()) return;
+  if (addr_len <= 0 || addr_len > 64) return;
+
+  if (checker_thread.joinable ())
+    checker_thread.join ();
+
+  checker.n= addr_len > 64 ? 64 : addr_len;
+  checker.timeout_ms= timeout_ms;
+  memcpy (checker.addrs, addrs, checker.n * sizeof (tm_addr));
+
+  checker_running.store (true);
+  checker_thread= std::thread (std::ref (checker));
 }
 
 #else // Non QT part
