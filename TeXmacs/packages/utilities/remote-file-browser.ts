@@ -65,6 +65,10 @@
     <concat|<dir-entry-icon|<arg|icon-name>|>|<hspace|12pt><dir-entry-name|<arg|name>|<arg|link>>|<htab|5mm>|<arg|date><hspace|1em><arg|actions>>
   </macro>>
 
+  <assign|dir-entry-empty|<macro|<with|color|dark
+  grey|font-shape|italic|<concat|<phantom-icon><hspace|12pt>Nothing to
+  show>>>>
+
   <\active*>
     <\src-comment>
       Container macros

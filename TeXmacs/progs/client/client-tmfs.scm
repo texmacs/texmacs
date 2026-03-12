@@ -487,7 +487,9 @@
                         (dir-labels ,type-label ,type-action
                                     ,name-label ,name-action
                                     ,date-hdr-label ,date-action ,share-hdr-label)
-                        ,@content))))
+                        ,@(if (null? content)
+                              '((dir-entry-empty))
+                              content)))))
 
 (define (directory-table sname server entries)
   (let ((sorted (sort-directory-entries entries)))
