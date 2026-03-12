@@ -504,6 +504,7 @@ static int cert_out_callback (gnutls_x509_crt_t cert,
 static inline bool
 handle_cert_error_interactive (unsigned int status) {
   return status & GNUTLS_CERT_SIGNER_NOT_FOUND ||
+    status & GNUTLS_CERT_SIGNER_NOT_CA ||
     status & GNUTLS_CERT_NOT_ACTIVATED ||
     status & GNUTLS_CERT_EXPIRED;
 }
@@ -1058,7 +1059,8 @@ tls_client_contact_rep::handshake (gnutls_session_t s) {
 
     GNUTLS_LOGW (msg);
 
-    if (cert_verif_status & GNUTLS_CERT_SIGNER_NOT_FOUND) {
+    if (cert_verif_status & GNUTLS_CERT_SIGNER_NOT_FOUND ||
+        cert_verif_status & GNUTLS_CERT_SIGNER_NOT_CA) {
       call ("trust-certificate-interactive",
           object (msg),
           object (tm_cert_as_pem_string (server_certificate->cert)));
