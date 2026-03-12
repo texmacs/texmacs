@@ -649,6 +649,8 @@
 "client-write"
 "enter-secure-mode"
 "server-client-address"
+"cpp-check-online"
+"cpp-get-online-status"
 "server-log-write-int"
 "supports-gnutls?"
 "gnutls-random-number"

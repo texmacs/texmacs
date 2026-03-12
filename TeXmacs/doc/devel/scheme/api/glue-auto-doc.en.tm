@@ -4995,6 +4995,22 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(cpp-check-online <scm-arg|scheme_tree> <scm-arg|int>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|tm_check_online> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
+    <scm|(cpp-get-online-status)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|tm_get_online_status> which returns
+    <scm|scheme_tree>.
+  </explain>
+
+  <\explain>
     <scm|(server-log-write-int <scm-arg|int> <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>

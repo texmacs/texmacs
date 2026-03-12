@@ -30,6 +30,11 @@ const int TM_NET_NO_GNUTLS = -100;
 const int TM_NET_CONNECTION_FAILED = -120;
 const int TM_NET_SESSION_INACTIVE = -1024;
 
+struct tm_addr {
+  char host[254];  /* RFC 1035: max 253 + NUL */
+  char port[6];
+};
+
 // TeXmacs server and client
 
 void   server_define_error_codes ();
@@ -50,6 +55,10 @@ string server_client_address (int fd);
 void   client_listen_connections (int msecs);
 
 void   enter_secure_mode (int fd);
+
+void        check_online (tm_addr* addrs, int addr_len, int timeout_ms);
+void        tm_check_online (scheme_tree endpoints, int timeout_ms);
+scheme_tree tm_get_online_status ();
 
 // Tells if TeXmacs is running a server
 bool is_server ();
