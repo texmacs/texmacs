@@ -898,7 +898,7 @@ qt_gui_rep::update () {
   time_t std_delay= 1;
   tm_sleep ();
 #else
-  time_t std_delay= 90 / 6;
+  time_t std_delay= headless_mode ? 1000 : 90 / 6;
 #endif
 
   if (updating) {
