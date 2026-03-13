@@ -59,11 +59,13 @@
     (if (null? l)
 	("Login" (open-remote-login "" "6561" "" `())))
     (if (nnull? l)
-	(for (x l)
-	  (with (server-name port pseudo authentications) x
-	    ((eval (string-append
-		    "Login as " (account->string server-name port pseudo)))
-	     (open-remote-login server-name port pseudo authentications))))
+        (with online (list->ahash-table (cpp-get-online-status))
+          (for (x l)
+            (with (server-name port pseudo authentications) x
+              (when (ahash-ref online (list server-name  port))
+                ((eval (string-append
+                        "Login as " (account->string server-name port pseudo)))
+                 (open-remote-login server-name port pseudo authentications))))))
 	("Other login" (open-remote-login "" "6561" "" `())))
     ("New account" (open-remote-account-creator))
     (-> "Reset credentials" (link client-reset-credentials-menu))
@@ -169,6 +171,7 @@
 
 (menu-bind client-menu
   (invisible (client-active-servers))
+  (invisible (cpp-get-online-status))
   (link client-start-menu)
   (with l (client-active-servers)
     ---
@@ -267,3 +270,28 @@
   (assuming (server-started?)
     (=> (balloon (icon "tm_cloud_server.xpm") "Local server")
         (link server-menu))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Periodic server availability check
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (unique-addrs l)
+  (let* ((addrs (make-ahash-table))
+         (unique-addrs
+           (lambda (a)
+             (with addr `(,(first a) ,(second a))
+               (if (not (ahash-ref addrs addr))
+                 (begin
+                  (ahash-set! addrs addr  #t)
+                  `(,(first a) ,(second a)))
+                 #f)))))
+    (filter-map unique-addrs l)))
+
+(delayed
+  (:idle 0)
+  (:pause 0)
+  (:while (and (not (server-mode?)) (not (headless?))
+               (== (get-preference "remote tool") "on")))
+  (:every 3000)
+  (with accounts (client-accounts)
+    (when (nnull? accounts) (cpp-check-online (unique-addrs accounts) 1000))))
