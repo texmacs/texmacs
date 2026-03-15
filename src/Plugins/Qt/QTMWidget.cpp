@@ -806,7 +806,7 @@ QTMWidget::event (QEvent* event) {
     assigned to QActions while building menus, etc. In doing this, we keep the
     shortcut text in the menus while relaying all keypresses through the editor*/
     if (event->type() == QEvent::ShortcutOverride) {
-      cout << "Ignoring ShortcutOverride event" << LF;
+      //cout << "Ignoring ShortcutOverride event" << LF;
       event->accept();
       return true;
     }
