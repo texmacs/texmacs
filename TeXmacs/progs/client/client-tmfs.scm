@@ -470,7 +470,8 @@
 
 (define (build-dir-breadcrumbs p)
   (if (== (tmfs-type p) "dir")
-    (list-intersperse (path-breadcrumbs p) " > ")
+    (with sep `(with color white (concat " " <blacktriangleright> " "))
+      (list-intersperse (path-breadcrumbs p) sep))
     '()))
 
 (tm-define (build-dir-table title date-label content share?)
