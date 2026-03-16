@@ -468,28 +468,29 @@
         new-acc
         (loop (url-head cur) new-acc)))))
 
-(define (build-dir-header p)
+(define (build-dir-breadcrumbs p)
   (if (== (tmfs-type p) "dir")
-    `(dir-header ,@(list-intersperse (path-breadcrumbs p) " > "))
-    ""))
+    (list-intersperse (path-breadcrumbs p) " > ")
+    '()))
 
 (tm-define (build-dir-table title date-label content share?)
-  (let* ((dir-hdr (build-dir-header (buffer-get-title (current-buffer))))
+  (let* ((breadcrumbs (build-dir-breadcrumbs (buffer-get-title (current-buffer))))
          (type-label (sort-header-label "type" ""))
          (type-action (sort-header-action "type"))
          (name-label (sort-header-label "name" "Name"))
          (name-action (sort-header-action "name"))
          (date-hdr-label (sort-header-label "date" date-label))
          (date-action (sort-header-action "date"))
-         (share-hdr-label (build-actions-hdr share?)))
-    `(compact (document (dir-title ,title)
-                        ,dir-hdr
-                        (dir-labels ,type-label ,type-action
+         (share-hdr-label (build-actions-hdr share?))
+         (table-name (if (null? breadcrumbs) title `(concat ,@breadcrumbs))))
+    `(compact (document (dir-header ,table-name
+                                    ,type-label ,type-action
                                     ,name-label ,name-action
                                     ,date-hdr-label ,date-action ,share-hdr-label)
                         ,@(if (null? content)
                               '((dir-entry-empty))
-                              content)))))
+                              content)
+                        (phantom "x")))))
 
 (define (directory-table sname server entries)
   (let ((sorted (sort-directory-entries entries)))
