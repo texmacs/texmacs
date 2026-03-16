@@ -39,12 +39,22 @@
   </active*>
 
   <assign|dir-title|<\macro|name>
-    <surround||<vspace|0.6fn>|<block*|<tformat|<cwith|1|1|1|1|cell-background|pastel
-    blue>|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-lsep|1spc>|<cwith|1|1|1|1|cell-rsep|1spc>|<cwith|1|1|1|1|cell-bsep|1spc>|<cwith|1|1|1|1|cell-tsep|1spc>|<table|<row|<cell|<strong|<arg|name>>>>>>>>
+    <tformat|<cwith|1|1|1|1|cell-background|dark grey>|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-lsep|1spc>|<cwith|1|1|1|1|cell-rsep|1spc>|<cwith|1|1|1|1|cell-bsep|0.5spc>|<cwith|1|1|1|1|cell-tsep|0.5spc>|<table|<row|<cell|<samp|<with|color|white|locus-color|preserve|<arg|name>>>>>>>
   </macro>>
 
-  <assign|dir-header|<\macro|breadcrumbs>
-    <compact|<concat|<phantom-icon><dir-entry-icon|tm_cloud_dir.svg><hspace|12pt><arg|breadcrumbs>|<vspace|0.6fn>>>
+  <assign|dir-header|<\macro|name|type-label|type-action|name-label|name-action|date-label|date-action|action-label>
+    <tformat|\
+      <cwith|1|1|1|1|cell-background|dark grey>|<cwith|2|2|1|1|cell-background|dark grey>|\
+      <twith|table-width|1par>|<twith|table-hmode|exact>|\
+      <cwith|1|1|1|1|cell-tsep|2.5spc>|<cwith|2|2|1|1|cell-bsep|0.5spc>|\
+      <cwith|1|1|1|1|cell-valign|c>|<cwith|1|1|1|1|cell-halign|c>|<cwith|2|2|1|1|cell-valign|c>|<cwith|2|2|1|1|cell-halign|c>|\
+      <table|\
+        <row|<cell|<samp|<with|color|white|locus-color|preserve|<compact|<arg|name>|<vspace|0.6fn>>>>>>|\
+        <row|<cell|<samp|<small|<with|color|white|locus-color|preserve|<wide-underlined|||<concat|<action|<arg|type-label>|<arg|type-action>>|<hspace|12pt><action|<arg|name-label>|<arg|name-action>>|<htab|5mm>|<action|<arg|date-label>|<arg|date-action>><hspace|2em><arg|action-label>>>>>>>>>>
+  </macro>>
+
+  <assign|dir-header-old|<\macro|breadcrumbs>
+    <with|color|white|locus-color|preserve|<compact|<concat|<phantom-icon><dir-entry-icon|tm_cloud_dir.svg><hspace|12pt><arg|breadcrumbs>|<vspace|0.6fn>>>>
   </macro>>
 
   <assign|dir-labels|<\macro|type-label|type-action|name-label|name-action|date-label|date-action|action-label>
@@ -74,6 +84,8 @@
       Container macros
     </src-comment>
   </active*>
+
+  <assign|dir-spacer|<macro|<tformat|<cwith|1|1|1|1|cell-height|0.1fn>|<cwith|1|1|1|1|cell-vmode|exact>|<table|<row|<cell|>>>>>>
 
   <assign|dir-list|<\macro|body>
     <with|shadow-elevation|0.75|<\drop-shadow>
