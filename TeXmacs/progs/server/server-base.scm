@@ -83,22 +83,14 @@
   (set! server-serial (+ server-serial 1)))
 
 (tm-define (server-add client)
-  (ahash-set! server-client-active? client #t)
-  (with wait 1
-    (delayed
-      (:while (ahash-ref server-client-active? client))
-      (:pause ((lambda () (inexact->exact (round wait)))))
-      (:do (set! wait (min (* 1.01 wait) 2500)))
-      ;;(display* "server-wait= " wait "\n")
-      (with msg (server-read client)
-        ;;(when (!= msg "")
-        ;;  (display* "wait  = " wait "\n")
-        ;;  (display* "client= " client "\n")
-        ;;  (display* "msg   = " msg "\n"))
-        (when (!= msg "")
-          (with (msg-id msg-cmd) (string->object msg)
-            (server-eval (list client msg-id) msg-cmd)
-            (set! wait 1)))))))
+  (ahash-set! server-client-active? client #t))
+
+(tm-define (server-feed client)
+  (with msg (server-read client)
+    (when (!= msg "")
+      (with (msg-id msg-cmd) (string->object msg)
+        (server-eval (list client msg-id) msg-cmd))
+      (server-feed client))))
 
 (tm-define (server-remove client)
   (ahash-remove! server-client-active? client))
