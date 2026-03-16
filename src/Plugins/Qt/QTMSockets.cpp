@@ -539,6 +539,15 @@ socket_link_rep::resume_start (int s) {
 }
 
 void
+socket_link_rep::feed_data () {
+  if (used_by_server ()) {
+    call ("server-feed", object (socket_id));
+  } else {
+    call ("client-feed", object (socket_id));
+  }
+}
+
+void
 socket_link_rep::data_set_ready (int s) {
   if (!exists (this)) return;
   read_notifier_ptr->setEnabled (false);
@@ -593,8 +602,7 @@ socket_link_rep::data_set_ready (int s) {
           << N(s));
       }
     }
-    if (!is_nil (feed_cmd))
-      feed_cmd->apply ();
+    feed_data ();
     read_notifier_ptr->setEnabled (true);
   }
 }

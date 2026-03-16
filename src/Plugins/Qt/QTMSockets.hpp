@@ -114,6 +114,7 @@ private:
 
   void connect_data_notifiers ();
   void connect_handshake_notifiers ();
+  void feed_data ();
 };
 
 /******************************************************************************
