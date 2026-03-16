@@ -28,9 +28,9 @@
     </src-comment>
   </active*>
 
-  <assign|dir-entry-icon|<macro|name|tip|<with|icon|<image|<find-file|$TEXMACS_PATH/misc/pixmaps/light|$TEXMACS_PATH/misc/pixmaps/modern/24x24/main|$TEXMACS_PATH/misc/pixmaps/modern/16x16/focus|<arg|name>>||12pt||-0.666ex>|<if|<equal|<length|<arg|tip>>|0>|<value|icon>|<help-balloon|<value|icon>|<arg|tip>|left|Bottom>>>>>
+  <assign|dir-entry-icon|<macro|name|<image|<find-file|$TEXMACS_PATH/misc/pixmaps/light|$TEXMACS_PATH/misc/pixmaps/modern/24x24/main|$TEXMACS_PATH/misc/pixmaps/modern/16x16/focus|<arg|name>>||12pt||-0.666ex>>>
 
-  <assign|phantom-icon|<macro|<phantom|<dir-entry-icon|tm_cloud_share.svg|>>>>
+  <assign|phantom-icon|<macro|<phantom|<dir-entry-icon|tm_cloud_share.svg>>>>
 
   <\active*>
     <\src-comment>
@@ -44,7 +44,7 @@
   </macro>>
 
   <assign|dir-header|<\macro|breadcrumbs>
-    <compact|<concat|<phantom-icon><dir-entry-icon|tm_cloud_dir.svg|><hspace|12pt><arg|breadcrumbs>|<vspace|0.6fn>>>
+    <compact|<concat|<phantom-icon><dir-entry-icon|tm_cloud_dir.svg><hspace|12pt><arg|breadcrumbs>|<vspace|0.6fn>>>
   </macro>>
 
   <assign|dir-labels|<\macro|type-label|type-action|name-label|name-action|date-label|date-action|action-label>
@@ -62,7 +62,7 @@
   <assign|dir-entry-name|<macro|name|link|<if|<greater|<length|<arg|name>>|<value|dir-entry-name-max-len>>|<hlink|<concat|<range|<arg|name>|0|<minus|<value|dir-entry-name-max-len>|3>>|\<ldots\>>|<arg|link>>|<hlink|<arg|name>|<arg|link>>>>>
 
   <assign|dir-entry|<\macro|icon-name|name|link|date|actions>
-    <concat|<dir-entry-icon|<arg|icon-name>|>|<hspace|12pt><dir-entry-name|<arg|name>|<arg|link>>|<htab|5mm>|<arg|date><hspace|1em><arg|actions>>
+    <concat|<dir-entry-icon|<arg|icon-name>>|<hspace|12pt><dir-entry-name|<arg|name>|<arg|link>>|<htab|5mm>|<arg|date><hspace|1em><arg|actions>>
   </macro>>
 
   <assign|dir-entry-empty|<macro|<with|color|dark
