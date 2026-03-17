@@ -59,7 +59,7 @@ QTMMainTabWindow::QTMMainTabWindow() {
   tabBar()->installEventFilter(this);
 #endif
 
-#if QT_VERSION >= 0x050000
+#if !defined(OS_ANDROID) && QT_VERSION >= 0x050000
   setupWindowControls();
 #endif
 

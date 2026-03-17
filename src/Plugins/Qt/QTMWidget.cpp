@@ -1112,6 +1112,6 @@ void QTMWidget::showEvent (QShowEvent *event) {
 
 #if defined(OS_ANDROID) && QT_VERSION >= 0x060000
 void QTMWidget::showKeyboard() {
-  qApp->inputMethod()->show();
+  // qApp->inputMethod()->show();
 }
 #endif
