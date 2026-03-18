@@ -228,6 +228,12 @@
 /* The size of 'void *', as computed by sizeof. */
 #undef SIZEOF_VOID_P
 
+/* Define if the system is 32-bit */
+#undef SI_32
+
+/* Define if the system is 64-bit */
+#undef SI_64
+
 /* If not set during link */
 #undef STACK_SIZE
 
