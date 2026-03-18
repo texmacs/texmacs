@@ -42,17 +42,19 @@ typedef unsigned int color;
 #define MAX_INT ((int) 0x7fffffff)
 #define MIN_INT ((int) 0x80000000)
 
-#define SI_32
+// don't use : typedef long int SI;
+// while long int is 64 bits on Linux and macOS (which use the LP64 data model), 
+// long int is strictly 32 bits on 64-bit Windows (which uses the LLP64 data model).
 #ifdef SI_32
-typedef int SI;
-typedef long long int DI;
+typedef int32_t SI;
+typedef int64_t DI;
 #define MAX_SI ((SI) 0x7fffffff)
 #define MIN_SI ((SI) 0x80000000)
 #define PLUS_INFINITY  ((SI) 0x3fffffff)
 #define MINUS_INFINITY ((SI) 0xc0000000)
 #else
-typedef long int SI;
-typedef long long int DI;
+typedef int64_t SI;
+typedef int64_t DI;
 #define MAX_SI ((SI) 0x7fffffffffffffff)
 #define MIN_SI ((SI) 0x8000000000000000)
 #define PLUS_INFINITY  ((SI) 0x3fffffffffffffff)
@@ -135,20 +137,24 @@ void clear_debug_messages (string channel);
 * miscellaneous routines
 ******************************************************************************/
 
-inline int min (int i, int j) { if (i<j) return i; else return j; }
-inline int max (int i, int j) { if (i>j) return i; else return j; }
-inline long int min (long int i, long int j) {
+inline int32_t min (int32_t i, int32_t j) { if (i<j) return i; else return j; }
+inline int32_t max (int32_t i, int32_t j) { if (i>j) return i; else return j; }
+inline int64_t min (int64_t i, int64_t j) {
   if (i<j) return i; else return j; }
-inline long int max (long int i, long int j) {
+inline int64_t max (int64_t i, int64_t j) {
   if (i>j) return i; else return j; }
-inline long int min (long int i, int j) {
+inline int64_t min (int64_t i, int32_t j) {
   if (i<j) return i; else return j; }
-inline long int max (long int i, int j) {
+inline int64_t max (int64_t i, int32_t j) {
   if (i>j) return i; else return j; }
-inline long long int min (long long int i, long long int j) {
+inline int64_t min (int32_t i, int64_t j) {
   if (i<j) return i; else return j; }
-inline long long int max (long long int i, long long int j) {
+inline int64_t max (int32_t i, int64_t j) {
   if (i>j) return i; else return j; }
+//inline long long int min (long long int i, long long int j) {
+//  if (i<j) return i; else return j; }
+//inline long long int max (long long int i, long long int j) {
+//  if (i>j) return i; else return j; }
 inline double min (double i, double j) { if (i<j) return i; else return j; }
 inline double max (double i, double j) { if (i>j) return i; else return j; }
 inline int hash (int i) { return i; }
