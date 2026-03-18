@@ -250,8 +250,8 @@ inline string as_string (tree t) {
 string tree_as_string (tree t);
 tree replace (tree t, tree w, tree b);
 template<class T> inline tree as_tree (T x) { return (tree) x; }
-template<> inline tree as_tree (int x) { return as_string (x); }
-template<> inline tree as_tree (long int x) { return as_string (x); }
+template<> inline tree as_tree (int32_t x) { return as_string (x); }
+template<> inline tree as_tree (int64_t x) { return as_string (x); }
 template<> inline tree as_tree (double x) { return as_string (x); }
 template<> inline tree as_tree (pointer x) { (void) x; return "pointer"; }
 inline tree bool_as_tree (bool f) {
