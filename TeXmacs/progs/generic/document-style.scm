@@ -161,7 +161,9 @@
          (style-url   (url-append "$TEXMACS_STYLE_PATH" style-name))
          (style-local (url-relative (current-buffer) style-name)))
     ;; we give precedence to the local style file to a global style with same name     
-    (url-resolve (url-or style-local style-url) "r")))
+    (if (url-rooted-tmfs? (current-buffer))
+      (url-resolve style-url "r")
+      (url-resolve (url-or style-local style-url) "r"))))
 
 (tm-define (edit-package-source name)
   (with file-name (url-resolve-package name)
