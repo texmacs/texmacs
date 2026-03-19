@@ -483,15 +483,15 @@
          (date-hdr-label (sort-header-label "date" date-label))
          (date-action (sort-header-action "date"))
          (share-hdr-label (build-actions-hdr share?))
-         (table-name (if (null? breadcrumbs) title `(concat ,@breadcrumbs))))
-    `(compact (document (dir-header ,table-name
-                                    ,type-label ,type-action
-                                    ,name-label ,name-action
-                                    ,date-hdr-label ,date-action ,share-hdr-label)
+         (table-name (if (null? breadcrumbs) title `(concat ,@breadcrumbs)))
+         (hdr `(dir-header ,table-name
+                           ,type-label ,type-action
+                           ,name-label ,name-action
+                           ,date-hdr-label ,date-action ,share-hdr-label)))
+    `(compact (document ,hdr
                         ,@(if (null? content)
                               '((dir-entry-empty))
-                              content)
-                        (phantom "x")))))
+                              `((dir-content (document ,@content))))))))
 
 (define (directory-table sname server entries)
   (let ((sorted (sort-directory-entries entries)))
