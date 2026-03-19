@@ -1,4 +1,4 @@
-<TeXmacs|2.1.4>
+<TeXmacs|2.1.5>
 
 <style|source>
 
@@ -50,11 +50,11 @@
     <tformat|\
       <cwith|1|1|1|1|cell-background|dark grey>|<cwith|2|2|1|1|cell-background|dark grey>|\
       <twith|table-width|1par>|<twith|table-hmode|exact>|\
-      <cwith|1|1|1|1|cell-tsep|2.5spc>|<cwith|2|2|1|1|cell-bsep|0.5spc>|\
+      <cwith|1|1|1|1|cell-tsep|2.5spc>|<cwith|2|2|1|2|cell-bsep|1fn>|\
       <cwith|1|1|1|1|cell-valign|c>|<cwith|1|1|1|1|cell-halign|c>|<cwith|2|2|1|1|cell-valign|c>|<cwith|2|2|1|1|cell-halign|c>|\
       <table|\
         <row|<cell|<samp|<with|color|pastel cyan|locus-color|white|visited-color|white|<compact|<arg|name>|<vspace|0.6fn>>>>>>|\
-        <row|<cell|<samp|<small|<with|locus-color|white|<wide-underlined|||<concat|<action|<arg|type-label>|<arg|type-action>>|<hspace|12pt><action|<arg|name-label>|<arg|name-action>>|<htab|5mm>|<action|<arg|date-label>|<arg|date-action>><hspace|2em><arg|action-label>>>>>>>>>>
+        <row|<cell|<samp|<small|<with|locus-color|white|<wide-underlined|||<concat|<action|<arg|type-label>|<arg|type-action>>|<hspace|12pt><action|<arg|name-label>|<arg|name-action>>|<htab|5mm>|<action|<arg|date-label>|<arg|date-action>><hspace|3em><arg|action-label>>>>>>>>>>
   </macro>>
 
   <assign|dir-header-old|<\macro|breadcrumbs>
@@ -77,7 +77,7 @@
 
   <assign|dir-entry-line|<macro|icon-name|name|link|date|actions|<concat|<dir-entry-icon|<arg|icon-name>>|<hspace|12pt><dir-entry-name|<arg|name>|<arg|link>>|<htab|5mm>|<arg|date><hspace|1em><arg|actions>>>>
 
-  <assign|dir-entry-bg|<macro|bg|body|<tformat|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-background|<arg|bg>>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-lsep|0spc>|<cwith|1|1|1|1|cell-rsep|0spc>|<cwith|1|1|1|1|cell-bsep|0spc>|<cwith|1|1|1|1|cell-tsep|0spc>|<table|<row|<cell|<arg|body>>>>>>>
+  <assign|dir-entry-bg|<macro|bg|body|<tformat|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-background|<arg|bg>>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-lsep|2spc>|<cwith|1|1|1|1|cell-rsep|0spc>|<cwith|1|1|1|1|cell-bsep|0spc>|<cwith|1|1|1|1|cell-tsep|0spc>|<table|<row|<cell|<arg|body>>>>>>>
 
   <assign|dir-entry|<\macro|icon-name|name|link|date|actions>
     <with|clickable-color|#00000000|<dynamic-case|mouse-over|<dir-entry-bg|#e0e0e0|<dir-entry-line|<arg|icon-name>|<arg|name>|<arg|link>|<arg|date>|<arg|actions>>>|any|<dir-entry-bg||<dir-entry-line|<arg|icon-name>|<arg|name>|<arg|link>|<arg|date>|<arg|actions>>>>>
@@ -100,6 +100,14 @@
       <arg|body>
     </drop-shadow>>
   </macro>>
+
+  <assign|dir-content|<\macro|entries>
+    <with|ornament-border|0ln|ornament-hpadding|0spc|ornament-vpadding|0.5fn|padding-above|0fn|<\ornamented>
+      <arg|entries>
+    </ornamented>>
+  </macro>>
+
+  \;
 </body>
 
 <\initial>
