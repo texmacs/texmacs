@@ -24,7 +24,11 @@
 #include <QScrollerProperties>
 #endif // QT_VERSION >= 0x050000
 
+#ifdef OS_ANDROID
+#define QTMTOOLBAR_MARGIN 8
+#else
 #define QTMTOOLBAR_MARGIN 4
+#endif
 
 QTMToolbar::QTMToolbar (const QString& title, QSize iconSize, QWidget* parent)
   : QToolBar (title, parent)
@@ -237,14 +241,16 @@ void QTMToolbar::addAction (QAction* action) {
     if (action->menu()) {
       button->setPopupMode (QToolButton::InstantPopup);
       QMenu *actionMenu = action->menu();
-      connect (actionMenu, &QMenu::aboutToShow, [this, actionMenu]() {
+      connect (actionMenu, &QMenu::aboutToShow, [this, actionMenu, button]() {
         mCurrentMenu = actionMenu;
+        resetAllButtons(button);
       });
       connect (actionMenu, &QMenu::aboutToHide, [this, actionMenu, button]() {
         if (mCurrentMenu == actionMenu) {
           mCurrentMenu = nullptr;
           QTMWidget::setFocusToLast();
         }
+        resetButton(button);
       });
       actionMenu->installEventFilter (this);
     }
@@ -402,8 +408,9 @@ bool QTMToolbar::eventFilter (QObject* watched, QEvent* event) {
   if (!tmapp()->useNewToolbar()) return false;
   if (!mScrollArea) return false;
 
+#ifndef OS_ANDROID
   QMenu *menu = qobject_cast<QMenu*> (watched);
-  if (menu && mCurrentMenu && mCurrentMenu == menu && event->type() == QEvent::MouseMove) {
+  if (menu && mCurrentMenu == menu && event->type() == QEvent::MouseMove) {
 
     QToolButton *currentButton = nullptr;
     // look for the button that opened the menu
@@ -441,16 +448,6 @@ bool QTMToolbar::eventFilter (QObject* watched, QEvent* event) {
         QMouseEvent meRelease (QEvent::MouseButtonRelease, QPoint(-9999, -9999), outsidePos, Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
         QCoreApplication::sendEvent (menu, &meRelease);
 
-        for (int j = 0; j < mLayout->count(); j++) {
-          QToolButton* b = qobject_cast<QToolButton*>(mLayout->itemAt(j)->widget());
-          if (!b) continue;
-          if (b == button) continue;
-          b->setDown (true);
-          b->setDown (false);
-          QEvent leaveEvent(QEvent::Leave);
-          QCoreApplication::sendEvent(b, &leaveEvent);
-        }
-
         // send a mouse click event to the hovered button (with globalPos)
         QPoint buttonLocalPos = button->mapFromGlobal(globalPos);
         QMouseEvent bePress (QEvent::MouseButtonPress, buttonLocalPos, globalPos, Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
@@ -463,6 +460,7 @@ bool QTMToolbar::eventFilter (QObject* watched, QEvent* event) {
       }
     }
   }
+#endif
 
   if (watched == mScrollArea->viewport() || watched == mScrollArea->widget()) {
     if (event->type() == QEvent::Resize) {
@@ -489,3 +487,65 @@ bool QTMToolbar::eventFilter (QObject* watched, QEvent* event) {
 #endif // QT_VERSION >= 0x050000
   return false;
 }
+
+QList<QTMToolbar*> QTMToolbar::getAllToolbarsFromMainWindow () const {
+  QList<QTMToolbar*> toolbars;
+#if QT_VERSION >= 0x050000
+  if (!tmapp()->useNewToolbar()) return toolbars;
+  QWidget* mainWindow = parentWidget(); // todo
+  if (!mainWindow) return toolbars;
+  QList<QToolBar*> allToolbars = mainWindow->findChildren<QToolBar*>();
+  for (QToolBar* tb : allToolbars) {
+    QTMToolbar* tmtb = qobject_cast<QTMToolbar*>(tb);
+    if (tmtb) {
+      toolbars.append(tmtb);
+    }
+  }
+#endif // QT_VERSION >= 0x050000
+  return toolbars;
+}
+
+QList<QToolButton*> QTMToolbar::getAllButtonsFromAllToolbars () const {
+  QList<QToolButton*> buttons;
+#if QT_VERSION >= 0x050000
+  if (!tmapp()->useNewToolbar()) return buttons;
+  QList<QTMToolbar*> toolbars = getAllToolbarsFromMainWindow();
+  for (QTMToolbar* tb : toolbars) {
+    for (int i = 0; i < tb->mLayout->count(); i++) {
+      QToolButton* button = qobject_cast<QToolButton*>(tb->mLayout->itemAt(i)->widget());
+      if (button) {
+        buttons.append(button);
+      }
+    }
+  }
+#endif // QT_VERSION >= 0x050000
+  return buttons;
+}
+
+void QTMToolbar::resetAllButtons(QToolButton* except) {
+#if QT_VERSION >= 0x050000
+  QList<QToolButton*> buttons = getAllButtonsFromAllToolbars();
+  for (QToolButton* button : buttons) {
+    if (button == except) continue;
+    resetButton(button);
+  }
+#endif // QT_VERSION >= 0x050000
+}
+
+void QTMToolbar::resetButton(QToolButton* button) {
+#if QT_VERSION >= 0x050000
+  if (!button) return;
+  button->setDown (false);
+  button->setAttribute(Qt::WA_UnderMouse, false);
+#endif // QT_VERSION >= 0x050000
+}
+
+/*
+QMenu* QTMToolbar::currentMenu () const {
+  QWidget *activePopup = QApplication::activePopupWidget();
+  if (!activePopup) return nullptr;
+  QMenu *menu = qobject_cast<QMenu*> (activePopup);
+  if (!menu) return nullptr;
+  return menu;
+}
+  */
