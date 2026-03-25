@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-  <id>org.texmacs.texmacs</id>
+  <id>texmacs</id>
   
   <name>TeXmacs</name>
   <summary>A structured wysiwyg scientific text editor</summary>
@@ -39,7 +39,7 @@
     <category>Math</category>
   </categories>
   
-  <launchable type="desktop-id">org.texmacs.texmacs.desktop</launchable>
+  <launchable type="desktop-id">texmacs.desktop</launchable>
   <screenshots>
     <screenshot type="default">
       <image>https://www.texmacs.org/tmweb/images/texmacs-ffnlogn.png</image>
