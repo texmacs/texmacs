@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>org.texmacs.texmacs</id>
+  
+  <name>TeXmacs</name>
+  <summary>A structured wysiwyg scientific text editor</summary>
+  
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+
+  <developer_name>The GNU TeXmacs Team</developer_name>
+  
+  <url type="homepage">https://www.texmacs.org/</url>
+  <url type="bugtracker">https://savannah.gnu.org/bugs/?group=texmacs</url>
+  <url type="help">https://www.texmacs.org/tmweb/help/manual.en.html</url>
+  
+  <recommends>
+    <display_length compare="ge">1024</display_length>
+  </recommends>
+  
+  <description>
+    <p>
+      GNU TeXmacs is a free scientific editing platform designed to create beautiful technical documents using a wysiwyg interface. It provides a unified and user-friendly framework for editing structured documents with different types of content: text, mathematics, graphics, interactive content, slides, etc.
+    </p>
+    <ul>
+      <li>Use TeXmacs as a graphical front-end for many systems in computer algebra, numerical analysis, statistics, etc.</li>
+      <li>Save documents in TeXmacs, XML, or Scheme format and print them as PDF or Postscript files.</li>
+      <li>Convert easily to and from TeX/LaTeX and HTML/MathML. (Notice that TeXmacs is not based on TeX/LaTeX).</li>
+      <li>Rely on a rendering engine that uses high-quality typesetting algorithms to produce professional-looking documents for printing or presentations.</li>
+      <li>Write new styles and add new features to the editor using the Scheme extension language.</li>
+    </ul>
+  </description>
+
+  <categories>
+    <category>Office</category>
+    <category>WordProcessor</category>
+    <category>Education</category>
+    <category>Science</category>
+    <category>Math</category>
+  </categories>
+  
+  <launchable type="desktop-id">org.texmacs.texmacs.desktop</launchable>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://www.texmacs.org/tmweb/images/texmacs-ffnlogn.png</image>
+    </screenshot>
+  </screenshots>
+
+  <content_rating type="oars-1.1" />
+</component>

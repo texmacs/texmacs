@@ -724,7 +724,7 @@ APPIMAGE: TEXMACS
 	$(CP) -r `find @GUILE_DATA_PATH@ -type d | grep ice-9` ../distr/TeXmacs.AppDir/usr/share/TeXmacs/progs
 	
 	# Copy the AppImage specific files
-	$(CP) packages/appimage/org.texmacs.texmacs.metainfo.xml ../distr/TeXmacs.AppDir/usr/share/metainfo/org.texmacs.texmacs.metainfo.xml
+	$(CP) TeXmacs/misc/mime/metainfo.xml ../distr/TeXmacs.AppDir/usr/share/metainfo/org.texmacs.texmacs.metainfo.xml
 	$(CP) packages/appimage/org.texmacs.texmacs.desktop ../distr/TeXmacs.AppDir/usr/share/applications/org.texmacs.texmacs.desktop
 	$(CP) packages/appimage/org.texmacs.texmacs.desktop ../distr/TeXmacs.AppDir/org.texmacs.texmacs.desktop	
 	$(CP) ../distr/TeXmacs.AppDir/usr/share/TeXmacs/misc/images/texmacs.svg ../distr/TeXmacs.AppDir/texmacs.svg
