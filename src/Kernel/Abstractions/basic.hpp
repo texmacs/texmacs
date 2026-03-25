@@ -42,23 +42,51 @@ typedef unsigned int color;
 #define MAX_INT ((int) 0x7fffffff)
 #define MIN_INT ((int) 0x80000000)
 
+#if SIZEOF_VOID_P == 8
+  #define SI_64 1
+#elif SIZEOF_VOID_P == 4
+  #define SI_32 1
+#else
+  #error "Cannot determine 32 bit or 64 bit. void* size is: " SIZEOF_VOID_P
+#endif
+
+#if SIZEOF_INT == 4
+  typedef int tm_int32_t;
+#elif SIZEOF_LONG == 4
+  typedef long tm_int32_t;
+#elif SIZEOF_SHORT == 4
+  typedef short tm_int32_t;
+#else
+  #error "Cannot determine 32 bit integer type."
+#endif
+
+#if SIZEOF_LONG == 8
+  typedef long tm_int64_t;
+#elif SIZEOF_LONG_LONG == 8
+  typedef long long tm_int64_t;
+#elif SIZEOF_INT == 8
+  typedef int tm_int64_t;
+#else
+  #error "Cannot determine 64 bit integer type."
+#endif
+
 // don't use : typedef long int SI;
 // while long int is 64 bits on Linux and macOS (which use the LP64 data model), 
 // long int is strictly 32 bits on 64-bit Windows (which uses the LLP64 data model).
 #ifdef SI_32
-typedef int32_t SI;
-typedef int64_t DI;
-#define MAX_SI ((SI) 0x7fffffff)
-#define MIN_SI ((SI) 0x80000000)
-#define PLUS_INFINITY  ((SI) 0x3fffffff)
-#define MINUS_INFINITY ((SI) 0xc0000000)
+  typedef tm_int32_t SI;
+  typedef tm_int64_t DI;
+  #define MAX_SI ((SI) 0x7fffffff)
+  #define MIN_SI ((SI) 0x80000000)
+  #define PLUS_INFINITY  ((SI) 0x3fffffff)
+  #define MINUS_INFINITY ((SI) 0xc0000000)
 #else
-typedef int64_t SI;
-typedef int64_t DI;
-#define MAX_SI ((SI) 0x7fffffffffffffff)
-#define MIN_SI ((SI) 0x8000000000000000)
-#define PLUS_INFINITY  ((SI) 0x3fffffffffffffff)
-#define MINUS_INFINITY ((SI) 0xc000000000000000)
+  typedef tm_int64_t SI;
+  typedef tm_int64_t DI;
+  #define MAX_SI ((SI) 0x7fffffffffffffff)
+  #define MIN_SI ((SI) 0x8000000000000000)
+  #define PLUS_INFINITY  ((SI) 0x3fffffffffffffff)
+  #define MINUS_INFINITY ((SI) 0xc000000000000000)
 #endif
 
 /******************************************************************************
@@ -137,19 +165,19 @@ void clear_debug_messages (string channel);
 * miscellaneous routines
 ******************************************************************************/
 
-inline int32_t min (int32_t i, int32_t j) { if (i<j) return i; else return j; }
-inline int32_t max (int32_t i, int32_t j) { if (i>j) return i; else return j; }
-inline int64_t min (int64_t i, int64_t j) {
+inline tm_int32_t min (tm_int32_t i, tm_int32_t j) { if (i<j) return i; else return j; }
+inline tm_int32_t max (tm_int32_t i, tm_int32_t j) { if (i>j) return i; else return j; }
+inline tm_int64_t min (tm_int64_t i, tm_int64_t j) {
   if (i<j) return i; else return j; }
-inline int64_t max (int64_t i, int64_t j) {
+inline tm_int64_t max (tm_int64_t i, tm_int64_t j) {
   if (i>j) return i; else return j; }
-inline int64_t min (int64_t i, int32_t j) {
+inline tm_int64_t min (tm_int64_t i, tm_int32_t j) {
   if (i<j) return i; else return j; }
-inline int64_t max (int64_t i, int32_t j) {
+inline tm_int64_t max (tm_int64_t i, tm_int32_t j) {
   if (i>j) return i; else return j; }
-inline int64_t min (int32_t i, int64_t j) {
+inline tm_int64_t min (tm_int32_t i, tm_int64_t j) {
   if (i<j) return i; else return j; }
-inline int64_t max (int32_t i, int64_t j) {
+inline tm_int64_t max (tm_int32_t i, tm_int64_t j) {
   if (i>j) return i; else return j; }
 //inline long long int min (long long int i, long long int j) {
 //  if (i<j) return i; else return j; }
