@@ -19,6 +19,7 @@
 #include <QScrollArea>
 #include <QHBoxLayout>
 #include <QToolButton>
+#include <QList>
 
 class QTMToolbar : public QToolBar {
   Q_OBJECT
@@ -37,6 +38,11 @@ public:
   void addSmallSeparator ();
   void addRightSpacer ();
 
+  QList<QTMToolbar*> getAllToolbarsFromMainWindow () const;
+  QList<QToolButton*> getAllButtonsFromAllToolbars () const;
+  void resetAllButtons(QToolButton* except = nullptr);
+  void resetButton(QToolButton* button);
+
 protected:
   bool eventFilter (QObject* watched, QEvent* event) override;
   void setRightActVisible (bool v);
@@ -49,7 +55,7 @@ private:
   QToolButton* mRightBtn;
   QAction*     mLeftAct;
   QAction*     mRightAct;
-  QMenu*       mCurrentMenu;
+  QMenu* mCurrentMenu;
 
   void scrollBy (int dx);
   void updateNavButtons ();
