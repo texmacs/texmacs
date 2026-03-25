@@ -358,10 +358,12 @@ bool QTMMainTabWindow::eventFilterTabBar(QObject *obj, QEvent *event) {
 
 bool QTMMainTabWindow::eventFilter(QObject *obj, QEvent *event) {
   if (obj == this) {
-    return eventFilterWindow(obj, event);
+    eventFilterWindow(obj, event);
+    return false;
   }
 
-  return eventFilterTabBar(obj, event);
+  eventFilterTabBar(obj, event);
+  return false;
 }
 
 void QTMMainTabWindow::showWidget(QWidget *widget) {

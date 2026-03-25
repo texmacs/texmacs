@@ -240,7 +240,7 @@ void QTMToolbar::addAction (QAction* action) {
       connect (actionMenu, &QMenu::aboutToShow, [this, actionMenu]() {
         mCurrentMenu = actionMenu;
       });
-      connect (actionMenu, &QMenu::aboutToHide, [this, actionMenu]() {
+      connect (actionMenu, &QMenu::aboutToHide, [this, actionMenu, button]() {
         if (mCurrentMenu == actionMenu) {
           mCurrentMenu = nullptr;
           QTMWidget::setFocusToLast();
@@ -440,6 +440,16 @@ bool QTMToolbar::eventFilter (QObject* watched, QEvent* event) {
         QCoreApplication::sendEvent (menu, &mePress);
         QMouseEvent meRelease (QEvent::MouseButtonRelease, QPoint(-9999, -9999), outsidePos, Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
         QCoreApplication::sendEvent (menu, &meRelease);
+
+        for (int j = 0; j < mLayout->count(); j++) {
+          QToolButton* b = qobject_cast<QToolButton*>(mLayout->itemAt(j)->widget());
+          if (!b) continue;
+          if (b == button) continue;
+          b->setDown (true);
+          b->setDown (false);
+          QEvent leaveEvent(QEvent::Leave);
+          QCoreApplication::sendEvent(b, &leaveEvent);
+        }
 
         // send a mouse click event to the hovered button (with globalPos)
         QPoint buttonLocalPos = button->mapFromGlobal(globalPos);
