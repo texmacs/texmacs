@@ -69,15 +69,10 @@ AC_CPLUSPLUS_STACK
 #--------------------------------------------------------------------
 
 AC_CHECK_SIZEOF([void *])
-AS_IF([test "$ac_cv_sizeof_void_p" = "8"], [
-  AC_MSG_NOTICE([Detected 64-bit system])
-  AC_DEFINE([SI_64], [1], [Define if the system is 64-bit])
-], [test "$ac_cv_sizeof_void_p" = "4"], [
-  AC_MSG_NOTICE([Detected 32-bit system])
-  AC_DEFINE([SI_32], [1], [Define if the system is 32-bit])
-], [
-  AC_MSG_ERROR([Cannot determine 32 bit or 64 bit. void* size is: $ac_cv_sizeof_void_p])
-])
+AC_CHECK_SIZEOF([short])
+AC_CHECK_SIZEOF([int])
+AC_CHECK_SIZEOF([long])
+AC_CHECK_SIZEOF([long long])
 
 #--------------------------------------------------------------------
 # Checks for standard functionality
