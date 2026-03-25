@@ -225,14 +225,20 @@
 /* signtool location */
 #undef SIGNTOOL
 
+/* The size of 'int', as computed by sizeof. */
+#undef SIZEOF_INT
+
+/* The size of 'long', as computed by sizeof. */
+#undef SIZEOF_LONG
+
+/* The size of 'long long', as computed by sizeof. */
+#undef SIZEOF_LONG_LONG
+
+/* The size of 'short', as computed by sizeof. */
+#undef SIZEOF_SHORT
+
 /* The size of 'void *', as computed by sizeof. */
 #undef SIZEOF_VOID_P
-
-/* Define if the system is 32-bit */
-#undef SI_32
-
-/* Define if the system is 64-bit */
-#undef SI_64
 
 /* If not set during link */
 #undef STACK_SIZE
