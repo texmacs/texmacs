@@ -409,7 +409,11 @@ void QTMMainTabWindow::setDefaultStyle() {
   // todo : put this into a css file, and make this more beautiful
   setStyleSheet(
     "QTabBar::tab { "
+#ifdef OS_ANDROID
+    "   height: 45px; "
+#else
     "   height: 30px; "
+#endif
     "   max-width: 200px; "
     "   border-radius: 0px; "
     "   padding: 0px 16px; "
@@ -428,7 +432,11 @@ void QTMMainTabWindow::setHoverStyle() {
   // todo : put this into a css file, and make this more beautiful
   setStyleSheet(
     "QTabBar::tab { "
+#ifdef OS_ANDROID
+    "   height: 45px; "
+#else
     "   height: 30px; "
+#endif
     "   max-width: 200px; "
     "   border-radius: 0px; "
     "   padding: 0px 16px; "
