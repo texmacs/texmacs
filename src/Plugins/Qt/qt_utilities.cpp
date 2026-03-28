@@ -173,7 +173,7 @@ qt_decode_length (string width, string height,
 static string
 conv_sub (const string& ks) {
   string r(ks);
-#if QT_VERSION >= 0x060000
+#if QT_VERSION >= 0x060000 && QT_VERSION < QT_VERSION_CHECK(6, 10, 0)
   r = replace (r, "hat", "^");
   r = replace (r, "&", u8"﹠");
 #endif
