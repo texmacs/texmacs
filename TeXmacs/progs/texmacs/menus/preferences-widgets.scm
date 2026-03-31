@@ -641,6 +641,22 @@
                 (get-boolean-preference
                  "image->texmacs:svg-prefer-inkscape"))))))
 
+(tm-widget (ai-preferences-widget)
+  ======
+  (bold (text "AI corrections"))
+  ===
+  (aligned
+    (meti (hlist // (text "Show differences after text corrections"))
+      (toggle (set-boolean-preference
+	       "ai-correct show differences" answer)
+	      (get-boolean-preference
+	       "ai-correct show differences")))
+    (meti (hlist // (text "Explain text corrections"))
+      (toggle (set-boolean-preference
+	       "ai-correct explain" answer)
+	      (get-boolean-preference
+	       "ai-correct explain")))))
+
 ;; All converters ----------
 
 (tm-widget (conversion-preferences-widget)
@@ -665,7 +681,10 @@
             (dynamic (pdf-preferences-widget)))))
       (tab (text "Image")
         (centered
-          (dynamic (image-preferences-widget))))))
+          (dynamic (image-preferences-widget))))
+      (tab (text "AI")
+	(centered
+          (dynamic (ai-preferences-widget))))))
   ===)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
