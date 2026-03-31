@@ -3,6 +3,7 @@
 * MODULE     : ai.cpp
 * DESCRIPTION: interface for AI big language model
 * COPYRIGHT  : (C) 2025  Joris van der Hoeven
+*                  2026  Gregoire Lecerf
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -45,6 +46,9 @@ ai_quote (string s) {
     case '\"':
       r << '\\' << s[i];
       break;
+    case '\n':
+      r << "\\n";
+      break;
     case '\'':
       r << "'\\''";
       break;
@@ -62,9 +66,13 @@ ai_unquote (string s) {
   int i, n= N(s);
   string r;
   for (i=0; i<n; i++)
-    if (s[i] == '\\' && (i+1 < n) &&
-        (s[i+1] == '\\' || s[i+1] == '\"' || s[i+1] == '\''))
-      r << s[++i];
+    if (s[i] == '\\' && (i+1 < n)) {
+      if (s[i+1] == '\\' || s[i+1] == '\"' || s[i+1] == '\'')
+	r << s[++i];
+      else if (s[i+1] == 'n') {
+	r << '\n'; i++;
+      }
+    }
     else r << s[i];
   return r;
 }
