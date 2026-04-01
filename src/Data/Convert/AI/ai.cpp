@@ -30,6 +30,7 @@ ai_engine (string model) {
   if (starts (model, "gemini")) return "gemini";
   if (starts (model, "llama")) return "llama";
   if (starts (model, "open-mistral")) return "mistral";
+  if (starts (model, "albert")) return "albert";
   return "unknown";
 }
 
@@ -78,18 +79,94 @@ ai_unquote (string s) {
 }
 
 /******************************************************************************
+* TikZ pictures
+******************************************************************************/
+
+static bool
+run_pdflatex (url tex) {
+  if (!exists_in_path ("pdflatex")) {
+    static bool warned= false;
+    if (!warned) {
+      convert_warning <<
+	"pdflatex is not installed: TikZ pictures cannot be rendered" << LF;
+      warned= true;
+    }
+    return false;
+  }
+  array<string> cmd;
+  cmd << string ("pdflatex");
+  cmd << string ("-output-directory=") * sys_concretize (head (tex));
+  cmd << concretize (tex);
+  //cout << cmd << LF;
+  array<int> out; out << 1; out << 2;
+  array<string> ret= evaluate_system (cmd, array<int> (),
+				      array<string> (), out);
+  //cout << "ret= " << ret << LF;
+  if (ret [0] != "0" || ret[2] != "") {
+    convert_warning << "cannot render TikZ picture" << LF;
+    convert_warning << ret[1] << LF;
+    convert_warning << ret[2] << LF;
+    return false;
+  }
+  return true;
+}
+
+static string
+replace_tikz_by_pdf (string s) {
+  static int counter= 0;
+  counter++;
+  const string document_class_tag ("\\documentclass");
+  const string beg_document_tag ("\\begin{document}");
+  const string end_document_tag ("\\end{document}");
+  const string beg_tikz_tag ("\\begin{tikzpicture}");
+  const string end_tikz_tag ("\\end{tikzpicture}");
+  int beg_document_class_pos= search_forwards (document_class_tag, s);
+  if (beg_document_class_pos < 0) return s;
+  int end_document_class_pos= beg_document_class_pos; 
+  while (end_document_class_pos < N(s) &&
+	 s[end_document_class_pos] != '}') end_document_class_pos++;
+  if (end_document_class_pos == N(s)) return s;
+  end_document_class_pos++;
+  int beg_document_pos= search_forwards (beg_document_tag, s);
+  int end_document_pos= search_forwards (end_document_tag, s);
+  if (beg_document_pos < 0 || end_document_pos < 0) return s;
+  int beg_tikz_pos= search_forwards (beg_tikz_tag, s);
+  int end_tikz_pos= search_forwards (end_tikz_tag, s);
+  if (beg_tikz_pos < 0 || end_tikz_pos < 0) return s;
+  string r= string ("\\documentclass[border=3pt]{standalone}\n") *
+    s (end_document_class_pos, beg_document_pos) *
+    string ("\n") *  "\\usepackage{amsfonts}\n" *
+    "\\usetikzlibrary{calc}\n" *
+    beg_document_tag * string ("\n") *
+    s (beg_tikz_pos, end_tikz_pos + N(end_tikz_tag)) *
+    string ("\n") * end_document_tag * string ("\n");
+  url temp= url_temp_dir ();
+  url tex= temp * (as_string (counter) * ".tex");
+  save_string (tex, r);
+  if (!run_pdflatex (tex)) return s;
+  url pdf= temp * (as_string (counter) * ".pdf");
+  string aux= s (0, beg_tikz_pos) *
+    string ("\n") * "\\includegraphics{" * sys_concretize (pdf) * "}\n" *
+    s (end_tikz_pos + N(end_tikz_tag), N(s));
+  return replace_tikz_by_pdf (aux);
+}
+
+/******************************************************************************
 * History management
 ******************************************************************************/
 
-hashmap<string,string> ia_last_id ("");
+// By ID
+
+hashmap<string,string> ai_last_id ("");
 
 void
 ai_get_continuation (string& s, string model, string chat) {
   if (chat == "") return;
+  //cout << "model= " << model << "\n";
   if (starts (model, "none")) {
     string key= model * "-" * chat;
-    if (ia_last_id->contains (key)) {
-      string id= ia_last_id[key];
+    if (ai_last_id->contains (key)) {
+      string id= ai_last_id[key];
       s= "Please follow up on your last answer with ID " * id * ". " * s;
     }
   }
@@ -105,8 +182,73 @@ ai_set_continuation (string s, string model, string chat) {
     int end= search_forwards ("\"", pos, s);
     if (end < 0) return;
     string key= model * "-" * chat;
-    ia_last_id (key)= s (pos, end);
+    ai_last_id (key)= s (pos, end);
   }
+}
+
+// For albert, by passing previous prompts and answers
+
+static const int ai_default_history_size= 3;
+static hashmap<string,string> ai_current_prompt ("");
+static list<string> null_string_list;
+static hashmap<string,list<string> > ai_last_prompts (null_string_list);
+static hashmap<string,list<string> > ai_last_answers (null_string_list);
+
+static int
+ai_get_history_size () {
+  string s= get_preference ("albert chat history size");
+  if (is_int (s)) return as_int (s);
+  return ai_default_history_size;
+}
+
+static void
+ai_set_current_prompt (string s, string model, string chat) {
+  if (chat == "") return;
+  string key= model * "-" * chat;
+  ai_current_prompt(key)= s;
+}
+
+static string
+ai_get_current_prompt (string model, string chat) {
+  if (chat == "") return "";
+  string key= model * "-" * chat;
+  return ai_current_prompt[key];
+}
+
+static void
+ai_set_last_prompt (string s, string model, string chat) {
+  if (chat == "") return;
+  string key= model * "-" * chat;
+  list<string> l (s, ai_last_prompts[key]);
+  ai_last_prompts(key)= l;
+  const int max_size= ai_get_history_size ();
+  if (N(ai_last_prompts[key]) > max_size)
+    ai_last_prompts(key)= head (ai_last_prompts[key], max_size); 
+}
+
+static list<string>
+ai_get_last_prompts (string model, string chat) {
+  if (chat == "") return null_string_list;
+  string key= model * "-" * chat;
+  return ai_last_prompts[key];
+}
+
+static void
+ai_set_last_answer (string s, string model, string chat) {
+  if (chat == "") return;
+  string key= model * "-" * chat;
+  list<string> l (s, ai_last_answers[key]);
+  ai_last_answers(key)= l;
+  const int max_size= ai_get_history_size ();
+  if (N(ai_last_answers[key]) > max_size)
+    ai_last_answers(key)= head (ai_last_answers[key], max_size); 
+}
+
+static list<string>
+ai_get_last_answers (string model, string chat) {
+  if (chat == "") return null_string_list;
+  string key= model * "-" * chat;
+  return ai_last_answers[key];
 }
 
 /******************************************************************************
@@ -115,8 +257,8 @@ ai_set_continuation (string s, string model, string chat) {
 
 string
 chatgpt_command (string s, string model, string chat) {
-  (void) chat;
   (void) model;
+  (void) chat;
   url u ("$TEXMACS_HOME_PATH/system/tmp/chatgpt.txt");
   if (save_string (u, s)) return "";
   string cmd= "openai -k 5000 complete " * as_string (u);
@@ -125,8 +267,8 @@ chatgpt_command (string s, string model, string chat) {
 
 string
 gemini_command (string s, string model, string chat) {
-  (void) chat;
   (void) model;
+  (void) chat;
   string key= get_env ("GEMINI_API_KEY");
   string gem= "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
   string cmd= "curl \"" * gem * "\" \\\n";
@@ -176,6 +318,47 @@ mistral_command (string s, string model, string chat) {
 }
 
 string
+albert_command (string s, string model, string agent, string chat) {
+  (void) chat;
+  string key= get_env ("ALBERT_API_KEY");
+  string model_= get_preference (model * " model", model);
+  ai_set_current_prompt (s, model, chat);
+  list<string> last_prompts= reverse (ai_get_last_prompts (model, chat));
+  list<string> last_answers= reverse (ai_get_last_answers (model, chat));
+  string cmd= "curl -X POST \\\n";
+  cmd << "  -H \"Authorization: Bearer " << key << "\" \\\n"
+      << "  -H \"Content-Type: application/json\" \\\n"
+      << "  -d '{\n"
+      << "    \"model\": \"" << model_ << "\",\n"
+      << "    \"messages\": [\n"
+      << "      {\n"
+      << "       \"role\": \"system\",\n"
+      << "       \"content\": \"" << ai_quote (agent) << "\"\n"
+      << "      },\n";
+  while (!is_nil (last_prompts) && !is_nil (last_answers)) { cmd
+      << "      {\n"
+      << "       \"role\": \"user\",\n"
+      << "       \"content\": \"" << ai_quote (last_prompts->item) << "\"\n"
+      << "      },\n"
+      << "      {\n"
+      << "       \"role\": \"assistant\",\n"
+      << "       \"content\": \"" << ai_quote (last_answers->item) << "\"\n"
+      << "      },\n";
+    last_prompts= last_prompts->next;
+    last_answers= last_answers->next;
+  }
+  cmd << "      {\n"
+      << "       \"role\": \"user\",\n"
+      << "       \"content\": \"" << ai_quote (s) << "\"\n"
+      << "      }\n"
+      << "    ]\n"
+      << "  }' \\\n"
+      << "  https://albert.api.etalab.gouv.fr/v1/chat/completions";
+    //cout << cmd << LF;
+  return cmd;
+}
+
+string
 ai_command (string s, string model, string agent, string chat) {
   ai_get_continuation (s, model, chat);
   string engine= ai_engine (model);
@@ -184,6 +367,7 @@ ai_command (string s, string model, string agent, string chat) {
   if (engine == "gemini") return gemini_command (s_, model, chat);
   if (engine == "llama") return llama_command (s_, model, chat);
   if (engine == "mistral") return mistral_command (s_, model, chat);
+  if (engine == "albert") return albert_command (s, model, agent, chat);
   return "";
 }
 
@@ -271,6 +455,40 @@ mistral_output (string val, string model, string chat) {
 }
 
 string
+albert_output (string val, string model, string chat) {
+  (void) chat;
+  (void) model;
+  int pos= search_forwards ("\"content\":\"", val);
+  if (pos < 0) return "";
+  pos += 11;
+  int end= search_forwards (",\"refusal\"", pos, val);
+  if (end < 0) return "";
+  string r= ai_unquote (val (pos, end));
+  if (N(ai_get_current_prompt (model, chat)) > 0) {
+    ai_set_last_prompt (ai_get_current_prompt (model, chat), model, chat);
+    ai_set_last_answer (r, model, chat);
+  }
+  r= replace_tikz_by_pdf (r);
+  // replace uft8 e2 80 af by ' '
+  char* aux= (char*) malloc (N(r)+1);
+  int j= 0;
+  for (int i= 0; i < N(r); i++) {
+    if (i+2 < N(r) &&
+	(unsigned char) r[i]   == 0xe2 &&
+	(unsigned char) r[i+1] == 0x80 &&
+	(unsigned char) r[i+2] == 0xaf) {
+      aux[j]= ' ';
+      j++; i+=2;
+      continue;
+    }
+    aux[j]= r[i]; j++;
+  }
+  r= string (aux, j);
+  free (aux);
+  return r;
+}
+
+string
 ai_output (string s, string model, string chat) {
   ai_set_continuation (s, model, chat);
   string engine= ai_engine (model);
@@ -278,6 +496,7 @@ ai_output (string s, string model, string chat) {
   if (engine == "gemini") return gemini_output (s, model, chat);
   if (engine == "llama") return llama_output (s, model, chat);
   if (engine == "mistral") return mistral_output (s, model, chat);
+  if (engine == "albert") return albert_output (s, model, chat);
   return "";
 }
 
@@ -292,6 +511,29 @@ un_escape_cr (string s) {
     else if (test (s, i, "\\n")) { r << '\n'; i += 2; }
     else r << s[i++];
   return r;
+}
+
+static tree
+embed_images (tree t) {
+  if (is_atomic (t)) return t;
+  if (is_func (t, IMAGE, 5)) {
+    array<tree> a= A(t);
+    url image= cork_to_utf8 (as_string (a[0]));
+    string type= "", data;
+    tree s (IMAGE);
+    load_string (image, data, false);
+    if (data == "") {
+      std_error << "ai.cpp, cannot embed image\n";
+      return t;
+    }
+    s << tuple (tree (RAW_DATA, data), as_string (tail (image)));
+    s << a[1] << a[2] << a[3] << a[4];
+    return s;
+  }
+  array<tree> a= A(t);
+  for (int i= 0; i < N(a); i++)
+    a[i]= embed_images (a[i]);
+  return tree (L(t), a);
 }
 
 tree
@@ -313,8 +555,11 @@ ai_latex_output (string s, string model, string chat) {
   post= r (end, N(r));
   r= r (start, end);
   r= replace (r, "\\maketitle", "");
+  r= replace (r, "\\begin{lstlisting}", "\\begin{verbatim}");
+  r= replace (r, "\\end{lstlisting}", "\\end{verbatim}");
   r= un_escape_cr (r);
   tree t= generic_to_tree (r, "latex-snippet");
+  t= embed_images (t);
   return tree (WITH, MODE, "text", t);
 }
 
@@ -363,6 +608,12 @@ ai_correct_agent_description (string lan, string model) {
     * string ("and grammar of the following ") * lan
     * string (" text, and show me just the result, ")
     * string ("without further explanations or justifications:");
+  if (engine == "albert")
+    q = string ("You are a native " * lan * " speaker. ")
+      * string ("Correct spelling, grammar, and improve the writing ")
+      * string ("style of scientific documents. Show any explanations ")
+      * string ("and justifications in comment tags at the end. ")
+      * string ("Preserve HTML tags. Do not add new lines");
   return q;
 }
 

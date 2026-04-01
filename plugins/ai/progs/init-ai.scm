@@ -25,13 +25,16 @@
   ("gemini-text-input" "on" noop)
   ("llama3-text-input" "on" noop)
   ("llama4-text-input" "on" noop)
-  ("open-mistral-7b-text-input" "on" noop))
+  ("open-mistral-7b-text-input" "on" noop)
+  ("albert-text-input" "on" noop)
+  ("albert model" "openweight-large" noop))
 
 (tm-define (ollama-models)
   (list "llama3" "llama4"))
 
 (tm-define (ia-models)
-  (append (ollama-models) (list "chatgpt" "gemini" "open-mistral-7b")))
+  (append (ollama-models)
+	  (list "chatgpt" "gemini" "open-mistral-7b" "albert")))
 
 (tm-define (ollama-variants model)
   (cond ((== model "llama3")
@@ -40,6 +43,9 @@
         ((== model "llama4")
          (list "llama4" "llama4:scout" "llama4:maverick" ""))
         (else (list model ""))))
+
+(tm-define (albert-variants)
+  (list "openweight-large" "openweight-medium" "openweight-small" ""))
 
 (tm-widget (plugin-preferences-widget name)
   (:require (in? name (ia-models)))
@@ -56,11 +62,23 @@
           (enum (set-preference model answer) (ollama-variants name)
                 (get-preference model) "8em"))))
     === === ===)
+  (assuming (== name "albert")
+    (with model (string-append name " model")
+      (aligned
+        (item (text model)
+          (enum (set-preference model answer)
+		(albert-variants)
+                (get-preference model) "11em"))
+	(item (text "Chat history size")
+	  (enum (set-preference "albert chat history size" answer)
+		'("10" "5" "4" "3" "2" "1" "0" "")
+		(get-preference "albert chat history size") "6em"))))
+    === === ===)
   (with textual-input (string-append name "-text-input")
     (aligned
       (meti (hlist // (text "Textual input"))
-        (toggle (set-boolean-preference textual-input answer)
-                (get-boolean-preference textual-input))))))
+	(toggle (set-boolean-preference textual-input answer)
+		(get-boolean-preference textual-input))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ChatGPT
@@ -130,3 +148,19 @@
   (:preferences #t)
   (:session "Mistral 7B")
   (:serializer ,ia-serialize))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Albert
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (has-albert?)
+  (and (getenv "ALBERT_API_KEY")
+       (!= (getenv "ALBERT_API_KEY") "")))
+
+(plugin-configure albert
+  (:require (has-albert?))
+  (:cmdline ,ai-cmdline ,ai-result)
+  (:preferences #t)
+  (:session "Albert")
+  (:serializer ,ia-serialize))
+
