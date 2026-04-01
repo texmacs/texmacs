@@ -89,7 +89,10 @@
       (when (has-llama? "llama4")
         ("Llama 4" (set-preference "ai" "llama4")))
       (when (has-open-mistral-7b?)
-        ("Mistral 7B" (set-preference "ai" "open-mistral-7b"))))
+        ("Mistral 7B" (set-preference "ai" "open-mistral-7b")))
+      (when (has-albert?)
+        ("Albert"
+	 (set-preference "ai" "albert"))))
   (when (and (cpp-has-preference? "ai")
              (selection-active-any?))
     ("Correct" (ai-correct (get-preference "ai")))
