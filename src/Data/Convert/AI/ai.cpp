@@ -367,10 +367,22 @@ ai_correct_agent_description (string lan, string model) {
 }
 
 string
-ai_correct (string s, string lan, string model, string chat) {
+ai_correct (string s, string lan, string model, string chat,
+	    array<string>& comments) {
   string agent= ai_correct_agent_description (lan, model);
   string pre, post;
-  return ai_chat (s, model, agent, chat, pre, post);
+  string ret= ai_chat (s, model, agent, chat, pre, post);
+  comments= array<string> ();
+  int pos= 0, start;
+  while ((start= search_forwards ("<!--", pos, post)) >= 0) {
+    int end= search_forwards ("-->", start, post);
+    if (end <= start) break;
+    string comment= trim_spaces (post (start+4, end));
+    if (N(comment) > 0)
+      comments << comment;
+    pos= end;
+  }
+  return ret;
 }
 
 tree
@@ -383,13 +395,18 @@ ai_post (tree t, tree u) {
 
 tree
 ai_correct (tree t, string lan, string model, string chat) {
+  array<string> comments;
   string s= compress_html (t);
   //cout << "s= " << s << "\n";
-  string r= ai_correct (s, lan, model, chat);
+  string r= ai_correct (s, lan, model, chat, comments);
   //cout << "r= " << r << "\n";
   tree u= decompress_html (r);
   //cout << "u = " << u << "\n";
-  return ai_post (r, u);
+  tree ret= tree (TUPLE);
+  ret << ai_post (r, u);
+  for (int i= 0; i < N(comments); i++)
+    ret << decompress_html (comments[i]);
+  return ret;
 }
 
 /******************************************************************************
