@@ -3875,7 +3875,7 @@ source code.
   </explain>
 
   <\explain>
-    <scm|(cpp-ai-command <scm-arg|string> <scm-arg|string>)>
+    <scm|(cpp-ai-command <scm-arg|string> <scm-arg|string> <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|ai_command> which returns
@@ -3907,7 +3907,7 @@ source code.
   </explain>
 
   <\explain>
-    <scm|(cpp-ai-chat <scm-arg|string> <scm-arg|string>)>
+    <scm|(cpp-ai-chat <scm-arg|string> <scm-arg|string> <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|ai_chat> which returns

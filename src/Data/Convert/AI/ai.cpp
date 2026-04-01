@@ -176,22 +176,31 @@ mistral_command (string s, string model, string chat) {
 }
 
 string
-ai_command (string s, string model, string chat) {
+ai_command (string s, string model, string agent, string chat) {
   ai_get_continuation (s, model, chat);
   string engine= ai_engine (model);
-  if (engine == "chatgpt") return chatgpt_command (s, model, chat);
-  if (engine == "gemini") return gemini_command (s, model, chat);
-  if (engine == "llama") return llama_command (s, model, chat);
-  if (engine == "mistral") return mistral_command (s, model, chat);
+  string s_= agent * " " * s;
+  if (engine == "chatgpt") return chatgpt_command (s_, model, chat);
+  if (engine == "gemini") return gemini_command (s_, model, chat);
+  if (engine == "llama") return llama_command (s_, model, chat);
+  if (engine == "mistral") return mistral_command (s_, model, chat);
   return "";
+}
+
+static string
+ai_latex_agent_description (string model) {
+  string engine= ai_engine (model);
+  if (engine == "albert") return string ("Provide your answer in ")
+    * "the form of an untitled utf-8 LaTeX document without any comments.";
+  return string ("Please provide your answer in the form of an ")
+    * "untitled LaTeX document.";
 }
 
 string
 ai_latex_command (string s, string model, string chat) {
-  //string pre= "I would like to perform an editing operation on a LaTeX document. In the input LaTeX document, I indicated the current cursor position using \\cursor. Please provide the result after the editing operation in the form of an untitled LaTeX document as well.";
-  //return ai_command (pre * " " * s, model, chat);
-  string pre= "Please provide your answer in the form of an untitled LaTeX document.";
-  return ai_command (pre * " " * s, model, chat);
+  string agent= ai_latex_agent_description (model);
+  string r= ai_command (s, model, agent, chat);
+  return r;
 }
 
 /******************************************************************************
@@ -314,8 +323,9 @@ ai_latex_output (string s, string model, string chat) {
 ******************************************************************************/
 
 string
-ai_chat (string s, string model, string chat) {
-  string cmd= ai_command (s, model, chat);
+ai_chat (string s, string model, string agent, string chat) {
+  string engine= ai_engine (model), cmd;
+  cmd= ai_command (s, model, agent, chat);
   string val= eval_system (cmd);
   //if (DEBUG_IO) {
   //  debug_io << "input, " << cmd << LF;
@@ -330,14 +340,15 @@ ai_chat (string s, string model, string chat) {
 }
 
 string
-ai_chat (string s, string model, string chat, string& pre, string& post) {
-  string r= ai_chat (s, model, chat);
+ai_chat (string s, string model, string agent, string chat,
+	 string& pre, string& post) {
+  string r= ai_chat (s, model, agent, chat);
   int start= search_forwards ("<body>", r);
   if (start < 0) { pre= ""; post= ""; return r; }
   int end= search_forwards ("</body>", start, r);
   if (end < 0) { pre= ""; post= ""; return r; }
   pre= r (0, start);
-  post= r (end, N(r));
+  post= r (end+7, N(r));
   return r (start, end);
 }
 
@@ -345,11 +356,21 @@ ai_chat (string s, string model, string chat, string& pre, string& post) {
 * Automatic correction of spelling and grammar
 ******************************************************************************/
 
+static string
+ai_correct_agent_description (string lan, string model) {
+  string engine= ai_engine (model);
+  string q= string ("If necessary, then please correct the spelling ")
+    * string ("and grammar of the following ") * lan
+    * string (" text, and show me just the result, ")
+    * string ("without further explanations or justifications:");
+  return q;
+}
+
 string
 ai_correct (string s, string lan, string model, string chat) {
-  string q= "If necessary, then please correct the spelling and grammar of the following " * lan * " text, and show me just the result, without further explanations or justifications: " * s;
+  string agent= ai_correct_agent_description (lan, model);
   string pre, post;
-  return ai_chat (q, model, chat, pre, post);
+  return ai_chat (s, model, agent, chat, pre, post);
 }
 
 tree
@@ -375,12 +396,19 @@ ai_correct (tree t, string lan, string model, string chat) {
 * Automatic translation
 ******************************************************************************/
 
+static string
+ai_translate_agent_description (string from, string into, string model) {
+  string engine= ai_engine (model);
+  string q= "Please translate the following HTML snippet from ";
+  q << from << " into " << into << ", without explanations: ";
+  return q;
+}
+
 string
 ai_translate (string s, string from, string into, string model, string chat) {
-  string q= "Please translate the following HTML snippet from ";
-  q << from << " into " << into << ", without explanations: " << s;
+  string agent= ai_translate_agent_description (from, into, model);
   string pre, post;
-  return ai_chat (q, model, chat, pre, post);
+  return ai_chat (s, model, agent, chat, pre, post);
 }
 
 tree
