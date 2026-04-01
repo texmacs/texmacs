@@ -11,7 +11,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (utils misc ai))
+(texmacs-module (utils misc ai)
+  (version version-compare))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Pre- and post-processing
@@ -44,7 +45,24 @@
       (with t (selection-tree)
         (clipboard-cut "primary")
         (with r (cpp-ai-correct t lan model)
-          (insert r))))))
+          (when (and (tree-func? r 'tuple) (>= (tree-arity r) 1))
+            (let* ((l (tree-children r))
+                   (s (car l))
+                   (c (cdr l)))
+	      (if (get-boolean-preference "ai-correct show differences")
+		  (with d (compare-versions (tree->stree t) (tree->stree s))
+		    (insert (stree->tree d)))
+		  (insert s))
+	      (when (and (> (length c) 0)
+			 (get-boolean-preference "ai-correct explain"))
+		(with doc
+		    `(document
+		       (style "generic")
+		       (body (document
+			       (strong ,(pretty-time (current-time)))
+			       ,@(map tree->stree c))))
+		  (open-auxiliary "Comments from AI about corrections"
+				  doc ))))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Automatic translation
