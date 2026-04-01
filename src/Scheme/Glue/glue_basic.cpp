@@ -6528,15 +6528,17 @@ tmg_decompress_html (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
-tmg_cpp_ai_command (tmscm arg1, tmscm arg2) {
+tmg_cpp_ai_command (tmscm arg1, tmscm arg2, tmscm arg3) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "cpp-ai-command");
   TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "cpp-ai-command");
+  TMSCM_ASSERT_STRING (arg3, TMSCM_ARG3, "cpp-ai-command");
 
   string in1= tmscm_to_string (arg1);
   string in2= tmscm_to_string (arg2);
+  string in3= tmscm_to_string (arg3);
 
   // TMSCM_DEFER_INTS;
-  string out= ai_command (in1, in2);
+  string out= ai_command (in1, in2, in3);
   // TMSCM_ALLOW_INTS;
 
   return string_to_tmscm (out);
@@ -6592,15 +6594,17 @@ tmg_cpp_ai_latex_output (tmscm arg1, tmscm arg2, tmscm arg3) {
 }
 
 tmscm
-tmg_cpp_ai_chat (tmscm arg1, tmscm arg2) {
+tmg_cpp_ai_chat (tmscm arg1, tmscm arg2, tmscm arg3) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "cpp-ai-chat");
   TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "cpp-ai-chat");
+  TMSCM_ASSERT_STRING (arg3, TMSCM_ARG3, "cpp-ai-chat");
 
   string in1= tmscm_to_string (arg1);
   string in2= tmscm_to_string (arg2);
+  string in3= tmscm_to_string (arg3);
 
   // TMSCM_DEFER_INTS;
-  string out= ai_chat (in1, in2);
+  string out= ai_chat (in1, in2, in3);
   // TMSCM_ALLOW_INTS;
 
   return string_to_tmscm (out);
@@ -11123,11 +11127,11 @@ initialize_glue_basic () {
   tmscm_install_procedure ("decompress-tree",  tmg_decompress_tree, 1, 0, 0);
   tmscm_install_procedure ("compress-html",  tmg_compress_html, 2, 0, 0);
   tmscm_install_procedure ("decompress-html",  tmg_decompress_html, 2, 0, 0);
-  tmscm_install_procedure ("cpp-ai-command",  tmg_cpp_ai_command, 2, 0, 0);
+  tmscm_install_procedure ("cpp-ai-command",  tmg_cpp_ai_command, 3, 0, 0);
   tmscm_install_procedure ("cpp-ai-output",  tmg_cpp_ai_output, 2, 0, 0);
   tmscm_install_procedure ("cpp-ai-latex-command",  tmg_cpp_ai_latex_command, 3, 0, 0);
   tmscm_install_procedure ("cpp-ai-latex-output",  tmg_cpp_ai_latex_output, 3, 0, 0);
-  tmscm_install_procedure ("cpp-ai-chat",  tmg_cpp_ai_chat, 2, 0, 0);
+  tmscm_install_procedure ("cpp-ai-chat",  tmg_cpp_ai_chat, 3, 0, 0);
   tmscm_install_procedure ("cpp-ai-correct",  tmg_cpp_ai_correct, 3, 0, 0);
   tmscm_install_procedure ("cpp-ai-translate",  tmg_cpp_ai_translate, 4, 0, 0);
   tmscm_install_procedure ("url->url",  tmg_url_2url, 1, 0, 0);
