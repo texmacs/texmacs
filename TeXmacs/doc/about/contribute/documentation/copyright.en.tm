@@ -1,6 +1,6 @@
-<TeXmacs|1.0.7.14>
+<TeXmacs|2.1.5>
 
-<style|tmdoc>
+<style|<tuple|tmdoc|english|old-spacing|old-dots|old-lengths>>
 
 <\body>
   <tmdoc-title|Specifying meta information for documentation files>
@@ -12,7 +12,7 @@
   document with the <tmstyle|tmdoc> style.
 
   All <TeXmacs> documentation falls under the <hlink|GNU Free Documentation
-  License|../../../fdl.txt>. If you want your documentation to be included in
+  License|fdl.txt>. If you want your documentation to be included in
   <TeXmacs>, then you have to agree that it will be distributed under this
   license too. The license information
 
@@ -41,7 +41,7 @@
   you are allowed to list only the principal authors, but a complete list
   should be given at a clearly indicated place.
 
-  <tmdoc-copyright|1998--2002|Joris van der Hoeven>
+  <tmdoc-copyright|1998\U2002|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this
   document under the terms of the GNU Free Documentation License, Version 1.1
@@ -51,8 +51,5 @@
   Documentation License".>
 </body>
 
-<\initial>
-  <\collection>
-    <associate|language|english>
-  </collection>
-</initial>
+<initial|<\collection>
+</collection>>
