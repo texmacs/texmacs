@@ -101,7 +101,16 @@ FILE* texmacs_fopen(string filename, string mode, bool lock) {
   std::wstring wide_mode = texmacs_utf8_to_wide(mode);
   wide_mode += L"b";
   FILE* result = _wfopen(wide_filename.c_str(), wide_mode.c_str());
-  
+  // lock the file with LockFileEx if requested
+  if (result && lock) {
+    int fd = _fileno(result);
+    HANDLE hFile = (HANDLE)_get_osfhandle(fd);
+    OVERLAPPED overlapped = { 0 };
+    if (!LockFileEx(hFile, LOCKFILE_EXCLUSIVE_LOCK, 0, MAXDWORD, MAXDWORD, &overlapped)) {
+      fclose(result);
+      return nullptr;
+    }
+  }
   return result;
 }
 
@@ -129,8 +138,16 @@ ssize_t texmacs_fwrite(const char *str, size_t size, FILE *stream) {
 }
 
 void texmacs_fclose(FILE *&file, bool unlock) {
-  fclose(file);
-  file = nullptr;
+  if (unlock && file) {
+    int fd = _fileno(file);
+    HANDLE hFile = (HANDLE)_get_osfhandle(fd);
+    OVERLAPPED overlapped = { 0 };
+    UnlockFileEx(hFile, 0, MAXDWORD, MAXDWORD, &overlapped);
+  }
+  if (file) {
+    fclose(file);
+    file = nullptr;
+  }
 }
 
 TEXMACS_DIR texmacs_opendir(string dirname) {
