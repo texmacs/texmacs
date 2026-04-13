@@ -6,6 +6,9 @@
 /* The normal alignment of 'void *', in bytes. */
 #undef ALIGNOF_VOID_P
 
+/* Alternative version number */
+#undef ALTERNATIVE_VERSION
+
 /* Enable experimental Cocoa port */
 #undef AQUATEXMACS
 

@@ -177,12 +177,24 @@
           (shown ,(car bodies))
           ,@(map (lambda (x) `(hidden ,x)) (cdr bodies)))))
 
+(tm-define (markup-responsive-tabs names bodies)
+  `(responsive-tabs (responsive-tabs-bar
+          (active-tab ,(car names))
+          ,@(map (lambda (x) `(passive-tab ,x)) (cdr names)))
+         (responsive-tabs-body
+          (shown ,(car bodies))
+          ,@(map (lambda (x) `(hidden ,x)) (cdr bodies)))))
+
 (define (attach-icon icon name)
   `(concat ,(markup-xpm icon) " " ,name))
 
 (tm-define (markup-icon-tabs icons names bodies)
   (with combined (map attach-icon icons names)
     (markup-tabs combined bodies)))
+
+(tm-define (markup-responsive-icon-tabs icons names bodies)
+  (with combined (map attach-icon icons names)
+    (markup-responsive-tabs combined bodies)))
 
 (tm-define (markup-input cmd* type props style width)
   ;; TODO: handle inert style
@@ -704,9 +716,19 @@
   (markup-tabs (build-menu-items (map tab-key (cdr p)) style #f)
                (build-menu-items (map tab-value (cdr p)) style #f)))
 
+(define (build-menu-responsive-tabs p style)
+  "Make @(responsive-tabs :menu-item-list) menu item."
+  (markup-responsive-tabs (build-menu-items (map tab-key (cdr p)) style #f)
+                          (build-menu-items (map tab-value (cdr p)) style #f)))
+
 (define (build-menu-tab p style)
   "Make @(tab :menu-item-list) menu item."
   (display* "Error 'build-menu-tab', " p ", " style "\n")
+  (list 'vlist))
+
+(define (build-menu-responsive-tab p style)
+  "Make @(responsive-tab :menu-item-list) menu item."
+  (display* "Error 'build-menu-responsive-tab', " p ", " style "\n")
   (list 'vlist))
 
 (define (icon-tab-icon x)
@@ -725,9 +747,21 @@
                       (build-menu-items (map icon-tab-key (cdr p)) style* #f)
                       (build-menu-items (map icon-tab-value (cdr p)) style #f))))
 
+(define (build-menu-responsive-icon-tabs p style)
+  "Make @(responsive-icon-tabs :menu-item-list) menu item."
+  (with style* (logior style widget-style-mini)
+    (markup-responsive-icon-tabs (map icon-tab-icon (cdr p))
+                                (build-menu-items (map icon-tab-key (cdr p)) style* #f)
+                                (build-menu-items (map icon-tab-value (cdr p)) style #f))))
+
 (define (build-menu-icon-tab p style)
   "Make @(icon-tab :menu-item-list) menu item."
   (display* "Error 'build-menu-icon-tab', " p ", " style "\n")
+  (list 'vlist))
+
+(define (build-menu-responsive-icon-tab p style)
+  "Make @(responsive-icon-tab :menu-item-list) menu item."
+  (display* "Error 'build-menu-responsive-icon-tab', " p ", " style "\n")
   (list 'vlist))
 
 (define (build-menu-extend p style bar?)
@@ -985,6 +1019,14 @@
         ,(lambda (p style bar?) (list (build-menu-icon-tabs p style))))
   (icon-tab (:*)
         ,(lambda (p style bar?) (list (build-menu-icon-tab p style))))
+  (responsive-tabs (:*)
+        ,(lambda (p style bar?) (list (build-menu-responsive-tabs p style))))
+  (responsive-tab (:*)
+        ,(lambda (p style bar?) (list (build-menu-responsive-tab p style))))
+  (responsive-icon-tabs (:*)
+        ,(lambda (p style bar?) (list (build-menu-responsive-icon-tabs p style))))
+  (responsive-icon-tab (:*)
+        ,(lambda (p style bar?) (list (build-menu-responsive-icon-tab p style))))
   (minibar (:*)
             ,(lambda (p style bar?) (list (build-menu-minibar p style))))
   (extend (:%1 :*)

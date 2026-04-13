@@ -33,14 +33,16 @@ void QTMApplication::init_theme () {
   setStyle(QStyleFactory::create("Windows"));
 #endif    
   string theme= get_user_preference ("gui theme", "default");
+  if (theme != "default" && theme != "light" && theme != "dark") {
+    std_warning << "Invalid GUI theme preference: " << theme << ", falling back to default." << LF;
+    theme = "default";
+  }
   if (theme == "default") 
     theme = get_default_theme ();
   if (theme == "light")
     tm_style_sheet= "$TEXMACS_PATH/misc/themes/standard-light.css";
   else if (theme == "dark")
     tm_style_sheet= "$TEXMACS_PATH/misc/themes/standard-dark.css";
-  else if (theme != "")
-    tm_style_sheet= theme;
 
   init_palette (this);
   init_style_sheet (this);

@@ -225,6 +225,14 @@
   (require-format x '(tab :%1 :*))
   `($tab ,@(map gui-make (cdr x))))
 
+(define (gui-make-responsive-tabs x)
+  (require-format x '(responsive-tabs :*))
+  `($responsive-tabs ,@(map gui-make (cdr x))))
+
+(define (gui-make-responsive-tab x)
+  (require-format x '(responsive-tab :%1 :*))
+  `($responsive-tab ,@(map gui-make (cdr x))))
+
 (define (gui-make-icon-tabs x)
   (require-format x '(icon-tabs :*))
   `($icon-tabs ,@(map gui-make (cdr x))))
@@ -232,6 +240,14 @@
 (define (gui-make-icon-tab x)
   (require-format x '(icon-tab :%2 :*))
   `($icon-tab ,@(map gui-make (cdr x))))
+
+(define (gui-make-responsive-icon-tabs x)
+  (require-format x '(responsive-icon-tabs :*))
+  `($responsive-icon-tabs ,@(map gui-make (cdr x))))
+
+(define (gui-make-responsive-icon-tab x)
+  (require-format x '(responsive-icon-tab :%2 :*))
+  `($responsive-icon-tab ,@(map gui-make (cdr x))))
 
 (define (gui-make-plain-style x)
   (require-format x '(plain-style :*))
@@ -437,6 +453,10 @@
   (tab ,gui-make-tab)
   (icon-tabs ,gui-make-icon-tabs)
   (icon-tab ,gui-make-icon-tab)
+  (responsive-tabs ,gui-make-responsive-tabs)
+  (responsive-tab ,gui-make-responsive-tab)
+  (responsive-icon-tabs ,gui-make-responsive-icon-tabs)
+  (responsive-icon-tab ,gui-make-responsive-icon-tab)
   (plain-style ,gui-make-plain-style)
   (inert ,gui-make-inert)
   (explicit-buttons ,gui-make-explicit-buttons)

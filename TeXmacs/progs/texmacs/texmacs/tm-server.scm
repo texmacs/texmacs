@@ -145,6 +145,45 @@
   ("use unified toolbar" (get-default-unified-toolbar) noop))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Startup validation
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (validate-boolean-preference pref)
+  (when (nin? (get-preference pref) '("on" "off"))
+    (reset-preference pref)))
+
+(for (pref '("enable tab" "new toolbar" "disable texmacs window positioning"
+             "use experimental keyboard patches" "fast environments"
+             "show full context" "show table cells" "show focus"
+             "show only semantic focus" "semantic editing" "semantic selections"
+             "semantic correctness" "remove superfluous invisible"
+             "insert missing invisible" "zealous invisible correct"
+             "homoglyph correct" "manual remove superfluous invisible"
+             "manual insert missing invisible" "manual zealous invisible correct"
+             "manual homoglyph correct" "speech" "database tool" "debugging tool"
+             "developer tool" "linking tool" "presentation tool" "remote tool"
+             "source tool" "versioning tool" "experimental alpha" "new style fonts"
+             "bitmap effects" "new style page breaking" "open console on errors"
+             "open console on warnings" "gui:line-input:autocommit"
+             "use native menubar" "use unified toolbar"))
+  (validate-boolean-preference pref))
+
+(define (validate-enum-preference pref allowed-values)
+  (when (nin? (get-preference pref) allowed-values)
+    (reset-preference pref)))
+
+(validate-enum-preference "look and feel" '("default" "emacs" "gnome" "kde" "macos" "windows"))
+(validate-enum-preference "complex actions" '("menus" "popups"))
+(validate-enum-preference "interactive questions" '("footer" "popup"))
+(validate-enum-preference "detailed menus" '("simple" "detailed"))
+(validate-enum-preference "buffer management" '("separate" "shared"))
+(validate-enum-preference "security" '("accept no scripts" "prompt on scripts" "accept all scripts"))
+(validate-enum-preference "autosave" '("0" "5" "30" "120" "300"))
+(validate-enum-preference "document update times" '("1" "2" "3"))
+(validate-enum-preference "updater:interval" '("0" "24" "168" "720"))
+(validate-enum-preference "gui theme" '("default" "light" "dark" ""))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Properties of some built-in routines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

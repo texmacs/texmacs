@@ -743,6 +743,9 @@
   (widget-tabs tabs_widget (widget array_widget array_widget))
   (widget-icon-tabs icon_tabs_widget (widget array_url array_widget
                                              array_widget))
+  (widget-responsive-tabs responsive_tabs_widget (widget array_widget array_widget))
+  (widget-responsive-icon-tabs responsive_icon_tabs_widget (widget array_url array_widget
+                                             array_widget))
   (widget-scrollable user_canvas_widget (widget widget int))
   (widget-resize resize_widget (widget widget int string string string string
                                        string string string string))
