@@ -12,6 +12,8 @@
 #include <QApplication>
 
 #if QT_VERSION >= 0x060000
+#include <QIconEngine>
+
 
 #include "QTMIconManager.hpp"
 #include "qt_picture.hpp"
@@ -85,22 +87,69 @@ load_pixmap (url file_name, QIcon& icon) {
          load_pixmap (file_name, icon, 1.0);
 }
 
-QIcon
-QTMIconManager::getIcon (url file_name) {
-  QIcon icon;
-  QString qfile_name= to_qstring (as_string (file_name));
-  if (icon_cache ().contains (qfile_name))
-    return icon_cache ()[qfile_name];
-  string suf= suffix (file_name);
-  url name= N(suf) == 0 ? file_name : unglue (file_name, N(suf)+1);
-  if (load_svg (glue (name, ".svg"), icon) ||
-      load_pixmap (file_name, icon)) {
-    icon_cache ()[qfile_name]= icon;
+class QTMThemeIconEngine : public QIconEngine {
+public:
+  QTMThemeIconEngine (url file_name) : m_file_name(file_name) {}
+
+  QIcon &getCurrentIcon () {
+    if (QTMIconManager::is_dark_mode ()) {
+      if (m_dark_icon.isNull ()) m_dark_icon = resolveIcon ();
+      return m_dark_icon;
+    } else {
+      if (m_light_icon.isNull ()) m_light_icon = resolveIcon ();
+      return m_light_icon;
+    }
+  }
+
+  void paint (QPainter *painter, const QRect &rect, QIcon::Mode mode, QIcon::State state) override {
+    getCurrentIcon().paint (painter, rect, Qt::AlignCenter, mode, state);
+  }
+
+  QPixmap pixmap (const QSize &size, QIcon::Mode mode, QIcon::State state) override {
+    return getCurrentIcon().pixmap (size, mode, state);
+  }
+
+  QSize actualSize (const QSize &size, QIcon::Mode mode, QIcon::State state) override {
+    return getCurrentIcon().actualSize (size, mode, state);
+  }
+
+  QIconEngine *clone () const override {
+    QTMThemeIconEngine* engine = new QTMThemeIconEngine (m_file_name);
+    engine->m_light_icon = m_light_icon;
+    engine->m_dark_icon = m_dark_icon;
+    return engine;
+  }
+
+private:
+  url m_file_name;
+  QIcon m_light_icon;
+  QIcon m_dark_icon;
+
+  QIcon resolveIcon () {
+    QIcon icon;
+    string suf= suffix (m_file_name);
+    url name= N(suf) == 0 ? m_file_name : unglue (m_file_name, N(suf)+1);
+    if (load_svg (glue (name, ".svg"), icon) ||
+        load_pixmap (m_file_name, icon)) {
+      return icon;
+    }
+    if (m_file_name != url ("TeXmacs"))
+      std_error << "Icon not found: " << m_file_name << LF;
+    load_svg (url ("$TEXMACS_PATH/misc/images/texmacs.svg"), icon);
     return icon;
   }
-  if (file_name != url ("TeXmacs"))
-    std_error << "Icon not found: " << file_name << LF;
-  load_svg (url ("$TEXMACS_PATH/misc/images/texmacs.svg"), icon);
+};
+
+QIcon
+QTMIconManager::getIcon (url file_name) {
+  QString qfile_name= to_qstring (as_string (file_name));
+  
+  if (engine_cache.contains (qfile_name))
+    return engine_cache[qfile_name];
+    
+  QIcon icon (new QTMThemeIconEngine (file_name));
+  engine_cache[qfile_name]= icon;
+  
   return icon;
 }
 
