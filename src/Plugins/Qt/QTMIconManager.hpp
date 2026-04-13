@@ -18,6 +18,7 @@
 
 #include <QIcon>
 #include <QMap>
+#include <QString>
 #include "url.hpp"
 #include "gui.hpp"
 
@@ -32,10 +33,8 @@ public:
     return occurs ("dark", tm_style_sheet); }
 
 private:
-  QMap<QString, QIcon> icon_table, dark_icon_table;
-  
-  inline const QMap<QString, QIcon>& icon_cache () {
-    return is_dark_mode () ? dark_icon_table : icon_table; }
+    QMap<QString, QIcon> engine_cache;
+
 };
 
 #endif // QT_VERSION >= 0x060000

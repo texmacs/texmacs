@@ -16,6 +16,9 @@
 #include "convert.hpp"
 #include "merge_sort.hpp"
 #include "iterator.hpp"
+#ifdef QTTEXMACS
+void qt_notify_preference (string var);
+#endif
 
 /******************************************************************************
 * Changing the user preferences
@@ -36,6 +39,9 @@ set_user_preference (string var, string val) {
   else user_prefs (var)= val;
   user_prefs_modified= true;
   notify_preference (var);
+#ifdef QTTEXMACS
+  qt_notify_preference (var);
+#endif
 }
 
 void
@@ -43,6 +49,9 @@ reset_user_preference (string var) {
   user_prefs->reset (var);
   user_prefs_modified= true;
   notify_preference (var);
+#ifdef QTTEXMACS
+  qt_notify_preference (var);
+#endif
 }
 
 string

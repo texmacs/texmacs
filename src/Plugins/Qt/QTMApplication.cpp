@@ -1,6 +1,6 @@
 #include "QTMApplication.hpp"
+#include <QTimer>
 
-  
 QTMApplication::QTMApplication (int& argc, char** argv) :
   QApplication (argc, argv) { }
 
@@ -25,6 +25,7 @@ void QTMApplication::load() {
 #if QT_VERSION >= 0x050000
   if (mUseTabWindow) new QTMMainTabWindow();
 #endif
+
 }
   
 
@@ -71,4 +72,18 @@ bool QTMApplication::notify (QObject* receiver, QEvent* event)
     the_exception= s;
   }
   return false;
+}
+
+void QTMApplication::notify_preference (string var) {
+  (void) var;
+#if QT_VERSION >= 0x060000
+  if (var == "gui theme") {
+    init_theme ();
+  }
+#endif
+}
+
+void qt_notify_preference (string var) {
+  QTMApplication* app= static_cast<QTMApplication*> (QApplication::instance ());
+  if (app) app->notify_preference (var);
 }

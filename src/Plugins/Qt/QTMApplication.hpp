@@ -76,6 +76,8 @@ public:
   }
 #endif
 
+  void notify_preference (string var);
+
 private:
 #if QT_VERSION >= 0x060000
   bool mPixmapManagerInitialized;
@@ -90,6 +92,8 @@ inline QTMApplication *tmapp() {
   ASSERT (!headless_mode, "invalid call of tmapp() in headless mode");
   return dynamic_cast<QTMApplication *>(qApp);
 }
+
+void qt_notify_preference (string var);
 
 class QTMCoreApplication: public QCoreApplication {
   Q_OBJECT
