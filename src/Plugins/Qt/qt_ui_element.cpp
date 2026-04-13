@@ -31,6 +31,7 @@
 #include "QTMStyle.hpp"
 #include "QTMTreeModel.hpp"
 #include "QTMIconManager.hpp"
+#include "QTMResponsiveTabWidget.hpp"
 
 #include <QCheckBox>
 #include <QPushButton>
@@ -254,9 +255,10 @@ qt_ui_element_rep::get_payload (qt_widget qtw, types check_type) {
     case text_widget:       case xpm_widget:       case toggle_widget:
     case enum_widget:       case choice_widget:    case filtered_choice_widget:
     case scrollable_widget: case hsplit_widget:    case vsplit_widget:
-    case tabs_widget:       case icon_tabs_widget: case resize_widget:
-    case refresh_widget:    case refreshable_widget:  case balloon_widget:
-    case glue_widget:       case division_widget:
+    case tabs_widget:       case icon_tabs_widget: case responsive_tabs_widget: 
+    case responsive_icon_tabs_widget: case resize_widget: case refresh_widget: 
+    case refreshable_widget:  case balloon_widget: case glue_widget: 
+    case division_widget:
     {
       qt_ui_element_rep* rep = static_cast<qt_ui_element_rep*> (qtw.rep);
       return rep->load;
@@ -777,6 +779,8 @@ qt_ui_element_rep::as_qlayoutitem (QWidget* parent_widget) {
     case vsplit_widget:
     case tabs_widget:
     case icon_tabs_widget:
+    case responsive_tabs_widget:
+    case responsive_icon_tabs_widget:
     case resize_widget:
     case refresh_widget:
     case refreshable_widget:
@@ -1300,6 +1304,62 @@ qt_ui_element_rep::as_qwidget (QWidget* parent_widget) {
       if (i>0) tw->resizeOthers(0);   // Force the automatic resizing
 
       qwid = tw;
+    }
+      break;
+
+    case responsive_tabs_widget:
+    {
+      typedef array<widget> T1;
+      typedef pair<T1, T1> T;
+      T       x = open_box<T>(load);
+      T1   tabs = x.x1;
+      T1 bodies = x.x2;
+
+      QTMResponsiveTabWidget* tw = new QTMResponsiveTabWidget (parent_widget);
+      
+      int i;
+      for (i = 0; i < N(tabs); i++) {
+        if (is_nil (tabs[i])) break;
+        QWidget* prelabel = concrete (tabs[i])->as_qwidget(tw);
+        QLabel*     label = qobject_cast<QLabel*> (prelabel);
+        QWidget*     body = concrete (bodies[i])->as_qwidget(tw);
+        tw->addTab (body, label ? label->text() : "", QIcon());
+        delete prelabel;
+      }
+
+      qwid = tw;
+    }
+      break;
+
+    case responsive_icon_tabs_widget:
+    {
+      typedef array<url> U1;
+      typedef array<widget> T1;
+      typedef triple<U1, T1, T1> T;
+      T       x = open_box<T>(load);
+      U1  icons = x.x1;
+      T1   tabs = x.x2;
+      T1 bodies = x.x3;
+
+      QTMResponsiveTabWidget* tw = new QTMResponsiveTabWidget (parent_widget);
+      int i;
+      for (i = 0; i < N(tabs); i++) {
+        if (is_nil (tabs[i])) break;
+        QImage*       img = xpm_image (icons[i]);
+        QWidget* prelabel = concrete (tabs[i])->as_qwidget(tw);
+        QLabel*     label = qobject_cast<QLabel*> (prelabel);
+        QWidget*     body = concrete (bodies[i])->as_qwidget(tw);
+//#if QT_VERSION >= 0x060000
+        tw->addTab(body, label ? label->text() : "", tmapp()->icon_manager().getIcon (icons[i]));
+//        (void) img;
+//        tw->setTabIcon(i, tmapp()->icon_manager().getIcon (icons[i]));
+//#else
+//        tw->addTab (body, QIcon (as_pixmap (*img)), label ? label->text() : "");
+//#endif
+        delete prelabel;
+      }
+
+        qwid = tw;
     }
       break;
       

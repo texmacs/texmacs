@@ -32,7 +32,17 @@
 
 void setup_texmacs_path () {
   string environment_texmacs_path;
-  if (texmacs_getenv ("TEXMACS_PATH", environment_texmacs_path)) return;
+  if (texmacs_getenv ("TEXMACS_PATH", environment_texmacs_path)) {
+    if (test_texmacs_path (environment_texmacs_path, false)) {
+        cout << "TEXMACS_PATH is set to: " 
+              << environment_texmacs_path << LF;
+        return;
+      } else {
+        cout << "The environment variable TEXMACS_PATH is set to: " 
+            << environment_texmacs_path << LF;
+        cout << "but it does not contain a valid TeXmacs installation.\n";
+      }
+  }
   url exedir = texmacs_get_application_directory ();
   if (test_texmacs_path (exedir * "TeXmacs")) return;
   if (test_texmacs_path (exedir * "..")) return;
@@ -42,6 +52,7 @@ void setup_texmacs_path () {
   if (test_texmacs_path (exedir * "../usr/share/TeXmacs")) return;
   if (test_texmacs_path ("/usr/share/TeXmacs")) return;
   if (test_texmacs_path ("/usr/local/share/TeXmacs")) return;
+  tm_throw("TeXmacs could not be found in the executable directory or its parent, nor in /usr/share/TeXmacs or /usr/local/share/TeXmacs.");
 }
 
 #if EXPERIMENTAL_REEXEC_DETACHED

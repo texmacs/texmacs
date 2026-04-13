@@ -55,7 +55,7 @@ SIGN = misc/admin/sign_update
 # Main makes
 ###############################################################################
 
-TEXMACS: EMPTY_DIRS @MKGUILE@
+TEXMACS: SAFE_TEXMACS_REV EMPTY_DIRS @MKGUILE@
 	if test "$(TEXMACS_DEPS)" != "no"; then \
 		cd src; $(MAKE) -f makefile deps; \
 	fi
@@ -72,7 +72,7 @@ TEXMACS: EMPTY_DIRS @MKGUILE@
 	@echo ----------------------------------------------------
 	@echo dynamic TeXmacs has been successfully compiled
 
-STATIC_TEXMACS: EMPTY_DIRS 
+STATIC_TEXMACS: SAFE_TEXMACS_REV EMPTY_DIRS 
 	if test "$(TEXMACS_DEPS)" != "no"; then \
 		cd src; $(MAKE) -f makefile deps; \
 	fi
@@ -103,6 +103,9 @@ EMPTY_DIRS:
 
 GLUE:
 	cd src; $(MAKE) -f makefile GLUE
+
+SAFE_TEXMACS_REV:
+	@echo "@ALTERNATIVE_VERSION@" > "$(tmdir)/SVNREV"
 
 .PHONY: TEXMACS STATIC_TEXMACS DEPS GLUE EXPERIMENTAL
 

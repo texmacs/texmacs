@@ -15,6 +15,17 @@
   (:use (texmacs menus preferences-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Validation Macro
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define-macro (define-preference-names-and-validate pref . options)
+  (let ((allowed (map car options)))
+    `(begin
+       (define-preference-names ,pref ,@options)
+       (when (nin? (get-preference ,pref) ',allowed)
+         (reset-preference ,pref)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Wrapper
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -29,7 +40,7 @@
 ;; Appearance preferences
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-preference-names "look and feel"
+(define-preference-names-and-validate "look and feel"
   ("default" "Default")
   ("emacs" "Emacs")
   ("gnome" "Gnome")
@@ -40,34 +51,29 @@
 (for (l supported-languages)
   (set-preference-name "language" l (upcase-first l)))
 
-(define-preference-names "complex actions"
+(when (nin? (get-preference "language") supported-languages)
+  (reset-preference "language"))
+
+(define-preference-names-and-validate "complex actions"
   ("menus" "Through the menus")
   ("popups" "Through popup windows"))
 
-(define-preference-names "interactive questions"
+(define-preference-names-and-validate "interactive questions"
   ("footer" "On the footer")
   ("popup" "In popup windows"))
 
-(define-preference-names "detailed menus"
-  ("simple ""Simplified menus")
+(define-preference-names-and-validate "detailed menus"
+  ("simple" "Simplified menus")
   ("detailed" "Detailed menus"))
 
-(define-preference-names "buffer management"
+(define-preference-names-and-validate "buffer management"
   ("separate" "Documents in separate windows")
   ("shared" "Multiple documents share window"))
 
-(if qt6-or-later-gui?
-    (define-preference-names "gui theme"
+(define-preference-names-and-validate "gui theme"
       ("default" "Default")
       ("light" "Bright")
       ("dark" "Dark"))
-    (define-preference-names "gui theme"
-      ("default" "Default")
-      ("light" "Bright")
-      ("dark" "Dark")
-      ("native-light" "Native")
-      ("" "Legacy"))
-)
 
 (when (not qt6-or-later-gui?)
   (when (in? (get-preference "gui theme") '("light" "dark" "default"))
@@ -119,19 +125,19 @@
 ;; Keyboard preferences
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-preference-names "text spacebar"
+(define-preference-names-and-validate "text spacebar"
   ("default" "Default")
   ("allow multiple spaces" "Allow multiple spaces")
   ("glue multiple spaces" "Glue multiple spaces")
   ("no multiple spaces" "No multiple spaces"))
 
-(define-preference-names "math spacebar"
+(define-preference-names-and-validate "math spacebar"
   ("default" "Default")
   ("allow spurious spaces" "Allow spurious spaces")
   ("avoid spurious spaces" "Avoid spurious spaces")
   ("no spurious spaces" "No spurious spaces"))
 
-(define-preference-names "automatic quotes"
+(define-preference-names-and-validate "automatic quotes"
   ("default" "Default")
   ("none" "Disabled")
   ("dutch" "Dutch")
@@ -141,12 +147,12 @@
   ("spanish" "Spanish")
   ("swiss" "Swiss"))
 
-(define-preference-names "automatic brackets"
+(define-preference-names-and-validate "automatic brackets"
   ("off" "Disabled")
   ("mathematics" "Inside mathematics" "mathematics")
   ("on" "Enabled"))
 
-(define-preference-names "cyrillic input method"
+(define-preference-names-and-validate "cyrillic input method"
   ("none" "None")
   ("translit" "Translit")
   ("jcuken" "Jcuken")
@@ -387,7 +393,7 @@
 
 ;; LaTeX ----------
 
-(define-preference-names "texmacs->latex:encoding"
+(define-preference-names-and-validate "texmacs->latex:encoding"
   ("ascii" "Ascii")
   ("cork"  "Cork with catcodes")
   ("utf-8" "Utf-8 with inputenc"))
@@ -518,14 +524,14 @@
 
 ;; Verbatim ----------
 
-(define-preference-names "texmacs->verbatim:encoding"
+(define-preference-names-and-validate "texmacs->verbatim:encoding"
   ("auto" "Automatic")
   ("cork" "Cork")
   ("iso-8859-1" "Iso-8859-1")
   ("iso-8859-2" "Iso-8859-2")
   ("utf-8" "Utf-8"))
 
-(define-preference-names "verbatim->texmacs:encoding"
+(define-preference-names-and-validate "verbatim->texmacs:encoding"
   ("auto" "Automatic")
   ("cork" "Cork")
   ("iso-8859-1" "Iso-8859-1")
@@ -563,7 +569,7 @@
             "12em"))))
 
 ;; Pdf ----------
-(define-preference-names "texmacs->pdf:version"
+(define-preference-names-and-validate "texmacs->pdf:version"
   ("Default" "default")
   ("1.4" "1.4")
   ("1.5" "1.5")
@@ -660,62 +666,60 @@
 ;; All converters ----------
 
 (tm-widget (conversion-preferences-widget)
-  ===
-  (padded
-    (tabs
-      (tab (text "Html")
+    (responsive-tabs
+      (responsive-tab (text "Html")
         (centered
           (dynamic (html-preferences-widget))))
-      (tab (text "LaTeX")
+      (responsive-tab (text "LaTeX")
         (centered
           (dynamic (latex-preferences-widget))))
-      (tab (text "BibTeX")
+      (responsive-tab (text "BibTeX")
         (centered
           (dynamic (bibtex-preferences-widget))))
-      (tab (text "Verbatim")
+      (responsive-tab (text "Verbatim")
         (centered
           (dynamic (verbatim-preferences-widget))))
       (assuming (or (supports-native-pdf?) (supports-ghostscript?))
-        (tab (text "Pdf")
+        (responsive-tab (text "Pdf")
           (centered
             (dynamic (pdf-preferences-widget)))))
-      (tab (text "Image")
+      (responsive-tab (text "Image")
         (centered
           (dynamic (image-preferences-widget))))
-      (tab (text "AI")
+      (responsive-tab (text "AI")
 	(centered
-          (dynamic (ai-preferences-widget))))))
+          (dynamic (ai-preferences-widget)))))
   ===)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Other
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-preference-names "autosave"
+(define-preference-names-and-validate "autosave"
   ("5" "5 sec")
   ("30" "30 sec")
   ("120" "120 sec")
   ("300" "300 sec")
   ("0" "Disable"))
 
-(define-preference-names "security"
+(define-preference-names-and-validate "security"
   ("accept no scripts" "Accept no scripts")
   ("prompt on scripts" "Prompt on scripts")
   ("accept all scripts" "Accept all scripts"))
 
-(define-preference-names "updater:interval"
+(define-preference-names-and-validate "updater:interval"
   ("0" "Never")
   ("0" "Unsupported")
   ("24" "Once a day")
   ("168" "Once a week")
   ("720" "Once a month"))
 
-(define-preference-names "document update times"
+(define-preference-names-and-validate "document update times"
   ("1" "Once")
   ("2" "Twice")
   ("3" "Three times"))
 
-(define-preference-names "scripting language"
+(define-preference-names-and-validate "scripting language"
   ("none" "None"))
 
 (define (updater-last-check-formatted)
@@ -1003,29 +1007,28 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-widget (preferences-widget)
-  (centered
-    (icon-tabs
-      (icon-tab "tm_prefs_general.xpm" (text "General")
+    (responsive-icon-tabs
+      (responsive-icon-tab "tm_prefs_general.xpm" (text "General")
         (centered
           (dynamic (general-preferences-widget))))
-      (icon-tab "tm_prefs_keyboard.xpm" (text "Keyboard")
+      (responsive-icon-tab "tm_prefs_keyboard.xpm" (text "Keyboard")
         (centered
           (dynamic (keyboard-preferences-widget))))
       ;; TODO: please implement nice icon tabs first before
       ;; adding new tabs in the preferences widget
       ;; The tabs currently take too much horizontal space
-      (icon-tab "tm_math_preferences.xpm" (text "Maths")
+      (responsive-icon-tab "tm_math_preferences.xpm" (text "Maths")
         (centered
           (dynamic (math-preferences-widget))))
-      (icon-tab "tm_prefs_convert.xpm" (text "Convert")
+      (responsive-icon-tab "tm_prefs_convert.xpm" (text "Convert")
         (dynamic (conversion-preferences-widget)))
       (assuming (== (get-preference "experimental encryption") "on")
-        (icon-tab "tm_prefs_security.xpm" (text "Security")
+        (responsive-icon-tab "tm_prefs_security.xpm" (text "Security")
           (centered
             (dynamic (security-preferences-widget)))))
-      (icon-tab "tm_prefs_other.xpm" (text "Other")
+      (responsive-icon-tab "tm_prefs_other.xpm" (text "Other")
         (centered
-          (dynamic (other-preferences-widget)))))))
+          (dynamic (other-preferences-widget))))))
 
 (tm-define (open-preferences-window)
   (:interactive #t)

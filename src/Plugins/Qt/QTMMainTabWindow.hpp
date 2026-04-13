@@ -1,7 +1,7 @@
 /******************************************************************************
 * MODULE     : QTMMainTabWindow.hpp
 * DESCRIPTION: A tab window that handle multiple moving tabs into windows.
-* COPYRIGHT  : (C) 2025 Liza Belos
+* COPYRIGHT  : (C) 2026 Liza Belos
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE

@@ -550,6 +550,18 @@ test_texmacs_path (url path, bool set_environment) {
   if (!exists (path * "fonts")) return false;
   if (!exists (path * "progs")) return false;
   if (!exists (path * "styles")) return false;
+  // read path/SVNREV and check that the content is equal to ALTERNATIVE_VERSION
+  url rev_file= path * "SVNREV";
+  if (!exists (rev_file)) return false;
+  string rev;
+  if (load_string (rev_file, rev, false)) return false;
+  // remove \n at the end of rev
+  if (N(rev) > 0 && rev[N(rev)-1] == '\n') rev= rev (0, N(rev)-1);
+  if (rev != ALTERNATIVE_VERSION) {
+    cout << "The directory " << path << " contains an incompatible version of TeXmacs.\n";
+    cout << "Expected version: " << ALTERNATIVE_VERSION << ", found version: " << rev << ".\n";
+    return false;
+  }
   if (set_environment) set_env_path ("TEXMACS_PATH", path);
   return true;
 }

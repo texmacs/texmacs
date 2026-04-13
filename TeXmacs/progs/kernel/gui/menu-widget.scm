@@ -70,6 +70,10 @@
     (tab :menu-item-list)
     (icon-tabs :menu-item-list)
     (icon-tab :menu-item-list)
+    (responsive-icon-tabs :menu-item-list)
+    (responsive-icon-tab :menu-item-list)
+    (responsive-tabs :menu-item-list)
+    (responsive-tab :menu-item-list)
     (minibar :menu-item-list)
     (extend :menu-item :menu-item-list)
     (style :integer? :menu-item-list)
@@ -569,6 +573,29 @@
   (display* "Error 'make-menu-icon-tab', " p ", " style "\n")
   (list 'vlist))
 
+(define (make-menu-responsive-tabs p style)
+  "Make @(responsive-tabs :menu-item-list) menu item."
+  (with style* (logior style widget-style-mini)
+    (widget-responsive-tabs (make-menu-items (map tab-key (cdr p)) style* #f)
+                            (make-menu-items (map tab-value (cdr p)) style #f))))
+
+(define (make-menu-responsive-tab p style)
+  "Make @(responsive-tab :menu-item-list) menu item."
+  (display* "Error 'make-menu-responsive-tab', " p ", " style "\n")
+  (list 'vlist))
+
+(define (make-menu-responsive-icon-tabs p style)
+  "Make @(responsive-icon-tabs :menu-item-list) menu item."
+  (with style* (logior style widget-style-mini)
+    (widget-responsive-icon-tabs (map icon-tab-icon (cdr p))
+                                (make-menu-items (map icon-tab-key (cdr p)) style* #f)
+                                (make-menu-items (map icon-tab-value (cdr p)) style #f))))
+
+(define (make-menu-responsive-icon-tab p style)
+  "Make @(responsive-icon-tab :menu-item-list) menu item."
+  (display* "Error 'make-menu-responsive-icon-tab', " p ", " style "\n")
+  (list 'vlist))
+
 (define (make-menu-extend p style bar?)
   "Make @(extend :menu-item :menu-item-list) menu item."
   (with l (make-menu-items (cdr p) style bar?)
@@ -828,6 +855,14 @@
         ,(lambda (p style bar?) (list (make-menu-icon-tabs p style))))
   (icon-tab (:*)
         ,(lambda (p style bar?) (list (make-menu-icon-tab p style))))
+  (responsive-icon-tabs (:*)
+        ,(lambda (p style bar?) (list (make-menu-responsive-icon-tabs p style))))
+  (responsive-icon-tab (:*)
+        ,(lambda (p style bar?) (list (make-menu-responsive-icon-tab p style))))
+  (responsive-tabs (:*)
+        ,(lambda (p style bar?) (list (make-menu-responsive-tabs p style))))
+  (responsive-tab (:*)
+        ,(lambda (p style bar?) (list (make-menu-responsive-tab p style))))
   (minibar (:*)
             ,(lambda (p style bar?) (list (make-menu-minibar p style))))
   (extend (:%1 :*)
@@ -1055,6 +1090,10 @@
   (tab ,(lambda (p) `(tab ,@(menu-expand-list (cdr p)))))
   (icon-tabs ,(lambda (p) `(icon-tabs ,@(menu-expand-list (cdr p)))))
   (icon-tab ,(lambda (p) `(icon-tab ,@(menu-expand-list (cdr p)))))
+  (responsive-icon-tabs ,(lambda (p) `(responsive-icon-tabs ,@(menu-expand-list (cdr p)))))
+  (responsive-icon-tab ,(lambda (p) `(responsive-icon-tab ,@(menu-expand-list (cdr p)))))
+  (responsive-tabs ,(lambda (p) `(responsive-tabs ,@(menu-expand-list (cdr p)))))
+  (responsive-tab ,(lambda (p) `(responsive-tab ,@(menu-expand-list (cdr p)))))
   (minibar ,(lambda (p) `(minibar ,@(menu-expand-list (cdr p)))))
   (extend ,(lambda (p) `(extend ,(cadr p) ,@(menu-expand-list (cddr p)))))
   (style ,(lambda (p) `(style ,(cadr p) ,@(menu-expand-list (cddr p)))))

@@ -220,6 +220,8 @@ widget tabs_widget (array<widget> tabs, array<widget> bodies);
   // a tab bar where one and only of the bodies can be selected
 widget icon_tabs_widget (array<url> us, array<widget> ss, array<widget> bs);
   // a variant of tabs_widget with named icon tabs
+widget responsive_tabs_widget (array<widget> tabs, array<widget> bodies);
+widget responsive_icon_tabs_widget (array<url> us, array<widget> ss, array<widget> bs);
 widget wrapped_widget (widget w, command quit);
   // copy of w, but with a separate reference counter,
   // and with a command to be called upon destruction

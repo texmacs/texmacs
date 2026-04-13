@@ -408,6 +408,22 @@ widget icon_tabs_widget (array<url> us, array<widget> ts, array<widget> bs) {
   wid->add_children (bs);
   return abstract (wid);
 }
+widget responsive_tabs_widget (array<widget> tabs, array<widget> bodies) {
+  if (headless_mode) return headless_widget ();
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::responsive_tabs_widget,
+                                             tabs, bodies);
+  wid->add_children (tabs);
+  wid->add_children (bodies);
+  return abstract (wid);
+}
+widget responsive_icon_tabs_widget (array<url> us, array<widget> ts, array<widget> bs) {
+  if (headless_mode) return headless_widget ();
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::responsive_icon_tabs_widget,
+                                    us, ts, bs);
+  wid->add_children (ts);
+  wid->add_children (bs);
+  return abstract (wid);
+}
 widget wrapped_widget (widget w, command cmd) {
   if (headless_mode) return headless_widget ();
   return tm_new<qt_wrapped_widget_rep> (w, cmd);

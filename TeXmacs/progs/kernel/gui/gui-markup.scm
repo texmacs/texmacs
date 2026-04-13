@@ -193,6 +193,22 @@
   (:synopsis "One icon tab of an icon tab bar")
   `(cons* 'icon-tab ($list ,@l)))
 
+(tm-define-macro ($responsive-tabs . l)
+  (:synopsis "A responsive tab bar")
+  `(cons* 'responsive-tabs ($list ,@l)))
+
+(tm-define-macro ($responsive-tab . l)
+  (:synopsis "One responsive tab of a responsive tab bar")
+  `(cons* 'responsive-tab ($list ,@l)))
+
+(tm-define-macro ($responsive-icon-tabs . l)
+  (:synopsis "A responsive icon tab bar")
+  `(cons* 'responsive-icon-tabs ($list ,@l)))
+
+(tm-define-macro ($responsive-icon-tab . l)
+  (:synopsis "One responsive icon tab of a responsive icon tab bar")
+  `(cons* 'responsive-icon-tab ($list ,@l)))
+
 (tm-define-macro ($horizontal . l)
   (:synopsis "Horizontal layout of widgets")
   `(cons* 'horizontal ($list ,@l)))
