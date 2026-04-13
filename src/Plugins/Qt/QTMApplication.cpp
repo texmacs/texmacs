@@ -79,6 +79,7 @@ void QTMApplication::notify_preference (string var) {
 #if QT_VERSION >= 0x060000
   if (var == "gui theme") {
     init_theme ();
+    emit themeChanged();
   }
 #endif
 }

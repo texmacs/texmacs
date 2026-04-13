@@ -78,6 +78,9 @@ public:
 
   void notify_preference (string var);
 
+signals:
+  void themeChanged();
+
 private:
 #if QT_VERSION >= 0x060000
   bool mPixmapManagerInitialized;
