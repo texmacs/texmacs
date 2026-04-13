@@ -10,6 +10,7 @@
 ******************************************************************************/
 
 #include "QTMStyle.hpp"
+#include "QTMApplication.hpp"
 #include "qt_utilities.hpp"
 #include <time.h>
 
@@ -720,6 +721,16 @@ qt_apply_tm_style (QWidget* qwid, int style) {
   QString sheet = "* {" + parse_tm_style (style) + "}";
   qwid->setStyleSheet (sheet);
   qwid->setEnabled (! (style & WIDGET_STYLE_INERT));
+
+  if (!qwid->property("tm_theme_connected").toBool()) {
+    QTMApplication *app = qobject_cast<QTMApplication*>(QCoreApplication::instance());
+    if (app) {
+      QObject::connect(app, &QTMApplication::themeChanged, qwid, [qwid,style](){
+        qt_apply_tm_style(qwid, style);
+      });
+      qwid->setProperty("tm_theme_connected", true);
+    }
+  }
 }
 
 void
@@ -741,6 +752,16 @@ qt_apply_tm_style (QWidget* qwid, int style, color c) {
 #endif
   qwid->setEnabled (! (style & WIDGET_STYLE_INERT));
   qwid->setStyleSheet (sheet);
+
+  if (!qwid->property("tm_theme_connected").toBool()) {
+    QTMApplication *app = qobject_cast<QTMApplication*>(QCoreApplication::instance());
+    if (app) {
+      QObject::connect(app, &QTMApplication::themeChanged, qwid, [qwid,style,c](){
+        qt_apply_tm_style(qwid, style, c);
+      });
+      qwid->setProperty("tm_theme_connected", true);
+    }
+  }
 }
 
 
