@@ -3669,6 +3669,9 @@ printf "%s\n" "$SVNREV" >&6; }
   ALTERNATIVE_VERSION="$VERSION_MAJOR.$VERSION_MINOR.$SVNINT"
 
 
+printf "%s\n" "#define ALTERNATIVE_VERSION \"$ALTERNATIVE_VERSION\"" >>confdefs.h
+
+
 #Naming package strategy
 #   if test "$SVNREV" != $DEVEL_REVISION
 #   then AC_SUBST(REVISION,[-${SVNINT}])
