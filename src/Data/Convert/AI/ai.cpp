@@ -28,7 +28,7 @@ string
 ai_engine (string model) {
   if (starts (model, "chatgpt")) return "chatgpt";
   if (starts (model, "gemini")) return "gemini";
-  if (starts (model, "llama")) return "llama";
+  if (starts (model, "ollama")) return "ollama";
   if (starts (model, "open-mistral")) return "mistral";
   if (starts (model, "albert")) return "albert";
   return "unknown";
@@ -286,11 +286,12 @@ gemini_command (string s, string model, string chat) {
 }
 
 string
-llama_command (string s, string model, string chat) {
+ollama_command (string s, string model, string chat) {
   (void) chat;
   string server= get_preference ("ollama server", "localhost");
   string port  = get_preference ("ollama port", "11434");
-  string model_= get_preference (model * " model", model);
+  string model_= get_preference ("ollama model", "default");
+  if (model_ == "default") model_= as_string (call ("ollama-default-model"));
   string cmd= "curl http://" * server * ":" * port * "/api/generate -d '{\n";
   cmd << "\"model\": \"" << model_ << "\",\n"
       << "\"prompt\": \"" << ai_quote (s) << "\",\n"
@@ -365,7 +366,7 @@ ai_command (string s, string model, string agent, string chat) {
   string s_= agent * " " * s;
   if (engine == "chatgpt") return chatgpt_command (s_, model, chat);
   if (engine == "gemini") return gemini_command (s_, model, chat);
-  if (engine == "llama") return llama_command (s_, model, chat);
+  if (engine == "ollama") return ollama_command (s_, model, chat);
   if (engine == "mistral") return mistral_command (s_, model, chat);
   if (engine == "albert") return albert_command (s, model, agent, chat);
   return "";
@@ -424,7 +425,7 @@ gemini_output (string val, string model, string chat) {
 }
 
 string
-llama_output (string val, string model, string chat) {
+ollama_output (string val, string model, string chat) {
   (void) chat;
   (void) model;
   int pos= search_forwards ("\"response\":\"", val);
@@ -438,6 +439,10 @@ llama_output (string val, string model, string chat) {
   r= replace (r, "\\u0026", "&");
   r= replace (r, "\\u003c", "<");
   r= replace (r, "\\u003e", ">");
+  if (occurs ("u003cbodyu003e", r)) {
+    r= replace (r, "u003c", "<");
+    r= replace (r, "u003e", ">");
+  }
   return r;
 }
 
@@ -494,7 +499,7 @@ ai_output (string s, string model, string chat) {
   string engine= ai_engine (model);
   if (engine == "chatgpt") return chatgpt_output (s, model, chat);
   if (engine == "gemini") return gemini_output (s, model, chat);
-  if (engine == "llama") return llama_output (s, model, chat);
+  if (engine == "ollama") return ollama_output (s, model, chat);
   if (engine == "mistral") return mistral_output (s, model, chat);
   if (engine == "albert") return albert_output (s, model, chat);
   return "";
