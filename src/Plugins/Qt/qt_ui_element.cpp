@@ -1248,6 +1248,9 @@ qt_ui_element_rep::as_qwidget (QWidget* parent_widget) {
       break;
       
     case tabs_widget:
+#if QT_VERSION < 0x060000
+    case responsive_tabs_widget:
+#endif
     {
       typedef array<widget> T1;
       typedef pair<T1, T1> T;
@@ -1273,6 +1276,9 @@ qt_ui_element_rep::as_qwidget (QWidget* parent_widget) {
     }
       break;
       
+#if QT_VERSION < 0x060000
+    case responsive_tabs_widget:
+#endif
     case icon_tabs_widget:
     {
       typedef array<url> U1;
@@ -1307,6 +1313,7 @@ qt_ui_element_rep::as_qwidget (QWidget* parent_widget) {
     }
       break;
 
+#if QT_VERSION >= 0x060000
     case responsive_tabs_widget:
     {
       typedef array<widget> T1;
@@ -1362,6 +1369,7 @@ qt_ui_element_rep::as_qwidget (QWidget* parent_widget) {
         qwid = tw;
     }
       break;
+#endif
       
     case refresh_widget:
     {
