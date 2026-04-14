@@ -80,6 +80,8 @@
   (-> "AI engine"
       ("Off" (reset-preference "ai"))
       ---
+      (when (has-albert?)
+        ("Albert" (set-preference "ai" "albert")))
       (when (has-chatgpt?)
         ("Chat GPT" (set-preference "ai" "chatgpt")))
       (when (has-gemini?)
@@ -87,9 +89,7 @@
       (when (has-ollama?)
         ("Ollama" (set-preference "ai" "ollama")))
       (when (has-open-mistral-7b?)
-        ("Mistral 7B" (set-preference "ai" "open-mistral-7b")))
-      (when (has-albert?)
-        ("Albert" (set-preference "ai" "albert"))))
+        ("Mistral 7B" (set-preference "ai" "open-mistral-7b"))))
   (when (and (cpp-has-preference? "ai")
              (selection-active-any?))
     ("Correct" (ai-correct (get-preference "ai")))
