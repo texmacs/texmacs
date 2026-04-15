@@ -1277,7 +1277,7 @@ qt_ui_element_rep::as_qwidget (QWidget* parent_widget) {
       break;
       
 #if QT_VERSION < 0x060000
-    case responsive_tabs_widget:
+    case responsive_icon_tabs_widget:
 #endif
     case icon_tabs_widget:
     {
