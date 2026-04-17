@@ -16,6 +16,7 @@
 #include <QIcon>
 #include <QStyle>
 #include <QStyleFactory>
+#include <QFileSystemWatcher>
 #include "string.hpp"
 #include "sys_utils.hpp"
 #include "url.hpp"
@@ -78,6 +79,9 @@ public:
 
   void notify_preference (string var);
 
+public slots:
+    void onCssFileChanged(const QString &path);
+
 signals:
   void themeChanged();
 
@@ -89,6 +93,8 @@ private:
   QTMKeyboard mKeyboard;
   bool mUseTabWindow;
   bool mUseNewToolbar;
+  QFileSystemWatcher* mCssWatcher = nullptr;
+  QString mCurrentCssPath;
 };
 
 inline QTMApplication *tmapp() {
