@@ -628,6 +628,17 @@ qt_ui_element_rep::as_qaction () {
                         * type_as_string()));
   }
 
+#ifdef OS_MACOS
+  if (get_env("__CFBundleIdentifier") == "com.apple.Terminal" && act) {
+    static bool has_displayed_warning = false;
+    if (!has_displayed_warning) {
+      cout << "Warning: Adding thin space to menu items to workaround a focus bug in Terminal.app." << LF;
+      has_displayed_warning = true;
+    }
+    QChar thin_space(0x2009);
+    act->setText(thin_space + act->text());
+  }
+#endif
   return act;
 }
 
