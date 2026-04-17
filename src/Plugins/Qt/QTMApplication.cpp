@@ -1,8 +1,15 @@
 #include "QTMApplication.hpp"
 #include <QTimer>
+#include <QFileSystemWatcher>
+#include <QFile>
+#include "qt_utilities.hpp"
 
 QTMApplication::QTMApplication (int& argc, char** argv) :
-  QApplication (argc, argv) { }
+  QApplication (argc, argv) {
+    mCssWatcher = new QFileSystemWatcher(this);
+    connect(mCssWatcher, &QFileSystemWatcher::fileChanged, 
+            this, &QTMApplication::onCssFileChanged);
+}
 
 void QTMApplication::load() {
   mUseTabWindow = get_user_preference ("enable tab") == "on";
@@ -44,6 +51,13 @@ void QTMApplication::init_theme () {
     tm_style_sheet= "$TEXMACS_PATH/misc/themes/standard-light.css";
   else if (theme == "dark")
     tm_style_sheet= "$TEXMACS_PATH/misc/themes/standard-dark.css";
+
+  
+  QString qcss_path= utf8_to_qstring (concretize (url_system (tm_style_sheet)));
+  qDebug() << "Loading CSS from: " << qcss_path;
+  mCssWatcher->addPath(qcss_path);
+  
+ 
 
   init_palette (this);
   init_style_sheet (this);
@@ -87,4 +101,10 @@ void QTMApplication::notify_preference (string var) {
 void qt_notify_preference (string var) {
   QTMApplication* app= static_cast<QTMApplication*> (QApplication::instance ());
   if (app) app->notify_preference (var);
+}
+
+
+void QTMApplication::onCssFileChanged(const QString &path) {
+  init_theme();
+  emit themeChanged();
 }
