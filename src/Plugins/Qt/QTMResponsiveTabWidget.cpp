@@ -135,14 +135,6 @@ QTMResponsiveTabWidget::QTMResponsiveTabWidget(QWidget *parent)
     mWindowFusion(false), mIsResizing(false), mCurrentMode(-1),
     mCurrentDepth(-1), mCurrentGridCols(-1) {
 
-  if (parent) {
-    QString parentType = parent->metaObject()->className();
-    cout << "QTMResponsiveTabWidget parent type:" 
-         << string(parentType.toStdString().c_str()) << LF;
-  } else {
-    cout << "QTMResponsiveTabWidget has no parent" << LF;
-  }
-
   setAttribute(Qt::WA_StyledBackground, true);
   setMinimumSize(320, 300);
 

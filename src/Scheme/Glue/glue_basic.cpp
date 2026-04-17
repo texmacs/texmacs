@@ -9006,11 +9006,8 @@ tmg_widget_icon_tabs (tmscm arg1, tmscm arg2, tmscm arg3) {
 
 tmscm
 tmg_widget_responsive_tabs (tmscm arg1, tmscm arg2) {
-  cout << "checking a" << LF;
   TMSCM_ASSERT_ARRAY_WIDGET (arg1, TMSCM_ARG1, "widget-responsive-tabs");
-  cout << "checking b" << LF;
   TMSCM_ASSERT_ARRAY_WIDGET (arg2, TMSCM_ARG2, "widget-responsive-tabs");
-  cout << "checked" << LF;
 
   array_widget in1= tmscm_to_array_widget (arg1);
   array_widget in2= tmscm_to_array_widget (arg2);
