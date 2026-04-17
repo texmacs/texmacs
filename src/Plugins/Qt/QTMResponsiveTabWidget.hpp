@@ -35,7 +35,7 @@ public:
   int addCustomTab(const QIcon &icon, const QString &text);
   QSize tabSizeHint(int index) const override;
 
-private slots:
+public slots:
   void updateLabelColors(int index);
 };
 
@@ -77,6 +77,7 @@ signals:
 
 protected:
   void showEvent(QShowEvent* event) override;
+  void changeEvent(QEvent *event) override;
 
 private slots:
   void onTabSelected(int index);
