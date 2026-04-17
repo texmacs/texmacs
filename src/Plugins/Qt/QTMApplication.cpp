@@ -54,11 +54,8 @@ void QTMApplication::init_theme () {
 
   
   QString qcss_path= utf8_to_qstring (concretize (url_system (tm_style_sheet)));
-  qDebug() << "Loading CSS from: " << qcss_path;
   mCssWatcher->addPath(qcss_path);
   
- 
-
   init_palette (this);
   init_style_sheet (this);
 }
