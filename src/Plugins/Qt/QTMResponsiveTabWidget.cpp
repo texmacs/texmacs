@@ -28,8 +28,6 @@
 #include <QGridLayout>
 #include <QIcon>
 
-#define ENABLE_COLOR_DEBUG 0
-
 QTMHorizontalTextTabBar::QTMHorizontalTextTabBar(QWidget* parent) 
   : QTabBar(parent) {
   setMovable(true);
@@ -46,65 +44,32 @@ int QTMHorizontalTextTabBar::addCustomTab(const QIcon &icon,
   int index = QTabBar::addTab("");
 
   QWidget* vwidget = new QWidget(this);
-  vwidget->setObjectName("LizaTabContainer");
+  vwidget->setObjectName("ResponsiveTabContainer");
   vwidget->setAttribute(Qt::WA_TransparentForMouseEvents);
-
-#if ENABLE_COLOR_DEBUG
-  vwidget->setStyleSheet("background: transparent; border: 1px solid red; "
-                         "padding: 0px; margin: 0px;");
-#else
-  vwidget->setStyleSheet("background: transparent; border: none; "
-                         "padding: 0px; margin: 0px;");
-#endif
   
   QVBoxLayout* vlayout = new QVBoxLayout(vwidget);
   vlayout->setContentsMargins(0, 0, 0, 0);
   vlayout->setSpacing(0);
 
   QWidget *hwidget = new QWidget(vwidget);
-#if ENABLE_COLOR_DEBUG
-  hwidget->setStyleSheet("background: transparent; border: 1px solid blue; "
-                         "padding: 0px; margin: 0px;");
-#else
-  hwidget->setStyleSheet("background: transparent; border: none; "
-                         "padding: 0px; margin: 0px;");
-#endif
+  hwidget->setObjectName("ResponsiveTabInnerContainer");
   
   QHBoxLayout* hlayout = new QHBoxLayout(hwidget);
   hlayout->setContentsMargins(10, 0, 10, 0);
 
-  QFont boldFont = font();
-  boldFont.setPixelSize(14); 
-  boldFont.setBold(true);
-
   if (!icon.isNull()) {
     QLabel* iconLabel = new QLabel(hwidget);
-    iconLabel->setObjectName("LizaTabIcon");
+    iconLabel->setObjectName("ResponsiveTabIcon");
     iconLabel->setPixmap(icon.pixmap(18, 18));
     iconLabel->setFixedSize(18, 18);
     iconLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-#if ENABLE_COLOR_DEBUG
-    iconLabel->setStyleSheet("background: transparent; border: 1px solid green; "
-                             "padding: 0px; margin: 0px;");
-#else
-    iconLabel->setStyleSheet("background: transparent; border: none; "
-                             "padding: 0px; margin: 0px;");
-#endif
     hlayout->addWidget(iconLabel);
     hlayout->addStretch();
   }
 
   QLabel* textLabel = new QLabel(text, hwidget);
-  textLabel->setObjectName("LizaTabLabel");
-  textLabel->setFont(boldFont);
+  textLabel->setObjectName("ResponsiveTabLabel");
   textLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-#if ENABLE_COLOR_DEBUG
-  textLabel->setStyleSheet("background: transparent; border: 1px solid green; "
-                           "padding: 0px; margin: 0px;");
-#else
-  textLabel->setStyleSheet("background: transparent; border: none; "
-                           "padding: 0px; margin: 0px;");
-#endif
   hlayout->addWidget(textLabel);
 
   vlayout->addStretch();
@@ -129,24 +94,17 @@ void QTMHorizontalTextTabBar::updateLabelColors(int index) {
   for (int i = 0; i < count(); ++i) {
     QWidget* vwidget = tabButton(i, QTabBar::LeftSide);
     if (vwidget) {
-      QLabel* label = vwidget->findChild<QLabel*>("LizaTabLabel");
+      QLabel* label = vwidget->findChild<QLabel*>("ResponsiveTabLabel");
       if (label) {
-        if (i == index) {
-#if !ENABLE_COLOR_DEBUG
-          label->setStyleSheet("background: transparent; color: #FFFFFF; "
-                               "font-weight: bold; font-size: 14px; "
-                               "border: none; padding: 0px; margin: 0px;");
-#endif
-        } else {
-#if !ENABLE_COLOR_DEBUG
-          label->setStyleSheet("background: transparent; color: #909090; "
-                               "font-weight: bold; font-size: 14px; "
-                               "border: none; padding: 0px; margin: 0px;");
-#endif
-        }
+        label->setProperty("activeTab", i == index);
+        label->style()->unpolish(label);
+        label->style()->polish(label);
       }
     }
   }
+
+  style()->unpolish(this);
+  style()->polish(this);
 }
 
 QTMDraggableTopBar::QTMDraggableTopBar(QWidget* parent) 
@@ -177,7 +135,6 @@ QTMResponsiveTabWidget::QTMResponsiveTabWidget(QWidget *parent)
     mWindowFusion(false), mIsResizing(false), mCurrentMode(-1),
     mCurrentDepth(-1), mCurrentGridCols(-1) {
 
-  // print the type of the parent widget for debugging
   if (parent) {
     QString parentType = parent->metaObject()->className();
     cout << "QTMResponsiveTabWidget parent type:" 
@@ -198,14 +155,15 @@ QTMResponsiveTabWidget::QTMResponsiveTabWidget(QWidget *parent)
   mAddTabBtn->hide();
 
   mTabBar = new QTMHorizontalTextTabBar(this);
+  mTabBar->setObjectName("ResponsiveTabWidgetBar");
   mListWidget = new QListWidget(this);
+  mListWidget->setObjectName("ResponsiveTabWidgetList");
   
   mContentStack = new QStackedWidget(this);
-  mContentStack->setObjectName("ContentStack"); // AJOUT : Pour le cibler en CSS
+  mContentStack->setObjectName("ContentStack");
 
-  // Initialisation du conteneur Grille
   mGridContainer = new QWidget(this);
-  mGridContainer->setObjectName("GridContainer"); // AJOUT : Pour le cibler en CSS
+  mGridContainer->setObjectName("GridContainer");
   mGridLayout = new QGridLayout(mGridContainer);
   mGridLayout->setContentsMargins(10, 10, 10, 10);
   mGridLayout->setSpacing(20);
@@ -245,7 +203,6 @@ QTMResponsiveTabWidget::QTMResponsiveTabWidget(QWidget *parent)
 
   mDynamicLayout = new QBoxLayout(QBoxLayout::TopToBottom);
   mDynamicLayout->setContentsMargins(0, 0, 0, 0);
-  // AJOUT : Supprime l'espace entre la tabBar et le contenu
   mDynamicLayout->setSpacing(0); 
 
   mDynamicLayout->addWidget(mListWidget);
@@ -256,7 +213,7 @@ QTMResponsiveTabWidget::QTMResponsiveTabWidget(QWidget *parent)
   mainLayout->addLayout(mDynamicLayout);
 
   mSizeGrip = new QSizeGrip(this);
-  mSizeGrip->setStyleSheet("background: transparent;");
+  mSizeGrip->setObjectName("ResponsiveTabSizeGrip");
   mSizeGrip->hide();
 
   connect(mTabBar, &QTabBar::currentChanged, 
@@ -280,7 +237,6 @@ QTMResponsiveTabWidget::QTMResponsiveTabWidget(QWidget *parent)
   applyMode(1);
 #endif
   
-  // if the type of the parent is QTMPlainWindow, then we are in window fusion mode
   if (parent && parent->metaObject()->className() == QString("QTMPlainWindow")) {
     //setWindowFusion(true);
     //setDraggable(true);
@@ -293,86 +249,39 @@ void QTMResponsiveTabWidget::showEvent(QShowEvent* event) {
 }
 
 void QTMResponsiveTabWidget::updateNestingVisuals() {
-  int depth = 0;
-  QWidget* p = this->parentWidget();
-  while (p) {
-    if (qobject_cast<QTMResponsiveTabWidget*>(p)) depth++;
-    p = p->parentWidget();
-  }
-
-  if (depth == mCurrentDepth) return;
-  mCurrentDepth = depth;
-
-  int tabBgL = qMin(32 + (depth * 15), 200);       // Arrière-plan principal (foncé)
-  int contentBgL = qMin(tabBgL + 16, 220);         // Zone de contenu (plus claire)
-  int topL = qMin(44 + (depth * 10), 210);         // Top bar
-
-  QString tabBgColor = QString("#%1%1%1").arg(tabBgL, 2, 16, QLatin1Char('0'));
-  QString contentBgColor = QString("#%1%1%1").arg(contentBgL, 2, 16, QLatin1Char('0'));
-  QString topColor = QString("#%1%1%1").arg(topL, 2, 16, QLatin1Char('0'));
-  QString borderThick = (depth == 0) ? "1" : "0";
-
-  QString newCss = QString(R"(
-    QTMResponsiveTabWidget { 
-      background-color: %1; 
-      border: %3px solid #404040; 
-      font-family: 'Segoe UI', 'Roboto', sans-serif; 
-      font-size: 14px; 
+    int depth = 0;
+    QWidget* p = this->parentWidget();
+    while (p) {
+        if (qobject_cast<QTMResponsiveTabWidget*>(p)) depth++;
+        p = p->parentWidget();
     }
+
+    if (depth == mCurrentDepth) return;
+    mCurrentDepth = depth;
+
+    setObjectName(QString("QTMResponsiveTabWidgetDepth%1").arg(depth));
+
+    style()->unpolish(this);
+    style()->polish(this);
+
+    QList<QWidget*> childrenToPolish = { 
+        mTopBar, mTabBar, mContentStack, mGridContainer, mListWidget 
+    };
     
-    QTMResponsiveTabWidget > #TopBar { 
-      background-color: %2; 
+    for (QWidget* child : childrenToPolish) {
+        if (child) {
+            child->style()->unpolish(child);
+            child->style()->polish(child);
+        }
     }
 
-    #ContentStack, #GridContainer {
-      background-color: %4;
+    if (mTabBar && mTabBar->count() > 0) {
+        if (auto* customTabBar = qobject_cast<QTMHorizontalTextTabBar*>(mTabBar)) {
+            customTabBar->updateLabelColors(customTabBar->currentIndex());
+        }
     }
 
-    QPushButton#AddTabBtn, QPushButton#BackButton {
-      background-color: #383838; color: #E0E0E0; border-radius: 6px; 
-      padding: 6px 12px; font-weight: bold; border: 1px solid #505050; margin: 0px;
-    }
-    QPushButton#AddTabBtn:hover, QPushButton#BackButton:hover { 
-      background-color: #4C4C4C; 
-    }
-
-    QPushButton#WinMinBtn, QPushButton#WinMaxBtn, QPushButton#WinCloseBtn {
-      background: transparent; color: #909090; border: none; border-radius: 4px;
-      font-size: 16px; padding: 4px 12px; margin: 0px; 
-      min-width: 0px; min-height: 0px;
-    }
-    QPushButton#WinMinBtn:hover, QPushButton#WinMaxBtn:hover { 
-      background: #404040; color: white; 
-    }
-    QPushButton#WinCloseBtn:hover { 
-      background: #E81123; color: white; 
-    }
-
-    QTabBar { background: transparent; border: none; qproperty-drawBase: 0; }
-    QTabBar::tab { background: transparent; padding: 0px; margin: 0px; border: none; border-radius: 0px; }        
-    
-    QTabBar::tab:selected { 
-      background: %4; 
-      margin: 0px;
-      padding: 0px;
-      border: none;
-      border-radius: 0px;
-    }
-    
-    QTabBar::tab:hover:!selected { background: #404040; }
-
-    QListWidget { background: transparent; border: none; outline: none; }
-    QListWidget::item {
-      background: %2; border-radius: 8px 8px 0px 0px; margin: 6px 20px; 
-      padding: 15px; border: 1px solid #404040; color: #E0E0E0; font-weight: bold;
-    }
-    QListWidget::item:selected { 
-      border: 2px solid %4; background: %4; color: white; 
-    }
-    QListWidget::item:hover:!selected { background: #383838; }
-  )").arg(tabBgColor, topColor, borderThick, contentBgColor);
-
-  setStyleSheet(newCss);
+    update();
 }
 
 void QTMResponsiveTabWidget::addTab(QWidget* widget, const QString& title, 
@@ -392,7 +301,7 @@ void QTMResponsiveTabWidget::addTab(QWidget* widget, const QString& title,
     QVBoxLayout *layout = new QVBoxLayout(top);
     layout->setContentsMargins(0, 0, 0, 0);
     layout->addWidget(widget);
-    layout->addStretch(); // add a spacer
+    layout->addStretch();
     top->setLayout(layout);
     widget = top;
   }
@@ -459,7 +368,6 @@ void QTMResponsiveTabWidget::applyMode(int mode) {
   mDynamicLayout->removeWidget(mTabBar);
 
   if (mode == 3) {
-    // Transfert de tous les widgets vers la Grille
     int cols = (width() > 1700) ? 3 : 2;
     for (int i = 0; i < mPages.size(); ++i) {
       QWidget* w = mPages[i];
@@ -469,7 +377,6 @@ void QTMResponsiveTabWidget::applyMode(int mode) {
       w->show();
     }
   } else {
-    // Transfert de tous les widgets vers le Stack
     for (int i = 0; i < mPages.size(); ++i) {
       QWidget* w = mPages[i];
       mGridLayout->removeWidget(w);
@@ -655,4 +562,13 @@ bool QTMResponsiveTabWidget::goBack() {
     return true;
   }
   return false;
+}
+
+void QTMResponsiveTabWidget::changeEvent(QEvent *event) {
+    QWidget::changeEvent(event);
+    
+    // Recalculate depth immediately if this widget is moved to a new parent
+    if (event->type() == QEvent::ParentChange) {
+        updateNestingVisuals();
+    }
 }
