@@ -500,3 +500,218 @@ QDockWidget#sideTools QWidget#discrete QPushButton:pressed {
     background: #D0D0D0;
     border: none;
 }
+
+/****************************************************************************
+* Responsive Tab Widget
+****************************************************************************/
+QTMResponsiveTabWidget { 
+    font-family: 'Segoe UI', 'Roboto', sans-serif; 
+    font-size: 14px; 
+}
+
+QPushButton#AddTabBtn, QPushButton#BackButton {
+    background-color: #FFFFFF;
+    color: #000000;
+    border-radius: 6px; 
+    padding: 6px 12px;
+    font-weight: bold;
+    border: 1px solid #C0C0C0;
+    margin: 0px;
+}
+
+QPushButton#AddTabBtn:hover, QPushButton#BackButton:hover { 
+    background-color: #E0E0E0; 
+}
+
+QPushButton#WinMinBtn, QPushButton#WinMaxBtn, QPushButton#WinCloseBtn {
+    background: transparent;
+    color: #505050;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    padding: 4px 12px;
+    margin: 0px;
+    min-width: 0px;
+    min-height: 0px;
+}
+
+QPushButton#WinMinBtn:hover, QPushButton#WinMaxBtn:hover { 
+    background: #C0C0C0;
+    color: #000000; 
+}
+
+QPushButton#WinCloseBtn:hover { 
+    background: #E81123;
+    color: white; 
+}
+
+QTabBar#ResponsiveTabWidgetBar { 
+    background: transparent;
+    border: none;
+    qproperty-drawBase: 0; 
+}
+
+QTabBar#ResponsiveTabWidgetBar::tab {
+    background: transparent;
+    padding: 0px;
+    margin: 0px;
+    border: none;
+    border-radius: 0px;
+    color: #505050;
+}
+
+QTabBar#ResponsiveTabWidgetBar::tab:selected { 
+    margin: 0px;
+    padding: 0px;
+    border: none;
+    border-radius: 0px;
+    color: #000000;
+}
+
+QTabBar#ResponsiveTabWidgetBar::tab:hover:!selected {
+    background: #D0D0D0;
+    color: #000000;
+}
+
+QListWidget#ResponsiveTabWidgetList {
+    background: transparent;
+    border: none;
+    outline: none;
+}
+QListWidget#ResponsiveTabWidgetList::item {
+    border-radius: 8px 8px 0px 0px;
+    margin: 6px 20px; 
+    padding: 15px;
+    border: 1px solid #C0C0C0;
+    color: #505050;
+    font-weight: bold;
+}
+QListWidget#ResponsiveTabWidgetList::item:selected { 
+    color: #000000; 
+}
+QListWidget#ResponsiveTabWidgetList::item:hover:!selected {
+    background: #D0D0D0;
+}
+
+/* --- DEPTH 0 --- */
+#QTMResponsiveTabWidgetDepth0 { 
+    background-color: #C0C0C0; 
+    border: 1px solid #A0A0A0; 
+}
+#QTMResponsiveTabWidgetDepth0 > #TopBar { 
+    background-color: #C8C8C8; 
+}
+#QTMResponsiveTabWidgetDepth0 #ContentStack, 
+#QTMResponsiveTabWidgetDepth0 #GridContainer {
+    background-color: #E8E8E8;
+}
+#QTMResponsiveTabWidgetDepth0 QTabBar::tab:selected { 
+    background: #E8E8E8; 
+}
+#QTMResponsiveTabWidgetDepth0 QListWidget::item {
+    background: #C8C8C8;
+}
+#QTMResponsiveTabWidgetDepth0 QListWidget::item:selected { 
+    border: 2px solid #E8E8E8; 
+    background: #E8E8E8;
+}
+
+/* --- DEPTH 1 --- */
+#QTMResponsiveTabWidgetDepth1 { 
+    background-color: #D0D0D0; 
+    border: 0px solid #A0A0A0; 
+}
+#QTMResponsiveTabWidgetDepth1 > #TopBar { 
+    background-color: #D8D8D8; 
+}
+#QTMResponsiveTabWidgetDepth1 #ContentStack, 
+#QTMResponsiveTabWidgetDepth1 #GridContainer {
+    background-color: #F0F0F0;
+}
+#QTMResponsiveTabWidgetDepth1 QTabBar::tab:selected { 
+    background: #F0F0F0; 
+}
+#QTMResponsiveTabWidgetDepth1 QListWidget::item {
+    background: #D8D8D8;
+}
+#QTMResponsiveTabWidgetDepth1 QListWidget::item:selected { 
+    border: 2px solid #F0F0F0; 
+    background: #F0F0F0;
+}
+
+/* --- DEPTH 2 --- */
+#QTMResponsiveTabWidgetDepth2 { 
+    background-color: #E0E0E0; 
+    border: 0px solid #A0A0A0; 
+}
+#QTMResponsiveTabWidgetDepth2 > #TopBar { 
+    background-color: #E8E8E8; 
+}
+#QTMResponsiveTabWidgetDepth2 #ContentStack, 
+#QTMResponsiveTabWidgetDepth2 #GridContainer {
+    background-color: #F8F8F8;
+}
+#QTMResponsiveTabWidgetDepth2 QTabBar::tab:selected { 
+    background: #F8F8F8; 
+}
+#QTMResponsiveTabWidgetDepth2 QListWidget::item {
+    background: #E8E8E8;
+}
+#QTMResponsiveTabWidgetDepth2 QListWidget::item:selected { 
+    border: 2px solid #F8F8F8; 
+    background: #F8F8F8;
+}
+
+/* --- DEPTH 3 --- */
+#QTMResponsiveTabWidgetDepth3 { 
+    background-color: #E8E8E8; 
+    border: 0px solid #A0A0A0; 
+}
+#QTMResponsiveTabWidgetDepth3 > #TopBar { 
+    background-color: #F0F0F0; 
+}
+#QTMResponsiveTabWidgetDepth3 #ContentStack, 
+#QTMResponsiveTabWidgetDepth3 #GridContainer {
+    background-color: #FFFFFF;
+}
+#QTMResponsiveTabWidgetDepth3 QTabBar::tab:selected { 
+    background: #FFFFFF; 
+}
+#QTMResponsiveTabWidgetDepth3 QListWidget::item {
+    background: #F0F0F0;
+}
+#QTMResponsiveTabWidgetDepth3 QListWidget::item:selected { 
+    border: 2px solid #FFFFFF; 
+    background: #FFFFFF;
+}
+
+/* Custom Internal Tab Bar Items */
+QWidget#ResponsiveTabContainer, 
+QWidget#ResponsiveTabInnerContainer, 
+QLabel#ResponsiveTabIcon {
+    background: transparent;
+    border: none;
+    padding: 0px;
+    margin: 0px;
+}
+
+QLabel#ResponsiveTabLabel {
+    background: transparent;
+    border: none;
+    padding: 0px;
+    margin: 0px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+QLabel#ResponsiveTabLabel[activeTab="true"] {
+    color: #000000;
+}
+
+QLabel#ResponsiveTabLabel[activeTab="false"] {
+    color: #505050;
+}
+
+QSizeGrip#ResponsiveTabSizeGrip {
+    background: transparent;
+}
