@@ -137,6 +137,7 @@
   (players-set-speed players_set_speed (void tree double))
   (apply-effect apply_effect (void content array_url url int int))
   (headless? is_headless (bool))
+  (server-mode? is_server (bool))
   
   ;; routines for the font database
   (tt-exists? tt_font_exists (bool string))

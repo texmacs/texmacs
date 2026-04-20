@@ -971,6 +971,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(server-mode?)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|is_server> which returns
+    <scm|bool>.
+  </explain>
+
+  <\explain>
     <scm|(tt-exists? <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>

@@ -1397,6 +1397,15 @@ tmg_headlessP () {
 }
 
 tmscm
+tmg_server_modeP () {
+  // TMSCM_DEFER_INTS;
+  bool out= is_server ();
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
 tmg_tt_existsP (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "tt-exists?");
 
@@ -11084,6 +11093,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("players-set-speed",  tmg_players_set_speed, 2, 0, 0);
   tmscm_install_procedure ("apply-effect",  tmg_apply_effect, 5, 0, 0);
   tmscm_install_procedure ("headless?",  tmg_headlessP, 0, 0, 0);
+  tmscm_install_procedure ("server-mode?",  tmg_server_modeP, 0, 0, 0);
   tmscm_install_procedure ("tt-exists?",  tmg_tt_existsP, 1, 0, 0);
   tmscm_install_procedure ("tt-dump",  tmg_tt_dump, 1, 0, 0);
   tmscm_install_procedure ("tt-font-name",  tmg_tt_font_name, 1, 0, 0);
