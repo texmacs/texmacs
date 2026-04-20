@@ -5107,6 +5107,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(widget-setting-toggle <scm-arg|command> <scm-arg|string> <scm-arg|bool> <scm-arg|int>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|setting_toggle_widget> which returns
+    <scm|widget>.
+  </explain>
+
+  <\explain>
     <scm|(widget-balloon <scm-arg|widget> <scm-arg|widget>)>
 <explain-synopsis|no synopsis>
   <|explain>
@@ -5143,6 +5151,14 @@ source code.
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|enum_widget> which returns
+    <scm|widget>.
+  </explain>
+
+  <\explain>
+    <scm|(widget-setting-enum <scm-arg|command> <scm-arg|string> <scm-arg|array_string> <scm-arg|string> <scm-arg|int> <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|setting_enum_widget> which returns
     <scm|widget>.
   </explain>
 
@@ -5255,6 +5271,22 @@ source code.
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|icon_tabs_widget> which returns
+    <scm|widget>.
+  </explain>
+
+  <\explain>
+    <scm|(widget-responsive-tabs <scm-arg|array_widget> <scm-arg|array_widget>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|responsive_tabs_widget> which returns
+    <scm|widget>.
+  </explain>
+
+  <\explain>
+    <scm|(widget-responsive-icon-tabs <scm-arg|array_url> <scm-arg|array_widget> <scm-arg|array_widget>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|responsive_icon_tabs_widget> which returns
     <scm|widget>.
   </explain>
 

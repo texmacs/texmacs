@@ -4,7 +4,7 @@
 ****************************************************************************/
 
 QWidget {
-    background: #404040;
+    background: red;
     color: #e0e0e0;
     font-size: 14px;
     icon-size: 16px;
