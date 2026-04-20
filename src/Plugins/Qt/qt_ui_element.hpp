@@ -96,6 +96,12 @@ public:
     typedef quintuple<X1,X2,X3,X4,X5> T;
     return tm_new <qt_ui_element_rep> (_type, close_box<T> (T (x1,x2,x3,x4,x5)));
   }
+
+  template <class X1, class X2, class X3, class X4, class X5, class X6> 
+  static qt_widget create (types _type, X1 x1, X2 x2, X3 x3, X4 x4, X5 x5, X6 x6) {
+    typedef sextuple<X1,X2,X3,X4,X5,X6> T;
+    return tm_new <qt_ui_element_rep> (_type, close_box<T> (T (x1,x2,x3,x4,x5,x6)));
+  }
   
 protected:
   static blackbox get_payload (qt_widget qtw, types check_type = none);
