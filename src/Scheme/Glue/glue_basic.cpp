@@ -10784,6 +10784,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("language-to-locale",  tmg_language_to_locale, 1, 0, 0);
   tmscm_install_procedure ("texmacs-time",  tmg_texmacs_time, 0, 0, 0);
   tmscm_install_procedure ("pretty-time",  tmg_pretty_time, 1, 0, 0);
+  tmscm_install_procedure ("cpp-add-on-idle-task",  tmg_cpp_add_on_idle_task, 3, 0, 0);
   tmscm_install_procedure ("pretty-date",  tmg_pretty_date, 2, 0, 0);
   tmscm_install_procedure ("texmacs-memory",  tmg_texmacs_memory, 0, 0, 0);
   tmscm_install_procedure ("bench-print",  tmg_bench_print, 1, 0, 0);
