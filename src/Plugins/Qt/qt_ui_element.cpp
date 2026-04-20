@@ -32,6 +32,7 @@
 #include "QTMTreeModel.hpp"
 #include "QTMIconManager.hpp"
 #include "QTMResponsiveTabWidget.hpp"
+#include "QTMSettingWidgets.hpp"
 
 #include <QCheckBox>
 #include <QPushButton>
@@ -110,6 +111,17 @@ public:
   tm_ostream& print (tm_ostream& out) { return out << "<command qt_toggle>"; }
 };
 
+class qt_setting_toggle_command_rep: public command_rep {
+  QPointer<QTMSettingCheckbox> qwid;
+  command cmd;
+
+public:
+  qt_setting_toggle_command_rep(QTMSettingCheckbox* w, command c) : qwid(w), cmd(c) { }
+  void apply () { if (qwid) cmd (list_object (object (qwid->isChecked()))); }
+
+  tm_ostream& print (tm_ostream& out) { return out << "<command qt_setting_toggle>"; }
+};
+
 /*! Ad-hoc command to be used with enum widgets.
  
  The command associated with a qt_ui_element::enum_widget has one parameter. For the
@@ -128,6 +140,20 @@ public:
   }
   
   tm_ostream& print (tm_ostream& out) { return out << "<command qt_enum>"; }
+};
+
+class qt_setting_enum_command_rep: public command_rep {
+  QPointer<QTMSettingSelect> qwid;
+  command cmd;
+
+public:
+  qt_setting_enum_command_rep(QTMSettingSelect* w, command c) : qwid(w), cmd(c) {}
+  void apply () {
+    if (qwid)
+      cmd (list_object (object (from_qstring(qwid->currentText()))));
+  }
+
+  tm_ostream& print (tm_ostream& out) { return out << "<command qt_setting_enum>"; }
 };
 
 
@@ -258,7 +284,7 @@ qt_ui_element_rep::get_payload (qt_widget qtw, types check_type) {
     case tabs_widget:       case icon_tabs_widget: case responsive_tabs_widget: 
     case responsive_icon_tabs_widget: case resize_widget: case refresh_widget: 
     case refreshable_widget:  case balloon_widget: case glue_widget: 
-    case division_widget:
+    case division_widget:   case setting_toggle_widget: case setting_enum_widget:
     {
       qt_ui_element_rep* rep = static_cast<qt_ui_element_rep*> (qtw.rep);
       return rep->load;
@@ -797,6 +823,8 @@ qt_ui_element_rep::as_qlayoutitem (QWidget* parent_widget) {
     case refreshable_widget:
     case balloon_widget:
     case division_widget:
+    case setting_toggle_widget:
+    case setting_enum_widget:
     {
       QWidgetItem* wi = new QWidgetItem (this->as_qwidget(parent_widget));
       return wi;
@@ -1133,6 +1161,68 @@ qt_ui_element_rep::as_qwidget (QWidget* parent_widget) {
                         c, &QTMCommand::apply);
 #endif
       
+      qwid = w;
+    }
+      break;
+
+    case setting_toggle_widget:
+    {
+      typedef quartet<command, string, bool, int> T;
+      T         x = open_box<T>(load);
+      command cmd = x.x1;
+      string  txt = x.x2;
+      bool   check = x.x3;
+      int    style = x.x4;
+      // todo
+
+      QTMSettingCheckbox* w  = new QTMSettingCheckbox (parent_widget);
+      w->setText (to_qstring (txt));
+      w->setCheckState (check ? Qt::Checked : Qt::Unchecked);
+      qt_apply_tm_style (w, style);
+      w->setFocusPolicy (Qt::StrongFocus);
+
+      command tcmd = tm_new<qt_setting_toggle_command_rep> (w, cmd);
+      QTMCommand* c = new QTMCommand (w, tcmd);
+      QObject::connect(w, &QTMSettingCheckbox::toggled, c, &QTMCommand::apply);
+
+      qwid = w;
+    }
+      break;
+
+    case setting_enum_widget:
+    {
+      typedef sextuple<command, string, array<string>, string, int, string> T;
+      T                x = open_box<T>(load);
+      command        cmd = x.x1;
+      QString       txt = to_qstring (x.x2);
+      QStringList values = to_qstringlist (x.x3);
+      QString      value = to_qstring (x.x4);
+      int          style = x.x5;
+
+      QTMSettingSelect * w = new QTMSettingSelect (parent_widget);
+      w->setText (txt);
+      if (values.isEmpty())
+        values << QString("");  // safeguard
+
+      w->setEditable (value.isEmpty() || values.last().isEmpty());  // weird convention?!
+      if (values.last().isEmpty())
+        values.removeLast();
+
+      w->addItemsAndResize (values, x.x6, "");
+      int index = w->findText (value, Qt::MatchFixedString | Qt::MatchCaseSensitive);
+      if (index != -1)
+        w->setCurrentIndex (index);
+
+      qt_apply_tm_style (w, style);
+
+      command  ecmd = tm_new<qt_setting_enum_command_rep> (w, cmd);
+      QTMCommand* c = new QTMCommand (w, ecmd);
+      // NOTE: with QueuedConnections, the slots are sometimes not invoked.
+#if QT_VERSION < 0x060000
+      QObject::connect (w, SIGNAL (currentIndexChanged(int)), c, SLOT (apply()));
+#else
+      QObject::connect (w, &QTMSettingSelect::currentIndexChanged, c, &QTMCommand::apply);
+#endif
       qwid = w;
     }
       break;

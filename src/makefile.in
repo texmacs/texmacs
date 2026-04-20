@@ -65,6 +65,7 @@ AR = ar
 ARFLAGS = -r
 RM = rm -f
 CP = @CONFIG_CP@
+GUILE_BIN = @GUILE_BIN@
 GLUE = cd Scheme/Glue; ./build-glue
 TOUCH = touch
 MOC = @MOC@
@@ -198,7 +199,8 @@ qt_moc := QTMStyle.hpp QTMGuiHelper.hpp QTMInteractiveInputHelper.hpp \
   QTMPipeLink.hpp QTMInteractivePrompt.hpp QTMFileDialog.hpp \
   QTMPrintDialog.hpp QTMPrinterSettings.hpp QTMApplication.hpp \
   QTMTreeModel.hpp QTMSockets.hpp QTMMainTabWindow.hpp \
-  QTMToolbar.hpp QTMDelayedMethodCall.hpp QTMResponsiveTabWidget.hpp
+  QTMToolbar.hpp QTMDelayedMethodCall.hpp QTMResponsiveTabWidget.hpp \
+  QTMSettingWidgets.hpp
 endif
 
 qt_moc_src = $(patsubst %.hpp, moc_%.cpp,$(qt_moc))
@@ -478,20 +480,20 @@ gluesrc = Scheme/Glue
 GLUE: $(gluesrc)/glue_basic.cpp $(gluesrc)/glue_editor.cpp $(gluesrc)/glue_server.cpp
 	$(RM) Objects/glue.o
 
-.PHONY: GLUE
+.PHONY: GLUE Scheme/Glue/glue_%.cpp $(gluesrc)/glue_basic.cpp $(gluesrc)/glue_editor.cpp $(gluesrc)/glue_server.cpp
 
 $(gluesrc)/glue_basic.cpp: $(gluesrc)/build-glue.scm
 $(gluesrc)/glue_editor.cpp: $(gluesrc)/build-glue.scm 
 $(gluesrc)/glue_server.cpp: $(gluesrc)/build-glue.scm
 
 $(gluesrc)/glue_basic.cpp: $(gluesrc)/build-glue-basic.scm
-	$(GLUE) build-glue-basic.scm glue_basic.cpp
+	$(GLUE) build-glue-basic.scm glue_basic.cpp "$(GUILE_BIN)"
 
 $(gluesrc)/glue_editor.cpp: $(gluesrc)/build-glue-editor.scm
-	$(GLUE) build-glue-editor.scm glue_editor.cpp
+	$(GLUE) build-glue-editor.scm glue_editor.cpp "$(GUILE_BIN)"
 
 $(gluesrc)/glue_server.cpp: $(gluesrc)/build-glue-server.scm
-	$(GLUE) build-glue-server.scm glue_server.cpp
+	$(GLUE) build-glue-server.scm glue_server.cpp "$(GUILE_BIN)"
 
 ###############################################################################
 # Cleaning and backup
