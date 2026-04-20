@@ -8684,6 +8684,25 @@ tmg_widget_toggle (tmscm arg1, tmscm arg2, tmscm arg3) {
 }
 
 tmscm
+tmg_widget_setting_toggle (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
+  TMSCM_ASSERT_COMMAND (arg1, TMSCM_ARG1, "widget-setting-toggle");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "widget-setting-toggle");
+  TMSCM_ASSERT_BOOL (arg3, TMSCM_ARG3, "widget-setting-toggle");
+  TMSCM_ASSERT_INT (arg4, TMSCM_ARG4, "widget-setting-toggle");
+
+  command in1= tmscm_to_command (arg1);
+  string in2= tmscm_to_string (arg2);
+  bool in3= tmscm_to_bool (arg3);
+  int in4= tmscm_to_int (arg4);
+
+  // TMSCM_DEFER_INTS;
+  widget out= setting_toggle_widget (in1, in2, in3, in4);
+  // TMSCM_ALLOW_INTS;
+
+  return widget_to_tmscm (out);
+}
+
+tmscm
 tmg_widget_balloon (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_WIDGET (arg1, TMSCM_ARG1, "widget-balloon");
   TMSCM_ASSERT_WIDGET (arg2, TMSCM_ARG2, "widget-balloon");
@@ -8763,6 +8782,29 @@ tmg_widget_enum (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4, tmscm arg5) {
 
   // TMSCM_DEFER_INTS;
   widget out= enum_widget (in1, in2, in3, in4, in5);
+  // TMSCM_ALLOW_INTS;
+
+  return widget_to_tmscm (out);
+}
+
+tmscm
+tmg_widget_setting_enum (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4, tmscm arg5, tmscm arg6) {
+  TMSCM_ASSERT_COMMAND (arg1, TMSCM_ARG1, "widget-setting-enum");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "widget-setting-enum");
+  TMSCM_ASSERT_ARRAY_STRING (arg3, TMSCM_ARG3, "widget-setting-enum");
+  TMSCM_ASSERT_STRING (arg4, TMSCM_ARG4, "widget-setting-enum");
+  TMSCM_ASSERT_INT (arg5, TMSCM_ARG5, "widget-setting-enum");
+  TMSCM_ASSERT_STRING (arg6, TMSCM_ARG6, "widget-setting-enum");
+
+  command in1= tmscm_to_command (arg1);
+  string in2= tmscm_to_string (arg2);
+  array_string in3= tmscm_to_array_string (arg3);
+  string in4= tmscm_to_string (arg4);
+  int in5= tmscm_to_int (arg5);
+  string in6= tmscm_to_string (arg6);
+
+  // TMSCM_DEFER_INTS;
+  widget out= setting_enum_widget (in1, in2, in3, in4, in5, in6);
   // TMSCM_ALLOW_INTS;
 
   return widget_to_tmscm (out);
@@ -9021,13 +9063,10 @@ tmg_widget_responsive_tabs (tmscm arg1, tmscm arg2) {
 
 tmscm
 tmg_widget_responsive_icon_tabs (tmscm arg1, tmscm arg2, tmscm arg3) {
-  cout << "checking a" << LF;
   TMSCM_ASSERT_ARRAY_URL (arg1, TMSCM_ARG1, "widget-responsive-icon-tabs");
-  cout << "checking b" << LF;
   TMSCM_ASSERT_ARRAY_WIDGET (arg2, TMSCM_ARG2, "widget-responsive-icon-tabs");
-  cout << "checking c" << LF;
   TMSCM_ASSERT_ARRAY_WIDGET (arg3, TMSCM_ARG3, "widget-responsive-icon-tabs");
-  cout << "checked" << LF;
+
   array_url in1= tmscm_to_array_url (arg1);
   array_widget in2= tmscm_to_array_widget (arg2);
   array_widget in3= tmscm_to_array_widget (arg3);
@@ -11316,11 +11355,13 @@ initialize_glue_basic () {
   tmscm_install_procedure ("widget-pullright-button",  tmg_widget_pullright_button, 2, 0, 0);
   tmscm_install_procedure ("widget-menu-button",  tmg_widget_menu_button, 5, 0, 0);
   tmscm_install_procedure ("widget-toggle",  tmg_widget_toggle, 3, 0, 0);
+  tmscm_install_procedure ("widget-setting-toggle",  tmg_widget_setting_toggle, 4, 0, 0);
   tmscm_install_procedure ("widget-balloon",  tmg_widget_balloon, 2, 0, 0);
   tmscm_install_procedure ("widget-empty",  tmg_widget_empty, 0, 0, 0);
   tmscm_install_procedure ("widget-text",  tmg_widget_text, 4, 0, 0);
   tmscm_install_procedure ("widget-input",  tmg_widget_input, 5, 0, 0);
   tmscm_install_procedure ("widget-enum",  tmg_widget_enum, 5, 0, 0);
+  tmscm_install_procedure ("widget-setting-enum",  tmg_widget_setting_enum, 6, 0, 0);
   tmscm_install_procedure ("widget-choice",  tmg_widget_choice, 4, 0, 0);
   tmscm_install_procedure ("widget-choices",  tmg_widget_choices, 4, 0, 0);
   tmscm_install_procedure ("widget-filtered-choice",  tmg_widget_filtered_choice, 4, 0, 0);
