@@ -1,39 +1,19 @@
 #!/bin/sh
 # Program to make Guile interface to TeXmacs
 
-# update documentation of glue 
-./build-auto-doc
-
-if test $# = 2; then
-  guile -l build-glue.scm -l $1 -c "(quit)" | cat > $2
-else
-  echo "Usage: build-glue <input.scm> <output.cpp>"
+GUILE_BIN=${GUILE_BIN:-guile}
+if test $# = 3; then
+  GUILE_BIN=$3
 fi
 
-# FIXME? I can't see any reason for repeating the same code 4 times
-# I leave it there in case it's some shell magic I don't understand
+./build-auto-doc "$GUILE_BIN"
 
-#!/bin/sh
-# Program to make Guile interface to TeXmacs
-
-if test $# = 2; then
-  guile -l build-glue.scm -l $1 -c "(quit)" | cat > $2
-else
-  echo "Usage: build-glue <input.scm> <output.cpp>"
+if test $# -ne 2 -a $# -ne 3; then
+  echo "Usage: build-glue <input.scm> <output.cpp> [guile-bin]"
+  exit 1
 fi
-#!/bin/sh
-# Program to make Guile interface to TeXmacs
 
-if test $# = 2; then
-  guile -l build-glue.scm -l $1 -c "(quit)" | cat > $2
-else
-  echo "Usage: build-glue <input.scm> <output.cpp>"
-fi
-#!/bin/sh
-# Program to make Guile interface to TeXmacs
-
-if test $# = 2; then
-  guile -l build-glue.scm -l $1 -c "(quit)" | cat > $2
-else
-  echo "Usage: build-glue <input.scm> <output.cpp>"
-fi
+$GUILE_BIN -l build-glue.scm -l $1 -c "(quit)" | cat > $2
+$GUILE_BIN -l build-glue.scm -l $1 -c "(quit)" | cat > $2
+$GUILE_BIN -l build-glue.scm -l $1 -c "(quit)" | cat > $2
+$GUILE_BIN -l build-glue.scm -l $1 -c "(quit)" | cat > $2

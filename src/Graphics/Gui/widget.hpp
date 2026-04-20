@@ -184,6 +184,8 @@ widget input_text_widget (command call_back, string type, array<string> def,
   // the width is specified in TeXmacs length format with units em, px or w
 widget enum_widget (command cb, array<string> vals, string val,
                     int st= 0, string w= "1w");
+widget setting_enum_widget (command cb, string text, array<string> vals, string val,
+                    int st= 0, string w= "1w");
   // select a value from a list of possible values
 widget choice_widget (command cb, array<string> vals, string val, int style= 0);
   // select a value from a long list of possible values
@@ -242,6 +244,7 @@ widget extend_widget (widget w, array<widget> a);
   // extend the size of w to the maximum of the sizes of
   // the widgets in the list a
 widget toggle_widget (command cmd, bool on= false, int style= 0);
+widget setting_toggle_widget (command cmd, string text, bool on= false, int style= 0);
   // an input toggle
 widget wait_widget (SI width, SI height, string message);
   // a widget of a specified width and height, displaying a wait message

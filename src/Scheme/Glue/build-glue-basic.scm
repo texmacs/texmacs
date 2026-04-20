@@ -721,12 +721,14 @@
   (widget-pullright-button pullright_button (widget widget promise_widget))
   (widget-menu-button menu_button (widget widget command string string int))
   (widget-toggle toggle_widget (widget command bool int))
+  (widget-setting-toggle setting_toggle_widget (widget command string bool int))
   (widget-balloon balloon_widget (widget widget widget))
   (widget-empty empty_widget (widget))
   (widget-text text_widget (widget string int int bool))
   (widget-input input_text_widget
 		(widget command string array_string int string))
   (widget-enum enum_widget (widget command array_string string int string))
+  (widget-setting-enum setting_enum_widget (widget command string array_string string int string))
   (widget-choice choice_widget (widget command array_string string int))
   (widget-choices choice_widget (widget command array_string array_string int))
   (widget-filtered-choice choice_widget

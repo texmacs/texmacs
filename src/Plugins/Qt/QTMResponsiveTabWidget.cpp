@@ -290,6 +290,7 @@ void QTMResponsiveTabWidget::addTab(QWidget* widget, const QString& title,
   
   if (!qobject_cast<QTMResponsiveTabWidget*>(widget) && !containsResponsive) {
     QWidget *top = new QWidget(this);
+    top->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     QVBoxLayout *layout = new QVBoxLayout(top);
     layout->setContentsMargins(0, 0, 0, 0);
     layout->addWidget(widget);
@@ -393,7 +394,7 @@ void QTMResponsiveTabWidget::applyMode(int mode) {
     mMobileViewingContent = true;
   }
   else if (mode == 1) {
-    mDynamicLayout->insertWidget(0, mTabBar);
+    mDynamicLayout->insertWidget(0, mTabBar, 0, Qt::AlignTop); 
     mDynamicLayout->setDirection(QBoxLayout::LeftToRight);
     mTabBar->setShape(QTabBar::RoundedWest);
     mTabBar->show();
