@@ -507,6 +507,19 @@ widget enum_widget (command cmd, array<string> vals, string val, int style,
                                              cmd, vals, val, style, width);
   return abstract (wid);
 }
+widget setting_toggle_widget (command cmd, string setting, int style) {
+  if (headless_mode) return headless_widget ();
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::setting_toggle_widget,
+                                             cmd, setting, style);
+  return abstract (wid);
+}
+widget setting_enum_widget (command cmd, string setting, array<string> vals,
+                          int style, string width) {
+  if (headless_mode) return headless_widget ();
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::setting_enum_widget,
+                                             cmd, setting, vals, style, width);
+  return abstract (wid);
+}
 widget choice_widget (command cmd, array<string> vals, array<string> chosen,
 		      int style) {
   if (headless_mode) return headless_widget ();
