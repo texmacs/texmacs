@@ -316,7 +316,7 @@
   (markup-text "Error" 0 (color "black") #t))
 
 (define (build-menu-bad-format p style)
-  (build-menu-error "menu has bad format in " (object->string p)))
+  (build-menu-error "menu has bad format (build-menu) in " (object->string p)))
 
 (define (build-menu-empty) (markup-hmenu '()))
 
