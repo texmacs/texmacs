@@ -1200,7 +1200,6 @@ qt_ui_element_rep::as_qwidget (QWidget* parent_widget) {
       int          style = x.x5;
 
       QTMSettingSelect * w = new QTMSettingSelect (parent_widget);
-      cout << "setting_enum_widget: txt=" << x.x2 << LF;
       w->setDescriptionText (txt);
       if (values.isEmpty())
         values << QString("");  // safeguard
