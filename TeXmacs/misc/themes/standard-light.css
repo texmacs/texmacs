@@ -718,11 +718,10 @@ QSizeGrip#ResponsiveTabSizeGrip {
 
 
 /****************************************************************************
-* QTM Setting Widgets (Light)
+* QTM Setting Widgets
 ****************************************************************************/
 
 QTMSettingCheckbox QLabel, QTMSettingSelect QLabel {
-    font-size: 15px;
     font-weight: bold;
     color: #000000;
     border: none;
@@ -738,7 +737,6 @@ QTMSettingSelect QComboBox {
     border: 0px;
     border-radius: 5px;
     min-height: 24px;
-    font-size: 14px;
 }
 
 QTMSettingSelect QComboBox:focus { 
