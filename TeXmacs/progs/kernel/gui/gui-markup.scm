@@ -355,10 +355,19 @@
   (:synopsis "Make input toggle")
   `(list 'toggle (lambda (answer) ,cmd) (lambda () ,on)))
 
+(tm-define-macro ($setting-toggle cmd setting on)
+  (:synopsis "Make input toggle for a setting")
+  `(list 'setting-toggle (lambda (answer) ,cmd) ,setting (lambda () ,on)))
+
 (tm-define-macro ($enum cmd vals val width)
   (:synopsis "Make input enumeration field")
   `(list 'enum (lambda (answer) ,cmd) (lambda () ,vals) (lambda () ,val)
          ,width))
+
+(tm-define-macro ($setting-enum cmd name vals val width)
+  (:synopsis "Make input enumeration field for a setting")
+  `(list 'setting-enum (lambda (answer) ,cmd) ,name (lambda () ,vals)
+         (lambda () ,val) ,width))
 
 (tm-define-macro ($choice cmd vals val)
   (:synopsis "Make a choice list")

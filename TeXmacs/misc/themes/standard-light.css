@@ -715,3 +715,58 @@ QLabel#ResponsiveTabLabel[activeTab="false"] {
 QSizeGrip#ResponsiveTabSizeGrip {
     background: transparent;
 }
+
+
+/****************************************************************************
+* QTM Setting Widgets (Light)
+****************************************************************************/
+
+QTMSettingCheckbox QLabel, QTMSettingSelect QLabel {
+    font-size: 15px;
+    font-weight: bold;
+    color: #000000;
+    border: none;
+    background: transparent;
+}
+
+QTMSettingSelect QComboBox {
+    background: #FFFFFF;
+    color: #000000;
+    selection-background-color: #C0D0E0;
+    selection-color: #000000;
+    padding: 4px 10px;
+    border: 0px;
+    border-radius: 5px;
+    min-height: 24px;
+    font-size: 14px;
+}
+
+QTMSettingSelect QComboBox:focus { 
+    border: 1px solid #80C0C0; 
+}
+
+QTMSettingSelect QComboBox::drop-down { 
+    background: transparent; 
+    border: 0px; 
+}
+
+QTMSettingSelect QComboBox::down-arrow { 
+    image: none; 
+}
+
+QTMSettingSelect QComboBox QAbstractItemView {
+    background: #E8E8E8;
+    color: #000000;
+    selection-background-color: #C0D0E0;
+    border: 1px solid #C0C0C0;
+    outline: 0px;
+}
+
+QTMSettingSelect QComboBox QAbstractItemView::item { 
+    padding: 8px; 
+}
+
+QTMSettingCheckbox, QTMSettingSelect {
+    border-bottom: 1px solid #F8F8F8;
+    margin: 1px;
+}

@@ -121,6 +121,10 @@
   (require-format x '(enum :%4))
   `($enum ,@(cdr x)))
 
+(define (gui-make-setting-enum x)
+  (require-format x '(setting-enum :%5))
+  `($setting-enum ,@(cdr x)))
+
 (define (gui-make-choice x)
   (require-format x '(choice :%3))
   `($choice ,@(cdr x)))
@@ -144,6 +148,10 @@
 (define (gui-make-toggle x)
   (require-format x '(toggle :%2))
   `($toggle ,@(cdr x)))
+
+(define (gui-make-setting-toggle x)
+  (require-format x '(setting-toggle :%3))
+  `($setting-toggle ,@(cdr x)))
 
 (define (gui-make-icon x)
   (require-format x '(icon :%1))
@@ -425,12 +433,14 @@
   (texmacs-input ,gui-make-texmacs-input)
   (input ,gui-make-input)
   (enum ,gui-make-enum)
+  (setting-enum ,gui-make-setting-enum)
   (choice ,gui-make-choice)
   (choices ,gui-make-choices)
   (tree-view ,gui-make-tree-view)
   (filtered-choice ,gui-make-filtered-choice)
   (color-input ,gui-make-color-input)
   (toggle ,gui-make-toggle)
+  (setting-toggle ,gui-make-setting-toggle)
   (icon ,gui-make-icon)
   (replace ,gui-make-replace)
   (concat ,gui-make-concat)

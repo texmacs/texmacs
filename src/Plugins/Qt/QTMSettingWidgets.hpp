@@ -22,7 +22,7 @@ class QTMSettingCheckbox : public QWidget {
 public:
   explicit QTMSettingCheckbox(QWidget* parent = nullptr);
   
-  void setText(const QString& text);
+  void setDescriptionText(const QString& text);
   bool isChecked() const;
   void setChecked(bool checked);
   inline bool setCheckState(bool checked) { setChecked(checked); return checked; }
@@ -34,8 +34,8 @@ protected:
   void mouseReleaseEvent(QMouseEvent* event) override;
 
 private:
-  QLabel* m_label;
-  QTMSwitchControl* m_switch;
+  QLabel* mLabel;
+  QTMSwitchControl* mSwitch;
 };
 
 class QTMSettingSelect : public QWidget {
@@ -43,7 +43,7 @@ class QTMSettingSelect : public QWidget {
 public:
   explicit QTMSettingSelect(QWidget* parent = nullptr);
   
-  void setText(const QString& text);
+  void setDescriptionText(const QString& text);
   QString currentText() const;
   int findText(const QString& text, Qt::MatchFlags flags = Qt::MatchFlags(0)) const;
   
@@ -55,14 +55,14 @@ public:
   int currentIndex() const;
   void setCurrentIndex(int index);
   
-  QComboBox* comboBox() const { return m_combo; }
+  QComboBox* comboBox() const { return mCombo; }
 
 signals:
   void currentIndexChanged(int index);
 
 private:
-  QLabel* m_label;
-  QComboBox* m_combo;
+  QLabel* mLabel;
+  QComboBox* mCombo;
 };
 
 #endif // QTMSETTINGWIDGET_HPP
