@@ -590,6 +590,7 @@
 "system-remove"
 "system-mkdir"
 "system-rmdir"
+"system-rmdir-recursive"
 "system-setenv"
 "system-search-score"
 "system-1"
