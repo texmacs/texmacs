@@ -27,6 +27,7 @@
 #include <QFontMetrics>
 #include <QGridLayout>
 #include <QIcon>
+#include <QScrollArea>
 
 QTMHorizontalTextTabBar::QTMHorizontalTextTabBar(QWidget* parent) 
   : QTabBar(parent) {
@@ -296,7 +297,16 @@ void QTMResponsiveTabWidget::addTab(QWidget* widget, const QString& title,
     layout->addWidget(widget);
     layout->addStretch();
     top->setLayout(layout);
-    widget = top;
+
+  
+    // we are going to do better : a vertical scroll !
+    QScrollArea *scroll = new QScrollArea(this);
+    scroll->setWidgetResizable(true);
+    scroll->setFrameShape(QFrame::NoFrame);
+    scroll->setWidget(top);
+    widget = scroll;
+
+  
   }
 
   mPages.append(widget);

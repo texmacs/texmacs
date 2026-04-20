@@ -1176,7 +1176,7 @@ qt_ui_element_rep::as_qwidget (QWidget* parent_widget) {
       // todo
 
       QTMSettingCheckbox* w  = new QTMSettingCheckbox (parent_widget);
-      w->setText (to_qstring (txt));
+      w->setDescriptionText (to_qstring (txt));
       w->setCheckState (check ? Qt::Checked : Qt::Unchecked);
       qt_apply_tm_style (w, style);
       w->setFocusPolicy (Qt::StrongFocus);
@@ -1200,7 +1200,8 @@ qt_ui_element_rep::as_qwidget (QWidget* parent_widget) {
       int          style = x.x5;
 
       QTMSettingSelect * w = new QTMSettingSelect (parent_widget);
-      w->setText (txt);
+      cout << "setting_enum_widget: txt=" << x.x2 << LF;
+      w->setDescriptionText (txt);
       if (values.isEmpty())
         values << QString("");  // safeguard
 

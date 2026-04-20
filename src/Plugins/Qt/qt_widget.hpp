@@ -158,12 +158,17 @@ public:
       "toggle_widget",      "enum_widget",        "choice_widget",
       "scrollable_widget",  "hsplit_widget",      "vsplit_widget",
       "aligned_widget",     "tabs_widget",        "icon_tabs_widget",
+      "responsive_tabs_widget", "responsive_icon_tabs_widget",
       "wrapped_widget",     "refresh_widget",     "refreshable_widget",
       "glue_widget",        "resize_widget",      "texmacs_widget",
       "simple_widget",      "embedded_tm_widget", "popup_widget",
       "field_widget",   "filtered_choice_widget", "tree_view_widget",
-      "division_widget"
+      "division_widget", "setting_toggle_widget", "setting_enum_widget"
     };
+    if (type < none || type > setting_enum_widget) {
+      cout << "qt_widget_rep::type_as_string(), unknown type: " << type << LF;
+      return "unknown";
+    }
     return string (qt_widget_type_strings[type]) * "\t id: " * as_string (id);
   }
   
