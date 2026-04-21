@@ -13,6 +13,13 @@
 #include "file.hpp"
 #include "tree.hpp"
 #include "parse_string.hpp"
+#include <cstring>
+
+#ifndef OS_MINGW
+#include <poll.h>
+#else
+#include <winsock2.h>
+#endif
 
 int script_status = 1;
 
@@ -177,4 +184,61 @@ bool
 has_printing_cmd () {
   static bool has= get_printing_cmd () != "";
   return has;
+}
+
+int
+tm_poll (struct tm_pollfd* fds, int nfds, int timeout_ms) {
+#ifndef OS_MINGW
+  struct pollfd pfds[64];
+  if (nfds > 64) nfds= 64;
+  for (int i= 0; i < nfds; i++) {
+    pfds[i].fd= fds[i].fd;
+    pfds[i].events= 0;
+    if (fds[i].events & TM_POLL_READ)  pfds[i].events |= POLLIN;
+    if (fds[i].events & TM_POLL_WRITE) pfds[i].events |= POLLOUT;
+    pfds[i].revents= 0;
+  }
+  int ret= poll (pfds, nfds, timeout_ms);
+  for (int i= 0; i < nfds; i++) {
+    fds[i].revents= 0;
+    if (pfds[i].revents & POLLIN)
+      fds[i].revents |= TM_POLL_READ;
+    if (pfds[i].revents & POLLOUT)
+      fds[i].revents |= TM_POLL_WRITE;
+    if (pfds[i].revents & (POLLERR | POLLHUP | POLLNVAL))
+      fds[i].revents |= TM_POLL_ERROR;
+  }
+  return ret;
+#else
+  // Windows select() only supports sockets, not pipes or file handles
+  fd_set rfds, wfds, efds;
+  FD_ZERO (&rfds);
+  FD_ZERO (&wfds);
+  FD_ZERO (&efds);
+  for (int i= 0; i < nfds; i++) {
+    if (fds[i].events & TM_POLL_READ)  FD_SET (fds[i].fd, &rfds);
+    if (fds[i].events & TM_POLL_WRITE) FD_SET (fds[i].fd, &wfds);
+    FD_SET (fds[i].fd, &efds);
+    fds[i].revents= 0;
+  }
+  struct timeval tv;
+  struct timeval* tvp= NULL;
+  if (timeout_ms >= 0) {
+    tv.tv_sec= timeout_ms / 1000;
+    tv.tv_usec= (timeout_ms % 1000) * 1000;
+    tvp= &tv;
+  }
+  int ret= select (0, &rfds, &wfds, &efds, tvp);
+  if (ret > 0) {
+    int count= 0;
+    for (int i= 0; i < nfds; i++) {
+      if (FD_ISSET (fds[i].fd, &rfds)) fds[i].revents |= TM_POLL_READ;
+      if (FD_ISSET (fds[i].fd, &wfds)) fds[i].revents |= TM_POLL_WRITE;
+      if (FD_ISSET (fds[i].fd, &efds)) fds[i].revents |= TM_POLL_ERROR;
+      if (fds[i].revents) count++;
+    }
+    return count;
+  }
+  return ret;
+#endif
 }
