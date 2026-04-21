@@ -124,8 +124,8 @@
 ;; get-name: extracts name from entry
 ;; get-type: extracts type from entry (or #f if not applicable)
 ;; get-date: extracts date from entry
-(tm-define (sort-entries entries get-name get-type get-date)
-  (let* ((field (get-sort-field))
+(tm-define (sort-entries entries get-name get-type get-date sort-field)
+  (let* ((field (if (== sort-field "") (get-sort-field) sort-field))
          (asc? (sort-ascending?))
          (cmp (cond
                ((== field "name")
@@ -146,22 +146,24 @@
 
 ;; Sort directory entries
 ;; Entry format: (short-name full-name dir? props)
-(define (sort-directory-entries entries)
+(define (sort-directory-entries entries sort-field)
   (sort-entries entries
     (lambda (e) (car e))
     (lambda (e) (if (caddr e) "dir" "file"))
     (lambda (e)
       (and-let* ((props (cadddr e))
                  (date-raw (assoc-ref props "date")))
-        (if (pair? date-raw) (car date-raw) date-raw)))))
+        (if (pair? date-raw) (car date-raw) date-raw)))
+    sort-field))
 
 ;; Sort entries by name/date (for chat rooms, live docs)
 ;; Entry format: (name date) or just name
-(tm-define (sort-name-entries entries)
+(tm-define (sort-name-entries entries sort-field)
   (sort-entries entries
     (lambda (e) (if (pair? e) (car e) e))
     #f
-    (lambda (e) (if (pair? e) (cadr e) #f))))
+    (lambda (e) (if (pair? e) (cadr e) #f))
+    sort-field))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Useful subroutines
@@ -491,7 +493,7 @@
                               `((dir-content (document ,@content))))))))
 
 (define (directory-table sname server entries)
-  (let ((sorted (sort-directory-entries entries)))
+  (let ((sorted (sort-directory-entries entries "")))
     (build-dir-table "My Files" "Date" (map (cut directory-entry sname server <>) sorted) "3.5")))
 
 (define (dir-page sname server entries)

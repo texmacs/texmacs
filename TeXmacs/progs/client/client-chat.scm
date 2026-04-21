@@ -211,7 +211,7 @@
                 ,(build-table-share-action server link))))
 
 (tm-define (chat-rooms-table title sname server entries)
-  (let ((sorted (sort-name-entries entries)))
+  (let ((sorted (sort-name-entries entries "")))
     (build-dir-table title "Created"
                      (map (cut chat-room-table-entry sname server <>) sorted) "1.5")))
 
@@ -272,14 +272,15 @@
       `(dir-entry ,icon-name ,name ,link ,date* ""))))
 
 ;; Sort shared entries - format: (action pseudo full-name date u to)
-(define (sort-shared-entries entries)
+(define (sort-shared-entries entries sort-field)
   (sort-entries entries
     (lambda (e) (url->string (url-tail (list-ref e 4))))
     (lambda (e) (tmfs-type (list-ref e 4)))
-    (lambda (e) (list-ref e 3))))
+    (lambda (e) (list-ref e 3))
+    sort-field))
 
 (tm-define (shared-table title entries)
-  (let ((sorted (sort-shared-entries entries)))
+  (let ((sorted (sort-shared-entries entries "")))
     (build-dir-table title "Shared" (map shared-table-entry sorted) "1")))
 
 (tm-define (shared-documents entries)
