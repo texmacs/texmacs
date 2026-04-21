@@ -262,8 +262,7 @@
 
 (define (shared-table-entry item)
   (with (action pseudo full-name date u to) item
-    (let* ((type (tmfs-type u))
-           (icon-name (string-append "tm_cloud_" type ".svg"))
+    (let* ((icon-name (tmfs-icon (tmfs-type u)))
            (name (url->string (url-tail u)))
            (link (url->string u))
            (date* (if (and date (not (equal? date "")))
