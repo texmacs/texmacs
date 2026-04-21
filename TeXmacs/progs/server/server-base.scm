@@ -239,6 +239,13 @@
   (server-load-users)
   (ahash-ref server-users uid))
 
+(tm-define-macro (with-user-info pseudo name creds email admin uid  . body)
+  `(begin
+     (server-load-users)
+     (and-with h (ahash-get-handle server-users ,uid)
+       (with (,pseudo ,name ,creds ,email ,admin) (cdr h)
+         ,@body))))
+
 (define (get-accounts-user-list limit offset)
   (with-database (server-database)
     (server-load-users)
@@ -246,14 +253,13 @@
       (filter (lambda (uid) (not (server-user-deleted? uid))) users))))
 
 (define (user-info->list uid)
-  (with (pseudo name credentials email admin)
-        (ahash-ref server-users uid)
-        `(("pseudo" ,pseudo)
-          ("name" ,name)
-          ("authentications"
-           ,(credentials->authentications credentials))
-          ("email" ,email)
-          ("admin" ,admin))))
+  (with-user-info pseudo name credentials email admin uid
+    `(("pseudo" ,pseudo)
+      ("name" ,name)
+      ("authentications"
+       ,(credentials->authentications credentials))
+      ("email" ,email)
+      ("admin" ,admin))))
 
 (tm-define (server-set-user-info uid pseudo name hiddens email admin)
   (with-database (server-database)
@@ -781,7 +787,7 @@
 
 (tm-define (server-check-admin? envelope)
   (and-with uid (server-get-user envelope)
-    (with (pseudo name credentials email admin) (ahash-ref server-users uid)
+    (with-user-info pseudo name credentials email admin uid
       admin)))
 
 (tm-define (server-can-login-uid? uid)
@@ -943,16 +949,14 @@
 
 (tm-define (server-logout-client client)
   (and-with uid (ahash-ref server-logged-table client)
-    (with (pseudo name credentials email admin)
-        (ahash-ref server-users uid)
+    (with-user-info pseudo name credentials email admin uid
       (server-logout client pseudo))))
 
 (tm-service (remote-logout)
   (let* ((client (car envelope))
          (uid (ahash-ref server-logged-table client)))
     (if (not uid) (server-error envelope "user not logged")
-        (with (pseudo name credentials email admin)
-            (ahash-ref server-users uid)
+        (with-user-info pseudo name credentials email admin uid
           (server-logout client pseudo)
           (server-return envelope "bye")))))
 
@@ -972,16 +976,16 @@
       (list (credential->authentication credentials))))
 
 (tm-service (remote-get-account user)
-  (with uid (server-get-target-user user envelope)
-    (if (not uid)
-      (server-error envelope "user not logged")
-      (server-return envelope (user-info->list uid)))))
+  (let* ((uid (server-get-target-user user envelope))
+         (info (user-info->list uid)))
+    (cond ((not uid) (server-error envelope "user not logged"))
+          ((not info) (server-error envelope "user does not exist"))
+          (else (server-return envelope info)))))
 
 (tm-service (remote-set-account user info)
   (with uid (server-get-target-user user envelope)
     (if (not uid) (server-return envelope "user not logged")
-        (with (pseudo name credentials email admin)
-            (ahash-ref server-users uid)
+        (with-user-info pseudo name credentials email admin uid
           (for (x info)
             (when (list-2? x)
               (cond
@@ -1068,8 +1072,7 @@
 	    (!= (get-preference "server service reset-credentials") "on")
 	    (not (server-can-login-uid? uid)))
 	(server-return envelope "not allowed")
-	(with (pseudo name credentials email admin)
-	    (ahash-ref server-users uid)
+	(with-user-info pseudo name credentials email admin uid
 	  (with code (server-create-reset-credentials-user pseudo)
 	    (server-send-email-reset-credentials pseudo name email code))
 	(server-return envelope "done")))))
