@@ -428,9 +428,6 @@
                    u "\")")
     `(action (dir-entry-icon "tm_focus_delete.svg") ,action-cmd)))
 
-(tm-define (build-actions-hdr share?)
-  (if share? `(concat (phantom-icon) (phantom-icon) (phantom-icon)) ""))
-
 (tm-define (build-actions-bar server link)
   (let* ((share-action (build-table-share-action server link))
          (rename-action (build-table-rename-action server link))
@@ -474,7 +471,7 @@
       (list-intersperse (path-breadcrumbs p) sep))
     '()))
 
-(tm-define (build-dir-table title date-label content share?)
+(tm-define (build-dir-table title date-label content action-hpart)
   (let* ((breadcrumbs (build-dir-breadcrumbs (buffer-get-title (current-buffer))))
          (type-label (sort-header-label "type" ""))
          (type-action (sort-header-action "type"))
@@ -482,12 +479,12 @@
          (name-action (sort-header-action "name"))
          (date-hdr-label (sort-header-label "date" date-label))
          (date-action (sort-header-action "date"))
-         (share-hdr-label (build-actions-hdr share?))
          (table-name (if (null? breadcrumbs) title `(concat ,@breadcrumbs)))
          (hdr `(dir-header ,table-name
                            ,type-label ,type-action
                            ,name-label ,name-action
-                           ,date-hdr-label ,date-action ,share-hdr-label)))
+                           ,date-hdr-label ,date-action
+                           ,action-hpart)))
     `(compact (document ,hdr
                         ,@(if (null? content)
                               '((dir-entry-empty))
@@ -495,7 +492,7 @@
 
 (define (directory-table sname server entries)
   (let ((sorted (sort-directory-entries entries)))
-    (build-dir-table "My Files" "Date" (map (cut directory-entry sname server <>) sorted) #t)))
+    (build-dir-table "My Files" "Date" (map (cut directory-entry sname server <>) sorted) "3.5")))
 
 (define (dir-page sname server entries)
   (remote-file-browser-document
