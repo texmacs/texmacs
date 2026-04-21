@@ -63,6 +63,83 @@
          ,@body))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Message accessors — tuples are (action pseudo full-name date doc to)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (msg-action msg)    (list-ref msg 0))
+(tm-define (msg-pseudo msg)    (list-ref msg 1))
+(tm-define (msg-full-name msg) (list-ref msg 2))
+(tm-define (msg-date msg)      (list-ref msg 3))
+(tm-define (msg-doc msg)       (list-ref msg 4))
+(tm-define (msg-to msg)        (list-ref msg 5))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Shared resources
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (resolve-resource-id rid old-url)
+  ;; Given a resource database ID, resolve it to the current URL
+  (and-let* ((rtype (db-get-field-first rid "type" #f))
+             (name (db-get-field-first rid "name" #f))
+             (sname (tmfs-car (tmfs-cdr (url->string (url-unroot old-url))))))
+    ;(display* "resolving " rid " of type " rtype " with name " name " and old-url " old-url "\n")
+    ;(display* " got name = " name " and sname = " sname "\n")
+    (cond ((== rtype "live") (string-append "tmfs://live/" sname "/" name))
+          ((== rtype "chat-room")
+           (string-append "tmfs://chat/" sname "/" name))
+          ((or (== rtype "file") (== rtype "dir"))
+           (string-append "tmfs://"
+                          (if (== rtype "dir") "remote-dir" "remote-file")
+                          "/" sname "/" (resource->file-name rid)))
+          (else #f))))
+
+(tm-define (chat-message-retrieve mid)
+ (let* ((action (db-get-field-first mid "action" "unknown"))
+        (msg (db-get-field-first mid "message" "unknown"))
+        (from (db-get-field-first mid "from" "unknown"))
+        (to (db-get-field-first mid "to" "unknown"))
+        (pseudo (db-get-field-first from "pseudo" "unknown"))
+        (pseudo-to (db-get-field-first to "owner" "unknown"))
+        (full (db-get-field-first from "name" "unknown"))
+        (date (db-get-field-first mid "date" "unknown"))
+        (rid (db-get-field-first mid "resource-id" #f)))
+   (when (== action "send")
+     (with doc (string-load (repository-get msg))
+       (set! msg (convert doc "texmacs-snippet" "texmacs-stree"))))
+   (when (== action "share")
+     ;(display* "got rid for message: " rid "\n")
+     (when rid
+       (and-with current-url (resolve-resource-id rid msg)
+                 (set! msg current-url))))
+   (list action pseudo full date msg pseudo-to)))
+
+
+(tm-define (chat-messages-sent uid pred?)
+  (with l (db-search `(("type" "chat-message")
+                       ("from" ,uid)
+                       (:order "date" #t)))
+        (list-filter (map chat-message-retrieve l) pred?)))
+
+(define (list-shared? t room-name msg)
+  (and (== (msg-action msg) "share")
+       (string? (msg-doc msg))
+       (string-suffix? (string-append "/" room-name) (msg-doc msg))
+       (not (ahash-ref t (msg-to msg)))
+       (ahash-set! t (msg-to msg) #t)))
+
+(tm-define (resource-shared-with name owner)
+  (with users (make-ahash-table)
+    (chat-messages-sent owner (cut list-shared? users name <>))))
+
+;; Check if a resource (file/dir/live) is shared with users other than owner
+(tm-define (server-resource-shared? rid owner-uid)
+  (let* ((readable (db-get-field rid "readable"))
+         (writable (db-get-field rid "writable"))
+         (others (list-difference (append readable writable)
+                                  (list owner-uid "all" ""))))
+    (nnull? others)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; File hierarchy
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -96,6 +173,101 @@
 
 (define (inherit-property? x)
   (nin? (car x) (inheritance-reserved-attributes)))
+
+;; Remove a user from readable/writable/owner ACLs on a resource
+(tm-define (server-remove-user-from-acls rid uid)
+  (for (field (list "readable" "writable" "owner"))
+    (let* ((vals (db-get-field rid field))
+           (filtered (list-difference vals (list uid))))
+      (when (!= vals filtered)
+        (if (null? filtered)
+          (db-remove-field rid field)
+          (db-set-field rid field filtered))))))
+
+;; Strip the deleted user from readable/writable/owner ACLs on every
+;; resource that references them. Covers both resources they participate
+;; in (others' shared docs) and shared resources they co-owned.
+(tm-define (server-scrub-participations uid)
+  (let ((seen (make-ahash-table)))
+    (for (field (list "readable" "writable" "owner"))
+      (for (rid (db-search `((,field ,uid))))
+        (when (not (ahash-ref seen rid))
+          (ahash-set! seen rid #t)
+          (server-remove-user-from-acls rid uid))))))
+
+;; Remove a resource's physical file from the repository
+(define (repository-remove rid)
+  (and-with fname (repository-get rid)
+    (when (url-exists? fname)
+      (system-remove fname))))
+
+;; Remove a file resource, its version history, and all physical files
+(define (server-file-remove-complete rid)
+  (and-with vid (version-get-list rid)
+    (for (vrid (version-get-versions vid))
+      (repository-remove vrid)
+      (db-remove-entry vrid))
+    (db-remove-entry vid))
+  (repository-remove rid)
+  (db-remove-entry rid))
+
+;; Recursively remove a directory entry and all its contents
+;; including physical repository files and version histories
+(tm-define (server-dir-remove-recursive rid)
+  (let* ((children (dir-contents rid)))
+    (for (child children)
+      (if (== (db-get-field-first child "type" "") "dir")
+        (server-dir-remove-recursive child)
+        (server-file-remove-complete child)))
+    (db-remove-entry rid)))
+
+;; Compute deletion plan: returns (todelete keep) lists of rids.
+;; Files/dirs/live docs shared with other users (via chat share messages)
+;; are kept; unshared resources are marked for deletion.
+(tm-define (server-deletion-plan uid)
+  (let* ((children (db-search `(("owner" ,uid))))
+         (todelete '())
+         (keep '()))
+    (for (child children)
+      (let* ((rtype (db-get-field-first child "type" ""))
+             (readable (db-get-field child "readable"))
+             (writable (db-get-field child "writable"))
+             (owners (db-get-field child "owner"))
+             (name (db-get-field child "name"))
+             (shared-with (resource-shared-with
+                            (db-get-field-first child "name" "") uid)))
+        (display* "handle resource deletion, name = " name ", id = " child
+                   ", type = " rtype "\n")
+        (display* "  readable: " readable "\n")
+        (display* "  writable: " writable "\n")
+        (display* "  owner: " owners "\n")
+        (display* "  shared with: " shared-with "\n")
+        (when (in? rtype (list "file" "chat-room" "live"))
+          (if (null? shared-with)
+            (set! todelete (cons child todelete))
+            (set! keep (cons child keep))))))
+    (list todelete keep)))
+
+;; Return the deletion plan formatted as rewrite-dir-entry tuples
+;; for display in the remote file browser.
+(tm-define (server-deletion-plan-entries uid)
+  (define (getinfo rid)
+    (let* ((short-name (db-get-field-first rid "name" "?"))
+           (type (db-get-field-first rid "type" "file")))
+      (list short-name type)))
+  (with (todelete keep) (server-deletion-plan uid)
+    (list (map getinfo todelete) (map getinfo keep))))
+
+;; Execute the deletion plan: delete all unshared resources owned by uid.
+;; Re-computes the plan at execution time to avoid TOCTOU issues.
+(tm-define (server-execute-deletion-plan uid)
+  (with (todelete keep) (server-deletion-plan uid)
+    (for (rid todelete)
+      (let* ((rtype (db-get-field-first rid "type" "")))
+        (cond
+          ((== rtype "file") (server-file-remove-complete rid))
+          ((== rtype "chat-room") (server-chat-room-remove rid))
+          (else (db-remove-entry rid)))))))
 
 (define (copy-properties base-rid derived-rid pred?)
   (let* ((props1 (db-get-entry base-rid))

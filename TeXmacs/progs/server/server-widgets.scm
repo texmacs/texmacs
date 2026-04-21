@@ -104,6 +104,11 @@
 		 "server service reset-credentials" answer)
 		(get-boolean-preference
 		 "server service reset-credentials")))
+      (meti (hlist // (text "Remote account deletion"))
+	(toggle (set-boolean-preference
+		 "server service delete-account" answer)
+		(get-boolean-preference
+		 "server service delete-account")))
 ;      (meti (hlist // (text "Public preferences"))
 ;	(toggle (set-boolean-preference
 ;		 "server service public preferences" answer)
@@ -297,7 +302,7 @@
              (for-each (cut ahash-set! t <> <>) (form-fields) (form-values))
              (when (!= (ahash-ref* t "password" "") "")
                (set! use-password? #t))
-             (cond ((server-find-user (ahash-ref t "pseudo"))
+             (cond ((server-pseudo-taken? (ahash-ref t "pseudo"))
 		    (server-open-error (string-append
 				 "User '" (ahash-ref t "pseudo")
 				 "' already exists")))
@@ -417,7 +422,8 @@
 
 (define (get-all-accounts-user-list)
   (with-database (server-database)
-    (db-search `(("type" "user")))))
+    (filter (lambda (uid) (not (server-user-deleted? uid)))
+            (db-search `(("type" "user"))))))
 
 (define (get-accounts-pseudo-list)
   (map server-uid->pseudo (get-all-accounts-user-list)))
@@ -462,8 +468,34 @@
 		      ("Edit"
 		       (set! server-accounts-widget-uid uid)
 		       (open-server-account-editor)) // // //
-		       ("Delete"
-		       (server-open-error "not implemented")) // // //)
+		      ("Delete"
+		       (with pseudo (server-uid->pseudo uid)
+			 (cond
+			   ((== pseudo "admin")
+			    (server-open-error "Cannot delete the admin account"))
+			   (else
+			    (user-confirm
+			      (string-append
+				"Delete account '" pseudo "'?\n\n"
+				"WARNING: This action cannot be undone.\n"
+				"- Files never shared will be permanently deleted.\n"
+				"- Shared files and documents will be preserved for recipients.\n"
+				"- Chat messages will be preserved.\n"
+				"- The account will be marked as deleted and will no longer be visible.")
+			      #f
+			      (lambda (answ)
+				(when answ
+				  (if (server-remove-account pseudo)
+				    (begin
+				      (set! uid "")
+				      (refresh-now "server-accounts-choice-refreshable")
+				      (refresh-now "server-accounts-buttons-refreshable")
+				      (server-open-success
+					(string-append
+					  "Account '" pseudo "' has been deleted")))
+				    (server-open-error
+				      (string-append
+					"Failed to delete account '" pseudo "'")))))))))) // // //)
 		    ("Add"
 		     (dialogue-window server-add-account-widget 
 		      (lambda ()
