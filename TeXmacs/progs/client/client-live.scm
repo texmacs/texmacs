@@ -224,7 +224,7 @@
 (tm-define (live-table title sname server entries)
   (let ((sorted (sort-name-entries entries)))
     (build-dir-table title "Created"
-                     (map (cut live-table-entry sname server <>) sorted) #t)))
+                     (map (cut live-table-entry sname server <>) sorted) "1.5")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Live discussions as documents
