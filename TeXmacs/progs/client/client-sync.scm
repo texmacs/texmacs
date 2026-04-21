@@ -59,7 +59,7 @@
   ;;(display* "compute-sync-list " local-base ", " remote-base "\n")
   (let* ((rbase (remote-file-name remote-base))
          (server-name (tmfs-car rbase))
-         (server (client-find-server server-name))
+         (server (find-server-for-name rbase))
          (local-l (client-sync-list local-base))
          (t (make-ahash-table)))
     ;;(for (x local-l)
@@ -236,8 +236,8 @@
   (list-filter l (lambda (line) (string-starts? (car line) which))))
 
 (define (status-line->server line)
-  (with sname (tmfs-car (remote-file-name (fifth line)))
-    (client-find-server sname)))
+  (with rname (remote-file-name (fifth line))
+    (find-server-for-name rname)))
 
 (define (append-doc line)
   (with (cmd dir? local-name local-id remote-name remote-id*) line

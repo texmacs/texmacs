@@ -498,6 +498,90 @@
 ;; Account edition
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (sort-plan-entries entries sort-field)
+  (sort-entries entries
+    (lambda (e) (car e))
+    (lambda (e) (cadr e))
+    #f
+    sort-field))
+
+(define (deletion-plan-entry entry)
+  (with (name type) entry
+    `(dir-entry ,(tmfs-icon type) ,name "" "" "")))
+
+(define (deletion-plan-content entries)
+   `(with "par-width" "400px"
+      (compact (document (document ,@(map deletion-plan-entry (sort-plan-entries entries "type")))))))
+
+(tm-widget ((client-deletion-plan-widget server uid pseudo entries admin?
+                                        on-deleted) quit)
+  (padded
+    (if (nnull? (car entries))
+      (text (delete-account-msg pseudo))
+      (text "The following files will be permanently deleted:")
+      ======
+      (resize "480px" "150px"
+              (hlist
+                >>
+                (texmacs-output
+                (stree->tree (deletion-plan-content (first entries)))
+                `(style (tuple "generic" "remote-file-browser")))
+                >>))
+      ======)
+    (if (nnull? (cadr entries))
+      (text "The following files will be kept:")
+      ======
+      (resize "480px" "150px"
+              (hlist
+                >>
+                (texmacs-output
+                  (stree->tree (deletion-plan-content (second entries)))
+                  `(style (tuple "generic" "remote-file-browser")))
+                >>))
+      ======)
+    ===
+    (bottom-buttons
+      ("Cancel" (quit))
+      >>
+      ("Delete account"
+       (user-confirm
+         "Proceed with account deletion ?" #f
+         (lambda (answ)
+           (when answ
+             ;; Close the deletion plan dialog first.
+             ;; For self-delete: server disconnects before sending the
+             ;; response so the callback never fires; run on-deleted now.
+             ;; For admin delete: response comes back; run on-deleted there.
+             (quit)
+             ;(when (and on-deleted (not admin?)) (on-deleted))
+             (client-delete-account
+               server (if admin? uid #f)
+               (lambda (ret)
+                 (if (== ret "done")
+                   (begin
+                     (client-open-success "Account has been deleted")
+                     (when (and on-deleted admin?) (on-deleted)))
+                   (client-open-error
+                     (string-append
+                       "Failed to delete account: " ret))))))))))))
+
+(define (open-deletion-plan-widget server uid admin? on-deleted)
+  (client-get-account-then server uid
+    (lambda (info)
+      (with pseudo (car (ahash-ref (list->ahash-table info) "pseudo"))
+        (if (== pseudo "admin")
+          (client-open-error "Cannot delete the admin account")
+          (client-delete-account-plan server uid
+            (lambda (entries)
+              (if (list? entries)
+                (dialogue-window
+                  (client-deletion-plan-widget
+                    server uid pseudo entries admin? on-deleted)
+                  noop "Account deletion plan")
+                (client-open-error
+                  (string-append "Failed to get deletion plan: "
+                                 (object->string entries)))))))))))
+
 (tm-widget ((client-edit-account-widget server uid info admin?) quit)
   (let* ((dummy (form-named-set "client-edit-account-form" "password" ""))
 	 (w (list->ahash-table info))
@@ -543,6 +627,13 @@
 		>> )))
 	  === ===
 	  (hlist
+	    (if (not admin?)
+	      (explicit-buttons
+		("Delete my account"
+		 (open-deletion-plan-widget server #f #f
+		   (lambda ()
+		     (quit)
+		     (client-logout server))))))
 	    >>
 	    (explicit-buttons
 	      ("Cancel"
@@ -603,6 +694,16 @@
       (dialogue-window
         (admin-remote-accounts-widget server ret) noop "Server accounts"))))
 
+(define (delete-account-msg pseudo)
+ (line-feed-universal
+   (string-append "Delete account '" pseudo "'?\n\n"
+     "WARNING: This action cannot be undone.\n"
+     "- Files never shared will be permanently deleted.\n"
+     "- Shared files and documents will be preserved for recipients.\n"
+     "- Chat messages sent to public chat rooms will be preserved.\n"
+     "- Personal messages will be deleted.\n"
+     "- The account will be marked as deleted and will no longer be visible.\n")))
+
 (tm-widget ((admin-remote-accounts-widget server users) quit)
   (let ((uid "")
         (cb-done (lambda (server server-name port pseudo creds)
@@ -624,8 +725,16 @@
 		    (when (!= uid "")
 		      ("Edit"
 		       (open-admin-account-editor server uid)) // // //
-		       ("Delete"
-		       (server-open-error "not implemented")) // // //)
+		      ("Delete"
+		       (open-deletion-plan-widget server uid #t
+			 (lambda ()
+			   (set! uid "")
+			   (client-get-accounts-then server 0 0
+			     (lambda (new-users)
+                               (when new-users
+                                 (set! users new-users)
+                                 (refresh-now "remote-accounts-choice-refreshable")
+                                 (refresh-now "remote-accounts-buttons-refreshable")))))))) // // //)
 		    ("Add"
                      (client-public-preferences-then
                        server
@@ -641,8 +750,11 @@
                              (lambda (msg)
                                (client-open-error msg)))
                            (lambda ()
-                             (refresh-now "remote-accounts-choice-refreshable"))
-                           "Create server account"))))))))))
+                             (client-get-accounts-then server 0 0
+                               (lambda (new-users)
+                                 (set! users new-users)
+                                 (refresh-now "remote-accounts-choice-refreshable"))))
+                           "Create server account")))))))))
 
 (tm-define (open-admin-accounts-editor server)
   (:interactive #t)

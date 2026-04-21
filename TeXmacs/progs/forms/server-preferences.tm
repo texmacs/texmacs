@@ -44,7 +44,10 @@
   account creation>>>|<form-checkbox|server service
   reset-credentials|false|(lset-preference name
   answer)>|<hlist|<glue|false|false|5px|0px>|<inflate|<text-opaque|Remote
-  credentials resetting>>>>
+  credentials resetting>>>|<form-checkbox|server service
+  delete-account|false|(lset-preference name
+  answer)>|<hlist|<glue|false|false|5px|0px>|<inflate|<text-opaque|Remote
+  account deletion>>>>
 
   <subsection*|Passwords>
 
