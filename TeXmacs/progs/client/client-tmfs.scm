@@ -72,7 +72,7 @@
 (tm-define (entry-type-priority type-str)
   (cond ((== type-str "dir") 0)
         ((== type-str "file") 1)
-        ((== type-str "chat") 2)
+        ((or (== type-str "chat-room") (== type-str "chat")) 2)
         ((== type-str "live") 3)
         (else 4)))
 
@@ -397,10 +397,14 @@
   (with head (tmfs-car (url->string (url-unroot u)))
     (if (string-starts? head "remote-") (string-drop head 7) head)))
 
+(tm-define (tmfs-icon type)
+  (with icon-type (if (== type "chat-room") "chat" type)
+    (string-append "tm_cloud_" icon-type ".svg")))
+
 (define (directory-entry sname server entry)
   (with (short-name full-name dir? props) entry
     (let* ((type (if dir? "dir" "file"))
-           (icon-name (string-append "tm_cloud_" type ".svg"))
+           (icon-name (tmfs-icon type))
            (link (prepend-dir server short-name (string-append "remote-" type)))
            (actions (build-actions-bar server link))
            (date-raw (assoc-ref props "date"))
