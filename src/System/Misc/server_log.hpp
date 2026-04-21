@@ -13,7 +13,7 @@
 #define SERVER_LOG_H
 #include "string.hpp"
 
-#define SERRNO_FMT(msg) (string ("error: ") * msg * ": " * strerror (errno))
+#define SERRNO_FMT(msg) (string ("error: ") * msg * ": " * texmacs_get_last_error_str())
 
 #define SLOG_LVL(lvl, msg) server_log_write (log_ ## lvl, msg)
 
