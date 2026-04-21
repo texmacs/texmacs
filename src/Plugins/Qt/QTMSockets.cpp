@@ -348,53 +348,19 @@ socket_link_rep::start () {
   else { // used for clients
     if (used_by_server ())
       return "internal error, inconsistent 'socket_link_rep'";
+
     c_string _host (host);
     c_string _port (as_string (port));
-    struct ADDRINFO hints;
-    struct ADDRINFO *result, *rp;
-    memset (&hints, 0, sizeof(hints));
-    hints.ai_family = AF_UNSPEC;
-    hints.ai_socktype = SOCK_STREAM;
-    hints.ai_flags = AI_PASSIVE;
-    hints.ai_protocol = 0;
-    hints.ai_canonname = NULL;
-    hints.ai_addr = NULL;
-    hints.ai_next = NULL;
-    int x= GETADDRINFO(_host, _port, &hints, &result);
-    if (x)
-      return string ("'getaddrinfo' error: ") * string (GAI_STRERROR(x));
-    for (rp = result; rp != NULL; rp = rp->ai_next) {
-      DEBUG_SOCKET("'socket_link_rep::start' trying socket for addr");
-      socket_id= SOCKET(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
-      if (socket_id < 0)
-        continue;
+    char errbuf[256];
 
-      // TODO: this call is blocking, the socket is put non blocking further
-      // down after the connection succeeded. This blocks the UI if we
-      // connect to a valid domain name that isn't a texmacs server.
-      // We should put the socket as non blocking before the connect, just
-      // like we did for the gnutls handshake, and then resume the connection
-      // in resume_start. We would need to try all the results from
-      // getaddrinfo one after the other (keep addrinfo struct as class attr)
-      if (CONNECT(socket_id, rp->ai_addr, rp->ai_addrlen) != -1)
-        break;
-      CLOSE(socket_id);
-    }
-    if (rp == NULL)
+    socket_id= try_connect (_host, _port, 5000, errbuf, sizeof (errbuf));
+    if (socket_id < 0) {
+      if (errbuf[0] != '\0')
+        return string ("'getaddrinfo' error: ") * string (errbuf);
       return "cannot connect to hostname '" * host
         * "' at port " * as_string (port);
-    FREEADDRINFO(result);
-#ifndef OS_MINGW
-    if (fcntl (socket_id, F_SETFL, O_NONBLOCK) == -1)
-      return SERRNO_FMT("set socket non block");
-#else
-    {
-      using namespace wsoc;
-      u_long flags = -1;
-      if (ioctlsocket (socket_id, FIONBIO, &flags) == SOCKET_ERROR)
-        return SERRNO_FMT("ioctlsocket");
     }
-#endif
+
     DEBUG_SOCKET("'socket_link_rep::start' created socket with id "
       << socket_id);
     ::start (contact, socket_id);
@@ -760,24 +726,14 @@ socket_server_rep::start () {
       socket_id = -1;
       continue;
     }
-#ifndef OS_MINGW
-    if (fcntl (socket_id, F_SETFL, O_NONBLOCK) == -1)  {
+
+    if (set_socket_noblock (socket_id) == -1) {
       SERRNO_LOGE ("cannot set socket as non blocking");
       safe_server_close (socket_id);
       socket_id = -1;
       continue;
     }
-#else
-    { using namespace wsoc;
-      u_long flags = -1;
-      if (ioctlsocket (socket_id, FIONBIO, &flags) == SOCKET_ERROR) {
-        SERRNO_LOGI ("cannot set socket as non blocking");
-        safe_server_close (socket_id);
-        socket_id = -1;
-        continue;
-      }
-    }
-#endif
+
     if (BIND(socket_id, rp->ai_addr, rp->ai_addrlen) == 0)
       break;
     else if (errno == EADDRINUSE) {
