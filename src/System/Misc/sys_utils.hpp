@@ -58,4 +58,22 @@ bool has_printing_cmd (void);
 string get_printing_cmd (void);
 void set_printing_cmd (string cmd);
 
+/******************************************************************************
+* Cross-platform poll
+* Uses poll() on POSIX, select() on Windows.
+* Returns number of ready fds, 0 on timeout, -1 on error.
+******************************************************************************/
+
+#define TM_POLL_READ   0x01
+#define TM_POLL_WRITE  0x02
+#define TM_POLL_ERROR  0x04
+
+struct tm_pollfd {
+  int fd;
+  int events;   /* requested: TM_POLL_READ, TM_POLL_WRITE */
+  int revents;  /* returned:  TM_POLL_READ, TM_POLL_WRITE, TM_POLL_ERROR */
+};
+
+int tm_poll (struct tm_pollfd* fds, int nfds, int timeout_ms);
+
 #endif // defined SYS_UTILS_H
