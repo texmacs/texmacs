@@ -138,6 +138,22 @@ safe_server_close (int fd) {
   return ret;
 }
 
+static int
+set_socket_noblock (int socket) {
+#ifndef OS_MINGW
+    if (fcntl (socket, F_SETFL, O_NONBLOCK) == -1)
+      return -1;
+#else
+    {
+      using namespace wsoc;
+      u_long flags = -1;
+      if (ioctlsocket (socket, FIONBIO, &flags) == SOCKET_ERROR)
+        return -1;
+    }
+#endif
+    return 0;
+}
+
 /******************************************************************************
 * Socket initialization
 ******************************************************************************/
@@ -179,6 +195,95 @@ socket_present () {
 }
 
 #endif
+
+int try_connect (const char* host, const char* port, int timeout,
+                 char* errbuf, size_t errlen) {
+#define MAX_SOCKS 16
+  struct ADDRINFO hints;
+  struct ADDRINFO *result, *rp;
+  memset (&hints, 0, sizeof (hints));
+  hints.ai_family= AF_UNSPEC;
+  hints.ai_socktype= SOCK_STREAM;
+  hints.ai_protocol= 0;
+  hints.ai_canonname= NULL;
+  hints.ai_addr= NULL;
+  hints.ai_next= NULL;
+
+  if (errbuf && errlen > 0) errbuf[0]= '\0';
+
+  int x= GETADDRINFO (host, port, &hints, &result);
+  if (x != 0) {
+    if (errbuf)
+      snprintf (errbuf, errlen, "getaddrinfo: %s", GAI_STRERROR (x));
+    return -1;
+  }
+
+  int socks[MAX_SOCKS];
+  struct tm_pollfd pfds[MAX_SOCKS];
+  int n= 0;
+
+  for (rp= result; rp != NULL && n < MAX_SOCKS; rp= rp->ai_next) {
+    int s= SOCKET (rp->ai_family, rp->ai_socktype, rp->ai_protocol);
+    if (s < 0) continue;
+    if (set_socket_noblock (s) == -1) {
+      CLOSE (s);
+      continue;
+    }
+
+    int ret= CONNECT (s, rp->ai_addr, rp->ai_addrlen);
+    if (ret == 0) {
+      // immediate success
+      for (int j= 0; j < n; j++) CLOSE (socks[j]);
+      FREEADDRINFO (result);
+      return s;
+    }
+
+#if defined(OS_MINGW)
+    int err= WSAGetLastError ();
+    if (err != WSAEWOULDBLOCK) {
+      CLOSE (s);
+      continue;
+    }
+#else
+    if (errno != EINPROGRESS) {
+      CLOSE (s);
+      continue;
+    }
+#endif
+    socks[n]= s;
+    pfds[n].fd= s;
+    pfds[n].events= TM_POLL_WRITE;
+    pfds[n].revents= 0;
+    n++;
+  }
+  FREEADDRINFO (result);
+
+  if (n == 0) return -1;
+
+  int ret= tm_poll (pfds, n, timeout);
+  if (ret <= 0) {
+    for (int i= 0; i < n; i++) CLOSE (socks[i]);
+    return -1;
+  }
+
+  int winner= -1;
+  for (int i= 0; i < n; i++) {
+    if (pfds[i].revents & TM_POLL_WRITE) {
+      int err= 0;
+      socklen_t elen= sizeof (err);
+      getsockopt (socks[i], SOL_SOCKET, SO_ERROR, (char*) &err, &elen);
+      if (err == 0) {
+        winner= socks[i];
+        break;
+      }
+    }
+  }
+
+  for (int i= 0; i < n; i++)
+    if (socks[i] != winner) CLOSE (socks[i]);
+
+  return winner;
+}
 
 /******************************************************************************
 * Socket link

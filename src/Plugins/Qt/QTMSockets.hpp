@@ -66,6 +66,13 @@ string socket_debug_io_string (string s, int max);
    if (N(s)) DEBUG_SOCKET (a << socket_debug_io_string (s, 2048))
 
 /******************************************************************************
+* Socket initialization
+******************************************************************************/
+
+int try_connect (const char* host, const char* port, int timeout_ms,
+                 char* errbuf, size_t errlen);
+
+/******************************************************************************
 * Socket link
 ******************************************************************************/
 
