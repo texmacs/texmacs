@@ -43,27 +43,14 @@
   </active*>
 
   <assign|dir-title|<\macro|name>
-    <tformat|<cwith|1|1|1|1|cell-background|dark grey>|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-lsep|1spc>|<cwith|1|1|1|1|cell-rsep|1spc>|<cwith|1|1|1|1|cell-bsep|0.5spc>|<cwith|1|1|1|1|cell-tsep|0.5spc>|<table|<row|<cell|<samp|<with|color|white|locus-color|preserve|<arg|name>>>>>>>
+    <tformat|<cwith|1|1|1|1|cell-background|dark
+    grey>|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-lsep|1spc>|<cwith|1|1|1|1|cell-rsep|1spc>|<cwith|1|1|1|1|cell-bsep|0.5spc>|<cwith|1|1|1|1|cell-tsep|0.5spc>|<table|<row|<cell|<samp|<with|color|white|locus-color|preserve|<arg|name>>>>>>>
   </macro>>
 
-  <assign|dir-header|<\macro|name|type-label|type-action|name-label|name-action|date-label|date-action|action-label>
-    <tformat|\
-      <cwith|1|1|1|1|cell-background|dark grey>|<cwith|2|2|1|1|cell-background|dark grey>|\
-      <twith|table-width|1par>|<twith|table-hmode|exact>|\
-      <cwith|1|1|1|1|cell-tsep|2.5spc>|<cwith|2|2|1|2|cell-bsep|1fn>|\
-      <cwith|1|1|1|1|cell-valign|c>|<cwith|1|1|1|1|cell-halign|c>|<cwith|2|2|1|1|cell-valign|c>|<cwith|2|2|1|1|cell-halign|c>|\
-      <table|\
-        <row|<cell|<samp|<with|color|pastel cyan|locus-color|white|visited-color|white|<compact|<arg|name>|<vspace|0.6fn>>>>>>|\
-        <row|<cell|<samp|<small|<with|locus-color|white|<wide-underlined|||<concat|<action|<arg|type-label>|<arg|type-action>>|<hspace|12pt><action|<arg|name-label>|<arg|name-action>>|<htab|5mm>|<action|<arg|date-label>|<arg|date-action>><hspace|3em><arg|action-label>>>>>>>>>>
-  </macro>>
-
-  <assign|dir-header-old|<\macro|breadcrumbs>
-    <with|locus-color|white|<compact|<concat|<phantom-icon><dir-entry-icon|tm_cloud_dir.svg><hspace|12pt><arg|breadcrumbs>|<vspace|0.6fn>>>>
-  </macro>>
-
-  <assign|dir-labels|<\macro|type-label|type-action|name-label|name-action|date-label|date-action|action-label>
-    <wide-underlined|0.5ln|0.2em|<concat|<action|<arg|type-label>|<arg|type-action>>|<hspace|12pt><action|<arg|name-label>|<arg|name-action>>|<htab|5mm>|<action|<arg|date-label>|<arg|date-action>><hspace|2em><arg|action-label>>>
-  </macro>>
+  <assign|dir-header|<macro|name|type-label|type-action|name-label|name-action|date-label|date-action|action-hpart|<with|color|white|<wide-tabular|<tformat|<cwith|1|1|1|1|cell-background|darker
+  grey>|<cwith|2|2|1|-1|cell-background|dark
+  grey>|<cwith|1|1|1|1|cell-col-span|4>|<cwith|1|1|1|1|cell-tsep|3spc>|<cwith|2|2|1|-1|cell-bsep|1spc>|<cwith|2|2|1|-1|cell-tsep|1spc>|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-valign|c>|<cwith|1|1|1|1|cell-halign|c>|<cwith|2|2|1|1|cell-hmode|exact>|<cwith|2|2|1|1|cell-hpart|1>|<cwith|2|2|1|1|cell-lsep|1.5spc>|<cwith|2|2|2|2|cell-hpart|20>|<cwith|2|2|3|3|cell-hpart|<arg|action-hpart>>|<cwith|2|2|4|4|cell-halign|r>|<cwith|2|2|4|4|cell-hpart|<arg|action-hpart>>|<table|<row|<cell|<samp|<with|color|pastel
+  cyan|locus-color|white|visited-color|white|<arg|name>>>>|<cell|>|<cell|>|<cell|>>|<row|<cell|<samp|<small|<with|locus-color|white|<action|<arg|type-label>|<arg|type-action>>>>>>|<cell|<samp|<small|<with|locus-color|white|<action|<arg|name-label>|<arg|name-action>>>>>>|<cell|<samp|<small|<with|locus-color|white|<action|<arg|date-label>|<arg|date-action>>>>>>|<cell|>>>>>>>>
 
   <\active*>
     <\src-comment>
@@ -73,19 +60,18 @@
 
   <assign|dir-entry-name-max-len|60>
 
-  <assign|dir-entry-name|<macro|name|link|<if|<greater|<length|<arg|name>>|<value|dir-entry-name-max-len>>|<hlink|<concat|<range|<arg|name>|0|<minus|<value|dir-entry-name-max-len>|3>>|\<ldots\>>|<arg|link>>|<hlink|<arg|name>|<arg|link>>>>>
+  <assign|dir-entry-name|<macro|name|link|<if|<greater|<length|<arg|name>>|<value|dir-entry-name-max-len>>|<hlink|<range|<arg|name>|0|<minus|<value|dir-entry-name-max-len>|3>>\<ldots\>|<arg|link>>|<hlink|<arg|name>|<arg|link>>>>>
 
-  <assign|dir-entry-line|<macro|icon-name|name|link|date|actions|<concat|<dir-entry-icon|<arg|icon-name>>|<hspace|12pt><dir-entry-name|<arg|name>|<arg|link>>|<htab|5mm>|<arg|date><hspace|1em><arg|actions>>>>
+  <assign|dir-entry-line|<macro|icon-name|name|link|date|actions|<dir-entry-icon|<arg|icon-name>><hspace|12pt><dir-entry-name|<arg|name>|<arg|link>><htab|5mm><arg|date><hspace|1em><arg|actions>>>
 
-  <assign|dir-entry-bg|<macro|bg|body|<tformat|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-background|<arg|bg>>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-lsep|2spc>|<cwith|1|1|1|1|cell-rsep|0spc>|<cwith|1|1|1|1|cell-bsep|0spc>|<cwith|1|1|1|1|cell-tsep|0spc>|<table|<row|<cell|<arg|body>>>>>>>
+  <assign|dir-entry-bg|<macro|bg|body|<tformat|<twith|table-width|1par>|<twith|table-hmode|exact>|<cwith|1|1|1|1|cell-background|<arg|bg>>|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-lsep|2spc>|<cwith|1|1|1|1|cell-rsep|2spc>|<cwith|1|1|1|1|cell-bsep|0spc>|<cwith|1|1|1|1|cell-tsep|0spc>|<table|<row|<cell|<arg|body>>>>>>>
 
   <assign|dir-entry|<\macro|icon-name|name|link|date|actions>
     <with|clickable-color|#00000000|<dynamic-case|mouse-over|<dir-entry-bg|#e0e0e0|<dir-entry-line|<arg|icon-name>|<arg|name>|<arg|link>|<arg|date>|<arg|actions>>>|any|<dir-entry-bg||<dir-entry-line|<arg|icon-name>|<arg|name>|<arg|link>|<arg|date>|<arg|actions>>>>>
   </macro>>
 
   <assign|dir-entry-empty|<macro|<with|color|dark
-  grey|font-shape|italic|<concat|<phantom-icon><hspace|12pt>Nothing to
-  show>>>>
+  grey|font-shape|italic|<phantom-icon><hspace|12pt>Nothing to show>>>
 
   <\active*>
     <\src-comment>

@@ -213,7 +213,7 @@
 (tm-define (chat-rooms-table title sname server entries)
   (let ((sorted (sort-name-entries entries)))
     (build-dir-table title "Created"
-                     (map (cut chat-room-table-entry sname server <>) sorted) #t)))
+                     (map (cut chat-room-table-entry sname server <>) sorted) "1.5")))
 
 (tm-define (chat-rooms-document sname server entries)
   (remote-file-browser-document
@@ -280,7 +280,7 @@
 
 (tm-define (shared-table title entries)
   (let ((sorted (sort-shared-entries entries)))
-    (build-dir-table title "Shared" (map shared-table-entry sorted) #f)))
+    (build-dir-table title "Shared" (map shared-table-entry sorted) "1")))
 
 (tm-define (shared-documents entries)
   (remote-file-browser-document
