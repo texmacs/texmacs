@@ -92,6 +92,16 @@
   (with (server msg-id) envelope
     (client-send server `(server-remote-error ,msg-id ,error-msg))))
 
+(tm-call-back (client-account-deleted msg)
+  (with server (car envelope)
+    (and-with server-con (ahash-ref client-active-connections server)
+      (with (server-name server-port server-pseudo) server-con
+        (remove-active-connection server server-name server-port server-pseudo)
+        (set! remote-client-list (client-active-servers))
+        (client-stop server)
+        (client-remove server)))
+    (client-open-error (or msg "Your account has been deleted"))))
+
 (tm-call-back (local-eval cmd)
   (when #f ;; only set to #t for debugging purposes
     (with ret (eval cmd)
@@ -230,6 +240,16 @@
   (with (server-name port) (split-server-name-and-port server-name-port)
     (client-find-server-by-name-and-port server-name port)))
 
+(tm-define (client-find-server-by-pseudo server-name-port pseudo)
+  (with (server-name port) (split-server-name-and-port server-name-port)
+    (or (list-find (client-active-servers)
+          (lambda (s)
+            (and-with con (ahash-ref client-active-connections s)
+              (and (== (first con) server-name)
+                   (== (second con) port)
+                   (== (third con) pseudo)))))
+        (client-find-server-by-name-and-port server-name port))))
+
 (tm-define (client-find-server-name server)
   (and-with p (ahash-ref client-active-connections server) (first p)))
 
@@ -329,9 +349,11 @@
         (else (cb-err (string-append "Remote account creation failed: "
                                      msg))))))))
 
-(tm-define (client-remove-accounts server pseudos cb)
-  (client-remote-then server `(remote-remove-accounts ,pseudos) cb
-                      "Cannot remove remote account(s): "))
+(tm-define (client-delete-account server user cb)
+  (client-remote-eval* server `(remote-delete-account ,user) cb))
+
+(tm-define (client-delete-account-plan server user cb)
+  (client-remote-eval* server `(remote-deletion-plan ,user) cb))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Account informations

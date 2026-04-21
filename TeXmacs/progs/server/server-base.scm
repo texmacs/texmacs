@@ -243,7 +243,7 @@
   (with-database (server-database)
     (server-load-users)
     (let* ((users (db-search-paginate `(("type" "user")) limit offset)))
-          users)))
+      (filter (lambda (uid) (not (server-user-deleted? uid))) users))))
 
 (define (user-info->list uid)
   (with (pseudo name credentials email admin)
@@ -287,28 +287,43 @@
   (with uid (server-find-user pseudo)
     (server-set-user-info uid pseudo name hiddens email (== admin "yes"))))
 
-(tm-define (server-remove-user pseudo) ;; todo << fixme
+(tm-define (server-remove-user pseudo)
   (with-database (server-database)
-    (let* ((uid (server-find-user pseudo))
-           (home (string-append "~" pseudo))
-           (q (list (list "name" home)
-                    (list "type" "dir"))))
-      (server-dir-remove uid (string-append "~" pseudo) #f)
-      (and-with p (db-search q)
-                (db-remove-entry p)))
-    (db-remove-entry uid)
-    (server-load-users)
-    (ahash-remove! server-users uid)
-    (server-save-users)))
+    (let* ((uid (server-find-user pseudo)))
+      (when (and uid (!= pseudo "admin"))
+        ;; Logout user if logged in, notify client
+        (when (uid-logged? uid)
+          (with client (uid-logged? uid)
+            (server-remote-eval client
+              `(client-account-deleted
+                ,(string-append "Account '" pseudo "' has been deleted"))
+              (lambda (ok?) (noop)))
+            (server-logout client pseudo)))
+        ;; Mark user as deleted (uid preserved in DB)
+        (server-mark-user-deleted uid)
+        ;; Delete unshared resources, keep shared ones
+        (server-execute-deletion-plan uid)
+        ;; Remove user from document ACLs
+        (server-scrub-participations uid)
+        (server-clean-user-notifications uid 'all)
+        (server-load-users)
+        (ahash-remove! server-users uid)
+        (server-save-users)
+        (server-log-write 'notice
+          (string-append "deleted user account: " pseudo))
+        #t))))
 
 (tm-define (server-remove-account pseudo)
-  (if (not (or (server-pseudo-exists? pseudo)
-               (server-pending-pseudo-exists? pseudo)))
-    (not (server-log-format
-           `warning "could not delete user ~a, user does not exist\n" pseudo))
-    (or (and (server-pseudo-exists? pseudo) (server-remove-user pseudo))
-        (and (server-pending-pseudo-exists? pseudo)
-             (server-remove-pending-user pseudo)))))
+  (cond ((server-pseudo-exists? pseudo)
+         (server-remove-user pseudo)
+         #t)
+        ((server-pending-pseudo-exists? pseudo)
+         (server-remove-pending-user pseudo)
+         #t)
+        (else
+         (server-log-format
+           `warning "could not delete user ~a, user does not exist\n" pseudo)
+         #f)))
 
 (tm-define (server-suspend-user pseudo)
   (with-database (server-database)
@@ -331,6 +346,21 @@
 
 (tm-define (server-pseudo-exists? pseudo)
   (server-find-user pseudo))
+
+(tm-define (server-user-deleted? uid)
+  (with-database (server-database)
+    (== (db-get-field uid "deleted") (list "#t"))))
+
+(tm-define (server-mark-user-deleted uid)
+  (with-database (server-database)
+    (with-user #t
+      (db-set-field uid "deleted" (list "#t")))))
+
+;; Check if pseudo is taken by any user (active or deleted) in DB
+(tm-define (server-pseudo-taken? pseudo)
+  (or (server-find-user pseudo)
+      (with-database (server-database)
+        (nnull? (db-search `(("type" "user") ("pseudo" ,pseudo)))))))
 
 (tm-define (server-reset-preferences)
   (for-each (lambda (pref) (reset-preference (car pref)))
@@ -383,7 +413,7 @@
       (if (and (!= (get-preference "server require strong passwords") "off")
 	       (not (server-strong-credentials? credentials)))
 	  (server-return envelope server-strong-password-instructions)
-	  (if (or (server-pseudo-exists? pseudo)
+	  (if (or (server-pseudo-taken? pseudo)
 		  (server-pending-pseudo-exists? pseudo))
 	      (server-return envelope "user already exists")
 	      (let* ((salt (generate-salt))
@@ -406,15 +436,41 @@
     (server-return envelope (get-accounts-user-list limit offset))
     (server-return envelope "remote accounts list is not allowed")))
 
-(tm-service (remote-remove-accounts pseudos)
-  (if (and (== (get-preference "server service new-account") "on")
-           (server-check-admin? envelope))
-    (server-return envelope
-      (list-fold
-        (lambda (pseudo removed)
-          (if (server-remove-account pseudo) (cons pseudo prev) prev))
-        '() pseudos))
-    (server-return envelope "remote account removal is not allowed")))
+(tm-service (remote-deletion-plan user)
+  (with-verify-delete-rights
+    (server-return envelope (server-deletion-plan-entries target-uid))))
+
+(tm-define-macro (with-verify-delete-rights . body)
+  `(let* ((caller-uid (server-get-user envelope))
+         (is-admin? (server-check-admin? envelope))
+         (target-uid (server-get-target-user user envelope))
+         (target-pseudo (and target-uid (server-uid->pseudo target-uid)))
+         (service-on?
+           (== (get-preference "server service delete-account") "on")))
+     (cond
+       ((not caller-uid)
+        (server-error envelope "user not logged"))
+       ;; Non-admin: require service preference to be enabled
+       ((and (not is-admin?) (not service-on?))
+        (server-return envelope "account deletion is not allowed"))
+       ((not target-uid)
+        (server-error envelope "target user not found"))
+       ((== target-pseudo "admin")
+        (server-error envelope "cannot delete admin account"))
+       ;; Admin cannot delete own account
+       ((and is-admin? (== caller-uid target-uid))
+        (server-error envelope "admin cannot delete own account"))
+       ;; Non-admin can only delete self
+       ((and (not is-admin?) (!= caller-uid target-uid))
+        (server-error envelope "only admin can delete other accounts"))
+       (else
+         ,@body))))
+
+(tm-service (remote-delete-account user)
+  (with-verify-delete-rights
+    (if (server-remove-account target-pseudo)
+      (server-return envelope "done")
+      (server-error envelope "account deletion failed"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; User security
@@ -736,7 +792,8 @@
       (format #f
           "user ~A: ~A failed logins, ~A last failure, suspended: ~A\n"
           uid n (strftime "%c" (localtime t)) (server-user-suspended? uid)))
-    (and (not (server-user-suspended? uid))
+    (and (not (server-user-deleted? uid))
+         (not (server-user-suspended? uid))
 	 (or (< n (server-get-failed-login-limit))
 	     (> now (+ t (server-get-failed-login-delay)))))))
 

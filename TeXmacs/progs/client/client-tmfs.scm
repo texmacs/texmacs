@@ -166,6 +166,23 @@
     sort-field))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Server lookup from tmfs path
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Find the server handle for a tmfs name like "localhost/~pseudo/..."
+;; by extracting the pseudo from the ~pseudo path component.
+(tm-define (find-server-for-name name)
+  (let* ((parts (tmfs->list name))
+         (sname (car parts))
+         (pseudo-part (and (>= (length parts) 2) (cadr parts)))
+         (pseudo (and pseudo-part (string-starts? pseudo-part "~")
+                      (substring pseudo-part 1
+                                 (string-length pseudo-part)))))
+    (if pseudo
+        (client-find-server-by-pseudo sname pseudo)
+        (client-find-server sname))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Useful subroutines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -318,7 +335,7 @@
 
 (tmfs-title-handler (remote-file name doc)
   (let* ((sname (tmfs-car name))
-         (server (client-find-server sname))
+         (server (find-server-for-name name))
          (fname (string-append "tmfs://remote-file/" name))
          (def-title (url->string (url-tail fname)))
          (t (remote-get-time fname)))
@@ -338,7 +355,7 @@
 
 (tmfs-load-handler (remote-file name)
   (let* ((sname (tmfs-car name))
-         (server (client-find-server sname))
+         (server (find-server-for-name name))
          (fname (string-append "tmfs://remote-file/" name)))
     (if (not server)
         ;; FIXME: better error handling
@@ -359,7 +376,7 @@
 (tmfs-save-handler (remote-file name doc)
   ;;(display* "SAVE ") (write doc) (display* "\n")
   (let* ((sname (tmfs-car name))
-         (server (client-find-server sname))
+         (server (find-server-for-name name))
          (fname (string-append "tmfs://remote-file/" name))
          (msg remote-commit-message))
     (if (not server)
@@ -508,7 +525,7 @@
 (tmfs-load-handler (remote-dir name)
   ;;(display* "Loading remote dir " name "\n")
   (let* ((sname (car (tmfs->list name)))
-         (server (client-find-server sname))
+         (server (find-server-for-name name))
          (fname (string-append "tmfs://remote-dir/" name)))
     (if (not server)
         (texmacs-error "remote-file" "invalid server")
@@ -537,7 +554,7 @@
          (dest* (remote-file-name dest))
          (src-sv (car (tmfs->list src*)))
          (dest-sv (car (tmfs->list dest*)))
-         (server (client-find-server src-sv))
+         (server (find-server-for-name src*))
          (action (if (remote-file? src) "rename file" "rename directory"))
          (dir (remote-parent dest))
          (name (url->string (url-tail dest))))
@@ -573,7 +590,7 @@
   (let* ((dir? (remote-directory? what))
          (name (remote-file-name what))
          (server-name (car (tmfs->list name)))
-         (server (client-find-server server-name))
+         (server (find-server-for-name name))
          (action (if dir? "remove directory" "remove file"))
          (done (if dir? "directory removed" "file removed"))
          (cmd `(,(if dir? 'remote-dir-remove 'remote-file-remove) ,name)))
@@ -621,7 +638,7 @@
 (define (compute-remote-versions rname)
   (let* ((name (remote-file-name rname))
          (sname (tmfs-car name))
-         (server (client-find-server sname))
+         (server (find-server-for-name name))
          (fname (string-append "tmfs://remote-file/" name))
          (prefix (string-append "tmfs://remote-file/" sname "/")))
     (and server
