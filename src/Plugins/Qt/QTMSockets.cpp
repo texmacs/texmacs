@@ -52,6 +52,7 @@
 #define ACCEPT accept
 #define INET_NTOP inet_ntop
 #define TM_FD_SET(fd, set) FD_SET(fd, set)
+#define GETSOCKOPT getsockopt
 
 #else
 
@@ -72,6 +73,7 @@
 #undef FD_ISSET
 #define FD_ISSET __WSAFDIsSet
 #define TM_FD_SET(fd, set) FD_SET((u_int) fd, set)
+#define GETSOCKOPT wsoc::getsockopt
 
 #endif
 
@@ -239,7 +241,7 @@ int try_connect (const char* host, const char* port, int timeout,
     }
 
 #if defined(OS_MINGW)
-    int err= WSAGetLastError ();
+    int err= ERRNO;
     if (err != WSAEWOULDBLOCK) {
       CLOSE (s);
       continue;
@@ -271,7 +273,7 @@ int try_connect (const char* host, const char* port, int timeout,
     if (pfds[i].revents & TM_POLL_WRITE) {
       int err= 0;
       socklen_t elen= sizeof (err);
-      getsockopt (socks[i], SOL_SOCKET, SO_ERROR, (char*) &err, &elen);
+      GETSOCKOPT (socks[i], SOL_SOCKET, SO_ERROR, (char*) &err, &elen);
       if (err == 0) {
         winner= socks[i];
         break;
