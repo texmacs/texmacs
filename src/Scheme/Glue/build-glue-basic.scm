@@ -693,6 +693,7 @@
   (client-stop client_stop (void int))
   (client-read client_read (string int))
   (client-write client_write (int int string))
+  (client-protocol-version client_protocol_version (int))
   (enter-secure-mode enter_secure_mode (void int))
   (server-client-address server_client_address (string int))
   (cpp-check-online tm_check_online (void scheme_tree int))

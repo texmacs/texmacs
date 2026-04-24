@@ -29,6 +29,9 @@ static hashset<pointer> the_clients;
 static hashmap<int,pointer> client_from_fd; 
 static bool clients_started= false;
 
+// v1: tree_cache
+constexpr int TM_PROTOCOL_VERSION = 1;
+
 /******************************************************************************
 * Utilities
 ******************************************************************************/
@@ -186,6 +189,10 @@ client_listen_connections (int msecs) {
     if (c != NULL)
       c->listen (msecs);
   }
+}
+
+int client_protocol_version () {
+  return TM_PROTOCOL_VERSION;
 }
 
 static std::thread checker_thread;
