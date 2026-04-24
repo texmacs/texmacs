@@ -206,6 +206,7 @@ packrat_parser_rep::serialize (tree t, path p) {
     case GET_ATTACHMENT:
     case WRITE:
     case TOC_NOTIFY:
+    case CACHE_REF:
       break;
 
     case SPECIFIC:
