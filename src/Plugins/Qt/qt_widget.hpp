@@ -129,7 +129,7 @@ public:
     return retina_factor;
 #endif
   }
-  virtual widget plain_window_widget (string name, command quit, int b= 3);
+  virtual widget plain_window_widget (string name, command quit, int b= 0);
   virtual widget make_popup_widget ();
   virtual widget popup_window_widget (string s);
   virtual widget tooltip_window_widget (string s);
