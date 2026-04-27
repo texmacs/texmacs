@@ -692,8 +692,7 @@ qt_ui_element_rep::as_qlayoutitem (QWidget* parent_widget) {
       l->setSpacing(0);
 
       if (N(arr) > 0 && concrete(arr[0]).rep &&
-          (concrete(arr[0]).rep->type == tabs_widget ||
-           concrete(arr[0]).rep->type == icon_tabs_widget))  // HACK!
+          (concrete(arr[0]).rep->type == tabs_widget))  // HACK!
         l->setContentsMargins(0, 6, 0, 0);
       else
         l->setContentsMargins(0, 0, 0, 0);

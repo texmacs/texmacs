@@ -722,7 +722,6 @@ QSizeGrip#ResponsiveTabSizeGrip {
 ****************************************************************************/
 
 QTMSettingCheckbox QLabel, QTMSettingSelect QLabel {
-    font-weight: bold;
     color: #000000;
     border: none;
     background: transparent;
