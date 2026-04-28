@@ -179,6 +179,7 @@ INSTALL_DATA:
 	$(CP) $(tmdir)/progs $(DESTDIR)
 	$(CP) $(tmdir)/styles $(DESTDIR)
 	$(CP) $(tmdir)/texts $(DESTDIR)
+	$(CP) $(tmdir)/SVNREV $(DESTDIR)
 	$(CHMOD) -R go=rX $(DESTDIR)
 	@echo installed TeXmacs data in $(DESTDIR)
 
