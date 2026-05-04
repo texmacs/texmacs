@@ -467,6 +467,7 @@ QT_END_NAMESPACE
 #define QTMPRINTDIALOG_HPP
 
 #include <QDialog>
+#include <QPointer>
 //#include "ui_QTMPrintdialog.h"   // life's sad without uic...
 #include "QTMPrinterSettings.hpp"
 
@@ -503,7 +504,7 @@ protected slots:
   void on_evenPagesCheck_stateChanged(int state);
   
 protected:
-  QTMPrinterSettings* _settings;
+  QPointer<QTMPrinterSettings> _settings;
 };
 
 #endif // QTMPRINTDIALOG_HPP
