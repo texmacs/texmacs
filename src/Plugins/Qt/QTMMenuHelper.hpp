@@ -33,6 +33,7 @@
 #include <QScrollArea>
 #include <QTabWidget>
 #include <QToolButton>
+#include <QPointer>
 
 /*! Handles TeXmacs commands in the QT way.
 
@@ -328,7 +329,7 @@ class QTMRefreshWidget : public QWidget {
   object curobj;
   widget    cur;
   qt_widget tmwid;
-  QWidget*   qwid;
+  QPointer<QWidget> qwid;
   hashmap<object,widget> cache;
   
 public:
@@ -351,7 +352,7 @@ class QTMRefreshableWidget : public QWidget {
   object   curobj;
   widget      cur;
   qt_widget tmwid;
-  QWidget*   qwid;
+  QPointer<QWidget> qwid;
   
 public:
   QTMRefreshableWidget (qt_widget _tmwid, object _prom, string _kind);

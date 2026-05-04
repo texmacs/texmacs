@@ -84,7 +84,7 @@ QTMAction::QTMAction (QObject *parent) : QAction (parent) {
 }
 
 QTMAction::~QTMAction() { 
-  if (menu() && !menu()->parent()) delete menu();
+  if (menu() && !menu()->parent()) menu()->deleteLater();
 }
 
 void
@@ -1032,8 +1032,9 @@ QTMRefreshableWidget::doRefresh (string kind) {
 BEGIN_SLOT
   if (recompute (kind)) {
     if (qwid) {
+      qwid->hide();
       qwid->setParent (NULL);
-      delete qwid;
+      qwid->deleteLater();
     }
     qwid = concrete (cur)->as_qwidget(this);
 
