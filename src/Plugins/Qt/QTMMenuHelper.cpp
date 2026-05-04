@@ -944,8 +944,9 @@ QTMRefreshWidget::doRefresh (string kind) {
 BEGIN_SLOT
   if (recompute (kind)) {
     if (qwid) {
+      qwid->hide();
       qwid->setParent (NULL);
-      delete qwid;
+      qwid->deleteLater();
     }
     qwid = concrete (cur)->as_qwidget(this);
 
@@ -1140,20 +1141,26 @@ QTMComboBox::event (QEvent* ev) {
  the keys through items in a QListView contained in the QTMScrollArea.
  It also scrolls the viewport to the position of selected items in QListWidgets.
  */
-void
-QTMScrollArea::setWidgetAndConnect (QWidget* w) {
+void QTMScrollArea::setWidgetAndConnect (QWidget* w) {
   setWidget (w);
  
   listViews = w->findChildren<QTMListView*>();
-  for (ListViewsIterator it = listViews.begin(); it != listViews.end(); ++it) {
-    if (! (*it)->isScrollable())
+  
+  for (QTMListView* listView : listViews) {
+    
+    connect(listView, &QObject::destroyed, this, [this, listView]() {
+        listViews.removeAll(listView);
+    });
+
+    if (!listView->isScrollable()) {
 #if QT_VERSION < 0x060000
-      QObject::connect (*it, SIGNAL (selectionHasChanged (const QItemSelection&)),
+      QObject::connect (listView, SIGNAL (selectionHasChanged (const QItemSelection&)),
                         this,  SLOT (scrollToSelection (const QItemSelection&)));
 #else
-      QObject::connect (*it, &QTMListView::selectionHasChanged,
+      QObject::connect (listView, &QTMListView::selectionHasChanged,
                         this, &QTMScrollArea::scrollToSelection);
 #endif
+    }
   }
 }
 

@@ -20,6 +20,7 @@
 #include <QHBoxLayout>
 #include <QToolButton>
 #include <QList>
+#include <QPointer>
 
 class QTMToolbar : public QToolBar {
   Q_OBJECT
@@ -49,13 +50,13 @@ protected:
   void setLeftActVisible (bool v);
 
 private:
-  QScrollArea* mScrollArea;
-  QHBoxLayout* mLayout;
-  QToolButton* mLeftBtn;
-  QToolButton* mRightBtn;
-  QAction*     mLeftAct;
-  QAction*     mRightAct;
-  QMenu* mCurrentMenu;
+  QPointer<QScrollArea> mScrollArea;
+  QPointer<QHBoxLayout> mLayout;
+  QPointer<QToolButton> mLeftBtn;
+  QPointer<QToolButton> mRightBtn;
+  QPointer<QAction>     mLeftAct;
+  QPointer<QAction>     mRightAct;
+  QPointer<QMenu>       mCurrentMenu;
 
   void scrollBy (int dx);
   void updateNavButtons ();
