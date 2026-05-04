@@ -186,6 +186,7 @@ widget enum_widget (command cb, array<string> vals, string val,
                     int st= 0, string w= "1w");
 widget setting_enum_widget (command cb, string text, array<string> vals, string val,
                     int st= 0, string w= "1w");
+widget setting_group_widget (string text, array<widget> vals, int style= 0);
   // select a value from a list of possible values
 widget choice_widget (command cb, array<string> vals, string val, int style= 0);
   // select a value from a long list of possible values

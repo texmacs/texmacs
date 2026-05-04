@@ -125,6 +125,10 @@
   (require-format x '(setting-enum :%5))
   `($setting-enum ,@(cdr x)))
 
+(define (gui-make-setting-group x)
+  (require-format x '(setting-group :%1 :*))
+  `($setting-group ,(cadr x) ,@(map gui-make (cddr x))))
+
 (define (gui-make-choice x)
   (require-format x '(choice :%3))
   `($choice ,@(cdr x)))
@@ -434,6 +438,7 @@
   (input ,gui-make-input)
   (enum ,gui-make-enum)
   (setting-enum ,gui-make-setting-enum)
+  (setting-group ,gui-make-setting-group)
   (choice ,gui-make-choice)
   (choices ,gui-make-choices)
   (tree-view ,gui-make-tree-view)

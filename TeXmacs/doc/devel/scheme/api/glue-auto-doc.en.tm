@@ -5115,6 +5115,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(widget-setting-group <scm-arg|string> <scm-arg|array_widget> <scm-arg|int>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|setting_group_widget> which returns
+    <scm|widget>.
+  </explain>
+
+  <\explain>
     <scm|(widget-balloon <scm-arg|widget> <scm-arg|widget>)>
 <explain-synopsis|no synopsis>
   <|explain>

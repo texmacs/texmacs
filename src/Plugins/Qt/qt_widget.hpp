@@ -113,7 +113,8 @@ public:
     responsive_icon_tabs_widget, wrapped_widget, refresh_widget,  refreshable_widget, 
     glue_widget,        resize_widget, texmacs_widget,  simple_widget, 
     embedded_tm_widget, popup_widget, field_widget, filtered_choice_widget, 
-    tree_view_widget,   division_widget, setting_toggle_widget, setting_enum_widget
+    tree_view_widget,   division_widget, setting_toggle_widget, setting_enum_widget,
+    setting_group_widget
   } ;
   
   types type;
@@ -164,13 +165,17 @@ public:
       "glue_widget",        "resize_widget",      "texmacs_widget",
       "simple_widget",      "embedded_tm_widget", "popup_widget",
       "field_widget",   "filtered_choice_widget", "tree_view_widget",
-      "division_widget", "setting_toggle_widget", "setting_enum_widget"
+      "division_widget", "setting_toggle_widget", "setting_enum_widget",
+      "setting_group_widget"
     };
-    if (type < none || type > setting_enum_widget) {
+    int type_index = static_cast<int> (type);
+    int type_count = static_cast<int> (sizeof (qt_widget_type_strings) /
+                                       sizeof (qt_widget_type_strings[0]));
+    if (type_index < 0 || type_index >= type_count) {
       cout << "qt_widget_rep::type_as_string(), unknown type: " << type << LF;
       return "unknown";
     }
-    return string (qt_widget_type_strings[type]) * "\t id: " * as_string (id);
+    return string (qt_widget_type_strings[type_index]) * "\t id: " * as_string (id);
   }
   
   ////////////////////// Handling of TeXmacs' messages
