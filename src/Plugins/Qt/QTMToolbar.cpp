@@ -111,7 +111,9 @@ void QTMToolbar::replaceActions (QList<QAction*>* src) {
     while (mLayout && mLayout->count() > 0) {
       QWidget* w = mLayout->itemAt(0)->widget();
       mLayout->removeWidget(w);
-      delete w;
+      w->hide();
+      w->setParent(nullptr);
+      w->deleteLater();
     }
   } else {
     clear ();
@@ -138,7 +140,9 @@ void QTMToolbar::replaceButtons (QList<QAction*>* src) {
     while (mLayout && mLayout->count() > 0) {
       QWidget* w = mLayout->itemAt(0)->widget();
       mLayout->removeWidget(w);
-      delete w;
+      w->hide();
+      w->setParent(nullptr);
+      w->deleteLater();
     }
   } else {
     clear ();
@@ -316,7 +320,9 @@ void QTMToolbar::clear () {
   while (mLayout->count() > 0) {
     QWidget* w = mLayout->itemAt(0)->widget();
     mLayout->removeWidget(w);
-    delete w;
+    w->hide();
+    w->setParent(nullptr);
+    w->deleteLater();
   }
   updateNavButtons();
 #else
