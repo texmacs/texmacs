@@ -442,11 +442,13 @@ socket_link_rep::stop () {
     read_notifier_ptr->setEnabled (false);
     read_notifier_ptr->disconnect ();
     read_notifier_ptr->deleteLater ();
+    read_notifier_ptr= NULL;
   }
   if (write_notifier_ptr) {
     write_notifier_ptr->setEnabled (false);
     write_notifier_ptr->disconnect ();
     write_notifier_ptr->deleteLater ();
+    write_notifier_ptr= NULL;
   }
   if (used_by_server ()) { // socket created by the server
     call ("server-logout-client", object (socket_id));
@@ -782,7 +784,7 @@ socket_server_rep::stop () {
   }
   if (notifier_ptr) {
     notifier_ptr->disconnect (SIGNAL(activated(int)));
-    tm_delete (notifier_ptr);
+    notifier_ptr->deleteLater ();
     notifier_ptr= NULL;
   }
   safe_server_close (socket_id);
