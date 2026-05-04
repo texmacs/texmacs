@@ -221,35 +221,6 @@ qt_glue_widget_rep::as_qwidget(QWidget* parent_widget) {
   return qwid;
 }
 
-
-/******************************************************************************
- * The following hack has been implemented by Joris in order to avoid
- * a focus bug when a menu contains a text input field.  To provoke
- * this bug without the hack, put your cursor behind a citation,
- * open the right-most (search) popup menu just at the left of
- * the 'Identifier' text field and then close it again by re-clicking
- * on the magnifying glass
- ******************************************************************************/
-
-static list<QAction*> to_be_destroyed;
-static time_t last_addition;
-
-void
-schedule_destruction (QAction* a) {
-  time_t now= texmacs_time ();
-  if (!is_nil (to_be_destroyed) && last_addition + 3000 < now) {
-    to_be_destroyed= reverse (to_be_destroyed);
-    while (!is_nil (to_be_destroyed)) {
-      //cout << "Destroy\n";
-      delete to_be_destroyed->item;
-      to_be_destroyed= to_be_destroyed->next;
-    }
-  }
-  //cout << "Postpone\n";
-  last_addition= now;
-  to_be_destroyed= list<QAction*> (a, to_be_destroyed);
-}
-
 /******************************************************************************
  * qt_ui_element_rep
  ******************************************************************************/
@@ -262,7 +233,7 @@ qt_ui_element_rep::~qt_ui_element_rep() {
     while (!cachedActionList->empty()) {
       QAction *a = cachedActionList->takeFirst();
       //if (a) delete a;
-      if (a) schedule_destruction (a);
+      if (a) a->deleteLater();
     }
     delete cachedActionList;
   }

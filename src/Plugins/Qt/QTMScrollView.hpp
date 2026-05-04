@@ -13,6 +13,7 @@
 #define QTMSCROLLVIEW_HPP
 
 #include <QAbstractScrollArea>
+#include <QPointer>
 #include <QRect>
 #include "QTMDelayedMethodCall.hpp"
 
@@ -37,7 +38,7 @@ class QTMScrollView : public QAbstractScrollArea {
   bool   editor_flag;   // Set to true for editor widgets
   QRect    p_extents;   // The size of the virtual area where things are drawn.
   QPoint    p_origin;   // The offset into that area
-  QWidget* p_surface;   // Actual drawing area, centered (or not) in the scrollarea
+  QPointer<QWidget> p_surface;   // Actual drawing area, centered (or not) in the scrollarea
   
 public:
   
@@ -49,7 +50,7 @@ public:
   QRect   extents () { return p_extents; }
   void setExtents (QRect newExtents);
 
-  QWidget* surface () const { return p_surface; }
+  QWidget* surface () const { return p_surface ? p_surface.data() : nullptr; }
   
   void ensureVisible (int cx, int cy, int mx = 50, int my = 50);
   

@@ -16,6 +16,7 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QHBoxLayout>
+#include <QPointer>
 #include "string.hpp"
 
 class QMyFileDialog : public QFileDialog
@@ -34,8 +35,8 @@ class QTMFileDialog : public QDialog
   Q_OBJECT
 
 protected:
-  QHBoxLayout* hbox;
-  QFileDialog* file;
+  QPointer<QHBoxLayout> hbox;
+  QPointer<QFileDialog> file;
   void dragEnterEvent(QDragEnterEvent* event);
   void dragMoveEvent(QDragMoveEvent* event);
   void dragLeaveEvent(QDragLeaveEvent* event);
@@ -46,32 +47,32 @@ public:
                  const QString& caption = QString(),
                  const QString& directory = QString(),
                  const QString & filter = QString());
-  QStringList selectedFiles () { return file->selectedFiles (); };
+  QStringList selectedFiles () { return file ? file->selectedFiles () : QStringList (); };
 #if (defined(Q_OS_MAC) && (QT_VERSION >= 0x040500))
-  void setOptions (QFileDialog::Options opts) { file->setOptions (opts); };
+  void setOptions (QFileDialog::Options opts) { if (file) file->setOptions (opts); };
 #endif
-  void setAcceptMode (QFileDialog::AcceptMode mode) { file->setAcceptMode(mode); }
-  void setViewMode (QFileDialog::ViewMode mode) { file->setViewMode (mode); }
-  void setFileMode (QFileDialog::FileMode mode) { file->setFileMode (mode); }
+  void setAcceptMode (QFileDialog::AcceptMode mode) { if (file) file->setAcceptMode(mode); }
+  void setViewMode (QFileDialog::ViewMode mode) { if (file) file->setViewMode (mode); }
+  void setFileMode (QFileDialog::FileMode mode) { if (file) file->setFileMode (mode); }
 #if (QT_VERSION >= 0x040400)
-  void setNameFilter (const QString& filter) { file->setNameFilter (filter); }
-  void setNameFilters (const QStringList& filters) { file->setNameFilters (filters); }
+  void setNameFilter (const QString& filter) { if (file) file->setNameFilter (filter); }
+  void setNameFilters (const QStringList& filters) { if (file) file->setNameFilters (filters); }
 #endif
-  void setDefaultSuffix (const QString& suffix) { file->setDefaultSuffix (suffix); }
-  void setLabelText (QFileDialog::DialogLabel label, const QString& text) { file->setLabelText (label, text); }
+  void setDefaultSuffix (const QString& suffix) { if (file) file->setDefaultSuffix (suffix); }
+  void setLabelText (QFileDialog::DialogLabel label, const QString& text) { if (file) file->setLabelText (label, text); }
 };
 
 class QTMImagePreview : public QWidget
 {
   Q_OBJECT
 
-  QLabel *image;
+  QPointer<QLabel> image;
 
 public:
-  QLineEdit* wid;
-  QLineEdit* hei;
-  QLineEdit* xps;
-  QLineEdit* yps;
+  QPointer<QLineEdit> wid;
+  QPointer<QLineEdit> hei;
+  QPointer<QLineEdit> xps;
+  QPointer<QLineEdit> yps;
 
 public slots:
   void setImage (const QString&);
@@ -85,7 +86,7 @@ class QTMImageDialog : public QTMFileDialog
 {
   Q_OBJECT
 
-  QTMImagePreview* preview;
+  QPointer<QTMImagePreview> preview;
 
 public:
   QTMImageDialog (QWidget* parent= 0,

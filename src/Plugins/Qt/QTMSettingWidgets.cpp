@@ -48,18 +48,21 @@ QTMSettingCheckbox::QTMSettingCheckbox(QWidget* parent) : QWidget(parent) {
 }
 
 void QTMSettingCheckbox::setDescriptionText(const QString& text) {
+  if (!mLabel) return;
   mLabel->setText(text);
 }
 
 bool QTMSettingCheckbox::isChecked() const {
-  return mSwitch->isChecked();
+  return mSwitch ? mSwitch->isChecked() : false;
 }
 
 void QTMSettingCheckbox::setChecked(bool checked) {
+  if (!mSwitch) return;
   mSwitch->setChecked(checked);
 }
 
 void QTMSettingCheckbox::mouseReleaseEvent(QMouseEvent*) {
+  if (!mSwitch) return;
   mSwitch->toggle();
 }
 
@@ -70,7 +73,7 @@ QTMSettingSelect::QTMSettingSelect(QWidget* parent) : QWidget(parent) {
   mLabel = new QLabel(this);
 
   mCombo = new QComboBox(this);
-  mCombo->setCursor(Qt::PointingHandCursor);
+  if (mCombo) mCombo->setCursor(Qt::PointingHandCursor);
 
   layout->addWidget(mLabel);
   layout->addWidget(mCombo);
@@ -80,22 +83,25 @@ QTMSettingSelect::QTMSettingSelect(QWidget* parent) : QWidget(parent) {
 }
 
 void QTMSettingSelect::setDescriptionText(const QString& text) {
+  if (!mLabel) return;
   mLabel->setText(text);
 }
 
 QString QTMSettingSelect::currentText() const {
-  return mCombo->currentText();
+  return mCombo ? mCombo->currentText() : QString();
 }
 
 int QTMSettingSelect::findText(const QString& text, Qt::MatchFlags flags) const {
-  return mCombo->findText(text, flags);
+  return mCombo ? mCombo->findText(text, flags) : -1;
 }
 
 void QTMSettingSelect::setEditable(bool editable) {
+  if (!mCombo) return;
   mCombo->setEditable(editable);
 }
 
 void QTMSettingSelect::addItems(const QStringList& texts) {
+  if (!mCombo) return;
   mCombo->addItems(texts);
 }
 
@@ -104,5 +110,6 @@ int QTMSettingSelect::currentIndex() const {
 }
 
 void QTMSettingSelect::setCurrentIndex(int index) {
+  if (!mCombo) return;
   mCombo->setCurrentIndex(index);
 }

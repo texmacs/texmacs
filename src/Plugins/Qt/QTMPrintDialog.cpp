@@ -25,6 +25,8 @@ QTMPrintDialog::QTMPrintDialog(QTMPrinterSettings* s, QDialog* parent)
   : QDialog(parent), _settings(s) {
     
   setupUi(this);
+  if (!_settings || !printerCombo)
+    return;
 
 #if QT_VERSION < 0x060000
   QObject::connect(_settings, SIGNAL(doneReading()), 
@@ -50,6 +52,9 @@ QTMPrintDialog::QTMPrintDialog(QTMPrinterSettings* s, QDialog* parent)
  */
 void
 QTMPrintDialog::updatePrinterCapabilities() {
+  if (!_settings || !paperSizeCombo || !paperSizeLabel || !resolutionCombo ||
+      !resolutionLabel || !duplexCheck || !blackWhiteCheck)
+    return;
   int idx = 0;
   
   paperSizeCombo->clear();
@@ -84,6 +89,8 @@ void
 QTMPrintDialog::setupUi(QDialog *dia) {
 
   Ui::QTMPrintDialog::setupUi(dia);
+  if (!_settings || !printerCombo || !orientationCombo || !orderPagesCombo)
+    return;
   typedef QPair<QString, QString> printerPair;
   foreach (printerPair printer, _settings->availablePrinters())
     printerCombo->addItem(printer.first, printer.second);
@@ -118,6 +125,12 @@ QTMPrintDialog::setupUi(QDialog *dia) {
  */
 void 
 QTMPrintDialog::accept() {
+  if (!_settings || !printerCombo || !copiesInput || !collatedCheck ||
+      !allPagesRadio || !fromPageInput || !toPageInput || !oddPagesCheck ||
+      !evenPagesCheck || !paperSizeCombo || !orientationCombo ||
+      !duplexCheck || !blackWhiteCheck || !pagesPerSideCombo ||
+      !orderPagesCombo || !fitToPageCheck)
+    return;
   
   _settings->printerName   = printerCombo->currentText();
   _settings->copyCount     = copiesInput->text().toInt();
@@ -165,6 +178,8 @@ void QTMPrintDialog::reject()
  */
 void QTMPrintDialog::on_allPagesRadio_clicked(bool on)
 {
+  if (!allPagesRadio || !fromPageInput || !toPageInput)
+    return;
   if(on) {
     fromPageInput->setText("");
     toPageInput->setText("");
@@ -177,6 +192,8 @@ void QTMPrintDialog::on_allPagesRadio_clicked(bool on)
  */
 void QTMPrintDialog::on_rangePagesRadio_clicked(bool on)
 {
+  if (!_settings || !rangePagesRadio || !fromPageInput || !toPageInput)
+    return;
   if (on) {
     int f = (_settings->firstPage < 1) ? 1 : _settings->firstPage;
     int l = (_settings->lastPage < 1) ? 1 : _settings->lastPage;
@@ -189,26 +206,36 @@ void QTMPrintDialog::on_rangePagesRadio_clicked(bool on)
 void QTMPrintDialog::on_copiesInput_textChanged(const QString& text)
 {
   (void) text;
+  if (!collatedCheck)
+    return;
   collatedCheck->setEnabled(text.toInt() > 1);
 }
 
 void QTMPrintDialog::on_fromPageInput_textChanged(const QString& text)
 {
   (void) text;
+  if (!allPagesRadio || !rangePagesRadio)
+    return;
   if (allPagesRadio->isChecked())
     rangePagesRadio->setChecked(true);
 }
 
 void QTMPrintDialog::on_toPageInput_textChanged(const QString& text) {
   (void) text;
+  if (!allPagesRadio || !rangePagesRadio)
+    return;
   if (allPagesRadio->isChecked())
     rangePagesRadio->setChecked(true);
 }
 
 void QTMPrintDialog::on_oddPagesCheck_stateChanged(int state) {
+  if (!evenPagesCheck)
+    return;
   evenPagesCheck->setEnabled(state == Qt::Checked);
 }
 
 void QTMPrintDialog::on_evenPagesCheck_stateChanged(int state) {
+  if (!oddPagesCheck)
+    return;
   oddPagesCheck->setEnabled(state == Qt::Checked);
 }

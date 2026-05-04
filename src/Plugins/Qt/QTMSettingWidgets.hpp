@@ -6,6 +6,7 @@
 #include <QAbstractButton>
 #include <QComboBox>
 #include <QHBoxLayout>
+#include <QPointer>
 
 #include "string.hpp"
 
@@ -34,8 +35,8 @@ protected:
   void mouseReleaseEvent(QMouseEvent* event) override;
 
 private:
-  QLabel* mLabel;
-  QTMSwitchControl* mSwitch;
+  QPointer<QLabel> mLabel;
+  QPointer<QTMSwitchControl> mSwitch;
 };
 
 class QTMSettingSelect : public QWidget {
@@ -55,14 +56,14 @@ public:
   int currentIndex() const;
   void setCurrentIndex(int index);
   
-  QComboBox* comboBox() const { return mCombo; }
+  QComboBox* comboBox() const { return mCombo ? mCombo.data() : nullptr; }
 
 signals:
   void currentIndexChanged(int index);
 
 private:
-  QLabel* mLabel;
-  QComboBox* mCombo;
+  QPointer<QLabel> mLabel;
+  QPointer<QComboBox> mCombo;
 };
 
 #endif // QTMSETTINGWIDGET_HPP

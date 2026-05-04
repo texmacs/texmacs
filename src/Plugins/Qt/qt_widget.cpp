@@ -74,6 +74,16 @@ qt_widget_rep::add_child (widget w) {
 }
 
 void
+qt_widget_rep::remove_child (widget w) {
+  if (is_nil (w) || N(children) == 0) return;
+  array<widget> kept;
+  for (int i = 0; i < N(children); ++i)
+    if (is_nil(children[i]) || children[i] != w)
+      kept << children[i];
+  children = kept;
+}
+
+void
 qt_widget_rep::add_children (array<widget> a) {
   children << a;
 }

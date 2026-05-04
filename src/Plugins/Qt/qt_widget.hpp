@@ -135,6 +135,7 @@ public:
   virtual widget tooltip_window_widget (string s);
 
   void add_child (widget a);
+  void remove_child (widget a);
   void add_children (array<widget> a);
   
   ////////////////////// Qt semantics of abstract texmacs widgets  
