@@ -8703,6 +8703,23 @@ tmg_widget_setting_toggle (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
 }
 
 tmscm
+tmg_widget_setting_group (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "widget-setting-group");
+  TMSCM_ASSERT_ARRAY_WIDGET (arg2, TMSCM_ARG2, "widget-setting-group");
+  TMSCM_ASSERT_INT (arg3, TMSCM_ARG3, "widget-setting-group");
+
+  string in1= tmscm_to_string (arg1);
+  array_widget in2= tmscm_to_array_widget (arg2);
+  int in3= tmscm_to_int (arg3);
+
+  // TMSCM_DEFER_INTS;
+  widget out= setting_group_widget (in1, in2, in3);
+  // TMSCM_ALLOW_INTS;
+
+  return widget_to_tmscm (out);
+}
+
+tmscm
 tmg_widget_balloon (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_WIDGET (arg1, TMSCM_ARG1, "widget-balloon");
   TMSCM_ASSERT_WIDGET (arg2, TMSCM_ARG2, "widget-balloon");
@@ -11356,6 +11373,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("widget-menu-button",  tmg_widget_menu_button, 5, 0, 0);
   tmscm_install_procedure ("widget-toggle",  tmg_widget_toggle, 3, 0, 0);
   tmscm_install_procedure ("widget-setting-toggle",  tmg_widget_setting_toggle, 4, 0, 0);
+  tmscm_install_procedure ("widget-setting-group",  tmg_widget_setting_group, 3, 0, 0);
   tmscm_install_procedure ("widget-balloon",  tmg_widget_balloon, 2, 0, 0);
   tmscm_install_procedure ("widget-empty",  tmg_widget_empty, 0, 0, 0);
   tmscm_install_procedure ("widget-text",  tmg_widget_text, 4, 0, 0);
