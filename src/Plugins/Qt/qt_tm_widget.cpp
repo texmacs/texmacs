@@ -575,15 +575,15 @@ void
 qt_tm_widget_rep::update_visibility () {
 #define XOR(exp1,exp2) (((!exp1) && (exp2)) || ((exp1) && (!exp2)))
 
-  bool old_mainVisibility = mainToolBar->isVisible();
-  bool old_modeVisibility = modeToolBar->isVisible();
-  bool old_focusVisibility = focusToolBar->isVisible();
-  bool old_userVisibility = userToolBar->isVisible();
-  bool old_sideVisibility = sideTools->isVisible();
-  bool old_leftVisibility = leftTools->isVisible();
-  bool old_bottomVisibility = bottomTools->isVisible();
-  bool old_extraVisibility = extraTools->isVisible();
-  bool old_statusVisibility = mainwindow()->statusBar()->isVisible();
+  bool old_mainVisibility = mainToolBar ? mainToolBar->isVisible() : false;
+  bool old_modeVisibility = modeToolBar ? modeToolBar->isVisible() : false;
+  bool old_focusVisibility = focusToolBar ? focusToolBar->isVisible() : false;
+  bool old_userVisibility = userToolBar ? userToolBar->isVisible() : false;
+  bool old_sideVisibility = sideTools ? sideTools->isVisible() : false;
+  bool old_leftVisibility = leftTools ? leftTools->isVisible() : false;
+  bool old_bottomVisibility = bottomTools ? bottomTools->isVisible() : false;
+  bool old_extraVisibility = extraTools ? extraTools->isVisible() : false;
+  bool old_statusVisibility = (mainwindow() && mainwindow()->statusBar()) ? mainwindow()->statusBar()->isVisible() : false;
 
   bool new_mainVisibility = visibility[1] && visibility[0];
   bool new_modeVisibility = visibility[2] && visibility[0];
@@ -595,27 +595,27 @@ qt_tm_widget_rep::update_visibility () {
   bool new_bottomVisibility = visibility[8];
   bool new_extraVisibility = visibility[9];
   
-  if ( XOR(old_mainVisibility,  new_mainVisibility) )
+  if (mainToolBar && XOR(old_mainVisibility,  new_mainVisibility) )
     mainToolBar->setVisible (new_mainVisibility);
-  if ( XOR(old_modeVisibility,  new_modeVisibility) )
+  if (modeToolBar && XOR(old_modeVisibility,  new_modeVisibility) )
     modeToolBar->setVisible (new_modeVisibility);
-  if ( XOR(old_focusVisibility,  new_focusVisibility) )
+  if (focusToolBar && XOR(old_focusVisibility,  new_focusVisibility) )
     focusToolBar->setVisible (new_focusVisibility);
-  if ( XOR(old_userVisibility,  new_userVisibility) )
+  if (userToolBar && XOR(old_userVisibility,  new_userVisibility) )
     userToolBar->setVisible (new_userVisibility);
-  if ( XOR(old_sideVisibility,  new_sideVisibility) )
+  if (sideTools && XOR(old_sideVisibility,  new_sideVisibility) )
     sideTools->setVisible (new_sideVisibility);
-  if ( XOR(old_leftVisibility,  new_leftVisibility) )
+  if (leftTools && XOR(old_leftVisibility,  new_leftVisibility) )
     leftTools->setVisible (new_leftVisibility);
-  if ( XOR(old_bottomVisibility,  new_bottomVisibility) )
+  if (bottomTools && XOR(old_bottomVisibility,  new_bottomVisibility) )
     bottomTools->setVisible (new_bottomVisibility);
-  if ( XOR(old_extraVisibility,  new_extraVisibility) )
+  if (extraTools && XOR(old_extraVisibility,  new_extraVisibility) )
     extraTools->setVisible (new_extraVisibility);
-  if ( XOR(old_statusVisibility,  new_statusVisibility) )
+  if (mainwindow() && mainwindow()->statusBar() && XOR(old_statusVisibility,  new_statusVisibility) )
     mainwindow()->statusBar()->setVisible (new_statusVisibility);
 
 #if !defined(Q_OS_MAC)
-  if (!tmapp()->useNewToolbar()) {
+  if (!tmapp()->useNewToolbar()  && mainwindow() && mainwindow()->menuBar()) {
     bool old_menuVisibility = mainwindow()->menuBar()->isVisible();
     bool new_menuVisibility = visibility[0];
 
@@ -636,46 +636,60 @@ qt_tm_widget_rep::update_visibility () {
     // (actually only for main and mode toolbars, unifying focus is not
     // appropriate)
     
-    QBoxLayout *bl = qobject_cast<QBoxLayout*>(mainwindow()->centralWidget()->layout());
+    QBoxLayout *bl = mainwindow() && mainwindow()->centralWidget() ? 
+                     qobject_cast<QBoxLayout*>(mainwindow()->centralWidget()->layout()) : nullptr;
     
-    if (modeToolBarAction)
+    if (modeToolBarAction && modeToolBar)
       modeToolBarAction->setVisible(modeToolBar->isVisible());
-    mainToolBarAction->setVisible(mainToolBar->isVisible());
+
+    if (mainToolBarAction && mainToolBar)
+      mainToolBarAction->setVisible(mainToolBar->isVisible());
     
     //WARNING: jugglying around bugs in Qt unified toolbar implementation
     //do not try to change the order of the following operations....
     
-    if (mainToolBar->isVisible()) {       
-      bool tmp = modeToolBar->isVisible();
-      dumbToolBar->removeAction(modeToolBarAction);
-      dumbToolBar->addAction(mainToolBarAction);
-      bl->insertWidget(0, rulerWidget);
-      bl->insertWidget(0, modeToolBar);
-      mainToolBarAction->setVisible(true);
-      rulerWidget->setVisible(true);
-      modeToolBar->setVisible(tmp);
-      if (modeToolBarAction)
-        modeToolBarAction->setVisible(tmp);
-      dumbToolBar->setVisible(true);
+    if (mainToolBar && mainToolBar->isVisible()) {       
+      bool tmp = modeToolBar ? modeToolBar->isVisible() : false;
+      if (dumbToolBar) {
+          if (modeToolBarAction) dumbToolBar->removeAction(modeToolBarAction);
+          if (mainToolBarAction) dumbToolBar->addAction(mainToolBarAction);
+      }
+      if (bl) {
+          if (rulerWidget) bl->insertWidget(0, rulerWidget);
+          if (modeToolBar) bl->insertWidget(0, modeToolBar);
+      }
+      if (mainToolBarAction) mainToolBarAction->setVisible(true);
+      if (rulerWidget) rulerWidget->setVisible(true);
+      if (modeToolBar) modeToolBar->setVisible(tmp);
+      if (modeToolBarAction) modeToolBarAction->setVisible(tmp);
+      if (dumbToolBar) dumbToolBar->setVisible(true);
     } else { 
-      dumbToolBar->removeAction(mainToolBarAction);
-      if (modeToolBar->isVisible()) {
-        bl->removeWidget(rulerWidget);
-        rulerWidget->setVisible(false);
-        bl->removeWidget(modeToolBar);
-        if (modeToolBarAction == NULL) {
-          modeToolBarAction = dumbToolBar->addWidget(modeToolBar);
-        } else {
-          dumbToolBar->addAction(modeToolBarAction);
+      if (dumbToolBar && mainToolBarAction) dumbToolBar->removeAction(mainToolBarAction);
+      if (modeToolBar && modeToolBar->isVisible()) {
+        if (bl) {
+            if (rulerWidget) {
+                bl->removeWidget(rulerWidget);
+                rulerWidget->setVisible(false);
+            }
+            bl->removeWidget(modeToolBar);
         }
-        dumbToolBar->setVisible(true);
+        if (dumbToolBar) {
+            if (modeToolBarAction == NULL) {
+              modeToolBarAction = dumbToolBar->addWidget(modeToolBar);
+            } else {
+              dumbToolBar->addAction(modeToolBarAction);
+            }
+            dumbToolBar->setVisible(true);
+        }
       } else {
-        dumbToolBar->setVisible(false);
-        dumbToolBar->removeAction(modeToolBarAction);
+        if (dumbToolBar) {
+            dumbToolBar->setVisible(false);
+            if (modeToolBarAction) dumbToolBar->removeAction(modeToolBarAction);
+        }
       }
     }
   }
-  else if (!tmapp()->useNewToolbar()) {
+  else if (!tmapp()->useNewToolbar() && mainwindow() && mainwindow()->menuBar()) {
     bool old_menuVisibility = mainwindow()->menuBar()->isVisible();
     bool new_menuVisibility = visibility[0];
 
@@ -684,7 +698,8 @@ qt_tm_widget_rep::update_visibility () {
   }
 #endif // UNIFIED_TOOLBAR
 #undef XOR
-  if (tm_style_sheet == "" && use_mini_bars) {
+
+  if (tm_style_sheet == "" && use_mini_bars && leftLabel && rightLabel) {
     QFont f = leftLabel->font();
     int fs = as_int (get_preference ("gui:mini-fontsize", QTM_MINI_FONTSIZE));
     f.setPointSize (qt_zoom (fs > 0 ? fs : QTM_MINI_FONTSIZE));
@@ -809,16 +824,20 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     {
       check_type<string>(val, s);
       string msg = open_box<string> (val);
-      leftLabel->setText (to_qstring (msg));
-      leftLabel->update ();
+      if (leftLabel) {
+        leftLabel->setText (to_qstring (msg));
+        leftLabel->update ();
+      }
     }
       break;
     case SLOT_RIGHT_FOOTER:
     {
       check_type<string>(val, s);
       string msg= open_box<string> (val);
-      rightLabel->setText (to_qstring (msg));
-      rightLabel->update ();
+      if (rightLabel) {
+        rightLabel->setText (to_qstring (msg));
+        rightLabel->update ();
+      }
     }
       break;
     case SLOT_SCROLLBARS_VISIBILITY:
@@ -831,18 +850,22 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
 
       if (open_box<bool> (val) == true) {
         prompt = new QTMInteractivePrompt (int_prompt, int_input, mainwindow());
-        mainwindow()->statusBar()->removeWidget (leftLabel);
-        mainwindow()->statusBar()->removeWidget (rightLabel);
-        mainwindow()->statusBar()->addWidget (prompt, 1);
-        prompt->start();
+        if (mainwindow() && mainwindow()->statusBar()) {
+            if (leftLabel) mainwindow()->statusBar()->removeWidget (leftLabel);
+            if (rightLabel) mainwindow()->statusBar()->removeWidget (rightLabel);
+            if (prompt) mainwindow()->statusBar()->addWidget (prompt, 1);
+        }
+        if (prompt) prompt->start();
       } else {
         if (prompt) prompt->end();
-        mainwindow()->statusBar()->removeWidget (prompt);
-        mainwindow()->statusBar()->addWidget (leftLabel);
-        mainwindow()->statusBar()->addPermanentWidget (rightLabel);
-        leftLabel->show();
-        rightLabel->show();
-        prompt->deleteLater();
+        if (mainwindow() && mainwindow()->statusBar()) {
+            if (prompt) mainwindow()->statusBar()->removeWidget (prompt);
+            if (leftLabel) mainwindow()->statusBar()->addWidget (leftLabel);
+            if (rightLabel) mainwindow()->statusBar()->addPermanentWidget (rightLabel);
+        }
+        if (leftLabel) leftLabel->show();
+        if (rightLabel) rightLabel->show();
+        if (prompt) prompt->deleteLater();
         prompt = NULL;
       }
     }
@@ -853,7 +876,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       string file = open_box<string> (val);
       if (DEBUG_QT_WIDGETS) debug_widgets << "\tFile: " << file << LF;
 #if (QT_VERSION >= 0x040400)
-      mainwindow()->setWindowFilePath (utf8_to_qstring (file));
+      if (mainwindow()) mainwindow()->setWindowFilePath (utf8_to_qstring (file));
 #endif
     }
       break;
@@ -864,14 +887,14 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
         break;
       }
       coord2 p= open_box<coord2> (val);
-      mainwindow()->move (to_qpoint (p));
+      if (mainwindow()) mainwindow()->move (to_qpoint (p));
     }
       break;
     case SLOT_SIZE:
     {
       check_type<coord2>(val, s);
       coord2 p= open_box<coord2> (val);
-      mainwindow()->resize (to_qsize (p));
+      if (mainwindow()) mainwindow()->resize (to_qsize (p));
     }
       break;
     case SLOT_DESTROY:
@@ -956,7 +979,7 @@ qt_tm_widget_rep::query (slot s, int type_id) {
       check_type_id<string> (type_id, s);
       qt_input_text_widget_rep* w = 
         static_cast<qt_input_text_widget_rep*> (int_input.rep);
-      if (w->ok)
+      if (w && w->ok)
         return close_box<string> (scm_quote (w->input));
       else
         return close_box<string> ("#f");
@@ -965,13 +988,15 @@ qt_tm_widget_rep::query (slot s, int type_id) {
     case SLOT_POSITION:
     {
       check_type_id<coord2> (type_id, s);
-      return close_box<coord2> (from_qpoint (mainwindow()->pos()));
+      if (mainwindow()) return close_box<coord2> (from_qpoint (mainwindow()->pos()));
+      return close_box<coord2> (coord2(0,0));
     }
       
     case SLOT_SIZE:
     {
       check_type_id<coord2> (type_id, s);
-      return close_box<coord2> (from_qsize (mainwindow()->size()));
+      if (mainwindow()) return close_box<coord2> (from_qsize (mainwindow()->size()));
+      return close_box<coord2> (coord2(0,0));
     }
 
     case SLOT_INTERACTIVE_MODE:
@@ -992,7 +1017,7 @@ qt_tm_widget_rep::install_main_menu () {
     if (main_menu_widget == waiting_main_menu_widget) return;
     main_menu_widget = waiting_main_menu_widget;
     QList<QAction*>* src = main_menu_widget->get_qactionlist();
-    if (!src) return;
+    if (!src || !mainwindow() || !mainwindow()->menuBar()) return;
     QMenuBar* dest = mainwindow()->menuBar();
     dest->clear();
     for (int i = 0; i < src->count(); i++) {
@@ -1023,7 +1048,7 @@ qt_tm_widget_rep::install_main_menu () {
     if (main_menu_widget == waiting_main_menu_widget) return;
     main_menu_widget = waiting_main_menu_widget;
     QList<QAction*>* src = main_menu_widget->get_qactionlist();
-    if (!src) return;
+    if (!src || !menuToolBar) return;
     QTMToolbar* dest = menuToolBar;
 
     if (tm_style_sheet == "")
@@ -1069,12 +1094,12 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       check_type_void (index, s);
       
       QWidget* q = main_widget->qwid;
-      q->hide();
+      if (q) q->hide();
       QLayout* l = centralwidget()->layout();
-      l->removeWidget(q);
+      if (l && q) l->removeWidget(q);
 
       q = concrete(w)->as_qwidget(mainwindow());   // force creation of the new QWidget
-      l->addWidget(q);
+      if (l && q) l->addWidget(q);
       /* " When you use a layout, you do not need to pass a parent when
        constructing the child widgets. The layout will automatically reparent
        the widgets (using QWidget::setParent()) so that they are children of 
@@ -1082,7 +1107,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       main_widget = concrete (w);
         // canvas() now returns the new QTMWidget (or 0)
       
-      if (scrollarea())   // Fix size to draw margins around.
+      if (scrollarea() && scrollarea()->surface())   // Fix size to draw margins around.
         scrollarea()->surface()->setSizePolicy (QSizePolicy::Fixed,
                                                 QSizePolicy::Fixed);
       send_keyboard_focus (abstract (main_widget));
@@ -1106,7 +1131,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
     {
       main_icons_widget = concrete (w);
       QList<QAction*>* list = main_icons_widget->get_qactionlist();
-      if (list) {
+      if (list && mainToolBar) {
 #if !DISABLE_QTMTOOLBAR
         mainToolBar->replaceButtons (list);
 #else
@@ -1122,7 +1147,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
     {
       mode_icons_widget = concrete (w);
       QList<QAction*>* list = mode_icons_widget->get_qactionlist();
-      if (list) {
+      if (list && modeToolBar) {
 #if !DISABLE_QTMTOOLBAR
         modeToolBar->replaceButtons (list);
 #else
@@ -1154,7 +1179,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       if (can_update) {
         focus_icons_widget = concrete (w);
         QList<QAction*>* list = focus_icons_widget->get_qactionlist();
-        if (list) {
+        if (list && focusToolBar) {
 #if !DISABLE_QTMTOOLBAR
           focusToolBar->replaceButtons (list);
 #else
@@ -1188,18 +1213,25 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
 #if QT_VERSION >= 0x060000
       side_tools_widget = concrete (w);
       QWidget* new_qwidget = side_tools_widget->as_qwidget(mainwindow());
-      QWidget* old_qwidget = dynamic_cast<QScrollArea*>(sideTools->widget())->widget();
-      if (old_qwidget) old_qwidget->deleteLater();
-      dynamic_cast<QScrollArea*>(sideTools->widget())->setWidget (new_qwidget);
+      if (sideTools) {
+          QScrollArea *scrollArea = dynamic_cast<QScrollArea*>(sideTools->widget());
+          if (scrollArea) {
+              QWidget* old_qwidget = scrollArea->widget();
+              if (old_qwidget) old_qwidget->deleteLater();
+              scrollArea->setWidget (new_qwidget);
+          }
+      }
       update_visibility();
 #if (QT_VERSION >= 0x050000)
-      QList<QDockWidget*> l1;
-      l1.append ((QDockWidget*) extraTools);
-      QList<int> l2;
-      l2.append (1);
-      mainwindow()->resizeDocks (l1, l2, Qt::Horizontal);
+      if (extraTools && mainwindow()) {
+          QList<QDockWidget*> l1;
+          l1.append ((QDockWidget*) extraTools);
+          QList<int> l2;
+          l2.append (1);
+          mainwindow()->resizeDocks (l1, l2, Qt::Horizontal);
+      }
 #endif
-      new_qwidget->show();
+      if (new_qwidget) new_qwidget->show();
 #endif
     }
       break;
@@ -1209,18 +1241,22 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
     {
       left_tools_widget = concrete (w);
       QWidget* new_qwidget = left_tools_widget->as_qwidget(mainwindow());
-      QWidget* old_qwidget = leftTools->widget();
-      if (old_qwidget) old_qwidget->deleteLater();
-      leftTools->setWidget (new_qwidget);
+      if (leftTools) {
+        QWidget* old_qwidget = leftTools->widget();
+        if (old_qwidget) old_qwidget->deleteLater();
+        leftTools->setWidget (new_qwidget);
+      }
       update_visibility();
 #if (QT_VERSION >= 0x050000)
-      QList<QDockWidget*> l1;
-      l1.append ((QDockWidget*) extraTools);
-      QList<int> l2;
-      l2.append (1);
-      mainwindow()->resizeDocks (l1, l2, Qt::Horizontal);
+      if (extraTools && mainwindow()) {
+        QList<QDockWidget*> l1;
+        l1.append ((QDockWidget*) extraTools);
+        QList<int> l2;
+        l2.append (1);
+        mainwindow()->resizeDocks (l1, l2, Qt::Horizontal);
+      }
 #endif
-      new_qwidget->show();
+      if (new_qwidget) new_qwidget->show();
     }
       break;
 
@@ -1229,18 +1265,22 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
     {
       bottom_tools_widget = concrete (w);
       QWidget* new_qwidget = bottom_tools_widget->as_qwidget(mainwindow());
-      QWidget* old_qwidget = bottomTools->widget();
-      if (old_qwidget) old_qwidget->deleteLater();
-      bottomTools->setWidget (new_qwidget);
+      if (bottomTools) {
+          QWidget* old_qwidget = bottomTools->widget();
+          if (old_qwidget) old_qwidget->deleteLater();
+          bottomTools->setWidget (new_qwidget);
+      }
       update_visibility();
 #if (QT_VERSION >= 0x050000)
-      QList<QDockWidget*> l1;
-      l1.append ((QDockWidget*) extraTools);
-      QList<int> l2;
-      l2.append (1);
-      mainwindow()->resizeDocks (l1, l2, Qt::Vertical);
+      if (extraTools && mainwindow()) {
+          QList<QDockWidget*> l1;
+          l1.append ((QDockWidget*) extraTools);
+          QList<int> l2;
+          l2.append (1);
+          mainwindow()->resizeDocks (l1, l2, Qt::Vertical);
+      }
 #endif
-      new_qwidget->show();
+      if (new_qwidget) new_qwidget->show();
     }
       break;
       
@@ -1249,18 +1289,22 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
     {
       extra_tools_widget = concrete (w);
       QWidget* new_qwidget = extra_tools_widget->as_qwidget(mainwindow());
-      QWidget* old_qwidget = extraTools->widget();
-      if (old_qwidget) old_qwidget->deleteLater();
-      extraTools->setWidget (new_qwidget);
+      if (extraTools) {
+          QWidget* old_qwidget = extraTools->widget();
+          if (old_qwidget) old_qwidget->deleteLater();
+          extraTools->setWidget (new_qwidget);
+      }
       update_visibility();
 #if (QT_VERSION >= 0x050000)
-      QList<QDockWidget*> l1;
-      l1.append ((QDockWidget*) extraTools);
-      QList<int> l2;
-      l2.append (1);
-      mainwindow()->resizeDocks (l1, l2, Qt::Vertical);
+      if (extraTools && mainwindow()) {
+          QList<QDockWidget*> l1;
+          l1.append ((QDockWidget*) extraTools);
+          QList<int> l2;
+          l2.append (1);
+          mainwindow()->resizeDocks (l1, l2, Qt::Vertical);
+      }
 #endif
-      new_qwidget->show();
+      if (new_qwidget) new_qwidget->show();
     }
       break;
       
@@ -1329,8 +1373,10 @@ qt_tm_widget_rep::set_full_screen(bool flag) {
     }
   }
   
-  scrollarea()->setHorizontalScrollBarPolicy(flag ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
-  scrollarea()->setVerticalScrollBarPolicy(flag ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
+  if (scrollarea()) {
+      scrollarea()->setHorizontalScrollBarPolicy(flag ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
+      scrollarea()->setVerticalScrollBarPolicy(flag ? Qt::ScrollBarAlwaysOff : Qt::ScrollBarAsNeeded);
+  }
 }
 
 
