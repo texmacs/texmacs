@@ -44,6 +44,11 @@ public:
     delete timer;
   }
 
+  QTMDelayedMethodCall (const QTMDelayedMethodCall&) = delete;
+  QTMDelayedMethodCall& operator= (const QTMDelayedMethodCall&) = delete;
+  QTMDelayedMethodCall (QTMDelayedMethodCall&&) = delete;
+  QTMDelayedMethodCall& operator= (QTMDelayedMethodCall&&) = delete;
+
   inline void operator() () {
     if (is_first_call) {
       timer->start(0);

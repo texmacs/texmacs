@@ -213,7 +213,8 @@ QTMResponsiveTabWidget::QTMResponsiveTabWidget(QWidget *parent)
           this, &QTMResponsiveTabWidget::onTabSelected);
   connect(mListWidget, &QListWidget::itemClicked, 
         this, [this](QListWidgetItem *item) {
-            onListSelected(mListWidget->row(item));
+        if (!mListWidget) return;
+        onListSelected(mListWidget->row(item));
         });
   connect(mBackBtn, &QPushButton::clicked, 
           this, &QTMResponsiveTabWidget::onBackClicked);
