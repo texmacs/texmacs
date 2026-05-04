@@ -53,6 +53,7 @@
     (input :%1 :string? :%1 :string?)
     (enum :%3 :string?)
     (setting-enum :%5)
+    (setting-group :%1 :menu-item-list)
     (choice :%3)
     (choices :%3)
     (filtered-choice :%4)
@@ -317,6 +318,11 @@
            (cmd* (lambda (r) (cmd (or (assoc-ref dec r) r)))))
       (widget-setting-enum (object->command (menu-protect cmd*))
                            setting tvals tval style width))))
+
+(define (make-setting-group p style)
+  "Make @(setting-group :%1 :menu-item-list) item."
+  (with (tag name . items) p
+    (widget-setting-group (name) (make-menu-items items style #f) style)))
 
 (define (make-choice p style)
   "Make @(choice :%3) item."
@@ -840,6 +846,8 @@
         ,(lambda (p style bar?) (list (make-enum p style))))
   (setting-enum (:%5)
         ,(lambda (p style bar?) (list (make-setting-enum p style))))
+    (setting-group (:%1 :*)
+      ,(lambda (p style bar?) (list (make-setting-group p style))))
   (choice (:%3)
           ,(lambda (p style bar?) (list (make-choice p style))))
   (choices (:%3)
@@ -1012,6 +1020,11 @@
                  ,((fifth p))                     ;; 4. val (evaluate the promise for current state)
                  ,(sixth p)))                     ;; 5. width
 
+(define (menu-expand-setting-group p)
+  "Expand setting-group item @p."
+  `(setting-group ,((cadr p))
+                  ,@(menu-expand-list (cddr p))))
+
 (define (menu-expand-choice p)
   "Expand choice item @p."
   `(,(car p) ,(replace-procedures (cadr p))
@@ -1112,6 +1125,7 @@
   (input ,menu-expand-input)
   (enum ,menu-expand-enum)
   (setting-enum ,menu-expand-setting-enum)
+  (setting-group ,menu-expand-setting-group)
   (choice ,menu-expand-choice)
   (choices ,menu-expand-choice)
   (filtered-choice ,menu-expand-filtered-choice)

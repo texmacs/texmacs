@@ -6,6 +6,7 @@
 #include <QAbstractButton>
 #include <QComboBox>
 #include <QHBoxLayout>
+#include <QVBoxLayout>
 #include <QPointer>
 
 #include "string.hpp"
@@ -64,6 +65,27 @@ signals:
 private:
   QPointer<QLabel> mLabel;
   QPointer<QComboBox> mCombo;
+};
+
+class QTMSettingGroup : public QWidget {
+  Q_OBJECT
+  Q_PROPERTY(int outerMargin READ outerMargin WRITE setOuterMargin)
+public:
+  explicit QTMSettingGroup(QWidget* parent = nullptr);
+
+  void setTitleText(const QString& text);
+  void addItem(QLayoutItem* item);
+  QWidget* contentWidget() const { return mWrap ? mWrap.data() : const_cast<QTMSettingGroup*>(this); }
+  int outerMargin() const;
+  void setOuterMargin(int margin);
+
+private:
+  QPointer<QLabel> mTitle;
+  QPointer<QWidget> mWrap;
+  QPointer<QVBoxLayout> mOuterLayout;
+  QPointer<QVBoxLayout> mLayout;
+  int mOuterMargin;
+  int mContentItems;
 };
 
 #endif // QTMSETTINGWIDGET_HPP

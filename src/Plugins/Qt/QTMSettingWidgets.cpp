@@ -113,3 +113,63 @@ void QTMSettingSelect::setCurrentIndex(int index) {
   if (!mCombo) return;
   mCombo->setCurrentIndex(index);
 }
+
+QTMSettingGroup::QTMSettingGroup(QWidget* parent)
+  : QWidget(parent), mOuterMargin(10), mContentItems(0) {
+  setAttribute(Qt::WA_StyledBackground, true);
+  setObjectName("setting-group");
+
+  mOuterLayout = new QVBoxLayout(this);
+  mOuterLayout->setSpacing(0);
+  setOuterMargin(mOuterMargin);
+
+  mWrap = new QWidget(this);
+  mWrap->setObjectName("setting-group-wrap");
+  mOuterLayout->addWidget(mWrap);
+
+  mLayout = new QVBoxLayout(mWrap);
+  mTitle = new QLabel(mWrap);
+  mTitle->setObjectName("setting-group-title");
+
+  mLayout->setSpacing(0);
+  mLayout->setContentsMargins(0, 0, 0, 0);
+  mLayout->addWidget(mTitle);
+
+  setVisible(false);
+}
+
+int QTMSettingGroup::outerMargin() const {
+  return mOuterMargin;
+}
+
+void QTMSettingGroup::setOuterMargin(int margin) {
+  if (margin < 0) margin = 0;
+  mOuterMargin = margin;
+  if (mOuterLayout)
+    mOuterLayout->setContentsMargins(margin, margin, margin, margin);
+}
+
+void QTMSettingGroup::setTitleText(const QString& text) {
+  if (!mTitle) return;
+  mTitle->setText(text);
+}
+
+void QTMSettingGroup::addItem(QLayoutItem* item) {
+  if (!mLayout || !item) return;
+  if (QWidget* widget = item->widget()) {
+    if (widget->parentWidget() != contentWidget())
+      widget->setParent(contentWidget());
+    mLayout->addItem(item);
+  }
+  else if (QLayout* layout = item->layout()) {
+    mLayout->addLayout(layout);
+  }
+  else {
+    mLayout->addItem(item);
+  }
+
+  if (item->widget() != nullptr || item->layout() != nullptr)
+    mContentItems++;
+
+  setVisible(mContentItems > 0);
+}

@@ -369,6 +369,10 @@
   `(list 'setting-enum (lambda (answer) ,cmd) ,name (lambda () ,vals)
          (lambda () ,val) ,width))
 
+(tm-define-macro ($setting-group name . l)
+  (:synopsis "Make a grouped settings widget")
+  `(cons* 'setting-group (lambda () ,name) ($list ,@l)))
+
 (tm-define-macro ($choice cmd vals val)
   (:synopsis "Make a choice list")
   `(list 'choice (lambda (answer) ,cmd) (lambda () ,vals) (lambda () ,val)))

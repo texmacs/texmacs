@@ -530,6 +530,13 @@ widget setting_enum_widget (command cmd, string setting, array<string> vals,
                                              cmd, setting, vals, val, style, width);
   return abstract (wid);
 }
+widget setting_group_widget (string text, array<widget> vals, int style) {
+  if (headless_mode) return headless_widget ();
+  qt_widget wid = qt_ui_element_rep::create (qt_widget_rep::setting_group_widget,
+                                             text, vals, style);
+  wid->add_children (vals);
+  return abstract (wid);
+}
 widget choice_widget (command cmd, array<string> vals, array<string> chosen,
 		      int style) {
   if (headless_mode) return headless_widget ();

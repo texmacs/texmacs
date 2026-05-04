@@ -80,44 +80,45 @@
     (set-preference "gui theme" "default")))
 
 (tm-widget (general-preferences-widget)
-  (setting-enum (set-pretty-preference* "look and feel" answer)
-                "Look and feel"
-                '("Default" "Emacs" "Gnome" "KDE" "Mac OS" "Windows")
-                (get-pretty-preference "look and feel")
-                "18em")
-  (setting-enum (set-pretty-preference "language" answer)
-                "User interface language"
-                (map upcase-first supported-languages)
-                (get-pretty-preference "language")
-                "18em")
-  (setting-enum (set-pretty-preference "complex actions" answer)
-                "Complex actions"
-                '("Through the menus" "Through popup windows")
-                (get-pretty-preference "complex actions")
-                "18em")
-  (setting-enum (set-pretty-preference "interactive questions" answer)
-                "Interactive questions"
-                '("On the footer" "In popup windows")
-                (get-pretty-preference "interactive questions")
-                "18em")
-  (setting-enum (set-pretty-preference "detailed menus" answer)
-                "Details in menus"
-                '("Simplified menus" "Detailed menus")
-                (get-pretty-preference "detailed menus")
-                "18em")
-  (setting-enum (set-pretty-preference "buffer management" answer)
-                "Buffer management"
-                '("Documents in separate windows"
-                  "Multiple documents share window")
-                (get-pretty-preference "buffer management")
-                "18em")
-  (setting-enum (set-pretty-preference* "gui theme" answer)
-                "User interface theme"
-                (if qt6-or-later-gui?
-                    '("Default" "Bright" "Dark" "")
-                    '("Default" "Bright" "Dark" "Native" "Legacy" ""))
-                (get-pretty-preference "gui theme")
-                "18em"))
+  (setting-group "General"
+    (setting-enum (set-pretty-preference* "look and feel" answer)
+                  "Look and feel"
+                  '("Default" "Emacs" "Gnome" "KDE" "Mac OS" "Windows")
+                  (get-pretty-preference "look and feel")
+                  "18em")
+    (setting-enum (set-pretty-preference "language" answer)
+                  "User interface language"
+                  (map upcase-first supported-languages)
+                  (get-pretty-preference "language")
+                  "18em")
+    (setting-enum (set-pretty-preference "complex actions" answer)
+                  "Complex actions"
+                  '("Through the menus" "Through popup windows")
+                  (get-pretty-preference "complex actions")
+                  "18em")
+    (setting-enum (set-pretty-preference "interactive questions" answer)
+                  "Interactive questions"
+                  '("On the footer" "In popup windows")
+                  (get-pretty-preference "interactive questions")
+                  "18em")
+    (setting-enum (set-pretty-preference "detailed menus" answer)
+                  "Details in menus"
+                  '("Simplified menus" "Detailed menus")
+                  (get-pretty-preference "detailed menus")
+                  "18em")
+    (setting-enum (set-pretty-preference "buffer management" answer)
+                  "Buffer management"
+                  '("Documents in separate windows"
+                    "Multiple documents share window")
+                  (get-pretty-preference "buffer management")
+                  "18em")
+    (setting-enum (set-pretty-preference* "gui theme" answer)
+                  "User interface theme"
+                  (if qt6-or-later-gui?
+                      '("Default" "Bright" "Dark" "")
+                      '("Default" "Bright" "Dark" "Native" "Legacy" ""))
+                  (get-pretty-preference "gui theme")
+                  "18em")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Keyboard preferences
@@ -157,57 +158,55 @@
   ("yawerty" "Yawerty"))
 
 (tm-widget (keyboard-preferences-widget)
-  ======
-  (setting-enum (set-pretty-preference "text spacebar" answer)
-                "Space bar in text mode"
-                '("Default" "No multiple spaces"
-                  "Glue multiple spaces" "Allow multiple spaces")
-                (get-pretty-preference "text spacebar")
-                "15em")
-  (setting-enum (set-pretty-preference "math spacebar" answer)
-                "Space bar in math mode"
-                '("Default" "No spurious spaces"
-                  "Avoid spurious spaces" "Allow spurious spaces")
-                (get-pretty-preference "math spacebar")
-                "15em")
-  (setting-enum (set-pretty-preference "automatic quotes" answer)
-                "Automatic quotes"
-                '("Default" "Disabled" "Dutch" "English" "French" "German" "Spanish" "Swiss")
-                (get-pretty-preference "automatic quotes")
-                "15em")
-  (setting-enum (set-pretty-preference "automatic brackets" answer)
-                "Automatic brackets"
-                '("Disabled" "Enabled" "Inside mathematics")
-                (get-pretty-preference "automatic brackets")
-                "15em")
-  (setting-enum (set-pretty-preference "cyrillic input method" answer)
-                "Cyrillic input method"
-                '("None" "Translit" "Jcuken" "Yawerty")
-                (get-pretty-preference "cyrillic input method")
-                "15em")
-  ====== ======
-  (bold (text "Remote controllers with keyboard simulation"))
-  ======
-  (hlist
-    (vlist
-      (setting-enum (set-preference "ir-left" answer) "Left" '("pageup" "")
-                    (get-preference "ir-left") "8em")
-      (setting-enum (set-preference "ir-right" answer) "Right" '("pagedown" "")
-                    (get-preference "ir-right") "8em")
-      (setting-enum (set-preference "ir-up" answer) "Up" '("home" "")
-                    (get-preference "ir-up") "8em")
-      (setting-enum (set-preference "ir-down" answer) "Down" '("end" "")
-                    (get-preference "ir-down") "8em"))
-    ///
-    (vlist
-      (setting-enum (set-preference "ir-center" answer) "Center" '("return" "S-return" "")
-                    (get-preference "ir-center") "8em")
-      (setting-enum (set-preference "ir-play" answer) "Play" '("F5" "")
-                    (get-preference "ir-play") "8em")
-      (setting-enum (set-preference "ir-pause" answer) "Pause" '("escape" "")
-                    (get-preference "ir-pause") "8em")
-      (setting-enum (set-preference "ir-menu" answer) "Menu" '("." "")
-                    (get-preference "ir-menu") "8em"))))
+  (setting-group "Keyboard"
+    (setting-enum (set-pretty-preference "text spacebar" answer)
+                  "Space bar in text mode"
+                  '("Default" "No multiple spaces"
+                    "Glue multiple spaces" "Allow multiple spaces")
+                  (get-pretty-preference "text spacebar")
+                  "15em")
+    (setting-enum (set-pretty-preference "math spacebar" answer)
+                  "Space bar in math mode"
+                  '("Default" "No spurious spaces"
+                    "Avoid spurious spaces" "Allow spurious spaces")
+                  (get-pretty-preference "math spacebar")
+                  "15em")
+    (setting-enum (set-pretty-preference "automatic quotes" answer)
+                  "Automatic quotes"
+                  '("Default" "Disabled" "Dutch" "English" "French" "German" "Spanish" "Swiss")
+                  (get-pretty-preference "automatic quotes")
+                  "15em")
+    (setting-enum (set-pretty-preference "automatic brackets" answer)
+                  "Automatic brackets"
+                  '("Disabled" "Enabled" "Inside mathematics")
+                  (get-pretty-preference "automatic brackets")
+                  "15em")
+    (setting-enum (set-pretty-preference "cyrillic input method" answer)
+                  "Cyrillic input method"
+                  '("None" "Translit" "Jcuken" "Yawerty")
+                  (get-pretty-preference "cyrillic input method")
+                  "15em"))
+  (setting-group "Remote controllers with keyboard simulation"
+    (hlist
+      (vlist
+        (setting-enum (set-preference "ir-left" answer) "Left" '("pageup" "")
+                      (get-preference "ir-left") "8em")
+        (setting-enum (set-preference "ir-right" answer) "Right" '("pagedown" "")
+                      (get-preference "ir-right") "8em")
+        (setting-enum (set-preference "ir-up" answer) "Up" '("home" "")
+                      (get-preference "ir-up") "8em")
+        (setting-enum (set-preference "ir-down" answer) "Down" '("end" "")
+                      (get-preference "ir-down") "8em"))
+      ///
+      (vlist
+        (setting-enum (set-preference "ir-center" answer) "Center" '("return" "S-return" "")
+                      (get-preference "ir-center") "8em")
+        (setting-enum (set-preference "ir-play" answer) "Play" '("F5" "")
+                      (get-preference "ir-play") "8em")
+        (setting-enum (set-preference "ir-pause" answer) "Pause" '("escape" "")
+                      (get-preference "ir-pause") "8em")
+        (setting-enum (set-preference "ir-menu" answer) "Menu" '("." "")
+                      (get-preference "ir-menu") "8em")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Mathematics preferences widget
@@ -216,60 +215,56 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-widget (math-keyboard-preferences-widget)
-  (bold (text "Keyboard"))
-  ======
-  (setting-toggle (set-boolean-preference "use large brackets" answer)
-                  "Use extensible brackets"
-                  (get-boolean-preference "use large brackets")))
+  (setting-group "Keyboard"
+    (setting-toggle (set-boolean-preference "use large brackets" answer)
+                    "Use extensible brackets"
+                    (get-boolean-preference "use large brackets"))))
 
 (tm-widget (math-hints-preferences-widget)
-  (bold (text "Contextual hints"))
-  ======
-  (refreshable "math-pref-context"
-    (setting-toggle (set-boolean-preference "show full context" answer)
-                    "Show full context"
-                    (get-boolean-preference "show full context"))
-    (setting-toggle (set-boolean-preference "show table cells" answer)
-                    "Show table cells"
-                    (get-boolean-preference "show table cells"))
-    (setting-toggle (set-boolean-preference "show focus" answer)
-                    "Show current focus"
-                    (get-boolean-preference "show focus"))
-    (assuming (get-boolean-preference "semantic editing")
-      (setting-toggle (set-boolean-preference "show only semantic focus" answer)
-                      "Only show semantic focus"
-                      (get-boolean-preference "show only semantic focus")))))
+  (setting-group "Contextual hints"
+    (refreshable "math-pref-context"
+      (setting-toggle (set-boolean-preference "show full context" answer)
+                      "Show full context"
+                      (get-boolean-preference "show full context"))
+      (setting-toggle (set-boolean-preference "show table cells" answer)
+                      "Show table cells"
+                      (get-boolean-preference "show table cells"))
+      (setting-toggle (set-boolean-preference "show focus" answer)
+                      "Show current focus"
+                      (get-boolean-preference "show focus"))
+      (assuming (get-boolean-preference "semantic editing")
+        (setting-toggle (set-boolean-preference "show only semantic focus" answer)
+                        "Only show semantic focus"
+                        (get-boolean-preference "show only semantic focus"))))))
 
 (tm-widget (math-semantics-preferences-widget)
-  (bold (text "Semantics"))
-  ======
-  (refreshable "math-pref-semantic-selections"
-    (setting-toggle (and (set-boolean-preference "semantic editing" answer)
-                         (refresh-now "math-pref-semantic-selections")
-                         (refresh-now "math-pref-context"))
-                    "Semantic editing"
-                    (get-boolean-preference "semantic editing"))
-    (assuming (get-boolean-preference "semantic editing")
-      (setting-toggle (set-boolean-preference "semantic selections" answer)
-                      "Semantic selections"
-                      (get-boolean-preference "semantic selections")))
-    (assuming #f
-      (setting-toggle (set-boolean-preference "semantic correctness" answer)
-                      "Semantic correctness"
-                      (get-boolean-preference "semantic correctness")))))
+  (setting-group "Semantics"
+    (refreshable "math-pref-semantic-selections"
+      (setting-toggle (and (set-boolean-preference "semantic editing" answer)
+                           (refresh-now "math-pref-semantic-selections")
+                           (refresh-now "math-pref-context"))
+                      "Semantic editing"
+                      (get-boolean-preference "semantic editing"))
+      (assuming (get-boolean-preference "semantic editing")
+        (setting-toggle (set-boolean-preference "semantic selections" answer)
+                        "Semantic selections"
+                        (get-boolean-preference "semantic selections")))
+      (assuming #f
+        (setting-toggle (set-boolean-preference "semantic correctness" answer)
+                        "Semantic correctness"
+                        (get-boolean-preference "semantic correctness"))))))
 
 (tm-widget (math-correction-preferences-widget)
-  (bold (text "Correction"))
-  ======
-  (setting-toggle (set-boolean-preference "manual remove superfluous invisible" answer)
-                  "Remove superfluous invisible operators"
-                  (get-boolean-preference "manual remove superfluous invisible"))
-  (setting-toggle (set-boolean-preference "manual insert missing invisible" answer)
-                  "Insert missing invisible operators"
-                  (get-boolean-preference "manual insert missing invisible"))
-  (setting-toggle (set-boolean-preference "manual homoglyph correct" answer)
-                  "Homoglyph substitutions"
-                  (get-boolean-preference "manual homoglyph correct")))
+  (setting-group "Correction"
+    (setting-toggle (set-boolean-preference "manual remove superfluous invisible" answer)
+                    "Remove superfluous invisible operators"
+                    (get-boolean-preference "manual remove superfluous invisible"))
+    (setting-toggle (set-boolean-preference "manual insert missing invisible" answer)
+                    "Insert missing invisible operators"
+                    (get-boolean-preference "manual insert missing invisible"))
+    (setting-toggle (set-boolean-preference "manual homoglyph correct" answer)
+                    "Homoglyph substitutions"
+                    (get-boolean-preference "manual homoglyph correct"))))
 
 (tm-widget (math-preferences-widget)
   (dynamic (math-keyboard-preferences-widget))
@@ -314,39 +309,34 @@
     (refresh-now "texmacs to html")))
 
 (tm-widget (html-preferences-widget)
-  ======
-  (bold (text "TeXmacs -> Html"))
-  ===
-  (refreshable "texmacs to html"
-    (setting-toggle (set-boolean-preference "texmacs->html:css" answer)
-                    "Use CSS for more advanced formatting"
-                    (get-boolean-preference "texmacs->html:css"))
-    (setting-toggle (export-formulas-as-mathjax answer)
-                    "Export mathematical formulas as MathJax"
-                    (get-boolean-preference "texmacs->html:mathjax"))
-    (setting-toggle (export-formulas-as-mathml answer)
-                    "Export mathematical formulas as MathML"
-                    (get-boolean-preference "texmacs->html:mathml"))
-    (setting-toggle (export-formulas-as-images answer)
-                    "Export mathematical formulas as images"
-                    (get-boolean-preference "texmacs->html:images"))
-    ===
-    (setting-enum (set-preference "texmacs->html:css-stylesheet" answer)
-                  "CSS stylesheet"
-                  '("---"
-                    "https://www.texmacs.org/css/web-article.css"
-                    "https://www.texmacs.org/css/web-article-dark.css"
-                    "https://www.texmacs.org/css/web-article-colored.css"
-                    "https://www.texmacs.org/css/web-article-dark-colored.css"
-                    "")
-                  (get-preference "texmacs->html:css-stylesheet") "18em"))
-  ====== ======
-  (bold (text "Html -> TeXmacs"))
-  ===
-  (refreshable "html -> texmacs"
-    (setting-toggle (set-boolean-preference "mathml->texmacs:latex-annotations" answer)
-                    "Try to import formulas using LaTeX annotations"
-                    (get-boolean-preference "mathml->texmacs:latex-annotations"))))
+  (setting-group "TeXmacs -> Html"
+    (refreshable "texmacs to html"
+      (setting-toggle (set-boolean-preference "texmacs->html:css" answer)
+                      "Use CSS for more advanced formatting"
+                      (get-boolean-preference "texmacs->html:css"))
+      (setting-toggle (export-formulas-as-mathjax answer)
+                      "Export mathematical formulas as MathJax"
+                      (get-boolean-preference "texmacs->html:mathjax"))
+      (setting-toggle (export-formulas-as-mathml answer)
+                      "Export mathematical formulas as MathML"
+                      (get-boolean-preference "texmacs->html:mathml"))
+      (setting-toggle (export-formulas-as-images answer)
+                      "Export mathematical formulas as images"
+                      (get-boolean-preference "texmacs->html:images"))
+      (setting-enum (set-preference "texmacs->html:css-stylesheet" answer)
+                    "CSS stylesheet"
+                    '("---"
+                      "https://www.texmacs.org/css/web-article.css"
+                      "https://www.texmacs.org/css/web-article-dark.css"
+                      "https://www.texmacs.org/css/web-article-colored.css"
+                      "https://www.texmacs.org/css/web-article-dark-colored.css"
+                      "")
+                    (get-preference "texmacs->html:css-stylesheet") "18em")))
+  (setting-group "Html -> TeXmacs"
+    (refreshable "html -> texmacs"
+      (setting-toggle (set-boolean-preference "mathml->texmacs:latex-annotations" answer)
+                      "Try to import formulas using LaTeX annotations"
+                      (get-boolean-preference "mathml->texmacs:latex-annotations")))))
 
 ;; LaTeX ----------
 
@@ -382,54 +372,47 @@
   (set-boolean-preference "texmacs->latex:transparent-source-tracking" on?))
 
 (tm-widget (latex-preferences-widget)
-  ======
-  (bold (text "LaTeX -> TeXmacs"))
-  ===
-  (setting-toggle (set-boolean-preference "latex->texmacs:fallback-on-pictures" answer)
-                  "Import sophisticated objects as pictures"
-                  (get-boolean-preference "latex->texmacs:fallback-on-pictures"))
-  ====== ======
-  (bold (text "TeXmacs -> LaTeX"))
-  ===
-  (setting-toggle (set-boolean-preference "texmacs->latex:replace-style" answer)
-                  "Replace TeXmacs styles with no LaTeX equivalents"
-                  (get-boolean-preference "texmacs->latex:replace-style"))
-  (setting-toggle (set-boolean-preference "texmacs->latex:expand-macros" answer)
-                  "Expand TeXmacs macros with no LaTeX equivalents"
-                  (get-boolean-preference "texmacs->latex:expand-macros"))
-  (setting-toggle (set-boolean-preference "texmacs->latex:expand-user-macros" answer)
-                  "Expand user-defined macros"
-                  (get-boolean-preference "texmacs->latex:expand-user-macros"))
-  (setting-toggle (set-boolean-preference "texmacs->latex:indirect-bib" answer)
-                  "Export bibliographies as links"
-                  (get-boolean-preference "texmacs->latex:indirect-bib"))
-  (setting-toggle (set-boolean-preference "texmacs->latex:use-macros" answer)
-                  "Allow for macro definitions in preamble"
-                  (get-boolean-preference "texmacs->latex:use-macros"))
-  ===
-  (setting-enum (set-pretty-preference "texmacs->latex:encoding" answer)
-                "Character encoding"
-                '("Ascii" "Cork with catcodes" "Utf-8 with inputenc")
-                (get-pretty-preference "texmacs->latex:encoding")
-                "15em")
-  ====== ======
-  (bold (text "Conservative conversion options"))
-  ===
-  (refreshable "source-tracking"
-    (setting-toggle (set-latex-source-tracking answer)
-                    "Keep track of source code"
-                    (get-latex-source-tracking))
-    (setting-toggle (set-latex-conservative answer)
-                    "Only convert changes with respect to tracked version"
-                    (get-latex-conservative))
-    (assuming (get-latex-source-tracking)
-      (setting-toggle (set-latex-transparent-source-tracking answer)
-                      "Guarantee transparent source tracking"
-                      (get-latex-transparent-source-tracking)))
-    (assuming (get-latex-source-tracking)
-      (setting-toggle (set-boolean-preference "texmacs->latex:attach-tracking-info" answer)
-                      "Store tracking information in LaTeX files"
-                      (get-boolean-preference "texmacs->latex:attach-tracking-info")))))
+  (setting-group "LaTeX -> TeXmacs"
+    (setting-toggle (set-boolean-preference "latex->texmacs:fallback-on-pictures" answer)
+                    "Import sophisticated objects as pictures"
+                    (get-boolean-preference "latex->texmacs:fallback-on-pictures")))
+  (setting-group "TeXmacs -> LaTeX"
+    (setting-toggle (set-boolean-preference "texmacs->latex:replace-style" answer)
+                    "Replace TeXmacs styles with no LaTeX equivalents"
+                    (get-boolean-preference "texmacs->latex:replace-style"))
+    (setting-toggle (set-boolean-preference "texmacs->latex:expand-macros" answer)
+                    "Expand TeXmacs macros with no LaTeX equivalents"
+                    (get-boolean-preference "texmacs->latex:expand-macros"))
+    (setting-toggle (set-boolean-preference "texmacs->latex:expand-user-macros" answer)
+                    "Expand user-defined macros"
+                    (get-boolean-preference "texmacs->latex:expand-user-macros"))
+    (setting-toggle (set-boolean-preference "texmacs->latex:indirect-bib" answer)
+                    "Export bibliographies as links"
+                    (get-boolean-preference "texmacs->latex:indirect-bib"))
+    (setting-toggle (set-boolean-preference "texmacs->latex:use-macros" answer)
+                    "Allow for macro definitions in preamble"
+                    (get-boolean-preference "texmacs->latex:use-macros"))
+    (setting-enum (set-pretty-preference "texmacs->latex:encoding" answer)
+                  "Character encoding"
+                  '("Ascii" "Cork with catcodes" "Utf-8 with inputenc")
+                  (get-pretty-preference "texmacs->latex:encoding")
+                  "15em"))
+  (setting-group "Conservative conversion options"
+    (refreshable "source-tracking"
+      (setting-toggle (set-latex-source-tracking answer)
+                      "Keep track of source code"
+                      (get-latex-source-tracking))
+      (setting-toggle (set-latex-conservative answer)
+                      "Only convert changes with respect to tracked version"
+                      (get-latex-conservative))
+      (assuming (get-latex-source-tracking)
+        (setting-toggle (set-latex-transparent-source-tracking answer)
+                        "Guarantee transparent source tracking"
+                        (get-latex-transparent-source-tracking)))
+      (assuming (get-latex-source-tracking)
+        (setting-toggle (set-boolean-preference "texmacs->latex:attach-tracking-info" answer)
+                        "Store tracking information in LaTeX files"
+                        (get-boolean-preference "texmacs->latex:attach-tracking-info"))))))
 
 ;; BibTeX ----------
 
@@ -446,24 +429,19 @@
   (set-boolean-preference "texmacs->bibtex:conservative" on?))
 
 (tm-widget (bibtex-preferences-widget)
-  ===
-  (bold (text "BibTeX -> TeXmacs"))
-  ===
-  (setting-enum (set-pretty-preference "bibtex command" answer)
-                "BibTeX command"
-                '("bibtex" "biber" "biblatex" "rubibtex" "")
-                (get-pretty-preference "bibtex command")
-                "15em")
-  ===
-  (setting-toggle (set-bibtm-conservative answer)
-                  "Only convert changes when re-importing"
-                  (get-bibtm-conservative))
-  ====== ======
-  (bold (text "TeXmacs -> BibTeX"))
-  ===
-  (setting-toggle (set-tmbib-conservative answer)
-                  "Only convert changes with respect to imported version"
-                  (get-tmbib-conservative)))
+  (setting-group "BibTeX -> TeXmacs"
+    (setting-enum (set-pretty-preference "bibtex command" answer)
+                  "BibTeX command"
+                  '("bibtex" "biber" "biblatex" "rubibtex" "")
+                  (get-pretty-preference "bibtex command")
+                  "15em")
+    (setting-toggle (set-bibtm-conservative answer)
+                    "Only convert changes when re-importing"
+                    (get-bibtm-conservative)))
+  (setting-group "TeXmacs -> BibTeX"
+    (setting-toggle (set-tmbib-conservative answer)
+                    "Only convert changes with respect to imported version"
+                    (get-tmbib-conservative))))
 
 ;; Verbatim ----------
 
@@ -482,30 +460,24 @@
   ("utf-8" "Utf-8"))
 
 (tm-widget (verbatim-preferences-widget)
-  ======
-  (bold (text "TeXmacs -> Verbatim"))
-  ===
-  (setting-toggle (set-boolean-preference "texmacs->verbatim:wrap" answer)
-                  "Use line wrapping for lines which are longer than 80 characters"
-                  (get-boolean-preference "texmacs->verbatim:wrap"))
-  ===
-  (setting-enum (set-pretty-preference "texmacs->verbatim:encoding" answer)
-                "Character encoding"
-                '("Automatic" "Cork" "Iso-8859-1" "Iso-8859-2" "Utf-8")
-                (get-pretty-preference "texmacs->verbatim:encoding")
-                "12em")
-  ====== ======
-  (bold (text "Verbatim -> TeXmacs"))
-  ===
-  (setting-toggle (set-boolean-preference "verbatim->texmacs:wrap" answer)
-                  "Merge lines into paragraphs unless separated by blank lines"
-                  (get-boolean-preference "verbatim->texmacs:wrap"))
-  ===
-  (setting-enum (set-pretty-preference "verbatim->texmacs:encoding" answer)
-                "Character encoding"
-                '("Automatic" "Cork" "Iso-8859-1" "Iso-8859-2" "Utf-8")
-                (get-pretty-preference "verbatim->texmacs:encoding")
-                "12em"))
+  (setting-group "TeXmacs -> Verbatim"
+    (setting-toggle (set-boolean-preference "texmacs->verbatim:wrap" answer)
+                    "Use line wrapping for lines which are longer than 80 characters"
+                    (get-boolean-preference "texmacs->verbatim:wrap"))
+    (setting-enum (set-pretty-preference "texmacs->verbatim:encoding" answer)
+                  "Character encoding"
+                  '("Automatic" "Cork" "Iso-8859-1" "Iso-8859-2" "Utf-8")
+                  (get-pretty-preference "texmacs->verbatim:encoding")
+                  "12em"))
+  (setting-group "Verbatim -> TeXmacs"
+    (setting-toggle (set-boolean-preference "verbatim->texmacs:wrap" answer)
+                    "Merge lines into paragraphs unless separated by blank lines"
+                    (get-boolean-preference "verbatim->texmacs:wrap"))
+    (setting-enum (set-pretty-preference "verbatim->texmacs:encoding" answer)
+                  "Character encoding"
+                  '("Automatic" "Cork" "Iso-8859-1" "Iso-8859-2" "Utf-8")
+                  (get-pretty-preference "verbatim->texmacs:encoding")
+                  "12em")))
 
 ;; Pdf ----------
 (define-preference-names-and-validate "texmacs->pdf:version"
@@ -516,31 +488,29 @@
   ("1.7" "1.7"))
 
 (tm-widget (pdf-preferences-widget)
-  ======
-  (bold (text "TeXmacs -> Pdf/Postscript"))
-  ===
-  (assuming (supports-native-pdf?)
-    (setting-toggle (set-boolean-preference "native pdf" answer)
-                    "Produce Pdf using native export filter"
-                    (get-boolean-preference "native pdf")))
-  (assuming (supports-ghostscript?)
-    (setting-toggle (set-boolean-preference "native postscript" answer)
-                    "Produce Postscript using native export filter"
-                    (get-boolean-preference "native postscript")))
-  (setting-toggle (set-boolean-preference "texmacs->pdf:expand slides" answer)
-                  "Expand beamer slides"
-                  (get-boolean-preference "texmacs->pdf:expand slides"))
-  (assuming (supports-native-pdf?)
-    (setting-toggle (set-boolean-preference "texmacs->pdf:distill inclusion" answer)
-                    "Distill encapsulated Pdf files"
-                    (get-boolean-preference "texmacs->pdf:distill inclusion"))
-    (setting-toggle (set-boolean-preference "texmacs->pdf:check" answer)
-                    "Check exported Pdf files for correctness"
-                    (get-boolean-preference "texmacs->pdf:check"))
-    (setting-enum (set-preference "texmacs->pdf:version" answer)
-                  "Pdf version number"
-                  '("default" "1.4" "1.5" "1.6" "1.7")
-                  (get-preference "texmacs->pdf:version") "12em")))
+  (setting-group "TeXmacs -> Pdf/Postscript"
+    (assuming (supports-native-pdf?)
+      (setting-toggle (set-boolean-preference "native pdf" answer)
+                      "Produce Pdf using native export filter"
+                      (get-boolean-preference "native pdf")))
+    (assuming (supports-ghostscript?)
+      (setting-toggle (set-boolean-preference "native postscript" answer)
+                      "Produce Postscript using native export filter"
+                      (get-boolean-preference "native postscript")))
+    (setting-toggle (set-boolean-preference "texmacs->pdf:expand slides" answer)
+                    "Expand beamer slides"
+                    (get-boolean-preference "texmacs->pdf:expand slides"))
+    (assuming (supports-native-pdf?)
+      (setting-toggle (set-boolean-preference "texmacs->pdf:distill inclusion" answer)
+                      "Distill encapsulated Pdf files"
+                      (get-boolean-preference "texmacs->pdf:distill inclusion"))
+      (setting-toggle (set-boolean-preference "texmacs->pdf:check" answer)
+                      "Check exported Pdf files for correctness"
+                      (get-boolean-preference "texmacs->pdf:check"))
+      (setting-enum (set-preference "texmacs->pdf:version" answer)
+                    "Pdf version number"
+                    '("default" "1.4" "1.5" "1.6" "1.7")
+                    (get-preference "texmacs->pdf:version") "12em"))))
 
 ;; Images ----------
 
@@ -556,37 +526,31 @@
 (define (supports-inkscape?) (url-exists-in-path? "inkscape"))
 
 (tm-widget (image-preferences-widget)
-  ======
-  (bold (text "TeXmacs -> Image"))
-  ===
-  (setting-enum (set-preference "texmacs->image:raster-resolution" answer)
-                "Bitmap export resolution (dpi)"
-                '("1200" "600" "300" "150" "")
-                (get-preference "texmacs->image:raster-resolution")
-                "8em")
-  (setting-enum (set-pretty-preference "texmacs->image:format" answer)
-                "Clipboard image format"
-                (pretty-format-list)
-                (get-pretty-preference "texmacs->image:format")
-                "8em")
-  ====== ======
-  (bold (text "Image -> TeXmacs"))
-  ===
-  (assuming (supports-inkscape?)
-    (setting-toggle (set-boolean-preference "image->texmacs:svg-prefer-inkscape" answer)
-                    "Use Inkscape for conversion from SVG"
-                    (get-boolean-preference "image->texmacs:svg-prefer-inkscape"))))
+  (setting-group "TeXmacs -> Image"
+    (setting-enum (set-preference "texmacs->image:raster-resolution" answer)
+                  "Bitmap export resolution (dpi)"
+                  '("1200" "600" "300" "150" "")
+                  (get-preference "texmacs->image:raster-resolution")
+                  "8em")
+    (setting-enum (set-pretty-preference "texmacs->image:format" answer)
+                  "Clipboard image format"
+                  (pretty-format-list)
+                  (get-pretty-preference "texmacs->image:format")
+                  "8em"))
+  (setting-group "Image -> TeXmacs"
+    (assuming (supports-inkscape?)
+      (setting-toggle (set-boolean-preference "image->texmacs:svg-prefer-inkscape" answer)
+                      "Use Inkscape for conversion from SVG"
+                      (get-boolean-preference "image->texmacs:svg-prefer-inkscape")))))
 
 (tm-widget (ai-preferences-widget)
-  ======
-  (bold (text "AI corrections"))
-  ===
-  (setting-toggle (set-boolean-preference "ai-correct show differences" answer)
-                  "Show differences after text corrections"
-                  (get-boolean-preference "ai-correct show differences"))
-  (setting-toggle (set-boolean-preference "ai-correct explain" answer)
-                  "Explain text corrections"
-                  (get-boolean-preference "ai-correct explain")))
+  (setting-group "AI corrections"
+    (setting-toggle (set-boolean-preference "ai-correct show differences" answer)
+                    "Show differences after text corrections"
+                    (get-boolean-preference "ai-correct show differences"))
+    (setting-toggle (set-boolean-preference "ai-correct explain" answer)
+                    "Explain text corrections"
+                    (get-boolean-preference "ai-correct explain"))))
 
 ;; All converters ----------
 
@@ -691,37 +655,38 @@
       )))
 
 (tm-widget (misc-preferences-widget)
-  (setting-enum (set-pretty-preference "autosave" answer)
-                "Automatically save"
-                '("5 sec" "30 sec" "120 sec" "300 sec" "Disable")
-                (get-pretty-preference "autosave")
-                "12em")
-  (setting-enum (set-pretty-preference "security" answer)
-                "Security"
-                '("Accept no scripts" "Prompt on scripts" "Accept all scripts")
-                (get-pretty-preference "security")
-                "12em")
-  (setting-enum (set-pretty-preference "scripting language" answer)
-                "Scripting language"
-                (scripts-preferences-list)
-                (get-pretty-preference "scripting language")
-                "12em")
-  (setting-enum (set-pretty-preference "document update times" answer)
-                "Document updates run"
-                '("Once" "Twice" "Three times")
-                (get-pretty-preference "document update times") 
-                "12em")
-  (assuming (updater-supported?)
-    (setting-enum (set-pretty-preference "updater:interval" answer)
-                  "Check for automatic updates"
-                  (automatic-checks-choices)
-                  (get-pretty-preference "updater:interval")
-                  "12em"))
-  (assuming (updater-supported?)
-    (item (text "Last check:") (text (last-check-string)))))
+  (setting-group "Other"
+    (setting-enum (set-pretty-preference "autosave" answer)
+                  "Automatically save"
+                  '("5 sec" "30 sec" "120 sec" "300 sec" "Disable")
+                  (get-pretty-preference "autosave")
+                  "12em")
+    (setting-enum (set-pretty-preference "security" answer)
+                  "Security"
+                  '("Accept no scripts" "Prompt on scripts" "Accept all scripts")
+                  (get-pretty-preference "security")
+                  "12em")
+    (setting-enum (set-pretty-preference "scripting language" answer)
+                  "Scripting language"
+                  (scripts-preferences-list)
+                  (get-pretty-preference "scripting language")
+                  "12em")
+    (setting-enum (set-pretty-preference "document update times" answer)
+                  "Document updates run"
+                  '("Once" "Twice" "Three times")
+                  (get-pretty-preference "document update times") 
+                  "12em")
+    (assuming (updater-supported?)
+      (setting-enum (set-pretty-preference "updater:interval" answer)
+                    "Check for automatic updates"
+                    (automatic-checks-choices)
+                    (get-pretty-preference "updater:interval")
+                    "12em"))
+    (assuming (updater-supported?)
+      (item (text "Last check:") (text (last-check-string))))))
 
 (tm-widget (experimental-preferences-widget)
-    (vlist
+    (setting-group "Experimental features"
       (setting-toggle (set-boolean-preference "experimental encryption" answer)
                       "Encryption" (get-boolean-preference "experimental encryption"))
       (setting-toggle (set-boolean-preference "fast environments" answer)

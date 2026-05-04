@@ -664,6 +664,7 @@
 "widget-menu-button"
 "widget-toggle"
 "widget-setting-toggle"
+"widget-setting-group"
 "widget-balloon"
 "widget-empty"
 "widget-text"

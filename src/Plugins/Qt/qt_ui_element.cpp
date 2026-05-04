@@ -256,6 +256,7 @@ qt_ui_element_rep::get_payload (qt_widget qtw, types check_type) {
     case responsive_icon_tabs_widget: case resize_widget: case refresh_widget: 
     case refreshable_widget:  case balloon_widget: case glue_widget: 
     case division_widget:   case setting_toggle_widget: case setting_enum_widget:
+    case setting_group_widget:
     {
       qt_ui_element_rep* rep = static_cast<qt_ui_element_rep*> (qtw.rep);
       return rep->load;
@@ -795,6 +796,7 @@ qt_ui_element_rep::as_qlayoutitem (QWidget* parent_widget) {
     case division_widget:
     case setting_toggle_widget:
     case setting_enum_widget:
+    case setting_group_widget:
     {
       QWidgetItem* wi = new QWidgetItem (this->as_qwidget(parent_widget));
       return wi;
@@ -1194,6 +1196,26 @@ qt_ui_element_rep::as_qwidget (QWidget* parent_widget) {
       QObject::connect (w, &QTMSettingSelect::currentIndexChanged, c, &QTMCommand::apply);
 #endif
       qwid = w;
+    }
+      break;
+
+    case setting_group_widget:
+    {
+      typedef triple<string, array<widget>, int> T;
+      T x = open_box<T>(load);
+
+      QTMSettingGroup* box = new QTMSettingGroup (parent_widget);
+      box->setTitleText (to_qstring (x.x1));
+
+      array<widget> kids = x.x2;
+      for (int i = 0; i < N(kids); ++i) {
+        if (is_nil (kids[i])) break;
+        QLayoutItem* li = concrete (kids[i])->as_qlayoutitem (box->contentWidget());
+        if (li) box->addItem (li);
+      }
+
+      qt_apply_tm_style (box, x.x3);
+      qwid = box;
     }
       break;
       

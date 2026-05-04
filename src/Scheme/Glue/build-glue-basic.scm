@@ -722,6 +722,7 @@
   (widget-menu-button menu_button (widget widget command string string int))
   (widget-toggle toggle_widget (widget command bool int))
   (widget-setting-toggle setting_toggle_widget (widget command string bool int))
+  (widget-setting-group setting_group_widget (widget string array_widget int))
   (widget-balloon balloon_widget (widget widget widget))
   (widget-empty empty_widget (widget))
   (widget-text text_widget (widget string int int bool))

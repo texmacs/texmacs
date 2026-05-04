@@ -932,3 +932,44 @@ QTMSettingCheckbox, QTMSettingSelect {
     border-bottom: 1px solid #505050;
     margin: 1px;
 }
+
+QTMSettingGroup {
+    background: transparent;
+    qproperty-outerMargin: 10;
+}
+
+QTMSettingGroup QWidget#setting-group-wrap {
+    background: #2F2F2F;
+    border: 1px solid #505050;
+    border-radius: 10px;
+    padding: 8px;
+}
+
+QTMSettingGroup QLabel#setting-group-title {
+    background: transparent;
+    color: #F0F0F0;
+    font-weight: bold;
+    font-size: 15px;
+    padding: 2px 6px 8px 6px;
+    border-bottom: 1px solid #505050;
+    margin-bottom: 6px;
+}
+
+QTMSettingGroup QTMRefreshableWidget {
+     background: transparent;
+}
+
+QTMSettingGroup QWidget#setting-group-refreshable-root {
+    background: transparent;
+}
+
+QTMSettingGroup QTMSettingCheckbox,
+QTMSettingGroup QTMSettingSelect {
+    background: transparent;
+    border-bottom: 1px solid #4A4A4A;
+    margin: 0px;
+}
+
+QTMSettingGroup QTMSettingSelect QComboBox {
+    background: #585858;
+}
