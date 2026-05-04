@@ -26,8 +26,9 @@ public:
   : delay_ms(_delay_ms), is_first_call(true) {
     timer = new QTimer();
     timer->setSingleShot(true);
-    QObject::connect(timer, &QTimer::timeout, [instance, method]() { 
-      (instance->*method)();
+    QPointer<T> safe_instance (instance);
+    QObject::connect(timer, &QTimer::timeout, [safe_instance, method]() {
+      if (safe_instance) (safe_instance.data()->*method)();
     });
   }
 
