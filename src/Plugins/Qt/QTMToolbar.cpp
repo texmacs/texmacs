@@ -32,11 +32,6 @@
 
 QTMToolbar::QTMToolbar (const QString& title, QSize iconSize, QWidget* parent)
   : QToolBar (title, parent)
-  , mScrollArea(nullptr)
-  , mLayout(nullptr)
-  , mLeftBtn(nullptr)
-  , mRightBtn(nullptr)
-  , mCurrentMenu(nullptr)
 {  
 #if QT_VERSION >= 0x050000
   // strong focus
@@ -113,7 +108,7 @@ void QTMToolbar::replaceActions (QList<QAction*>* src) {
   setUpdatesEnabled (false);
 
   if (tmapp()->useNewToolbar()) {
-    while (mLayout->count() > 0) {
+    while (mLayout && mLayout->count() > 0) {
       QWidget* w = mLayout->itemAt(0)->widget();
       mLayout->removeWidget(w);
       delete w;
@@ -140,7 +135,7 @@ void QTMToolbar::replaceButtons (QList<QAction*>* src) {
     FAILED ("replaceButtons expects valid objects");
   setUpdatesEnabled (false);
   if (tmapp()->useNewToolbar()) {
-    while (mLayout->count() > 0) {
+    while (mLayout && mLayout->count() > 0) {
       QWidget* w = mLayout->itemAt(0)->widget();
       mLayout->removeWidget(w);
       delete w;
@@ -167,6 +162,9 @@ void QTMToolbar::addSeparator () {
     QToolBar::addSeparator();
     return;
   }
+
+  if (!mLayout) return;
+
   QWidget* spacer = new QWidget (this);
   spacer->setFixedWidth (10);
   mLayout->addWidget (spacer);
@@ -187,6 +185,7 @@ void QTMToolbar::addSeparator () {
 
 void QTMToolbar::addSmallSeparator () {
 #if QT_VERSION >= 0x050000
+  if (!mLayout) return;
   QWidget* spacer = new QWidget (this);
   spacer->setFixedWidth (3);
   mLayout->addWidget (spacer);
@@ -195,6 +194,7 @@ void QTMToolbar::addSmallSeparator () {
 
 void QTMToolbar::addRightSpacer () {
 #if QT_VERSION >= 0x050000
+  if (!mLayout) return;
   // a a spacer that will push the buttons to the left
   QWidget* spacer = new QWidget (this);
   spacer->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Preferred);
@@ -275,7 +275,7 @@ void QTMToolbar::addAction (QAction* action) {
   }
   
   // add the button to the toolbar, and on Android to the scrollable layout
-  if (tmapp()->useNewToolbar()) {
+  if (tmapp()->useNewToolbar() && mLayout) {
     actionWidget->setSizePolicy (QSizePolicy::Preferred, QSizePolicy::Expanding);
     mLayout->addWidget (actionWidget);
     updateNavButtons();
@@ -289,7 +289,7 @@ void QTMToolbar::addAction (QAction* action) {
 
 void QTMToolbar::removeAction (QAction* action) {
 #if QT_VERSION >= 0x050000
-  if (!tmapp()->useNewToolbar()) {
+  if (!tmapp()->useNewToolbar() || !mLayout) {
     QToolBar::removeAction(action);
     return;
   }
@@ -309,7 +309,7 @@ void QTMToolbar::removeAction (QAction* action) {
 
 void QTMToolbar::clear () {
 #if QT_VERSION >= 0x050000
-  if (!tmapp()->useNewToolbar()) {
+  if (!tmapp()->useNewToolbar() || !mLayout) {
     QToolBar::clear();
     return;
   }
@@ -346,6 +346,7 @@ void QTMToolbar::scrollBy (int dx) {
 
 void QTMToolbar::setRightActVisible (bool v) {
 #if QT_VERSION >= 0x050000
+  if (!mRightAct || !mRightBtn) return;
   if (v) {
     mRightAct->setEnabled(true);
     //mRightBtn->setText (QString::fromUtf8(">"));
@@ -360,6 +361,7 @@ void QTMToolbar::setRightActVisible (bool v) {
 
 void QTMToolbar::setLeftActVisible (bool v) {
 #if QT_VERSION >= 0x050000
+  if (!mLeftAct || !mLeftBtn) return;
   if (v) {
     mLeftAct->setEnabled(true);
     //mLeftBtn->setText (QString::fromUtf8("<"));
@@ -406,7 +408,7 @@ void QTMToolbar::updateNavButtons () {
 bool QTMToolbar::eventFilter (QObject* watched, QEvent* event) {
 #if QT_VERSION >= 0x050000
   if (!tmapp()->useNewToolbar()) return false;
-  if (!mScrollArea) return false;
+  if (!mScrollArea || !mLayout) return false;
 
 #ifndef OS_ANDROID
   QMenu *menu = qobject_cast<QMenu*> (watched);
@@ -511,6 +513,7 @@ QList<QToolButton*> QTMToolbar::getAllButtonsFromAllToolbars () const {
   if (!tmapp()->useNewToolbar()) return buttons;
   QList<QTMToolbar*> toolbars = getAllToolbarsFromMainWindow();
   for (QTMToolbar* tb : toolbars) {
+    if (!tb->mLayout) continue;
     for (int i = 0; i < tb->mLayout->count(); i++) {
       QToolButton* button = qobject_cast<QToolButton*>(tb->mLayout->itemAt(i)->widget());
       if (button) {
