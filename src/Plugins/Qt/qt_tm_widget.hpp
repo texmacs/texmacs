@@ -26,6 +26,7 @@
 #include <QMainWindow>
 #include <QStackedWidget>
 #include <QLayout>
+#include <QPointer>
 
 #if QT_VERSION >= 0x050000
 #define DISABLE_QTMTOOLBAR 0
@@ -58,34 +59,34 @@ class qt_tm_widget_rep: public qt_window_widget_rep {
    extra_tools_visibility   = 512
    } visibility_t;
    */
-  QLabel*       rightLabel;
-  QLabel*        leftLabel;
+  QPointer<QLabel>          rightLabel;
+  QPointer<QLabel>           leftLabel;
 #if !DISABLE_QTMTOOLBAR
-  QTMToolbar*    menuToolBar;
-  QTMToolbar*    mainToolBar;
-  QTMToolbar*    modeToolBar;
-  QTMToolbar*   focusToolBar;
-  QTMToolbar*    userToolBar;
+  QPointer<QTMToolbar>     menuToolBar;
+  QPointer<QTMToolbar>     mainToolBar;
+  QPointer<QTMToolbar>     modeToolBar;
+  QPointer<QTMToolbar>    focusToolBar;
+  QPointer<QTMToolbar>     userToolBar;
 #else
-  QToolBar*      mainToolBar;
-  QToolBar*      modeToolBar;
-  QToolBar*     focusToolBar;
-  QToolBar*      userToolBar;
+  QPointer<QToolBar>       mainToolBar;
+  QPointer<QToolBar>       modeToolBar;
+  QPointer<QToolBar>      focusToolBar;
+  QPointer<QToolBar>       userToolBar;
 #endif
-  QDockWidget*   sideTools;
-  QDockWidget*   leftTools;
-  QDockWidget* bottomTools;
-  QDockWidget*  extraTools;
+  QPointer<QDockWidget>      sideTools;
+  QPointer<QDockWidget>      leftTools;
+  QPointer<QDockWidget>    bottomTools;
+  QPointer<QDockWidget>     extraTools;
 
 #ifdef Q_OS_MAC
-  QToolBar*      dumbToolBar;
-  QAction* modeToolBarAction;
-  QAction* mainToolBarAction;
-  QWidget*       rulerWidget;
+  QPointer<QToolBar>       dumbToolBar;
+  QPointer<QAction>  modeToolBarAction;
+  QPointer<QAction>  mainToolBarAction;
+  QPointer<QWidget>        rulerWidget;
 #endif
 
   QTMInteractiveInputHelper helper;
-  QTMInteractivePrompt*     prompt;
+  QPointer<QTMInteractivePrompt> prompt;
   qt_widget int_prompt;
   qt_widget int_input;
   
