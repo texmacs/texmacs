@@ -280,6 +280,8 @@ void QTMResponsiveTabWidget::updateNestingVisuals() {
 void QTMResponsiveTabWidget::addTab(QWidget* widget, const QString& title, 
                                     const QIcon& icon) {
 
+  if (!widget) return;
+
                                         bool containsResponsive = false;
   QList<QWidget*> allChildren = widget->findChildren<QWidget*>();
   for (QWidget* child : allChildren) {
@@ -314,41 +316,51 @@ void QTMResponsiveTabWidget::addTab(QWidget* widget, const QString& title,
   if (mCurrentMode == 3) {
     int cols = (width() > 1700) ? 3 : 2;
     int i = mPages.size() - 1;
-    mGridLayout->addWidget(widget, i / cols, i % cols);
-    widget->show();
+    if (mGridLayout) {
+      mGridLayout->addWidget(widget, i / cols, i % cols);
+      widget->show();
+    }
   } else {
-    mContentStack->addWidget(widget);
+    if (mContentStack) {
+        mContentStack->addWidget(widget);
+    }
   }
 
-  mTabBar->addCustomTab(icon, title);
-  QListWidgetItem* item = new QListWidgetItem(icon, title);
-  mListWidget->addItem(item);
+  if (mTabBar) mTabBar->addCustomTab(icon, title);
+  if (mListWidget) {
+      QListWidgetItem* item = new QListWidgetItem(icon, title);
+      mListWidget->addItem(item);
+  }
 }
 
-int QTMResponsiveTabWidget::count() const { return mTabBar->count(); }
+int QTMResponsiveTabWidget::count() const { 
+    return mTabBar ? mTabBar->count() : 0; 
+}
 
 void QTMResponsiveTabWidget::setCurrentIndex(int index) {
-  if (index >= 0 && index < count()) mTabBar->setCurrentIndex(index);
+  if (mTabBar && index >= 0 && index < count()) {
+      mTabBar->setCurrentIndex(index);
+  }
 }
 
 int QTMResponsiveTabWidget::currentIndex() const { 
-  return mTabBar->currentIndex(); 
+  return mTabBar ? mTabBar->currentIndex() : -1; 
 }
 
 void QTMResponsiveTabWidget::setAddButtonVisible(bool visible) { 
-  mAddTabBtn->setVisible(visible); 
+  if (mAddTabBtn) mAddTabBtn->setVisible(visible); 
 }
 
 void QTMResponsiveTabWidget::setDraggable(bool draggable) { 
-  mTopBar->setDraggable(draggable); 
+  if (mTopBar) mTopBar->setDraggable(draggable); 
 }
 
 void QTMResponsiveTabWidget::setWindowFusion(bool fusion) {
   mWindowFusion = fusion;
-  mMinBtn->setVisible(fusion);
-  mMaxBtn->setVisible(fusion);
-  mCloseBtn->setVisible(fusion);
-  mSizeGrip->setVisible(fusion);
+  if (mMinBtn) mMinBtn->setVisible(fusion);
+  if (mMaxBtn) mMaxBtn->setVisible(fusion);
+  if (mCloseBtn) mCloseBtn->setVisible(fusion);
+  if (mSizeGrip) mSizeGrip->setVisible(fusion);
 
   if (fusion) {
     window()->setWindowFlags(window()->windowFlags() | 
@@ -362,73 +374,85 @@ void QTMResponsiveTabWidget::setWindowFusion(bool fusion) {
 void QTMResponsiveTabWidget::applyMode(int mode) {
   mCurrentMode = mode;
   
-  mTabBar->hide();
-  mListWidget->hide();
-  mContentStack->hide();
-  mGridContainer->hide();
+  if (mTabBar) mTabBar->hide();
+  if (mListWidget) mListWidget->hide();
+  if (mContentStack) mContentStack->hide();
+  if (mGridContainer) mGridContainer->hide();
 
-  mTopLayout->removeWidget(mTabBar);
-  mDynamicLayout->removeWidget(mTabBar);
+  if (mTopLayout && mTabBar) mTopLayout->removeWidget(mTabBar);
+  if (mDynamicLayout && mTabBar) mDynamicLayout->removeWidget(mTabBar);
 
   if (mode == 3) {
     int cols = (width() > 1700) ? 3 : 2;
     for (int i = 0; i < mPages.size(); ++i) {
-      QWidget* w = mPages[i];
-      mContentStack->removeWidget(w);
-      mGridLayout->removeWidget(w);
-      mGridLayout->addWidget(w, i / cols, i % cols);
-      w->show();
+      if (QWidget* w = mPages[i]) {
+        if (mContentStack) mContentStack->removeWidget(w);
+        if (mGridLayout) {
+            mGridLayout->removeWidget(w);
+            mGridLayout->addWidget(w, i / cols, i % cols);
+        }
+        w->show();
+      }
     }
   } else {
     for (int i = 0; i < mPages.size(); ++i) {
-      QWidget* w = mPages[i];
-      mGridLayout->removeWidget(w);
-      mContentStack->removeWidget(w);
-      mContentStack->insertWidget(i, w);
+      if (QWidget* w = mPages[i]) {
+        if (mGridLayout) mGridLayout->removeWidget(w);
+        if (mContentStack) {
+            mContentStack->removeWidget(w);
+            mContentStack->insertWidget(i, w);
+        }
+      }
     }
-    if (!mPages.isEmpty()) {
+    if (!mPages.isEmpty() && mContentStack && mTabBar) {
       mContentStack->setCurrentIndex(mTabBar->currentIndex());
     }
   }
 
   if (mode == 3) {
-    mGridContainer->show();
+    if (mGridContainer) mGridContainer->show();
     mMobileViewingContent = true;
   }
   else if (mode == 0) {
-    mTopLayout->insertWidget(2, mTabBar);
-    mDynamicLayout->setDirection(QBoxLayout::TopToBottom);
-    mTabBar->setShape(QTabBar::RoundedNorth);
-    mTabBar->show();
-    mContentStack->show();
+    if (mTopLayout && mTabBar) mTopLayout->insertWidget(2, mTabBar);
+    if (mDynamicLayout) mDynamicLayout->setDirection(QBoxLayout::TopToBottom);
+    if (mTabBar) {
+        mTabBar->setShape(QTabBar::RoundedNorth);
+        mTabBar->show();
+    }
+    if (mContentStack) mContentStack->show();
     mMobileViewingContent = true;
   }
   else if (mode == 1) {
-    mDynamicLayout->insertWidget(0, mTabBar, 0, Qt::AlignTop); 
-    mDynamicLayout->setDirection(QBoxLayout::LeftToRight);
-    mTabBar->setShape(QTabBar::RoundedWest);
-    mTabBar->show();
-    mContentStack->show();
+    if (mDynamicLayout && mTabBar) {
+        mDynamicLayout->insertWidget(0, mTabBar, 0, Qt::AlignTop); 
+        mDynamicLayout->setDirection(QBoxLayout::LeftToRight);
+    }
+    if (mTabBar) {
+        mTabBar->setShape(QTabBar::RoundedWest);
+        mTabBar->show();
+    }
+    if (mContentStack) mContentStack->show();
     mMobileViewingContent = true;
   }
   else if (mode == 2) {
-    mDynamicLayout->setDirection(QBoxLayout::TopToBottom);
+    if (mDynamicLayout) mDynamicLayout->setDirection(QBoxLayout::TopToBottom);
     if (mMobileViewingContent) {
-      mContentStack->show();
+      if (mContentStack) mContentStack->show();
     } else {
-      mListWidget->show();
+      if (mListWidget) mListWidget->show();
     }
   }
   
-  mTabBar->updateGeometry();
+  if (mTabBar) mTabBar->updateGeometry();
   reevaluateBackButton();
 }
 
 void QTMResponsiveTabWidget::onTabSelected(int index) {
   if (index < 0 || mIsUpdating) return;
   mIsUpdating = true;
-  mContentStack->setCurrentIndex(index);
-  mListWidget->setCurrentRow(index);
+  if (mContentStack) mContentStack->setCurrentIndex(index);
+  if (mListWidget) mListWidget->setCurrentRow(index);
   mIsUpdating = false;
   reevaluateBackButton();
 }
@@ -436,8 +460,8 @@ void QTMResponsiveTabWidget::onTabSelected(int index) {
 void QTMResponsiveTabWidget::onListSelected(int index) {
   if (index < 0 || mIsUpdating) return;
   mIsUpdating = true;
-  mContentStack->setCurrentIndex(index);
-  mTabBar->setCurrentIndex(index);
+  if (mContentStack) mContentStack->setCurrentIndex(index);
+  if (mTabBar) mTabBar->setCurrentIndex(index);
   mIsUpdating = false;
 
   if (mCurrentMode == 2) {
@@ -458,15 +482,23 @@ void QTMResponsiveTabWidget::onTabMoved(int from, int to) {
 
   mPages.move(from, to);
 
-  QWidget* widget = mContentStack->widget(from);
-  mContentStack->removeWidget(widget);
-  mContentStack->insertWidget(to, widget);
+  if (mContentStack) {
+      QWidget* widget = mContentStack->widget(from);
+      if (widget) {
+          mContentStack->removeWidget(widget);
+          mContentStack->insertWidget(to, widget);
+      }
+  }
 
-  QListWidgetItem* item = mListWidget->takeItem(from);
-  mListWidget->insertItem(to, item);
+  if (mListWidget) {
+      QListWidgetItem* item = mListWidget->takeItem(from);
+      if (item) {
+          mListWidget->insertItem(to, item);
+      }
+  }
 
-  mContentStack->setCurrentIndex(mTabBar->currentIndex());
-  mListWidget->setCurrentRow(mTabBar->currentIndex());
+  if (mContentStack && mTabBar) mContentStack->setCurrentIndex(mTabBar->currentIndex());
+  if (mListWidget && mTabBar) mListWidget->setCurrentRow(mTabBar->currentIndex());
   mIsUpdating = false;
 }
 
@@ -482,8 +514,8 @@ QTMResponsiveTabWidget* QTMResponsiveTabWidget::getParentTabWidget() const {
 }
 
 bool QTMResponsiveTabWidget::needsBackButton() const {
-  if (QWidget* currentContent = mContentStack->currentWidget()) {
-    if (!mContentStack->isHidden()) {
+  if (mContentStack && !mContentStack->isHidden()) {
+    if (QWidget* currentContent = mContentStack->currentWidget()) {
       QList<QTMResponsiveTabWidget*> childTabs = 
           currentContent->findChildren<QTMResponsiveTabWidget*>();
       if (QTMResponsiveTabWidget* directChild = 
@@ -495,16 +527,19 @@ bool QTMResponsiveTabWidget::needsBackButton() const {
       }
     }
   }
+  
   if (mCurrentMode == 3) {
-    for (QWidget* w : mPages) {
-      QList<QTMResponsiveTabWidget*> childTabs = 
-          w->findChildren<QTMResponsiveTabWidget*>();
-      if (QTMResponsiveTabWidget* directChild = 
-              qobject_cast<QTMResponsiveTabWidget*>(w)) {
-        if (!childTabs.contains(directChild)) childTabs.append(directChild);
-      }
-      for (QTMResponsiveTabWidget* child : childTabs) {
-        if (child->needsBackButton()) return true;
+    for (const QPointer<QWidget>& ptr : mPages) {
+      if (QWidget* w = ptr) {
+        QList<QTMResponsiveTabWidget*> childTabs = 
+            w->findChildren<QTMResponsiveTabWidget*>();
+        if (QTMResponsiveTabWidget* directChild = 
+                qobject_cast<QTMResponsiveTabWidget*>(w)) {
+          if (!childTabs.contains(directChild)) childTabs.append(directChild);
+        }
+        for (QTMResponsiveTabWidget* child : childTabs) {
+          if (child->needsBackButton()) return true;
+        }
       }
     }
   }
@@ -515,16 +550,18 @@ bool QTMResponsiveTabWidget::needsBackButton() const {
 void QTMResponsiveTabWidget::reevaluateBackButton() {
   QTMResponsiveTabWidget* parentTab = getParentTabWidget();
   if (parentTab) {
-    mBackBtn->hide();
+    if (mBackBtn) mBackBtn->hide();
     parentTab->reevaluateBackButton();
   } else {
-    if (needsBackButton()) mBackBtn->show();
-    else mBackBtn->hide();
+    if (mBackBtn) {
+        if (needsBackButton()) mBackBtn->show();
+        else mBackBtn->hide();
+    }
   }
 }
 
 bool QTMResponsiveTabWidget::goBack() {
-  if (!mContentStack->isHidden()) {
+  if (mContentStack && !mContentStack->isHidden()) {
     if (QWidget* currentContent = mContentStack->currentWidget()) {
       QList<QTMResponsiveTabWidget*> childTabs = 
           currentContent->findChildren<QTMResponsiveTabWidget*>();
@@ -540,18 +577,21 @@ bool QTMResponsiveTabWidget::goBack() {
       }
     }
   }
+  
   if (mCurrentMode == 3) {
-    for (QWidget* w : mPages) {
-      QList<QTMResponsiveTabWidget*> childTabs = 
-          w->findChildren<QTMResponsiveTabWidget*>();
-      if (QTMResponsiveTabWidget* directChild = 
-              qobject_cast<QTMResponsiveTabWidget*>(w)) {
-        if (!childTabs.contains(directChild)) childTabs.append(directChild);
-      }
-      for (QTMResponsiveTabWidget* child : childTabs) {
-        if (child->goBack()) {
-          reevaluateBackButton();
-          return true;
+    for (const QPointer<QWidget>& ptr : mPages) {
+      if (QWidget* w = ptr) {
+        QList<QTMResponsiveTabWidget*> childTabs = 
+            w->findChildren<QTMResponsiveTabWidget*>();
+        if (QTMResponsiveTabWidget* directChild = 
+                qobject_cast<QTMResponsiveTabWidget*>(w)) {
+          if (!childTabs.contains(directChild)) childTabs.append(directChild);
+        }
+        for (QTMResponsiveTabWidget* child : childTabs) {
+          if (child->goBack()) {
+            reevaluateBackButton();
+            return true;
+          }
         }
       }
     }
@@ -559,8 +599,10 @@ bool QTMResponsiveTabWidget::goBack() {
 
   if (mCurrentMode == 2 && mMobileViewingContent) {
     mMobileViewingContent = false;
-    mListWidget->clearSelection();
-    mListWidget->setCurrentRow(-1);
+    if (mListWidget) {
+        mListWidget->clearSelection();
+        mListWidget->setCurrentRow(-1);
+    }
     applyMode(2);
     return true;
   }

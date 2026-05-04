@@ -2,7 +2,7 @@
 * MODULE     : QTMResponsiveTabWidget.hpp
 * DESCRIPTION: A responsive tab widget that can adapts to different 
                screen sizes and orientations.
-* COPYRIGHT  : (C) 2025 Liza Belos
+* COPYRIGHT  : (C) 2026 Liza Belos
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -17,6 +17,7 @@
 #include <QFrame>
 #include <QList>
 #include <QIcon>
+#include <QPointer>
 
 class QStackedWidget;
 class QListWidget;
@@ -94,23 +95,23 @@ private:
   bool needsBackButton() const;
   bool goBack();
 
-  QPushButton* mBackBtn;
-  QPushButton* mAddTabBtn;
-  QPushButton* mMinBtn;
-  QPushButton* mMaxBtn;
-  QPushButton* mCloseBtn;
+  QPointer<QPushButton> mBackBtn;
+  QPointer<QPushButton> mAddTabBtn;
+  QPointer<QPushButton> mMinBtn;
+  QPointer<QPushButton> mMaxBtn;
+  QPointer<QPushButton> mCloseBtn;
 
-  QTMDraggableTopBar* mTopBar;
-  QHBoxLayout* mTopLayout;
-  QTMHorizontalTextTabBar* mTabBar;
-  QListWidget* mListWidget;
-  QStackedWidget* mContentStack;
-  QBoxLayout* mDynamicLayout;
-  QSizeGrip* mSizeGrip;
+  QPointer<QTMDraggableTopBar> mTopBar;
+  QPointer<QHBoxLayout> mTopLayout;
+  QPointer<QTMHorizontalTextTabBar> mTabBar;
+  QPointer<QListWidget> mListWidget;
+  QPointer<QStackedWidget> mContentStack;
+  QPointer<QBoxLayout> mDynamicLayout;
+  QPointer<QSizeGrip> mSizeGrip;
 
-  QWidget* mGridContainer;
-  QGridLayout* mGridLayout;
-  QList<QWidget*> mPages;
+  QPointer<QWidget> mGridContainer;
+  QPointer<QGridLayout> mGridLayout;
+  QList<QPointer<QWidget>> mPages;
   int mCurrentGridCols;
 
   bool mMobileViewingContent;
