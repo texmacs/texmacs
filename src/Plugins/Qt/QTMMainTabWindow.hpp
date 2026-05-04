@@ -14,6 +14,7 @@
 #include "config.h"
 
 #include <QTabWidget>
+#include <QPointer>
 
 /**
  * @brief A tab window that allows moving tabs between windows.
@@ -75,7 +76,7 @@ public:
    * @return A pointer to the top tab window, or nullptr if no tab windows are open.
    */
   static QTMMainTabWindow *topTabWindow() { 
-    return gTopTabWindow; 
+    return gTopTabWindow.data(); // todo : should we return a QPointer ? 
   }
 
 protected:
@@ -159,7 +160,7 @@ private:
    * 
    * Tracks the most recently activated tab window.
    */
-  static QTMMainTabWindow *gTopTabWindow;
+  static QPointer<QTMMainTabWindow> gTopTabWindow;
   QPoint dragPosition;
   bool isDraggingFramelessWindow = false;
    

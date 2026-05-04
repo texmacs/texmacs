@@ -15,18 +15,17 @@
 #include <QMouseEvent>
 #include <QTabBar>
 #include <QApplication>
-#include <QMouseEvent>
 #include <QPushButton>
 #include <QHBoxLayout>
 
-QTMMainTabWindow *QTMMainTabWindow::gTopTabWindow = nullptr;
+QPointer<QTMMainTabWindow> QTMMainTabWindow::gTopTabWindow = nullptr;
 
 bool isMovingTab = false;
 bool isMovingWindow = false;
 int movingTabIndex = -1;
 QPoint movingTabStartPos;
-QTMMainTabWindow *newTabWindow = nullptr;
-QTMMainTabWindow *targetTabWindow = nullptr;
+QPointer<QTMMainTabWindow> newTabWindow = nullptr;
+QPointer<QTMMainTabWindow> targetTabWindow = nullptr;
 
 QTMMainTabWindow::QTMMainTabWindow() {
   setTabsClosable(true);
@@ -299,7 +298,10 @@ bool QTMMainTabWindow::eventFilterTabBar(QObject *obj, QEvent *event) {
     int globalY = mouseEvent->globalPosition().toPoint().y();
     globalX -= newTabWindow->width() / 2;
     globalY -= 10;
-    newTabWindow->move(globalX, globalY);
+
+    if (newTabWindow) {
+      newTabWindow->move(globalX, globalY);
+    }
     
     /*
       Check if the mouse is over another tab bar.
