@@ -14,6 +14,7 @@
 #include <stdint.h>
 #include <QApplication>
 #include <QObject>
+#include <QPointer>
 #include <QThread>
 #include <QSocketNotifier>
 
@@ -106,7 +107,8 @@ private:
   tm_contact contact;
   string input_buffer;
   string output_buffer;
-  QSocketNotifier *read_notifier_ptr, *write_notifier_ptr;
+  QPointer<QSocketNotifier> read_notifier_ptr;
+  QPointer<QSocketNotifier> write_notifier_ptr;
   SOCKADDR_STORAGE address;
   inline bool used_by_server () { return port == 0; }
 
@@ -139,7 +141,7 @@ public slots:
 private:
   int socket_id;
   hashset<pointer> connections;
-  QSocketNotifier* notifier_ptr;
+  QPointer<QSocketNotifier> notifier_ptr;
   hashmap<int,pointer> socket_ptr_from_id;
   socket_link_rep* find_connection_ptr (int id);
 };
