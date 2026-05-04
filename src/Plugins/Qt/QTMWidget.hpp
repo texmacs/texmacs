@@ -17,6 +17,7 @@
 #include <QLabel>
 #include <QGesture>
 #include <QGestureEvent>
+#include <QPointer>
 #include <QScreen>
 
 class qt_simple_widget_rep;
@@ -32,7 +33,7 @@ class QTMWidget: public QTMScrollView {
   Q_OBJECT
 
   qt_widget    tmwid;
-  QLabel*      imwidget;
+  QPointer<QLabel> imwidget;
   QPoint       cursor_pos;
   bool         preediting;
 

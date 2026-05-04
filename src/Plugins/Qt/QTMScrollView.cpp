@@ -171,6 +171,8 @@ QTMScrollView::updateScrollBars (void) {
   QWidget *_viewport = QAbstractScrollArea::viewport();
   QScrollBar *_hScrollBar = QAbstractScrollArea::horizontalScrollBar();
   QScrollBar *_vScrollBar = QAbstractScrollArea::verticalScrollBar();
+  QWidget* surf = surface();
+  if (!surf) return;
 
   int xw = p_extents.width();
   int xh = p_extents.height();
@@ -200,8 +202,8 @@ QTMScrollView::updateScrollBars (void) {
   _vScrollBar->setSingleStep((h >> 4) + 1);
   _vScrollBar->setPageStep(h);
   
-  surface()->setMinimumWidth (w < xw? w: xw);
-  surface()->setMinimumHeight(h < xh? h: xh);
+  surf->setMinimumWidth (w < xw? w: xw);
+  surf->setMinimumHeight(h < xh? h: xh);
   
   // we may need a relayout if the surface width is changed
   updateGeometry();

@@ -62,10 +62,15 @@ void QTMFileDialog::dragMoveEvent(QDragMoveEvent *event)
 void QTMFileDialog::dropEvent(QDropEvent *event)
 {
 	const QMimeData *mimeData = event->mimeData();
+  if (!file || !mimeData) {
+    event->acceptProposedAction();
+    return;
+  }
 	
 	foreach (QString format, mimeData->formats()) {
 		if (format == "text/uri-list") {
-			file->selectFile(mimeData->urls().at(0).toLocalFile());
+      if (!mimeData->urls().isEmpty())
+        file->selectFile(mimeData->urls().at(0).toLocalFile());
 			break;
 		}
 	}
@@ -141,6 +146,7 @@ QTMImagePreview::QTMImagePreview (QWidget* parent)
 void
 QTMImagePreview::clear_dim(){
 BEGIN_SLOT
+  if (!wid || !hei) return;
   if (wid->isModified() && !(hei->isModified())) hei->setText("");
   else if (hei->isModified() && !(wid->isModified())) wid->setText("");
 END_SLOT    
@@ -150,6 +156,7 @@ END_SLOT
 void 
 QTMImagePreview::setImage (const QString& file) { 	  //generate thumbnail
 BEGIN_SLOT
+  if (!wid || !hei || !xps || !yps || !image) return;
   QImage img;
   wid->setText ("");
   hei->setText ("");
@@ -205,13 +212,17 @@ QTMImageDialog::QTMImageDialog (QWidget* parent, const QString& caption, const Q
   : QTMFileDialog (parent, caption, directory, filter)
 {
   preview= new QTMImagePreview (this);
-  hbox->insertWidget(0, preview);
-  connect(file, SIGNAL(currentChanged (const QString&)), preview, SLOT(setImage(const QString&)));
+  if (hbox && preview)
+    hbox->insertWidget(0, preview);
+  if (file && preview)
+    connect(file, SIGNAL(currentChanged (const QString&)), preview, SLOT(setImage(const QString&)));
 }
 
 string
 QTMImageDialog::getParamsAsString () {
   string params;
+  if (!preview || !preview->wid || !preview->hei || !preview->xps || !preview->yps)
+    return params;
   params << "\"" << from_qstring (preview->wid->text ()) << "\" ";
   params << "\"" << from_qstring (preview->hei->text ()) << "\" ";
   params << "\"" << from_qstring (preview->xps->text ()) << "\" ";

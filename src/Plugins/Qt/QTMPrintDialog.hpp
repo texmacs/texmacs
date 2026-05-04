@@ -24,6 +24,7 @@
 
 #include <QtGlobal>
 #include <QtCore/QLocale>
+#include <QtCore/QPointer>
 #include <QtCore/QVariant>
 #if (QT_VERSION >= 0x050000)
 //#include <QtWidgets/QAction>
@@ -66,47 +67,47 @@ QT_BEGIN_NAMESPACE
 class Ui_QTMPrintDialog
 {
 public:
-  QVBoxLayout *verticalLayout;
-  QGridLayout *gridLayout_3;
-  QComboBox *printerCombo;
-  QLabel *label_3;
-  QLineEdit *copiesInput;
-  QCheckBox *collatedCheck;
-  QHBoxLayout *horizontalLayout_2;
-  QGridLayout *gridLayout_2;
-  QLabel *label_7;
-  QRadioButton *allPagesRadio;
-  QRadioButton *rangePagesRadio;
-  QLineEdit *fromPageInput;
-  QLabel *label_4;
-  QLineEdit *toPageInput;
-  QCheckBox *evenPagesCheck;
-  QCheckBox *oddPagesCheck;
-  QFrame *line;
-  QHBoxLayout *horizontalLayout;
+  QPointer<QVBoxLayout> verticalLayout;
+  QPointer<QGridLayout> gridLayout_3;
+  QPointer<QComboBox> printerCombo;
+  QPointer<QLabel> label_3;
+  QPointer<QLineEdit> copiesInput;
+  QPointer<QCheckBox> collatedCheck;
+  QPointer<QHBoxLayout> horizontalLayout_2;
+  QPointer<QGridLayout> gridLayout_2;
+  QPointer<QLabel> label_7;
+  QPointer<QRadioButton> allPagesRadio;
+  QPointer<QRadioButton> rangePagesRadio;
+  QPointer<QLineEdit> fromPageInput;
+  QPointer<QLabel> label_4;
+  QPointer<QLineEdit> toPageInput;
+  QPointer<QCheckBox> evenPagesCheck;
+  QPointer<QCheckBox> oddPagesCheck;
+  QPointer<QFrame> line;
+  QPointer<QHBoxLayout> horizontalLayout;
   QSpacerItem *horizontalSpacer_2;
-  QGridLayout *gridLayout;
-  QLabel *paperSizeLabel;
-  QComboBox *paperSizeCombo;
-  QLabel *label_2;
-  QComboBox *orientationCombo;
-  QLabel *resolutionLabel;
-  QComboBox *resolutionCombo;
+  QPointer<QGridLayout> gridLayout;
+  QPointer<QLabel> paperSizeLabel;
+  QPointer<QComboBox> paperSizeCombo;
+  QPointer<QLabel> label_2;
+  QPointer<QComboBox> orientationCombo;
+  QPointer<QLabel> resolutionLabel;
+  QPointer<QComboBox> resolutionCombo;
   QSpacerItem *horizontalSpacer;
-  QHBoxLayout *horizontalLayout_3;
+  QPointer<QHBoxLayout> horizontalLayout_3;
   QSpacerItem *horizontalSpacer_3;
-  QCheckBox *duplexCheck;
+  QPointer<QCheckBox> duplexCheck;
   QSpacerItem *horizontalSpacer_5;
-  QCheckBox *fitToPageCheck;
+  QPointer<QCheckBox> fitToPageCheck;
   QSpacerItem *horizontalSpacer_4;
-  QGridLayout *gridLayout_4;
-  QLabel *label_5;
-  QComboBox *pagesPerSideCombo;
-  QLabel *label_6;
-  QComboBox *orderPagesCombo;
-  QFrame *line_2;
-  QCheckBox *blackWhiteCheck;
-  QDialogButtonBox *buttonBox;
+  QPointer<QGridLayout> gridLayout_4;
+  QPointer<QLabel> label_5;
+  QPointer<QComboBox> pagesPerSideCombo;
+  QPointer<QLabel> label_6;
+  QPointer<QComboBox> orderPagesCombo;
+  QPointer<QFrame> line_2;
+  QPointer<QCheckBox> blackWhiteCheck;
+  QPointer<QDialogButtonBox> buttonBox;
   
   void setupUi(QDialog *QTMPrintDialog)
   {

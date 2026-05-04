@@ -899,20 +899,22 @@ QTMRefreshWidget::recompute (string what) {
   string s = "'(vertical (link " * strwid * "))";
   eval ("(lazy-initialize-force)");
   object xwid = call ("menu-expand", eval (s));
+  widget previous = cur;
   
   if (cache->contains (xwid)) {
     if (curobj == xwid) return false;
     curobj = xwid;
     cur    = cache [xwid];
-    return true;
   } else {
     curobj = xwid;
     object uwid = eval (s);
     cur = make_menu_widget (uwid);
-    tmwid->add_child (cur); // FIXME?! Is this ok? what when we refresh?
     if (menu_caching) cache (xwid) = cur;
-    return true;
   }
+  if (!is_nil (previous) && previous != cur)
+    tmwid->remove_child (previous);
+  tmwid->add_child (cur);
+  return true;
 }
 
 /*
@@ -997,9 +999,12 @@ QTMRefreshableWidget::recompute (string what) {
   object xwid = call (prom);
   if (curobj == xwid) return false;
   if (!is_widget (xwid)) return false;
+  widget previous = cur;
   curobj= xwid;
   cur= as_widget (xwid);
-  tmwid->add_child (cur); // FIXME?! Is this ok? what when we refresh?
+  if (!is_nil (previous) && previous != cur)
+    tmwid->remove_child (previous);
+  tmwid->add_child (cur);
   return true;
 }
 
