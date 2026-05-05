@@ -1,14 +1,18 @@
 #include "QTMApplication.hpp"
 #include <QTimer>
-#include <QFileSystemWatcher>
 #include <QFile>
+#if QT_VERSION >= 0x060000
+#include <QFileSystemWatcher>
+#endif
 #include "qt_utilities.hpp"
 
 QTMApplication::QTMApplication (int& argc, char** argv) :
   QApplication (argc, argv), mOnscreenKeyboard(nullptr) {
+#if QT_VERSION >= 0x060000
     mCssWatcher = new QFileSystemWatcher(this);
     connect(mCssWatcher, &QFileSystemWatcher::fileChanged, 
             this, &QTMApplication::onCssFileChanged);
+#endif
 }
 
 void QTMApplication::load() {
