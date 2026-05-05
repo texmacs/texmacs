@@ -973,3 +973,86 @@ QTMSettingGroup QTMSettingSelect {
 QTMSettingGroup QTMSettingSelect QComboBox {
     background: #585858;
 }
+
+
+/****************************************************************************
+* QTMMainTabWindow
+****************************************************************************/
+
+QTabWidget#mainTabWindowTabs QTabBar::tab {
+    height: 30px;
+    max-width: 200px;
+    border-radius: 0px;
+    padding: 0px 16px;
+    text-align: left;
+    border: 0px solid transparent;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+QTabWidget#mainTabWindowTabs[tmIsAndroid="true"] QTabBar::tab {
+    height: 45px;
+}
+
+QTabWidget#mainTabWindowTabs[tmTabDragHover="true"] QTabBar::tab {
+    background-color: rgba(255, 0, 0, 0.5);
+}
+
+QTabWidget#mainTabWindowTabs::pane {
+    border: 0px;
+    padding: 0px;
+}
+
+
+#mainTabWindowControls {
+    background: transparent;
+}
+
+QPushButton#mainTabWindowMinButton[tmWindowControlStyle="win"],
+QPushButton#mainTabWindowMaxButton[tmWindowControlStyle="win"],
+QPushButton#mainTabWindowCloseButton[tmWindowControlStyle="win"] {
+    background-color: transparent;
+    border: none;
+    color: palette(window-text);
+    font-family: "Segoe Fluent Icons", "Segoe MDL2 Assets", sans-serif;
+    font-size: 8pt;
+}
+
+QPushButton#mainTabWindowMinButton[tmWindowControlStyle="win"]:hover,
+QPushButton#mainTabWindowMaxButton[tmWindowControlStyle="win"]:hover {
+    background-color: rgba(128, 128, 128, 0.2);
+}
+
+QPushButton#mainTabWindowCloseButton[tmWindowControlStyle="win"]:hover {
+    background-color: #e81123;
+    color: white;
+}
+
+QPushButton#mainTabWindowCloseButton[tmWindowControlStyle="mac"] {
+    background-color: #ff5f56;
+    border-radius: 6px;
+    border: 1px solid #e0443e;
+}
+
+QPushButton#mainTabWindowCloseButton[tmWindowControlStyle="mac"]:hover {
+    background-color: #ff3b30;
+}
+
+QPushButton#mainTabWindowMinButton[tmWindowControlStyle="mac"] {
+    background-color: #ffbd2e;
+    border-radius: 6px;
+    border: 1px solid #dea123;
+}
+
+QPushButton#mainTabWindowMinButton[tmWindowControlStyle="mac"]:hover {
+    background-color: #e0a82e;
+}
+
+QPushButton#mainTabWindowMaxButton[tmWindowControlStyle="mac"] {
+    background-color: #27c93f;
+    border-radius: 6px;
+    border: 1px solid #1aab29;
+}
+
+QPushButton#mainTabWindowMaxButton[tmWindowControlStyle="mac"]:hover {
+    background-color: #1fac33;
+}
