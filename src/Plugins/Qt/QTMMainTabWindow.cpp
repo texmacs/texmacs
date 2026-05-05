@@ -23,13 +23,6 @@
 
 QPointer<QTMMainTabWindow> QTMMainTabWindow::gTopTabWindow = nullptr;
 
-bool isMovingTab = false;
-bool isMovingWindow = false;
-int movingTabIndex = -1;
-QPoint movingTabStartPos;
-QPointer<QTMMainTabWindow> newTabWindow = nullptr;
-QPointer<QTMMainTabWindow> targetTabWindow = nullptr;
-
 QTMMainTabWindow::QTMMainTabWindow() {
   mTabWidget = new QTabWidget(this);
   mTabWidget->setObjectName("mainTabWindowTabs");
@@ -57,7 +50,7 @@ QTMMainTabWindow::QTMMainTabWindow() {
   // remove the border and padding
   setDefaultStyle();
 
-  connect(mTabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
+  connect(mTabWidget, &QTabWidget::tabCloseRequested, this, &QTMMainTabWindow::closeTab);
 
   // move the tab window to the center of the screen
 #if !defined(OS_ANDROID) && QT_VERSION >= 0x060000
@@ -243,137 +236,19 @@ bool QTMMainTabWindow::eventFilterWindow(QObject *obj, QEvent *event) {
 bool QTMMainTabWindow::eventFilterTabBar(QObject *obj, QEvent *event) {
 #if QT_VERSION >= 0x060000
   if (event->type() == QEvent::MouseButtonPress) {
-    /* 
-      The user pressed the mouse button on the single tab button.
-      In that case, the user wants to move the tab window,
-      or put the tab into another tab window.
-    */
-    if (mTabWidget->count() == 1) {
-      isMovingWindow = true;
-      newTabWindow = this;
-      movingTabIndex = 0;
-      QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
-      movingTabStartPos = mouseEvent->position().toPoint();
-    } 
-    else 
-    /* 
-      The user pressed the mouse button on one of the tab buttons.
-      Maybe the user wants to move the tab to another tab window ?
-      Put isMovingTab to true. We will check later if the mouse move too far.
-      (in that case, that confirm that the user wants 
-      to move the tab to another tab window)
-    */
-    {
-      QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
-      int x = mouseEvent->position().toPoint().x();
-      int y = mouseEvent->position().toPoint().y();
-      int tabBarWidth = mTabWidget->tabBar()->width();
-      int tabBarHeight = mTabWidget->tabBar()->height();
-      if (mouseEvent->button() == Qt::LeftButton && 
-          x >= 0 && y >= 0 && x < tabBarWidth && y < tabBarHeight) {
-        isMovingTab = true;
-        movingTabIndex = mTabWidget->tabBar()->tabAt(QPoint(x, y));
-        movingTabStartPos = mouseEvent->position().toPoint();
-      }
-    }
+    handleTabBarMousePress(static_cast<QMouseEvent *>(event));
   }
 
-  /*
-    Here, we know that the user may want to move the tab to another tab window.
-    We will check if the mouse move too far. If it is the case, 
-    we will create a new tab window.
-  */
-  if (event->type() == QEvent::MouseMove && isMovingTab) {
-    QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
-    int x = mouseEvent->position().toPoint().x();
-    int y = mouseEvent->position().toPoint().y();
-    int tabBarWidth = mTabWidget->tabBar()->width();
-    int tabBarHeight = mTabWidget->tabBar()->height();
-    const int dist = 10;
-    if (x >= tabBarWidth + dist || y >= tabBarHeight + dist ||
-        x < -dist || y < -dist) {
-      /* 
-        When creating a new tab window, the mouse continue to be pressed
-        and to move. While the mouse continue to be pressed, the new tab 
-        window will move with the mouse. 
-        For that, we put isMovingWindow to true.
-      */
-      newTabWindow = new QTMMainTabWindow();
-      //int globalX = mapToGlobal(movingTabStartPos).x();
-      //int globalY = mapToGlobal(movingTabStartPos).y();
-      QWidget *widgetToMove = mTabWidget->widget(movingTabIndex);
-      mTabWidget->removeTab(movingTabIndex);
-      newTabWindow->showWidget(widgetToMove);
-      isMovingTab = false;
-      isMovingWindow = true;
-      movingTabIndex = 0;
-    }
+  if (event->type() == QEvent::MouseMove && 
+      (mDragState.isMovingTab || mDragState.isMovingWindow)) {
+    handleTabBarMouseMove(static_cast<QMouseEvent *>(event));
   }
 
-  /*
-    If the mouse move and that isMovingWindow is true, 
-    we move the new tab window with the mouse.
-    isMovingWindow will be set to false when the mouse button is released.
-  */
-  if (event->type() == QEvent::MouseMove && isMovingWindow) {
-    QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
-    int globalX = mouseEvent->globalPosition().toPoint().x();
-    int globalY = mouseEvent->globalPosition().toPoint().y();
-    globalX -= newTabWindow->width() / 2;
-    globalY -= 10;
-
-    if (newTabWindow) {
-      newTabWindow->move(globalX, globalY);
-    }
-    
-    /*
-      Check if the mouse is over another tab bar.
-      If the user release the mouse button over another tab bar, 
-      we will move the tab to this tab bar.
-    */
-    QTMMainTabWindow *tabWindow = nullptr;
-    targetTabWindow = nullptr;
-    for (QWidget *tabWidget : QApplication::topLevelWidgets()) {
-      tabWindow = qobject_cast<QTMMainTabWindow *>(tabWidget);
-      if (tabWindow == nullptr) continue;
-
-      QPoint globalPos = mouseEvent->globalPosition().toPoint();
-      QPoint localPos = tabWindow->mapFromGlobal(globalPos);
-      QRect tabBarRect = tabWindow->mTabWidget->tabBar()->rect();
-      tabBarRect.setWidth(tabWindow->width());
-
-      if (tabWindow && tabWindow != newTabWindow && 
-          tabBarRect.contains(localPos)) {
-        if (DEBUG_QT_WIDGETS) cout << "mouse is over another tab bar" << LF;
-        targetTabWindow = tabWindow;
-        tabWindow->setHoverStyle();
-        break;
-      }
-      tabWindow->setDefaultStyle();
-    }
+  if (event->type() == QEvent::MouseButtonRelease && 
+      (mDragState.isMovingTab || mDragState.isMovingWindow)) {
+    handleTabBarMouseRelease();
   }
-
-  /*
-    If the mouse button is released and that we have a target tab window,
-    we move the tab to the target tab window.
-  */
-  if (event->type() == QEvent::MouseButtonRelease) {
-    isMovingWindow = false;
-    isMovingTab = false;
-    if (targetTabWindow != nullptr) {
-      if (DEBUG_QT_WIDGETS) cout << "move the tab to the target tab window" << LF;
-      QWidget *widgetToMove = mTabWidget->widget(movingTabIndex);
-      mTabWidget->removeTab(movingTabIndex);
-      targetTabWindow->showWidget(widgetToMove);
-      targetTabWindow->setDefaultStyle();
-      targetTabWindow->activateWindow();
-      targetTabWindow = nullptr;
-      if (mTabWidget->count() == 0) {
-        if (DEBUG_QT_WIDGETS) cout << "close the tab window" << LF;
-        closeAndSetTopTabWindow();
-      }
-    }
-  }
+  
   return QMainWindow::eventFilter(obj, event);
 #else
   (void) obj; (void) event;
@@ -444,5 +319,104 @@ void QTMMainTabWindow::setHoverStyle() {
   mTabWidget->style()->unpolish(mTabWidget);
   mTabWidget->style()->polish(mTabWidget);
   mTabWidget->update();
+}
+
+void QTMMainTabWindow::handleTabBarMousePress(QMouseEvent *event) {
+  if (mTabWidget->count() == 1) {
+    mDragState.isMovingWindow = true;
+    mDragState.newTabWindow = this;
+    mDragState.movingTabIndex = 0;
+    mDragState.movingTabStartPos = event->position().toPoint();
+  } else {
+    int x = event->position().toPoint().x();
+    int y = event->position().toPoint().y();
+    int tabBarWidth = mTabWidget->tabBar()->width();
+    int tabBarHeight = mTabWidget->tabBar()->height();
+    if (event->button() == Qt::LeftButton && 
+        x >= 0 && y >= 0 && x < tabBarWidth && y < tabBarHeight) {
+      mDragState.isMovingTab = true;
+      mDragState.movingTabIndex = mTabWidget->tabBar()->tabAt(QPoint(x, y));
+      mDragState.movingTabStartPos = event->position().toPoint();
+    }
+  }
+}
+
+void QTMMainTabWindow::handleTabBarMouseMove(QMouseEvent *event) {
+  if (mDragState.isMovingTab) {
+    int x = event->position().toPoint().x();
+    int y = event->position().toPoint().y();
+    int tabBarWidth = mTabWidget->tabBar()->width();
+    int tabBarHeight = mTabWidget->tabBar()->height();
+    
+    // Check if mouse moved beyond drag threshold
+    if (x >= tabBarWidth + TabDragThresholdPx || y >= tabBarHeight + TabDragThresholdPx ||
+        x < -TabDragThresholdPx || y < -TabDragThresholdPx) {
+      // Detach tab into new window
+      mDragState.newTabWindow = new QTMMainTabWindow();
+      QWidget *widgetToMove = mTabWidget->widget(mDragState.movingTabIndex);
+      mTabWidget->removeTab(mDragState.movingTabIndex);
+      mDragState.newTabWindow->showWidget(widgetToMove);
+      mDragState.isMovingTab = false;
+      mDragState.isMovingWindow = true;
+      mDragState.movingTabIndex = 0;
+    }
+  }
+  
+  if (mDragState.isMovingWindow) {
+    int globalX = event->globalPosition().toPoint().x();
+    int globalY = event->globalPosition().toPoint().y();
+    globalX -= mDragState.newTabWindow->width() / 2;
+    globalY -= 10;
+
+    if (mDragState.newTabWindow) {
+      mDragState.newTabWindow->move(globalX, globalY);
+    }
+    
+    updateDropTargetHover(event);
+  }
+}
+
+void QTMMainTabWindow::updateDropTargetHover(QMouseEvent *event) {
+  QTMMainTabWindow *tabWindow = nullptr;
+  mDragState.targetTabWindow = nullptr;
+  
+  for (QWidget *tabWidget : QApplication::topLevelWidgets()) {
+    tabWindow = qobject_cast<QTMMainTabWindow *>(tabWidget);
+    if (tabWindow == nullptr) continue;
+
+    QPoint globalPos = event->globalPosition().toPoint();
+    QPoint localPos = tabWindow->mapFromGlobal(globalPos);
+    QRect tabBarRect = tabWindow->mTabWidget->tabBar()->rect();
+    tabBarRect.setWidth(tabWindow->width());
+
+    if (tabWindow && tabWindow != mDragState.newTabWindow && 
+        tabBarRect.contains(localPos)) {
+      if (DEBUG_QT_WIDGETS) cout << "mouse is over another tab bar" << LF;
+      mDragState.targetTabWindow = tabWindow;
+      tabWindow->setHoverStyle();
+      break;
+    }
+    tabWindow->setDefaultStyle();
+  }
+}
+
+void QTMMainTabWindow::handleTabBarMouseRelease() {
+  mDragState.isMovingWindow = false;
+  mDragState.isMovingTab = false;
+  
+  if (mDragState.targetTabWindow != nullptr) {
+    if (DEBUG_QT_WIDGETS) cout << "move the tab to the target tab window" << LF;
+    QWidget *widgetToMove = mTabWidget->widget(mDragState.movingTabIndex);
+    mTabWidget->removeTab(mDragState.movingTabIndex);
+    mDragState.targetTabWindow->showWidget(widgetToMove);
+    mDragState.targetTabWindow->setDefaultStyle();
+    mDragState.targetTabWindow->activateWindow();
+    mDragState.targetTabWindow = nullptr;
+    
+    if (mTabWidget->count() == 0) {
+      if (DEBUG_QT_WIDGETS) cout << "close the tab window" << LF;
+      closeAndSetTopTabWindow();
+    }
+  }
 }
 
