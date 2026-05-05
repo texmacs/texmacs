@@ -5,7 +5,7 @@
 #include "qt_utilities.hpp"
 
 QTMApplication::QTMApplication (int& argc, char** argv) :
-  QApplication (argc, argv) {
+  QApplication (argc, argv), mOnscreenKeyboard(nullptr) {
     mCssWatcher = new QFileSystemWatcher(this);
     connect(mCssWatcher, &QFileSystemWatcher::fileChanged, 
             this, &QTMApplication::onCssFileChanged);
@@ -31,6 +31,15 @@ void QTMApplication::load() {
 
 #if QT_VERSION >= 0x050000
   if (mUseTabWindow) new QTMMainTabWindow();
+#endif
+
+#ifdef OS_ANDROID
+  mOnscreenKeyboard = new QTMOnscreenKeyboard();
+  if (mUseTabWindow && QTMMainTabWindow::topTabWindow() != nullptr) {
+    QTMMainTabWindow::topTabWindow()->attachOnscreenKeyboard(mOnscreenKeyboard);
+  } else {
+    mOnscreenKeyboard->show();
+  }
 #endif
 
 }
@@ -104,4 +113,14 @@ void qt_notify_preference (string var) {
 void QTMApplication::onCssFileChanged(const QString &path) {
   init_theme();
   emit themeChanged();
+}
+
+void QTMApplication::toggleOnScreenKeyboardVisibility() {
+  if (mOnscreenKeyboard) {
+    if (mOnscreenKeyboard->isVisible()) {
+      mOnscreenKeyboard->hide();
+    } else {
+      mOnscreenKeyboard->show();
+    }
+  }
 }

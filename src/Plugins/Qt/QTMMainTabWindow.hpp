@@ -13,16 +13,20 @@
 
 #include "config.h"
 
+#include <QMainWindow>
 #include <QTabWidget>
+#include <QDockWidget>
 #include <QPointer>
+
+class QTMOnscreenKeyboard;
 
 /**
  * @brief A tab window that allows moving tabs between windows.
  * 
- * This class extends QTabWidget to enable dynamic tab management,
+ * This class extends QMainWindow and embeds a QTabWidget to enable dynamic tab management,
  * including the ability to move tabs between separate windows.
  */
-class QTMMainTabWindow : public QTabWidget {
+class QTMMainTabWindow : public QMainWindow {
   Q_OBJECT
 
 public:
@@ -32,6 +36,8 @@ public:
    * Initializes the tab window, sets up event filters, and applies default styles.
    */
   QTMMainTabWindow();
+
+  void attachOnscreenKeyboard(QTMOnscreenKeyboard* keyboard);
 
   void setupWindowControls();
 
@@ -161,6 +167,8 @@ private:
    * Tracks the most recently activated tab window.
    */
   static QPointer<QTMMainTabWindow> gTopTabWindow;
+  QPointer<QTabWidget> mTabWidget;
+  QPointer<QDockWidget> mKeyboardDock;
   QPoint dragPosition;
   bool isDraggingFramelessWindow = false;
    

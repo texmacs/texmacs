@@ -23,6 +23,7 @@
 #include "boot.hpp"
 #include "gui.hpp"
 #include "QTMKeyboard.hpp"
+#include "QTMOnscreenKeyboard.hpp"
 #include "QTMIconManager.hpp"
 #include "QTMMainTabWindow.hpp"
 
@@ -77,6 +78,8 @@ public:
   }
 #endif
 
+  void toggleOnScreenKeyboardVisibility();
+
   void notify_preference (string var);
 
 public slots:
@@ -91,6 +94,7 @@ private:
   QTMIconManager mIconManager;
 #endif
   QTMKeyboard mKeyboard;
+  QTMOnscreenKeyboard *mOnscreenKeyboard;
   bool mUseTabWindow;
   bool mUseNewToolbar;
   QFileSystemWatcher* mCssWatcher = nullptr;
