@@ -19,6 +19,42 @@
 #include <QPointer>
 
 class QTMOnscreenKeyboard;
+class QTMMainTabWindow;
+
+/**
+ * @brief Drag operation states.
+ */
+enum class DragMode {
+  Idle,              // No drag in progress
+  PotentialTabDrag,  // Mouse pressed on tab, may drag
+  MovingDetached,    // Tab detached, moving with mouse
+  Dropping           // About to drop on target
+};
+
+/**
+ * @brief State for tab drag and drop operations.
+ * 
+ * Encapsulates the state of an ongoing or potential tab drag operation.
+ */
+struct DragState {
+  DragMode mode = DragMode::Idle;
+  bool isMovingTab = false;
+  bool isMovingWindow = false;
+  int movingTabIndex = -1;
+  QPoint movingTabStartPos;
+  QPointer<QTMMainTabWindow> newTabWindow = nullptr;
+  QPointer<QTMMainTabWindow> targetTabWindow = nullptr;
+  
+  void reset() {
+    mode = DragMode::Idle;
+    isMovingTab = false;
+    isMovingWindow = false;
+    movingTabIndex = -1;
+    movingTabStartPos = QPoint();
+    newTabWindow = nullptr;
+    targetTabWindow = nullptr;
+  }
+};
 
 /**
  * @brief A tab window that allows moving tabs between windows.
@@ -150,7 +186,34 @@ protected:
    */
   void onDoubleClickOnEmptyTabBarSpace();
 
-public slots:
+private:
+  /**
+   * @brief Handles mouse press on tab bar.
+   * 
+   * Initiates tab drag or window move depending on tab count.
+   */
+  void handleTabBarMousePress(QMouseEvent *event);
+
+  /**
+   * @brief Handles mouse move on tab bar.
+   * 
+   * Updates tab position during drag and manages drop target detection.
+   */
+  void handleTabBarMouseMove(QMouseEvent *event);
+
+  /**
+   * @brief Handles mouse release on tab bar.
+   * 
+   * Completes tab drop operation or resets drag state.
+   */
+  void handleTabBarMouseRelease();
+
+  /**
+   * @brief Updates hover style for potential drop targets.
+   * 
+   * Highlights tab windows under the dragged tab.
+   */
+  void updateDropTargetHover(QMouseEvent *event);
   /**
    * @brief Closes a tab at the given index.
    * 
@@ -167,10 +230,18 @@ private:
    * Tracks the most recently activated tab window.
    */
   static QPointer<QTMMainTabWindow> gTopTabWindow;
+  
+  // Constants for drag and window sizing
+  static constexpr int TabDragThresholdPx = 10;
+  static constexpr int DefaultTabHeightDesktop = 30;
+  static constexpr int DefaultTabHeightAndroid = 45;
+  static constexpr int DefaultMaxTabWidth = 200;
+  
   QPointer<QTabWidget> mTabWidget;
   QPointer<QDockWidget> mKeyboardDock;
   QPoint dragPosition;
   bool isDraggingFramelessWindow = false;
+  DragState mDragState;
    
 };
 
