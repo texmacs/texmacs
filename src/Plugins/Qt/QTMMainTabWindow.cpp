@@ -183,8 +183,8 @@ bool QTMMainTabWindow::eventFilterWindow(QObject *obj, QEvent *event) {
   // 1. Detect Mouse Press in empty tab space
   if (event->type() == QEvent::MouseButtonPress) {
     QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
-    int x = mouseEvent->position().toPoint().x();
-    int y = mouseEvent->position().toPoint().y();
+    int x = mouseEvent->pos().x();
+    int y = mouseEvent->pos().y();
     int tabBarWidth = mTabWidget->tabBar()->width();
     int tabBarHeight = mTabWidget->tabBar()->height();
     
@@ -192,7 +192,7 @@ bool QTMMainTabWindow::eventFilterWindow(QObject *obj, QEvent *event) {
     if(x > tabBarWidth && y < tabBarHeight) {
       if (mouseEvent->button() == Qt::LeftButton) {
         isDraggingFramelessWindow = true;
-        dragPosition = mouseEvent->globalPosition().toPoint() - frameGeometry().topLeft();
+        dragPosition = mouseEvent->globalPos() - frameGeometry().topLeft();
         event->accept();
         return true;
       }
@@ -203,7 +203,7 @@ bool QTMMainTabWindow::eventFilterWindow(QObject *obj, QEvent *event) {
   if (event->type() == QEvent::MouseMove && isDraggingFramelessWindow) {
     QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
     if (mouseEvent->buttons() & Qt::LeftButton) {
-      move(mouseEvent->globalPosition().toPoint() - dragPosition);
+      move(mouseEvent->globalPos() - dragPosition);
       event->accept();
       return true;
     }
@@ -219,8 +219,8 @@ bool QTMMainTabWindow::eventFilterWindow(QObject *obj, QEvent *event) {
   // 4. Double click logic for "new-document*"
   if (event->type() == QEvent::MouseButtonDblClick) {
      QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
-     if (mouseEvent->position().toPoint().x() > mTabWidget->tabBar()->width() && 
-       mouseEvent->position().toPoint().y() < mTabWidget->tabBar()->height()) {
+     if (mouseEvent->pos().x() > mTabWidget->tabBar()->width() && 
+       mouseEvent->pos().y() < mTabWidget->tabBar()->height()) {
          onDoubleClickOnEmptyTabBarSpace();
          return true;
      }
@@ -326,25 +326,25 @@ void QTMMainTabWindow::handleTabBarMousePress(QMouseEvent *event) {
     mDragState.isMovingWindow = true;
     mDragState.newTabWindow = this;
     mDragState.movingTabIndex = 0;
-    mDragState.movingTabStartPos = event->position().toPoint();
+    mDragState.movingTabStartPos = event->pos();
   } else {
-    int x = event->position().toPoint().x();
-    int y = event->position().toPoint().y();
+    int x = event->pos().x();
+    int y = event->pos().y();
     int tabBarWidth = mTabWidget->tabBar()->width();
     int tabBarHeight = mTabWidget->tabBar()->height();
     if (event->button() == Qt::LeftButton && 
         x >= 0 && y >= 0 && x < tabBarWidth && y < tabBarHeight) {
       mDragState.isMovingTab = true;
       mDragState.movingTabIndex = mTabWidget->tabBar()->tabAt(QPoint(x, y));
-      mDragState.movingTabStartPos = event->position().toPoint();
+      mDragState.movingTabStartPos = event->pos();
     }
   }
 }
 
 void QTMMainTabWindow::handleTabBarMouseMove(QMouseEvent *event) {
   if (mDragState.isMovingTab) {
-    int x = event->position().toPoint().x();
-    int y = event->position().toPoint().y();
+    int x = event->pos().x();
+    int y = event->pos().y();
     int tabBarWidth = mTabWidget->tabBar()->width();
     int tabBarHeight = mTabWidget->tabBar()->height();
     
@@ -363,8 +363,8 @@ void QTMMainTabWindow::handleTabBarMouseMove(QMouseEvent *event) {
   }
   
   if (mDragState.isMovingWindow) {
-    int globalX = event->globalPosition().toPoint().x();
-    int globalY = event->globalPosition().toPoint().y();
+    int globalX = event->globalPos().x();
+    int globalY = event->globalPos().y();
     globalX -= mDragState.newTabWindow->width() / 2;
     globalY -= 10;
 
@@ -384,7 +384,7 @@ void QTMMainTabWindow::updateDropTargetHover(QMouseEvent *event) {
     tabWindow = qobject_cast<QTMMainTabWindow *>(tabWidget);
     if (tabWindow == nullptr) continue;
 
-    QPoint globalPos = event->globalPosition().toPoint();
+    QPoint globalPos = event->globalPos();
     QPoint localPos = tabWindow->mapFromGlobal(globalPos);
     QRect tabBarRect = tabWindow->mTabWidget->tabBar()->rect();
     tabBarRect.setWidth(tabWindow->width());
