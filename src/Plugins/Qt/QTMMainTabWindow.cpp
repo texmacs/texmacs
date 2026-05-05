@@ -9,6 +9,7 @@
 ******************************************************************************/
 
 #include "QTMMainTabWindow.hpp"
+#include "QTMOnscreenKeyboard.hpp"
 
 #include "scheme.hpp"
 
@@ -17,6 +18,8 @@
 #include <QApplication>
 #include <QPushButton>
 #include <QHBoxLayout>
+#include <QDockWidget>
+#include <QStyle>
 
 QPointer<QTMMainTabWindow> QTMMainTabWindow::gTopTabWindow = nullptr;
 
@@ -28,8 +31,17 @@ QPointer<QTMMainTabWindow> newTabWindow = nullptr;
 QPointer<QTMMainTabWindow> targetTabWindow = nullptr;
 
 QTMMainTabWindow::QTMMainTabWindow() {
-  setTabsClosable(true);
-  setMovable(true);
+  mTabWidget = new QTabWidget(this);
+  mTabWidget->setObjectName("mainTabWindowTabs");
+#ifdef OS_ANDROID
+  mTabWidget->setProperty("tmIsAndroid", true);
+#else
+  mTabWidget->setProperty("tmIsAndroid", false);
+#endif
+  setCentralWidget(mTabWidget);
+
+  mTabWidget->setTabsClosable(true);
+  mTabWidget->setMovable(true);
 
   // todo : keep the tab window size and position in the user preferences
 #ifndef OS_ANDROID
@@ -45,7 +57,7 @@ QTMMainTabWindow::QTMMainTabWindow() {
   // remove the border and padding
   setDefaultStyle();
 
-  connect(this, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
+  connect(mTabWidget, SIGNAL(tabCloseRequested(int)), this, SLOT(closeTab(int)));
 
   // move the tab window to the center of the screen
 #if !defined(OS_ANDROID) && QT_VERSION >= 0x060000
@@ -55,7 +67,7 @@ QTMMainTabWindow::QTMMainTabWindow() {
 
 #if !defined(OS_ANDROID) && QT_VERSION >= 0x060000
   installEventFilter(this);
-  tabBar()->installEventFilter(this);
+  mTabWidget->tabBar()->installEventFilter(this);
 #endif
 
 #if !defined(OS_ANDROID) && QT_VERSION >= 0x050000
@@ -67,16 +79,37 @@ QTMMainTabWindow::QTMMainTabWindow() {
   show();
 }
 
+void QTMMainTabWindow::attachOnscreenKeyboard(QTMOnscreenKeyboard* keyboard) {
+  if (keyboard == nullptr) return;
+
+  if (mKeyboardDock == nullptr) {
+    mKeyboardDock = new QDockWidget(this);
+    mKeyboardDock->setObjectName("OnscreenKeyboardDock");
+    mKeyboardDock->setAllowedAreas(Qt::BottomDockWidgetArea);
+    mKeyboardDock->setFeatures(QDockWidget::NoDockWidgetFeatures);
+    mKeyboardDock->setTitleBarWidget(new QWidget(mKeyboardDock));
+    addDockWidget(Qt::BottomDockWidgetArea, mKeyboardDock);
+  }
+
+  mKeyboardDock->setWidget(keyboard);
+  mKeyboardDock->show();
+  keyboard->show();
+}
+
 void QTMMainTabWindow::setupWindowControls() {
 #if QT_VERSION >= 0x050000
   setWindowFlags(windowFlags() | Qt::FramelessWindowHint);
 
   QWidget* controlContainer = new QWidget(this);
+  controlContainer->setObjectName("mainTabWindowControls");
   QHBoxLayout* layout = new QHBoxLayout(controlContainer);
 
   QPushButton* closeBtn = new QPushButton(controlContainer);
   QPushButton* minBtn = new QPushButton(controlContainer);
   QPushButton* maxBtn = new QPushButton(controlContainer);
+  closeBtn->setObjectName("mainTabWindowCloseButton");
+  minBtn->setObjectName("mainTabWindowMinButton");
+  maxBtn->setObjectName("mainTabWindowMaxButton");
 
 #ifdef OS_MACOS
   layout->setContentsMargins(8, 10, 8, 10); 
@@ -86,22 +119,19 @@ void QTMMainTabWindow::setupWindowControls() {
   closeBtn->setFixedSize(btnSize, btnSize);
   minBtn->setFixedSize(btnSize, btnSize);
   maxBtn->setFixedSize(btnSize, btnSize);
-
-  closeBtn->setStyleSheet("QPushButton { background-color: #ff5f56; border-radius: 6px; border: 1px solid #e0443e; } QPushButton:hover { background-color: #ff3b30; }");
-  minBtn->setStyleSheet("QPushButton { background-color: #ffbd2e; border-radius: 6px; border: 1px solid #dea123; } QPushButton:hover { background-color: #e0a82e; }");
-  maxBtn->setStyleSheet("QPushButton { background-color: #27c93f; border-radius: 6px; border: 1px solid #1aab29; } QPushButton:hover { background-color: #1fac33; }");
+  closeBtn->setProperty("tmWindowControlStyle", "mac");
+  minBtn->setProperty("tmWindowControlStyle", "mac");
+  maxBtn->setProperty("tmWindowControlStyle", "mac");
 
   layout->addWidget(closeBtn);
   layout->addWidget(minBtn);
   layout->addWidget(maxBtn);
 
-  setCornerWidget(controlContainer, Qt::TopLeftCorner);
+  mTabWidget->setCornerWidget(controlContainer, Qt::TopLeftCorner);
 
 #else
   layout->setContentsMargins(0, 0, 0, 0); 
   layout->setSpacing(0); 
-
-  QString iconFont = "font-family: 'Segoe Fluent Icons', 'Segoe MDL2 Assets', sans-serif; font-size: 8pt;";
 
   minBtn->setText(QString(QChar(0xE921)));
   maxBtn->setText(QString(QChar(0xE922)));
@@ -112,22 +142,15 @@ void QTMMainTabWindow::setupWindowControls() {
   closeBtn->setFixedSize(winBtnWidth, winBtnHeight);
   minBtn->setFixedSize(winBtnWidth, winBtnHeight);
   maxBtn->setFixedSize(winBtnWidth, winBtnHeight);
-
-  QString winStyle = QString("QPushButton { background-color: transparent; border: none; color: palette(window-text); %1 }"
-                             "QPushButton:hover { background-color: rgba(128, 128, 128, 0.2); }").arg(iconFont);
-  
-  QString winCloseStyle = QString("QPushButton { background-color: transparent; border: none; color: palette(window-text); %1 }"
-                                  "QPushButton:hover { background-color: #e81123; color: white; }").arg(iconFont);
-
-  minBtn->setStyleSheet(winStyle);
-  maxBtn->setStyleSheet(winStyle);
-  closeBtn->setStyleSheet(winCloseStyle);
+  closeBtn->setProperty("tmWindowControlStyle", "win");
+  minBtn->setProperty("tmWindowControlStyle", "win");
+  maxBtn->setProperty("tmWindowControlStyle", "win");
 
   layout->addWidget(minBtn);
   layout->addWidget(maxBtn);
   layout->addWidget(closeBtn);
 
-  setCornerWidget(controlContainer, Qt::TopRightCorner);
+  mTabWidget->setCornerWidget(controlContainer, Qt::TopRightCorner);
 #endif
 
   connect(closeBtn, &QPushButton::clicked, this, &QWidget::close);
@@ -169,8 +192,8 @@ bool QTMMainTabWindow::eventFilterWindow(QObject *obj, QEvent *event) {
     QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
     int x = mouseEvent->position().toPoint().x();
     int y = mouseEvent->position().toPoint().y();
-    int tabBarWidth = tabBar()->width();
-    int tabBarHeight = tabBar()->height();
+    int tabBarWidth = mTabWidget->tabBar()->width();
+    int tabBarHeight = mTabWidget->tabBar()->height();
     
     // Check if clicked in empty space to the right of tabs
     if(x > tabBarWidth && y < tabBarHeight) {
@@ -203,14 +226,14 @@ bool QTMMainTabWindow::eventFilterWindow(QObject *obj, QEvent *event) {
   // 4. Double click logic for "new-document*"
   if (event->type() == QEvent::MouseButtonDblClick) {
      QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
-     if (mouseEvent->position().toPoint().x() > tabBar()->width() && 
-         mouseEvent->position().toPoint().y() < tabBar()->height()) {
+     if (mouseEvent->position().toPoint().x() > mTabWidget->tabBar()->width() && 
+       mouseEvent->position().toPoint().y() < mTabWidget->tabBar()->height()) {
          onDoubleClickOnEmptyTabBarSpace();
          return true;
      }
   }
 
-  return QTabWidget::eventFilter(obj, event);
+  return QMainWindow::eventFilter(obj, event);
 #else
   (void) obj; (void) event;
   return false;
@@ -225,7 +248,7 @@ bool QTMMainTabWindow::eventFilterTabBar(QObject *obj, QEvent *event) {
       In that case, the user wants to move the tab window,
       or put the tab into another tab window.
     */
-    if (count() == 1) {
+    if (mTabWidget->count() == 1) {
       isMovingWindow = true;
       newTabWindow = this;
       movingTabIndex = 0;
@@ -244,12 +267,12 @@ bool QTMMainTabWindow::eventFilterTabBar(QObject *obj, QEvent *event) {
       QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
       int x = mouseEvent->position().toPoint().x();
       int y = mouseEvent->position().toPoint().y();
-      int tabBarWidth = tabBar()->width();
-      int tabBarHeight = tabBar()->height();
+      int tabBarWidth = mTabWidget->tabBar()->width();
+      int tabBarHeight = mTabWidget->tabBar()->height();
       if (mouseEvent->button() == Qt::LeftButton && 
           x >= 0 && y >= 0 && x < tabBarWidth && y < tabBarHeight) {
         isMovingTab = true;
-        movingTabIndex = tabBar()->tabAt(QPoint(x, y));
+        movingTabIndex = mTabWidget->tabBar()->tabAt(QPoint(x, y));
         movingTabStartPos = mouseEvent->position().toPoint();
       }
     }
@@ -264,8 +287,8 @@ bool QTMMainTabWindow::eventFilterTabBar(QObject *obj, QEvent *event) {
     QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
     int x = mouseEvent->position().toPoint().x();
     int y = mouseEvent->position().toPoint().y();
-    int tabBarWidth = tabBar()->width();
-    int tabBarHeight = tabBar()->height();
+    int tabBarWidth = mTabWidget->tabBar()->width();
+    int tabBarHeight = mTabWidget->tabBar()->height();
     const int dist = 10;
     if (x >= tabBarWidth + dist || y >= tabBarHeight + dist ||
         x < -dist || y < -dist) {
@@ -278,8 +301,8 @@ bool QTMMainTabWindow::eventFilterTabBar(QObject *obj, QEvent *event) {
       newTabWindow = new QTMMainTabWindow();
       //int globalX = mapToGlobal(movingTabStartPos).x();
       //int globalY = mapToGlobal(movingTabStartPos).y();
-      QWidget *widgetToMove = widget(movingTabIndex);
-      removeTab(movingTabIndex);
+      QWidget *widgetToMove = mTabWidget->widget(movingTabIndex);
+      mTabWidget->removeTab(movingTabIndex);
       newTabWindow->showWidget(widgetToMove);
       isMovingTab = false;
       isMovingWindow = true;
@@ -316,7 +339,7 @@ bool QTMMainTabWindow::eventFilterTabBar(QObject *obj, QEvent *event) {
 
       QPoint globalPos = mouseEvent->globalPosition().toPoint();
       QPoint localPos = tabWindow->mapFromGlobal(globalPos);
-      QRect tabBarRect = tabWindow->tabBar()->rect();
+      QRect tabBarRect = tabWindow->mTabWidget->tabBar()->rect();
       tabBarRect.setWidth(tabWindow->width());
 
       if (tabWindow && tabWindow != newTabWindow && 
@@ -339,19 +362,19 @@ bool QTMMainTabWindow::eventFilterTabBar(QObject *obj, QEvent *event) {
     isMovingTab = false;
     if (targetTabWindow != nullptr) {
       if (DEBUG_QT_WIDGETS) cout << "move the tab to the target tab window" << LF;
-      QWidget *widgetToMove = widget(movingTabIndex);
-      removeTab(movingTabIndex);
+      QWidget *widgetToMove = mTabWidget->widget(movingTabIndex);
+      mTabWidget->removeTab(movingTabIndex);
       targetTabWindow->showWidget(widgetToMove);
       targetTabWindow->setDefaultStyle();
       targetTabWindow->activateWindow();
       targetTabWindow = nullptr;
-      if (count() == 0) {
+      if (mTabWidget->count() == 0) {
         if (DEBUG_QT_WIDGETS) cout << "close the tab window" << LF;
         closeAndSetTopTabWindow();
       }
     }
   }
-  return QTabWidget::eventFilter(obj, event);
+  return QMainWindow::eventFilter(obj, event);
 #else
   (void) obj; (void) event;
   return false;
@@ -367,32 +390,32 @@ bool QTMMainTabWindow::eventFilter(QObject *obj, QEvent *event) {
 }
 
 void QTMMainTabWindow::showWidget(QWidget *widget) {
-  addTab(widget, widget->windowTitle());
-  setCurrentWidget(widget);
+  mTabWidget->addTab(widget, widget->windowTitle());
+  mTabWidget->setCurrentWidget(widget);
 }
 
 void QTMMainTabWindow::removeWidget(QWidget *widget) {
-  removeTab(indexOf(widget));
-  if (count() == 0) closeAndSetTopTabWindow();
+  mTabWidget->removeTab(mTabWidget->indexOf(widget));
+  if (mTabWidget->count() == 0) closeAndSetTopTabWindow();
 }
 
 void QTMMainTabWindow::closeTab(int index) {
   // send the close window signal to the widget
 #ifdef OS_MACOS
-  if (count() > 1) {
-    QWidget *w = this->widget(index);
+  if (mTabWidget->count() > 1) {
+    QWidget *w = mTabWidget->widget(index);
     emit w->close();
   }
 #else
-    QWidget *w = this->widget(index);
+    QWidget *w = mTabWidget->widget(index);
     emit w->close();
-    if (count() == 0) closeAndSetTopTabWindow();
+    if (mTabWidget->count() == 0) closeAndSetTopTabWindow();
 #endif
 }
 
 void QTMMainTabWindow::tabTitleChanged(QWidget *widget, QString title) {
-  int index = indexOf(widget);
-  if (index != -1) setTabText(index, title);
+  int index = mTabWidget->indexOf(widget);
+  if (index != -1) mTabWidget->setTabText(index, title);
 }
 
 void QTMMainTabWindow::closeAndSetTopTabWindow() {
@@ -408,47 +431,18 @@ void QTMMainTabWindow::closeAndSetTopTabWindow() {
 }
 
 void QTMMainTabWindow::setDefaultStyle() {
-  // todo : put this into a css file, and make this more beautiful
-  setStyleSheet(
-    "QTabBar::tab { "
-#ifdef OS_ANDROID
-    "   height: 45px; "
-#else
-    "   height: 30px; "
-#endif
-    "   max-width: 200px; "
-    "   border-radius: 0px; "
-    "   padding: 0px 16px; "
-    "   text-align: left; "
-    "   border: 0px solid transparent; "
-    "   background-color: rgba(255, 255, 255, 0.1); "
-    "} "
-    "QTabWidget::pane { "
-    "   border: 0px; "
-    "   padding: 0px; "
-    "}"
-  );
+  if (mTabWidget == nullptr) return;
+  mTabWidget->setProperty("tmTabDragHover", false);
+  mTabWidget->style()->unpolish(mTabWidget);
+  mTabWidget->style()->polish(mTabWidget);
+  mTabWidget->update();
 }
 
 void QTMMainTabWindow::setHoverStyle() {
-  // todo : put this into a css file, and make this more beautiful
-  setStyleSheet(
-    "QTabBar::tab { "
-#ifdef OS_ANDROID
-    "   height: 45px; "
-#else
-    "   height: 30px; "
-#endif
-    "   max-width: 200px; "
-    "   border-radius: 0px; "
-    "   padding: 0px 16px; "
-    "   background-color: rgba(255, 0, 0, 0.5); "
-    "   text-align: left; "
-    "   border: 0px solid transparent; "
-    "} "
-    "QTabWidget::pane { "
-    "   border: 0px; "
-    "   padding: 0px; "
-    "}"
-  );
+  if (mTabWidget == nullptr) return;
+  mTabWidget->setProperty("tmTabDragHover", true);
+  mTabWidget->style()->unpolish(mTabWidget);
+  mTabWidget->style()->polish(mTabWidget);
+  mTabWidget->update();
 }
+

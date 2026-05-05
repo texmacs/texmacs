@@ -35,9 +35,20 @@
 (tm-define (notify-keyboard-tool var val)
   (update-bottom-tools))
 
+(define custom-keyboard-magnification "1.000")
+
 (define-preferences
   ("custom keyboard" "" (lambda args (noop)))
   ("keyboard tool" "off" notify-keyboard-tool))
+
+(tm-define (set-custom-keyboard-magnification mag)
+  (if (!= custom-keyboard-magnification mag)
+      (begin
+        (set! custom-keyboard-magnification mag)
+      )))
+
+(tm-define (get-custom-keyboard-magnification)
+  custom-keyboard-magnification)
 
 (tm-define (set-custom-keyboard kbd)
   (with s (serialize-texmacs-snippet kbd)
@@ -56,7 +67,9 @@
   (hlist (glue #f #f 0 200)
     >>
     (texmacs-output
-     `(with "bg-color" "#404040" ,(get-the-keyboard))
+     `(with "bg-color" "#404040"
+            "magnification" ,(get-custom-keyboard-magnification)
+            ,(get-the-keyboard))
      '(style "new-gui"))
     >>))
 
@@ -73,7 +86,9 @@
   (refreshable "custom-keyboard"
     (invisible (get-the-keyboard))
     (texmacs-output
-     `(with "bg-color" "#404040" ,(get-the-keyboard))
+     `(with "bg-color" "#404040"
+            "magnification" ,(get-custom-keyboard-magnification)
+            ,(get-the-keyboard))
      '(style "new-gui"))))
 
 (tm-define (open-custom-keyboard)

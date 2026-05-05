@@ -200,7 +200,7 @@ qt_moc := QTMStyle.hpp QTMGuiHelper.hpp QTMInteractiveInputHelper.hpp \
   QTMPrintDialog.hpp QTMPrinterSettings.hpp QTMApplication.hpp \
   QTMTreeModel.hpp QTMSockets.hpp QTMMainTabWindow.hpp \
   QTMToolbar.hpp QTMDelayedMethodCall.hpp QTMResponsiveTabWidget.hpp \
-  QTMSettingWidgets.hpp
+  QTMSettingWidgets.hpp QTMOnscreenKeyboard.hpp
 endif
 
 qt_moc_src = $(patsubst %.hpp, moc_%.cpp,$(qt_moc))

@@ -181,15 +181,12 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   leftLabel->setIndent (8);
 
 #ifdef OS_ANDROID
-  // increase the height of the status bar on Android, to avoid that it is too small for the finger
-  
-
   QPushButton *keyboardButton = new QPushButton ("", bar);
   QIcon keyboardIcon= tmapp()->icon_manager().getIcon("tm_prefs_keyboard");
   keyboardButton->setIcon (keyboardIcon);
   bar->addWidget (keyboardButton);
   QObject::connect (keyboardButton, &QPushButton::clicked, []() {
-    eval("(toggle-custom-keyboard)");
+    tmapp()->toggleOnScreenKeyboardVisibility();
   });
 #endif
   bar->addWidget (leftLabel, 1);
