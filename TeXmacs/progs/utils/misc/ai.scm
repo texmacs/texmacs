@@ -39,6 +39,19 @@
 ;; Automatic correction
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (open-comments c)
+  (let* ((doc
+	  `(document
+	     (style "generic")
+	     (body (document
+		     (strong ,(pretty-time (current-time)))
+		     ,@(map tree->stree c)))))
+	 (aux "Comments from AI about corrections")
+	 (name (aux-name aux)))
+    (aux-set-document aux doc)
+    (if (not (buffer->window name))
+	(load-buffer-main name :new-window))))
+
 (tm-define (ai-correct model)
   (when (selection-active-any?)
     (with lan (get-env "language")
@@ -55,14 +68,7 @@
 		  (insert s))
 	      (when (and (> (length c) 0)
 			 (get-boolean-preference "ai-correct explain"))
-		(with doc
-		    `(document
-		       (style "generic")
-		       (body (document
-			       (strong ,(pretty-time (current-time)))
-			       ,@(map tree->stree c))))
-		  (open-auxiliary "Comments from AI about corrections"
-				  doc ))))))))))
+		(open-comments c)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Automatic translation
