@@ -1445,17 +1445,10 @@ qt_ui_element_rep::as_qwidget (QWidget* parent_widget) {
       int i;
       for (i = 0; i < N(tabs); i++) {
         if (is_nil (tabs[i])) break;
-        QImage*       img = xpm_image (icons[i]);
         QWidget* prelabel = concrete (tabs[i])->as_qwidget(tw);
         QLabel*     label = qobject_cast<QLabel*> (prelabel);
         QWidget*     body = concrete (bodies[i])->as_qwidget(tw);
-//#if QT_VERSION >= 0x060000
         tw->addTab(body, label ? label->text() : "", tmapp()->icon_manager().getIcon (icons[i]));
-//        (void) img;
-//        tw->setTabIcon(i, tmapp()->icon_manager().getIcon (icons[i]));
-//#else
-//        tw->addTab (body, QIcon (as_pixmap (*img)), label ? label->text() : "");
-//#endif
         delete prelabel;
       }
 

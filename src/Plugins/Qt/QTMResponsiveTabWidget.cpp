@@ -124,17 +124,18 @@ void QTMDraggableTopBar::mousePressEvent(QMouseEvent *event) {
 
 void QTMDraggableTopBar::mouseMoveEvent(QMouseEvent *event) {
   if (mDraggable && (event->buttons() & Qt::LeftButton)) {
-    cout << "Dragging window, cursor pos: " << event->globalPos().x() 
-         << ", " << event->globalPos().y() << LF;
+    const QPoint globalPos = event->globalPosition().toPoint();
+    cout << "Dragging window, cursor pos: " << globalPos.x()
+         << ", " << globalPos.y() << LF;
     window()->move(QCursor::pos() - mClickPos);
   }
   QFrame::mouseMoveEvent(event);
 }
 
 QTMResponsiveTabWidget::QTMResponsiveTabWidget(QWidget *parent)
-  : QWidget(parent), mMobileViewingContent(true), mIsUpdating(false),
-    mWindowFusion(false), mIsResizing(false), mCurrentMode(-1),
-    mCurrentDepth(-1), mCurrentGridCols(-1) {
+  : QWidget(parent), mCurrentGridCols(-1), mMobileViewingContent(true),
+    mIsUpdating(false), mWindowFusion(false), mIsResizing(false),
+    mCurrentMode(-1), mCurrentDepth(-1) {
 
   setAttribute(Qt::WA_StyledBackground, true);
   setMinimumSize(320, 300);

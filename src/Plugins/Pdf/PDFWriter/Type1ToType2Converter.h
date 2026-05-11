@@ -35,6 +35,7 @@ class Type1Input;
 
 struct ConversionNode
 {
+	ConversionNode() : mMarkerType(0) {}
 	unsigned short mMarkerType;
 	LongList mOperands;
 };

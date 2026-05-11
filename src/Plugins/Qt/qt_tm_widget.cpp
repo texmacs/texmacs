@@ -137,6 +137,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
 #if QT_VERSION >= 0x060000
   int retina_scale = 1;
   int retina_icons = 1;
+  (void) retina_icons;
 #endif
 
   if (!tmapp()->useNewToolbar()) {
