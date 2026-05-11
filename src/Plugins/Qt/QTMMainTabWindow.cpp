@@ -363,7 +363,11 @@ void QTMMainTabWindow::handleTabBarMouseMove(QMouseEvent *event) {
   }
   
   if (mDragState.isMovingWindow) {
+#if QT_VERSION >= 0x060000
     const QPoint globalPos = event->globalPosition().toPoint();
+#else
+    const QPoint globalPos = event->globalPos();
+#endif
     int globalX = globalPos.x();
     int globalY = globalPos.y();
     globalX -= mDragState.newTabWindow->width() / 2;
@@ -385,7 +389,11 @@ void QTMMainTabWindow::updateDropTargetHover(QMouseEvent *event) {
     tabWindow = qobject_cast<QTMMainTabWindow *>(tabWidget);
     if (tabWindow == nullptr) continue;
 
+#if QT_VERSION >= 0x060000
     QPoint globalPos = event->globalPosition().toPoint();
+#else
+    QPoint globalPos = event->globalPos();
+#endif
     QPoint localPos = tabWindow->mapFromGlobal(globalPos);
     QRect tabBarRect = tabWindow->mTabWidget->tabBar()->rect();
     tabBarRect.setWidth(tabWindow->width());
