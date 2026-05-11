@@ -115,6 +115,7 @@ void qt_notify_preference (string var) {
 
 
 void QTMApplication::onCssFileChanged(const QString &path) {
+  (void) path;
   init_theme();
   emit themeChanged();
 }
