@@ -35,6 +35,7 @@ QTMOnscreenKeyboard::QTMOnscreenKeyboard() {
 
 void
 QTMOnscreenKeyboard::resizeEvent (QResizeEvent* event) {
+	(void) event;
     QTM_CALL_DELAYED(onResizeEvent);
 }
 

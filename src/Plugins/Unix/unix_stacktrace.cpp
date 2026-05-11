@@ -17,6 +17,7 @@
 #include <stdlib.h>
 #include <execinfo.h>
 #include <cxxabi.h>
+#include <vector>
 
 string
 get_stacktrace (unsigned int max_frames) {
@@ -24,10 +25,10 @@ get_stacktrace (unsigned int max_frames) {
   r << "Backtrace of C++ stack:\n";
   
   // storage array for stack trace address data
-  void* addrlist[max_frames+1];
+  std::vector<void*> addrlist (max_frames + 1);
 
   // retrieve current stack addresses
-  int addrlen = backtrace (addrlist, sizeof (addrlist) / sizeof (void*));
+  int addrlen = backtrace (addrlist.data (), static_cast<int> (addrlist.size ()));
 
   if (addrlen == 0) {
     r << "  <empty, possibly corrupt>\n";
@@ -36,7 +37,7 @@ get_stacktrace (unsigned int max_frames) {
 
   // resolve addresses into strings containing "filename(function+address)",
   // this array must be free()-ed
-  char** symbollist = backtrace_symbols (addrlist, addrlen);
+  char** symbollist = backtrace_symbols (addrlist.data (), addrlen);
 
   // allocate string which will be filled with the demangled function name
   size_t funcnamesize = 1024;
