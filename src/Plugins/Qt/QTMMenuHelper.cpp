@@ -1216,7 +1216,7 @@ QTMListView::QTMListView (const command& cmd,
                           bool filtered,
 			  int style2,
                           QWidget* parent)
-: style (style2), QListView (parent) {
+: QListView (parent), style (style2) {
   
   stringModel = new QStringListModel (strings, this);
   filterModel = new QSortFilterProxyModel (this);

@@ -192,7 +192,7 @@ bool QTMMainTabWindow::eventFilterWindow(QObject *obj, QEvent *event) {
     if(x > tabBarWidth && y < tabBarHeight) {
       if (mouseEvent->button() == Qt::LeftButton) {
         isDraggingFramelessWindow = true;
-        dragPosition = mouseEvent->globalPos() - frameGeometry().topLeft();
+        dragPosition = mouseEvent->globalPosition().toPoint() - frameGeometry().topLeft();
         event->accept();
         return true;
       }
@@ -203,7 +203,7 @@ bool QTMMainTabWindow::eventFilterWindow(QObject *obj, QEvent *event) {
   if (event->type() == QEvent::MouseMove && isDraggingFramelessWindow) {
     QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
     if (mouseEvent->buttons() & Qt::LeftButton) {
-      move(mouseEvent->globalPos() - dragPosition);
+      move(mouseEvent->globalPosition().toPoint() - dragPosition);
       event->accept();
       return true;
     }
@@ -363,8 +363,9 @@ void QTMMainTabWindow::handleTabBarMouseMove(QMouseEvent *event) {
   }
   
   if (mDragState.isMovingWindow) {
-    int globalX = event->globalPos().x();
-    int globalY = event->globalPos().y();
+    const QPoint globalPos = event->globalPosition().toPoint();
+    int globalX = globalPos.x();
+    int globalY = globalPos.y();
     globalX -= mDragState.newTabWindow->width() / 2;
     globalY -= 10;
 
@@ -384,7 +385,7 @@ void QTMMainTabWindow::updateDropTargetHover(QMouseEvent *event) {
     tabWindow = qobject_cast<QTMMainTabWindow *>(tabWidget);
     if (tabWindow == nullptr) continue;
 
-    QPoint globalPos = event->globalPos();
+    QPoint globalPos = event->globalPosition().toPoint();
     QPoint localPos = tabWindow->mapFromGlobal(globalPos);
     QRect tabBarRect = tabWindow->mTabWidget->tabBar()->rect();
     tabBarRect.setWidth(tabWindow->width());
