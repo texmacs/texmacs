@@ -47,7 +47,7 @@ public:
   
   void setDescriptionText(const QString& text);
   QString currentText() const;
-  int findText(const QString& text, Qt::MatchFlags flags = Qt::MatchFlags(0)) const;
+  int findText(const QString& text, Qt::MatchFlags flags = Qt::MatchFlags()) const;
   
   void setEditable(bool editable);
 

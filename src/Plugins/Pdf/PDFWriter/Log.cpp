@@ -129,7 +129,7 @@ void Log::WriteLogEntryToStream(const Byte* inMessage, LongBufferSizeType inMess
 std::string Log::GetFormattedTimeString()
 {
 	// create a local time string (date + time) that looks like this: "[ dd/mm/yyyy hh:mm:ss ] "
-	char buffer[26];
+    char buffer[32];
 	
 	time_t currentTime;
 	tm structuredLocalTime;
@@ -137,11 +137,8 @@ std::string Log::GetFormattedTimeString()
 	time(&currentTime);
 	SAFE_LOCAL_TIME(structuredLocalTime,currentTime);
 
-	SAFE_SPRINTF_6(buffer,26,"[ %02d/%02d/%04d %02d:%02d:%02d ] ",structuredLocalTime.tm_mday,
-																	structuredLocalTime.tm_mon + 1,
-																	structuredLocalTime.tm_year + 1900,
-																	structuredLocalTime.tm_hour,
-																	structuredLocalTime.tm_min,
-																	structuredLocalTime.tm_sec);
+    if (std::strftime(buffer, sizeof(buffer), "[ %d/%m/%Y %H:%M:%S ] ", &structuredLocalTime) == 0) {
+        buffer[0] = '\0';
+    }
 	return buffer;
 }

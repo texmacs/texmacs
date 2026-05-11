@@ -237,7 +237,8 @@ qt_renderer_rep::clear_device (SI x1, SI y1, SI x2, SI y2) {
       if (!im.isNull ()) {
 	br= QBrush (im);
 	w= im.width (); h= im.height ();
-	if (w == 0) w = 32; if (h == 0) h = 32;
+  if (w == 0) w = 32;
+  if (h == 0) h = 32;
       }
     }
     first_time= false;

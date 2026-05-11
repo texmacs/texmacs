@@ -202,19 +202,39 @@ QTMPrinterSettings::getChoices(DriverChoices _which, int& _default) {
 #else
   switch (_which) {
     case PageSize:
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+      _ret = printerOptions["PageSize"].split(" ", Qt::SkipEmptyParts);
+#else
       _ret = printerOptions["PageSize"].split(" ", QString::SkipEmptyParts);
+#endif
       break;
     case Resolution:
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+      _ret = printerOptions["Resolution"].split(" ", Qt::SkipEmptyParts);
+#else
       _ret = printerOptions["Resolution"].split(" ", QString::SkipEmptyParts);
+#endif
       break;
     case Duplex:
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+      _ret = printerOptions["Duplex"].split(" ", Qt::SkipEmptyParts);
+#else
       _ret = printerOptions["Duplex"].split(" ", QString::SkipEmptyParts);
+#endif
       break;
     case ColorModel:
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+      _ret = printerOptions["ColorModel"].split(" ", Qt::SkipEmptyParts);
+#else
       _ret = printerOptions["ColorModel"].split(" ", QString::SkipEmptyParts);
+#endif
       break;
     case Collate:
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+      _ret = printerOptions["Collate"].split(" ", Qt::SkipEmptyParts);
+#else
       _ret = printerOptions["Collate"].split(" ", QString::SkipEmptyParts);
+#endif
       break;
   }
 #endif
@@ -247,7 +267,7 @@ CupsQTMPrinterSettings::fromSystemConfig(const QString& printer) {
     return false;
   
   // Watch out! the order of the options is relevant!
-  configProgram->start(QString("lpoptions -p \"%1\" -l").arg(printer));
+  configProgram->start("lpoptions", QStringList() << "-p" << printer << "-l");
   //, 
   //                   QStringList() << QString("-p \"%1\"").arg(printer)
   //                                 << "-l");
@@ -463,7 +483,7 @@ WinQTMPrinterSettings::fromSystemConfig(const QString& printer) {
    */
   
   // See the docs for QProcess::start() for the reason behind the triple \"
-  configProgram->start(QString("winprinfo --printer=\"\"\"%1\"\"\"").arg(printer));
+  configProgram->start("winprinfo", QStringList() << QString("--printer=\"%1\"").arg(printer));
   printerName = printer;
   return true;
 }
