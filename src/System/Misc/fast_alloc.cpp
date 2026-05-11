@@ -147,7 +147,8 @@ void* alloc_check(const char *msg,void *ptr,size_t* sp) {
   size_t s1= *((size_t *) ptr);
   ptr= (void*) (((char*) ptr)- WORD_LENGTH);
   size_t s= *((size_t *) ptr);
-  if((s1 + comp) != -1 || (s + comp) != -1) {
+  if((s1 + comp) != (size_t)(-1) ||
+     (s + comp) != (size_t)(-1)) {
     printf("%s %p size mismatch at %p %lu:%lu :%lu:%lu\n",msg,mem, ptr,s,s+comp,s1,s1+comp);
     if(break_stub (ptr)) s=s1<s?s1:s;
   } //else printf("fast_delete %p size %lu at %p\n",mem,s,ptr);

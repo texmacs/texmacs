@@ -52,7 +52,7 @@ public:
   void setEditable(bool editable);
 
   void addItems(const QStringList& texts);
-  inline void addItemsAndResize(const QStringList& texts, string ww, string hh) { addItems(texts); } // todo
+  inline void addItemsAndResize(const QStringList& texts, string, string) { addItems(texts); } // todo
 
   int currentIndex() const;
   void setCurrentIndex(int index);

@@ -124,7 +124,11 @@ void QTMDraggableTopBar::mousePressEvent(QMouseEvent *event) {
 
 void QTMDraggableTopBar::mouseMoveEvent(QMouseEvent *event) {
   if (mDraggable && (event->buttons() & Qt::LeftButton)) {
+#if QT_VERSION >= 0x060000
     const QPoint globalPos = event->globalPosition().toPoint();
+#else
+    const QPoint globalPos = event->globalPos();
+#endif
     cout << "Dragging window, cursor pos: " << globalPos.x()
          << ", " << globalPos.y() << LF;
     window()->move(QCursor::pos() - mClickPos);

@@ -782,7 +782,6 @@ QTMWidget::event (QEvent* event) {
 
   if (get_user_preference("use experimental keyboard patches") == "on") {
     if (event->type() == QEvent::KeyPress) {
-      QKeyEvent *ke = static_cast<QKeyEvent*> (event);
       return true;
     }
     if (event->type() == QEvent::ShortcutOverride) {

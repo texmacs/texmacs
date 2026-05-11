@@ -154,6 +154,7 @@ qt_widget_rep::send (slot s, blackbox val) {
  */
 inline QWidget*
 qt_widget_rep::as_qwidget (QWidget* parent_widget) {
+  (void) parent_widget;
   if (DEBUG_QT_WIDGETS)
     debug_widgets << "qt_widget_rep::as_qwidget() for "
                   << type_as_string() << LF;
