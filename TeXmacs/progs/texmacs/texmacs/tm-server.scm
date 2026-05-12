@@ -214,6 +214,11 @@
 ;; Killing buffers, windows and TeXmacs
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (buffer-closeable? name)
+  (and (buffer-modified? name)
+       (or (and (url-rooted-tmfs? name) (remote-file? name))
+           (not (url-rooted-tmfs? name)))))
+
 (tm-define (buffer-close name)
   (cpp-buffer-close name))
 
@@ -223,7 +228,7 @@
 (tm-define (safely-kill-buffer)
   (cond ((buffer-embedded? (current-buffer))
          (alt-windows-delete (alt-window-search (current-buffer))))
-        ((buffer-modified? (current-buffer))
+        ((buffer-closeable? (current-buffer))
          (user-confirm "The document has not been saved. Really close it?" #f  
            (lambda (answ)
              (when answ (buffer-close (current-buffer))))))
@@ -249,20 +254,20 @@
         ((<= (windows-number) 1)
          (safely-quit-TeXmacs))
         ((nnull? opt-name)
-         (if (buffer-modified? (window->buffer (car opt-name)))
+         (if (buffer-closeable? (window->buffer (car opt-name)))
              (user-confirm
                  "The document has not been saved. Really close it?" #f
                (lambda (answ)
                  (when answ (do-kill-window* (car opt-name)))))
              (do-kill-window* (car opt-name))))
-        ((buffer-modified? (current-buffer))
+        ((buffer-closeable? (current-buffer))
          (user-confirm "The document has not been saved. Really close it?" #f
            (lambda (answ)
              (when answ (do-kill-window)))))
         (else (do-kill-window))))
 
 (tm-define (safely-quit-TeXmacs)
-  (let* ((m (filter buffer-modified? (buffer-list)))
+  (let* ((m (filter buffer-closeable? (buffer-list)))
 	 (l (filter (non buffer-aux?) m)))
     (if (null? l)
         (quit-TeXmacs)
