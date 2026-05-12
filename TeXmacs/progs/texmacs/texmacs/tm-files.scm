@@ -234,6 +234,14 @@
 (tm-define (save-buffer . l)
   (apply save-buffer-main l))
 
+(tm-define (save-buffer-dispatch . l)
+  (let* ((cur? (or (null? l) (not (url? (car l)))))
+         (name (if cur? (current-buffer) (car l)))
+         (opts (if cur? l (cdr l))))
+    (if (and (url-rooted-tmfs? name) (remote-file? name))
+      (version-interactive-commit name)
+      (save-buffer l))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Saving buffers under a new name
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

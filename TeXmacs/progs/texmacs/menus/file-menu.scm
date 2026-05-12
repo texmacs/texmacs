@@ -173,7 +173,7 @@
                   "Export selection as image" fm))))
 
 (menu-bind save-menu
-  ("Save" (save-buffer))
+  ("Save" (save-buffer-dispatch))
   ("Save as" (choose-file save-buffer-as "Save TeXmacs file" "texmacs"))
   ---
   (link export-top-menu)
@@ -267,7 +267,7 @@
       (when (nnull? (recent-file-list 1))
         ("Clear menu" (forget-interactive "recent-buffer"))))
   ---
-  ("Save" (save-buffer))
+  ("Save" (save-buffer-dispatch))
   ("Save as" (choose-file save-buffer-as "Save TeXmacs file" "texmacs"))
   ---
   (link print-menu)
