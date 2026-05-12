@@ -12,8 +12,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (client client-notifications)
-  (:use (client client-base))
-        (notification notification-base))
+  (:use (client client-base)
+        (client client-chat)
+        (notification notification-base)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menu helpers
@@ -48,6 +49,10 @@
       ((eq? kind 'message)
        (add-notification server nid 'message
                          (lambda () (mail-box-open server)) notif))
+      ((eq? kind 'chat)
+       (with room-name (car (assoc-ref notif "data"))
+         (add-notification server nid 'chat
+                           (lambda () (chat-room-join server room-name)) notif)))
       (else #f))))
 
 

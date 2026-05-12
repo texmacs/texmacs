@@ -75,7 +75,10 @@
     ("Home directory"
      (with-post-reload (load-document (remote-home-directory server)))))
   (when (list-chat-rooms server)
-    ("Chat rooms" (with-post-reload (load-document (list-chat-rooms server)))))
+    (eval (notifiable-entry
+            server 'chat "Chat rooms"
+            (lambda () (with-post-reload
+                         (load-document (list-chat-rooms server)))))))
   (when (list-live server)
     ("Live documents" (with-post-reload (load-document (list-live server)))))
   (assuming sep? ---)
@@ -239,7 +242,8 @@
       (=> (balloon (icon "tm_cloud_file.xpm") "Chat room")
 	  (dynamic (remote-chat-menu server))))
   (if (chat-rooms-url? (current-buffer))
-      (=> (balloon (icon "tm_cloud_dir.xpm") "Chat rooms")
+      (=> (balloon (icon "tm_cloud_dir.xpm")
+                   (eval (notif-count-label server 'chat "Chat rooms")))
 	  (dynamic (remote-chat-list-menu server))))
   (if (live-url? (current-buffer))
       (=> (balloon (icon "tm_cloud_file.xpm") "Live document")

@@ -41,6 +41,16 @@
           `(client-push-notifications ,nid ,(db-get-entry nid))
           (lambda (ok?) (noop)))))))
 
+(tm-define (server-push-chat-notification pseudo room-name new-m mid)
+  (with uid (server-find-user pseudo)
+    (when uid
+      (with nid (add-pending-notification uid 'chat room-name)
+        (when (pseudo-logged? pseudo)
+          (server-remote-eval
+            (pseudo-logged? pseudo)
+            `(client-push-notifications ,nid ,(db-get-entry nid))
+            (lambda (ok?) (noop))))))))
+
 (tm-define (server-clean-user-notifications uid kind)
   (let* ((notifs (get-user-notifications uid kind)))
     (for-each db-remove-entry notifs)))
