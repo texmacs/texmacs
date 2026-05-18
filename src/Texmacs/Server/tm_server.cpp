@@ -235,14 +235,16 @@ void
 tm_server_rep::typeset_update (path p) {
   array<url> vs= get_all_views ();
   for (int i=0; i<N(vs); i++)
-    view_to_editor (vs[i]) -> typeset_invalidate (p);
+    if (view_to_editor (vs[i]) != NULL)
+      view_to_editor (vs[i]) -> typeset_invalidate (p);
 }
 
 void
 tm_server_rep::typeset_update_all () {
   array<url> vs= get_all_views ();
   for (int i=0; i<N(vs); i++)
-    view_to_editor (vs[i]) -> typeset_invalidate_all ();
+    if (view_to_editor (vs[i]) != NULL)
+      view_to_editor (vs[i]) -> typeset_invalidate_all ();
 }
 
 bool
