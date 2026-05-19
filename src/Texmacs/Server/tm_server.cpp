@@ -92,6 +92,41 @@ gui_set_output_language (string lan) {
 server_rep::server_rep () {}
 server_rep::~server_rep () {}
 
+static void
+server_dec_count (server_rep* r) {
+  if (0 == --(r->ref_count)) {
+    tm_server_rep* concrete= dynamic_cast<tm_server_rep*> (r);
+    ASSERT (concrete != NULL, "invalid server representation");
+    cout << "destructing server" << LF;
+    tm_delete (concrete);
+  }
+}
+
+server::server (const server& x): rep (x.rep) {
+  INC_COUNT (this->rep);
+}
+
+server::~server () {
+  server_dec_count (this->rep);
+}
+
+server_rep*
+server::operator -> () {
+  return rep;
+}
+
+server&
+server::operator = (server x) {
+  INC_COUNT (x.rep);
+  server_dec_count (this->rep);
+  this->rep= x.rep;
+  return *this;
+}
+
+server::server (server_rep* rep2): rep (rep2) {
+  INC_COUNT (this->rep);
+}
+
 tm_server_rep::tm_server_rep (): def_zoomf (1.0) {
   the_server= tm_new<server> (this);
   initialize_scheme ();
@@ -117,6 +152,7 @@ tm_server_rep::tm_server_rep (): def_zoomf (1.0) {
 }
 
 tm_server_rep::~tm_server_rep () {}
+
 server::server (): rep (tm_new<tm_server_rep> ()) {}
 server_rep* tm_server_rep::get_server () { return this; }
 
