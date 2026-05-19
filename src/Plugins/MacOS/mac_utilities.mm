@@ -40,6 +40,7 @@
 #include <QApplication>
 #include <QKeyEvent>
 #include <QString>
+#include <QMainWindow>
 #include "Qt/QTMWidget.hpp"
 #include "Qt/qt_gui.hpp"
 #include "Qt/qt_utilities.hpp"
@@ -563,3 +564,19 @@ mac_end_server () {
 #endif
 #endif
 }
+
+
+
+#ifdef QTTEXMACS
+void applyMacOSUnifiedBar(QWidget* widget) {
+  if (widget == nullptr) return;
+
+  NSView* nativeView = reinterpret_cast<NSView*>(widget->winId());
+  NSWindow* nativeWindow = [nativeView window];
+
+  [nativeWindow setStyleMask:[nativeWindow styleMask] | NSFullSizeContentViewWindowMask | NSWindowTitleHidden];
+  [nativeWindow setTitlebarAppearsTransparent:YES];
+
+  [nativeWindow setMovableByWindowBackground:YES];
+}
+#endif
