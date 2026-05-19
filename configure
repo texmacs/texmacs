@@ -940,7 +940,7 @@ enable_fastalloc
 enable_macosx_extensions
 with_sdk
 with_osx
-enable_cv2pdb
+enable_windows_pbd
 enable_qt
 with_qt_find_method
 with_qt
@@ -6980,12 +6980,12 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -Wl" >&2;}
   fi
 
 
-  if [[ "-ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32" =~ $(echo '^-Wl,') ]]
-  then LDFLAGS+=" -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32"
-  elif [[ "-ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32" =~ $(echo '^-l') ]]
+  if [[ "-ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -ldwmapi" =~ $(echo '^-Wl,') ]]
+  then LDFLAGS+=" -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -ldwmapi"
+  elif [[ "-ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -ldwmapi" =~ $(echo '^-l') ]]
   then
   unset STRIP_ALL_ARGS_list
-  for STRIP_ALL_ARGS_arg in "-ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32"
+  for STRIP_ALL_ARGS_arg in "-ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -ldwmapi"
   do  while [[ $LDFLAGS != $STRIP_ALL_ARGS_list ]]
       do STRIP_ALL_ARGS_list=$LDFLAGS
 
@@ -7006,12 +7006,12 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -Wl" >&2;}
   done
   unset ${!STRIP_ALL_ARGS_*}
 
-       LDFLAGS+=" -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32"
+       LDFLAGS+=" -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -ldwmapi"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])-ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32($|[[:space:]])") ]]
-    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32" >&5
-printf "%s\n" "$as_me: WARNING: Drop duplicate flag -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32" >&2;}
-    else LDFLAGS+=" -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32"
+    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])-ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -ldwmapi($|[[:space:]])") ]]
+    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -ldwmapi" >&5
+printf "%s\n" "$as_me: WARNING: Drop duplicate flag -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -ldwmapi" >&2;}
+    else LDFLAGS+=" -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -ldwmapi"
     fi
   fi
 
@@ -27206,13 +27206,13 @@ then :
 
 fi
 
-    # Check whether --enable-cv2pdb was given.
-if test ${enable_cv2pdb+y}
+    # Check whether --enable-windows_pbd was given.
+if test ${enable_windows_pbd+y}
 then :
-  enableval=$enable_cv2pdb;
+  enableval=$enable_windows_pbd;
 fi
 
-    if test "$enableval" = yes
+    if test "$enable_windows_pbd" = yes
     then  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: enabling cv2pdb" >&5
 printf "%s\n" "enabling cv2pdb" >&6; }
           # Extract the first word of "cv2pdb", so it can be a program name with args.
@@ -27237,7 +27237,7 @@ do
   esac
     for ac_exec_ext in '' $ac_executable_extensions; do
   if as_fn_executable_p "$as_dir$ac_word$ac_exec_ext"; then
-    ac_cv_prog_CV2PDB="yes"
+    ac_cv_prog_CV2PDB="cv2pdb"
     printf "%s\n" "$as_me:${as_lineno-$LINENO}: found $as_dir$ac_word$ac_exec_ext" >&5
     break 2
   fi
@@ -27245,7 +27245,6 @@ done
   done
 IFS=$as_save_IFS
 
-  test -z "$ac_cv_prog_CV2PDB" && ac_cv_prog_CV2PDB="no"
 fi ;;
 esac
 fi
@@ -27259,11 +27258,12 @@ printf "%s\n" "no" >&6; }
 fi
 
 
-          if test "$CV2PDB" = no
+          if test -z "$CV2PDB"
           then  as_fn_error $? "cv2pdb not found" "$LINENO" 5
           fi
     else  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: disabling cv2pdb" >&5
 printf "%s\n" "disabling cv2pdb" >&6; }
+          CV2PDB=
     fi
 
     case "$MSYSTEM" in
