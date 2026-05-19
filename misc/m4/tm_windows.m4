@@ -25,15 +25,16 @@ AC_DEFUN([TM_WINDOWS],[
       AC_SUBST([XTRA_CMD],[$TMREPO/windows/bin])
     ])
 
-    AC_ARG_ENABLE(cv2pdb,
+    AC_ARG_ENABLE(windows_pbd,
       AS_HELP_STRING([--enable-windows-pbd], [enable windows debug symbols]))
-    if test "$enableval" = yes
+    if test "$enable_windows_pbd" = yes
     then  AC_MSG_RESULT([enabling cv2pdb])
-          AC_CHECK_PROG([CV2PDB], [cv2pdb], [yes], [no])
-          if test "$CV2PDB" = no
+          AC_CHECK_PROG([CV2PDB], [cv2pdb], [cv2pdb], [])
+          if test -z "$CV2PDB"
           then  AC_MSG_ERROR([cv2pdb not found])
           fi
     else  AC_MSG_RESULT([disabling cv2pdb])
+          CV2PDB=
     fi
 
     case "$MSYSTEM" in
