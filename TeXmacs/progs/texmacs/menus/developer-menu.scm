@@ -16,7 +16,8 @@
 
 (use-modules (prog scheme-tools) (prog scheme-menu)
              (doc apidoc) (doc apidoc-widgets)
-             (language natural))
+             (language natural)
+             (utils misc gui-utils))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Miscellaneous extra routines
@@ -90,6 +91,113 @@
             "magnification" ,(get-custom-keyboard-magnification)
             ,(get-the-keyboard))
      '(style "new-gui"))))
+
+;; Convertit une largeur de touche en nombre Scheme utilisable.
+;; Le layout peut contenir soit un nombre, soit une chaine numerique.
+;; Si la conversion echoue, on retourne une valeur par defaut.
+(define (custom-keyboard-number x default)
+  (cond ((number? x) x)
+        ((string? x)
+         (with v (string->number x)
+           (if (number? v) v default)))
+        (else default)))
+
+;; Construit une commande executable pour une touche modificateur.
+;; Exemple: key="shift" -> "(emu-toggle-modifier \"shift\")"
+;; On renvoie une chaine de code Scheme, elle sera evaluee cote C++.
+(define (custom-keyboard->command key)
+  (string-append "(emu-toggle-modifier " (object->string key) ")"))
+
+;; Convertit une touche du layout TeXmacs (std-key/extended-key/mod-key)
+;; vers un format plus simple consomme par le clavier Qt:
+;;   (width label cmd kind)
+;; ou:
+;;   width : nombre de colonnes relatives
+;;   label : texte affiche sur le bouton
+;;   cmd   : code Scheme a executer au clic
+;;   kind  : metadata (std/extended/modifier), utile pour debug/evolutions
+;;
+;; Important:
+;; - label et cmd sont gardes "bruts" (pas object->string), sinon on ajoute
+;;   des guillemets et la commande devient une simple chaine non executable.
+(define (custom-keyboard-entry t)
+  (cond ((tm-func? t 'std-key 2)
+         (let* ((label (tm->stree (tree-ref t 0)))
+                (cmd   (tm->stree (tree-ref t 1))))
+      (list 1.0 label cmd "std")))
+        ((tm-func? t 'std-key 3)
+         (let* ((label (tm->stree (tree-ref t 0)))
+                (cmd   (tm->stree (tree-ref t 1)))
+                (w     (custom-keyboard-number (tm->stree (tree-ref t 2)) 1.0)))
+      (list w label cmd "std")))
+        ((tm-func? t 'extended-key 3)
+         (let* ((label (tm->stree (tree-ref t 0)))
+                (cmd   (tm->stree (tree-ref t 1)))
+                (w     (custom-keyboard-number (tm->stree (tree-ref t 2)) 1.0)))
+      (list w label cmd "extended")))
+        ((tm-func? t 'mod-key 2)
+         (let* ((label (tm->stree (tree-ref t 0)))
+                (w     (custom-keyboard-number (tm->stree (tree-ref t 1)) 1.0))
+                (cmd   (custom-keyboard->command label)))
+      (list w label cmd "modifier")))
+        (else #f)))
+
+;; Filtre les entrees invalides (#f) produites pendant le mapping.
+;; Equivaut a un compact/map-filter.
+(define (custom-keyboard-filter-valid l)
+  (cond ((null? l) (list))
+        ((car l)
+         (cons (car l) (custom-keyboard-filter-valid (cdr l))))
+        (else
+         (custom-keyboard-filter-valid (cdr l)))))
+
+;; Convertit une ligne "row" du clavier TeXmacs en liste de touches simplifiees.
+;; Structure attendue cote TeXmacs:
+;;   (row (cell (concat key1 key2 ...)))
+;; Si la structure est differente, on renvoie une ligne vide.
+(define (custom-keyboard-row row)
+  (if (and (tm-func? row 'row 1)
+           (tm-func? (tree-ref row 0) 'cell 1)
+           (tm-func? (tree-ref (tree-ref row 0) 0) 'concat))
+      (with parts (tree-children (tree-ref (tree-ref row 0) 0))
+        (custom-keyboard-filter-valid (map custom-keyboard-entry parts)))
+      (list)))
+
+;; Resout recursivement les dynamic-case du clavier.
+;; Le clavier de base est defini comme un arbre dynamique, par ex:
+;;   (dynamic-case "fn" ... "no-fn" ...)
+;;   (dynamic-case "shift" ... "no-shift" ...)
+;;
+;; Cette fonction choisit la bonne branche selon l'etat des modificateurs
+;; (emu-active-modifier?) et retourne un arbre concret "keyboard".
+;;
+;; Note de robustesse:
+;; get-the-keyboard peut renvoyer un tree ou un stree selon le contexte.
+;; On normalise donc avec (stree->tree ...) avant tree-arity/tree-ref.
+(define (custom-keyboard-resolve t)
+  (with tt (if (tree? t) t (stree->tree t))
+    (if (and (tm-func? tt 'dynamic-case) (>= (tree-arity tt) 4))
+        (with mod (tm->stree (tree-ref tt 0))
+          (if (and (string? mod) (emu-active-modifier? mod))
+              (custom-keyboard-resolve (tree-ref tt 1))
+              (custom-keyboard-resolve (tree-ref tt 3))))
+        tt)))
+
+;; Point d'entree appele par le code C++ Qt.
+;; Retourne le layout courant du clavier sous forme "simple":
+;;   ( (row1-key1 row1-key2 ...) (row2-key1 ...) ... )
+;; ou chaque key = (width label cmd kind)
+;;
+;; Ce format evite de construire un widget Scheme complet cote C++ et permet
+;; de creer directement des QPushButton natifs, plus fluides.
+(tm-define (custom-keyboard-layout)
+  (let* ((tree (custom-keyboard-resolve (get-the-keyboard))))
+    (if (and (tm-func? tree 'keyboard 1)
+             (tm-func? (tree-ref tree 0) 'tformat 1)
+             (tm-func? (tree-ref (tree-ref tree 0) 0) 'table))
+        (with rows (tree-children (tree-ref (tree-ref tree 0) 0))
+          (map custom-keyboard-row rows))
+        (list))))
 
 (tm-define (open-custom-keyboard)
   (:interactive #t)
