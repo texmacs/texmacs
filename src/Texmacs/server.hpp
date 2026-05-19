@@ -111,10 +111,15 @@ public:
 };
 
 class server {
-  ABSTRACT(server);
+  server_rep *rep;
+public:
+  server (const server&);
+  ~server ();
+  server_rep* operator -> ();
+  server& operator = (server x);
+  server (server_rep*);
   server ();
 };
-ABSTRACT_CODE(server);
 
 extern bool rescue_mode;
 scheme_tree menu_merge (scheme_tree m1, scheme_tree m2);

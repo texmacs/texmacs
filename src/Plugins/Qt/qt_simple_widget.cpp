@@ -60,13 +60,14 @@ qt_simple_widget_rep::as_qwidget (QWidget* parent_widget) {
   SI width, height;
   handle_get_size_hint (width, height);
   QSize sz = to_qsize (width, height);
-  scrollarea()->editor_flag= is_editor_widget ();
+  if (scrollarea()) scrollarea()->editor_flag= is_editor_widget ();
   if (!is_editor_widget ()) {
-    canvas()->resize (sz);
-    scrollarea()->setExtents (QRect (QPoint(0,0), sz));
+    if (canvas()) canvas()->resize (sz);
+    if (scrollarea()) scrollarea()->setExtents (QRect (QPoint(0,0), sz));
   }
   all_widgets->insert((pointer) this);
-  backing_pos = canvas()->origin ();
+  if (canvas()) backing_pos = canvas()->origin ();
+  else backing_pos = QPoint();
   backing_valid = false;
   return qwid;
 }
@@ -204,7 +205,8 @@ qt_simple_widget_rep::send (slot s, blackbox val) {
     {
       check_type<coord4>(val, s);
       coord4 p = open_box<coord4> (val);
-      scrollarea()->setExtents (to_qrect (p));
+      if (scrollarea()) scrollarea()->setExtents (to_qrect (p));
+      else cout << "qt_simple_widget_rep::send: cannot set extents, scrollarea() is null" << LF;
     }
       break;
       
@@ -212,7 +214,8 @@ qt_simple_widget_rep::send (slot s, blackbox val) {
     {
       check_type<coord2>(val, s);
       coord2 p = open_box<coord2> (val);
-      canvas()->resize (to_qsize(p));
+      if (canvas()) canvas()->resize (to_qsize(p));
+      else cout << "qt_simple_widget_rep::send: cannot resize canvas, canvas() is null" << LF;
     }
       break;
       
@@ -224,7 +227,8 @@ qt_simple_widget_rep::send (slot s, blackbox val) {
       QSize  sz = canvas()->surface()->size();
       qp -= QPoint (sz.width() / 2, sz.height() / 2);
         // NOTE: adjust because child is centered
-      scrollarea()->setOrigin (qp);
+      if (scrollarea()) scrollarea()->setOrigin (qp);
+      else cout << "qt_simple_widget_rep::send: cannot set scroll position, scrollarea() is null" << LF;
     }
       break;
       
@@ -232,7 +236,9 @@ qt_simple_widget_rep::send (slot s, blackbox val) {
     {
       check_type<double> (val, s);
       double new_zoom = open_box<double> (val);
-      canvas()->tm_widget()->handle_set_zoom_factor (new_zoom);
+      if (canvas() && canvas()->tm_widget())
+        canvas()->tm_widget()->handle_set_zoom_factor (new_zoom);
+      else cout << "qt_simple_widget_rep::send: cannot set zoom factor, canvas() or canvas()->tm_widget() is null" << LF;
     }
       break;
       
@@ -264,7 +270,8 @@ qt_simple_widget_rep::send (slot s, blackbox val) {
     {
       check_type<coord2>(val, s);
       coord2 p = open_box<coord2> (val);
-      canvas()->setCursorPos(to_qpoint(p));
+      if (canvas()) canvas()->setCursorPos(to_qpoint(p));
+      else cout << "qt_simple_widget_rep::send: cannot set cursor position, canvas() is null" << LF;
     }
       break;
       
@@ -303,8 +310,20 @@ qt_simple_widget_rep::query (slot s, int type_id) {
     case SLOT_POSITION:
     {
       check_type_id<coord2> (type_id, s);
-        // HACK: mapTo() does not work as we expect on the Mac, so we manually
-        // calculate the global screen cordinates and substract
+      if (!scrollarea()) {
+        cout << "qt_simple_widget_rep::query: cannot get position, scrollarea() is null" << LF;
+        return close_box<coord2>(coord2(0,0));
+      }
+      if (!scrollarea()->surface()) {
+        cout << "qt_simple_widget_rep::query: cannot get position, scrollarea()->surface() is null" << LF;
+        return close_box<coord2>(coord2(0,0));
+      }
+      if (!scrollarea()->window()) {
+        cout << "qt_simple_widget_rep::query: cannot get position, scrollarea()->window() is null" << LF;
+        return close_box<coord2>(coord2(0,0));
+      }
+      // HACK: mapTo() does not work as we expect on the Mac, so we manually
+      // calculate the global screen cordinates and substract
       QPoint sg = scrollarea()->surface()->mapToGlobal (QPoint (0,0));
       QRect  wg = scrollarea()->window()->frameGeometry();
       sg.ry() -= wg.y();
@@ -315,18 +334,30 @@ qt_simple_widget_rep::query (slot s, int type_id) {
     case SLOT_SIZE:
     {
       check_type_id<coord2> (type_id, s);
+      if (!canvas()) {
+        cout << "qt_simple_widget_rep::query: cannot get size, canvas() is null" << LF;
+        return close_box<coord2>(coord2(0,0));
+      }
       return close_box<coord2> (from_qsize (canvas()->size()));
     }
       
     case SLOT_SCROLL_POSITION:
     {
       check_type_id<coord2> (type_id, s);
+      if (!canvas()) {
+        cout << "qt_simple_widget_rep::query: cannot get scroll position, canvas() is null" << LF;
+        return close_box<coord2>(coord2(0,0));
+      }
       return close_box<coord2> (from_qpoint (canvas()->origin()));
     }
       
     case SLOT_EXTENTS:
     {
       check_type_id<coord4> (type_id, s);
+      if (!canvas()) {
+        cout << "qt_simple_widget_rep::query: cannot get extents, canvas() is null" << LF;
+        return close_box<coord4>(coord4(0,0,0,0));
+      }
       return close_box<coord4> (from_qrect (canvas()->extents()));
     }
       
@@ -432,6 +463,10 @@ qt_simple_widget_rep::as_qaction () {
 #if QT_VERSION >= 0x060000
 void
 qt_simple_widget_rep::invalidate_rect (int x1, int y1, int x2, int y2) {
+  if (!canvas()) {
+    cout << "qt_simple_widget_rep::invalidate_rect: cannot invalidate rect, canvas() is null" << LF;
+    return;
+  }
   // Because of accumulated rounding error on screen with a dpr > 1, 
   // we enlarge the invalid rect by a few pixels.
   // todo : the solution would be to use a float for the coordinates
@@ -459,6 +494,10 @@ qt_simple_widget_rep::invalidate_rect (int x1, int y1, int x2, int y2) {
 
 void
 qt_simple_widget_rep::invalidate_all () {
+  if (!canvas()) {
+    cout << "qt_simple_widget_rep::invalidate_all: cannot invalidate all, canvas() is null" << LF;
+    return;
+  }
   QSize sz = canvas()->surface()->size();
   // QPoint pt = QAbstractScrollArea::viewport()->pos();
   //cout << "invalidate all " << LF;
@@ -522,6 +561,10 @@ qt_simple_widget_rep::get_renderer() {
  */
 void
 qt_simple_widget_rep::repaint_invalid_regions () {
+  if (!canvas()) {
+    cout << "qt_simple_widget_rep::repaint_invalid_regions: cannot repaint invalid regions, canvas() is null" << LF;
+    return;
+  }
 #if QT_VERSION >= 0x060000
   double pixel_ratio= canvas()->surface()->devicePixelRatio();
 #else
