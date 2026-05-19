@@ -7,8 +7,8 @@
 #include "qt_utilities.hpp"
 
 QTMApplication::QTMApplication (int& argc, char** argv) :
-  QApplication (argc, argv), mOnscreenKeyboard(nullptr) {
-#if QT_VERSION >= 0x060000
+  QApplication (argc, argv), mOnscreenKeyboard(nullptr), mCssWatcher(nullptr) {
+#if QT_VERSION >= 0x050000
     mCssWatcher = new QFileSystemWatcher(this);
     connect(mCssWatcher, &QFileSystemWatcher::fileChanged, 
             this, &QTMApplication::onCssFileChanged);
@@ -37,14 +37,14 @@ void QTMApplication::load() {
   if (mUseTabWindow) new QTMMainTabWindow();
 #endif
 
-#ifdef OS_ANDROID
+//#ifdef OS_ANDROID
   mOnscreenKeyboard = new QTMOnscreenKeyboard();
   if (mUseTabWindow && QTMMainTabWindow::topTabWindow() != nullptr) {
     QTMMainTabWindow::topTabWindow()->attachOnscreenKeyboard(mOnscreenKeyboard);
   } else {
     mOnscreenKeyboard->show();
   }
-#endif
+//#endif
 
 }
   
@@ -66,8 +66,10 @@ void QTMApplication::init_theme () {
     tm_style_sheet= "$TEXMACS_PATH/misc/themes/standard-dark.css";
 
   
-  QString qcss_path= utf8_to_qstring (concretize (url_system (tm_style_sheet)));
-  mCssWatcher->addPath(qcss_path);
+  if (mCssWatcher != nullptr) {
+    QString qcss_path= utf8_to_qstring (concretize (url_system (tm_style_sheet)));
+    mCssWatcher->addPath(qcss_path);
+  }
   
   init_palette (this);
   init_style_sheet (this);
