@@ -737,6 +737,7 @@
 "buffer-export"
 "buffer-save"
 "tree-import-loaded"
+"tree-import-loaded-from-object"
 "tree-import"
 "tree-inclusion"
 "tree-export"
