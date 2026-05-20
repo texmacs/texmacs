@@ -789,12 +789,12 @@ socket_server_rep::stop () {
   }
   safe_server_close (socket_id);
   socket_id= -1;
-  server_log_stop ();
 #if defined(OS_MACOS)
   mac_end_server ();
 #endif
   checkout (this);
   SLOGI ("server stopped at " * host * ":" * as_string (port));
+  server_log_stop ();
 }
 
 void
