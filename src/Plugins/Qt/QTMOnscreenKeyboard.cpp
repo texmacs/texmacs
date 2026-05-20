@@ -10,10 +10,12 @@
 
 #include "QTMOnscreenKeyboard.hpp"
 
-#include "qt_widget.hpp"
 #include "scheme.hpp"
+#include "qt_utilities.hpp"
 
 #include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QPushButton>
 #include <QResizeEvent>
 #include <QTimer>
 
@@ -21,98 +23,256 @@
 #include <cstdio>
 
 QTMOnscreenKeyboard::QTMOnscreenKeyboard() {
-
-	QVBoxLayout* layout = new QVBoxLayout(this);
-	layout->setContentsMargins(0, 0, 0, 0);
-	layout->setAlignment(Qt::AlignCenter);
+	mLayout = new QVBoxLayout(this);
+	mLayout->setContentsMargins(0, 0, 0, 0);
+	mLayout->setSpacing(2);
 
 	QTimer::singleShot(10, this, SLOT(initializeKeyboard()));
-
-    setMinimumHeight(200);
-    setMinimumWidth(450);
-
 }
 
-void
-QTMOnscreenKeyboard::resizeEvent (QResizeEvent* event) {
-	(void) event;
+void QTMOnscreenKeyboard::resizeEvent(QResizeEvent* event) {
+	(void)event;
     QTM_CALL_DELAYED(onResizeEvent);
 }
 
-void
-QTMOnscreenKeyboard::onResizeEvent () {
-    if (is_nil(mKeyboardWidget)) return;
+void QTMOnscreenKeyboard::onResizeEvent() {
 	updateKeyboardZoom();
-    initializeKeyboard();   
 }
 
-void
-QTMOnscreenKeyboard::updateKeyboardZoom () {
-    double w = width();
-    double h = height();
-    double w0 = mKeyboardSizeHint.width();
-    double h0 = mKeyboardSizeHint.height();
-    if (w0 <= 0 || h0 <= 0) {
-        w0 = 450;
-        h0 = 200;
-    }
-	double z = min(w / w0, h / h0);
+void QTMOnscreenKeyboard::updateKeyboardZoom() {
+    updateButtonGeometry();
+}
 
-	char buf[32];
-	snprintf (buf, sizeof (buf), "%.3f", z);
-	string zs (buf);
+void QTMOnscreenKeyboard::clearKeyboardWidgets() {
+	if (mLayout == nullptr) return;
+	mButtons.clear();
 
-	try {
-		eval ("(set-custom-keyboard-magnification \"" * zs * "\")");
-	} catch (string &err) {
-        cout << "Failed to set custom keyboard magnification: " << err << LF;
+	while (QLayoutItem* item = mLayout->takeAt(0)) {
+		if (QWidget* widget = item->widget()) {
+			widget->hide();
+			widget->setParent(nullptr);
+			widget->deleteLater();
+		}
+		delete item;
 	}
+}
+
+void QTMOnscreenKeyboard::updateButtonGeometry() {
+	const double w0= (mKeyboardSizeHint.width() > 0)?
+					mKeyboardSizeHint.width(): 450.0;
+	const double h0= (mKeyboardSizeHint.height() > 0)?
+					mKeyboardSizeHint.height(): 200.0;
+    const double z = max(0.6, min(width() / w0, height() / h0));
+
+    const int minHeight = (int) round(26.0 * z);
+    const int fontSize = (int) round(10.0 * z);
+	for (const QPointer<QPushButton>& key : mButtons) {
+        if (key == nullptr) continue;
+        key->setMinimumHeight(minHeight);
+        QFont f = key->font();
+        f.setPointSize(max(8, fontSize));
+        key->setFont(f);
+    }
+}
+
+void QTMOnscreenKeyboard::onKeyboardButtonClicked(QPushButton* key) {
+    if (key == nullptr) return;
+    QString cmd = key->property("tm-cmd").toString();
+    if (cmd.isEmpty()) return;
+	bool refreshLayout = shouldRefreshLayoutAfterCommand(cmd);
+
+    try {
+		eval(string(cmd.toUtf8().constData()));
+    } catch (string& err) {
+        cout << "custom-keyboard key command failed: " << err << LF;
+    }
+
+	if (refreshLayout)
+	  QTimer::singleShot(0, this, SLOT(initializeKeyboard()));
+}
+
+bool QTMOnscreenKeyboard::hasActiveEmuModifier() const {
+	const char* mods[] = { "fn", "shift", "ctrl", "alt", "cmd", "lock" };
+	for (const char* mod : mods) {
+		try {
+			object active = call("emu-active-modifier?", object(mod));
+			if (is_bool(active) && as_bool(active)) return true;
+		} catch (string&) {
+			// Ignore and keep trying other modifiers.
+		}
+	}
+	return false;
+}
+
+bool QTMOnscreenKeyboard::shouldRefreshLayoutAfterCommand(const QString& cmd) const {
+	// todo : we need a more intelligent way to determine whether the layout should be refreshed
+	QString s = cmd.trimmed();
+	if (s.startsWith("(emu-toggle-modifier ")) return true;
+	if (s.startsWith("(emu-key ")) return hasActiveEmuModifier();
+	return false;
+}
+
+QTMOnscreenKeyboard::KeyData
+QTMOnscreenKeyboard::parseKeyData(array<object> key) const {
+	KeyData data;
+	data.widthUnits = 1.0;
+	if (is_double(key[0])) data.widthUnits = as_double(key[0]);
+	else if (is_int(key[0])) data.widthUnits = (double) as_int(key[0]);
+
+	string label = is_string(key[1])? as_string(key[1]): string("");
+	string cmd = is_string(key[2])? as_string(key[2]): string("");
+	data.label = to_qstring(label);
+	data.cmd = to_qstring(cmd);
+	return data;
+}
+
+QTMOnscreenKeyboard::KeyboardRows
+QTMOnscreenKeyboard::parseKeyboardRows(object layoutData) const {
+	KeyboardRows parsedRows;
+	if (!is_list(layoutData)) return parsedRows;
+
+	array<object> rows = as_array_object(layoutData);
+	for (int i = 0; i < N(rows); i++) {
+		if (!is_list(rows[i])) continue;
+		array<object> cols = as_array_object(rows[i]);
+
+		RowData row;
+		for (int j = 0; j < N(cols); j++) {
+			if (!is_list(cols[j])) continue;
+			array<object> key = as_array_object(cols[j]);
+			if (N(key) < 3) continue;
+			row << parseKeyData(key);
+		}
+
+		parsedRows << row;
+	}
+
+	return parsedRows;
+}
+
+bool QTMOnscreenKeyboard::checkCanUpdateInPlace() {
+	if (mLayout == nullptr || mLayout->count() != N(mRows))
+	  return false;
+	for (int i = 0; i < N(mRows); i++) {
+		QLayoutItem* rowItem = mLayout->itemAt(i);
+		QWidget* rowWidget = nullptr;
+		if (rowItem) {
+			rowWidget = rowItem->widget();
+		}
+		QHBoxLayout* rowLayout = nullptr;
+		if (rowWidget) {
+			rowLayout = qobject_cast<QHBoxLayout*> (rowWidget->layout());
+		}
+		if (rowLayout == nullptr) {
+			return false;
+		}
+
+		int expected = N(mRows[i]);
+		if (rowLayout->count() != expected) {
+			return false;
+		}
+
+		for (int k = 0; k < rowLayout->count(); k++) {
+			QWidget* w = nullptr;
+			if (rowLayout->itemAt(k)) {
+			  w = rowLayout->itemAt(k)->widget();
+			}
+			if (qobject_cast<QPushButton*> (w) == nullptr) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
+void QTMOnscreenKeyboard::updateInPlace() {
+	for (int i=0; i<N(mRows); ++i) {
+		mLayout->setStretch(i, 1);
+		RowData row = mRows[i];
+		QHBoxLayout* rowLayout = qobject_cast<QHBoxLayout*> (mLayout->itemAt(i)->widget()->layout());
+		for (int k=0; k<N(row); ++k) {
+			KeyData keyData = row[k];
+
+			QPushButton* button = qobject_cast<QPushButton*> (rowLayout->itemAt(k)->widget());
+			if (button->text() != keyData.label) {
+				button->setText(keyData.label);
+			}
+			if (button->property("tm-cmd").toString() != keyData.cmd) {
+				button->setProperty("tm-cmd", keyData.cmd);
+			}
+			int stretch = max(1, (int) round(keyData.widthUnits * 100.0));
+			if (rowLayout->stretch(k) != stretch) {
+				rowLayout->setStretch(k, stretch);
+			}
+		}
+	}
+}
+
+void QTMOnscreenKeyboard::rebuildKeyboard() {
+	clearKeyboardWidgets();
+
+	double maxUnits = 0.0;
+	for (int i = 0; i < N(mRows); i++) {
+		RowData row = mRows[i];
+
+		QWidget* rowWidget = new QWidget(this);
+		rowWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+		QHBoxLayout* rowLayout = new QHBoxLayout(rowWidget);
+		rowLayout->setContentsMargins(0, 0, 0, 0);
+		rowLayout->setSpacing(4);
+
+		double rowUnits = 0.0;
+		for (int j = 0; j < N(row); j++) {
+			KeyData keyData = row[j];
+
+			QPushButton* button = new QPushButton(keyData.label, rowWidget);
+			mButtons << button;
+			button->setProperty("tm-cmd", keyData.cmd);
+			button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+			connect(button, &QPushButton::clicked, this, 
+				[this, button]() { onKeyboardButtonClicked(button); });
+
+			int stretch = max(1, (int) round(keyData.widthUnits * 100.0));
+			rowLayout->addWidget(button, stretch);
+			rowUnits += keyData.widthUnits;
+		}
+
+		maxUnits = max(maxUnits, rowUnits);
+		mLayout->addWidget(rowWidget, 1);
+	}
+
+	if (!mKeyboardSizeHint.isValid()) {
+		const int hintWidth = (int) round(max(10.0, maxUnits) * 42.0);
+		const int hintHeight = max(200, N(mRows) * 44 + 10);
+		mKeyboardSizeHint = QSize(hintWidth, hintHeight);
+		setMinimumSize(mKeyboardSizeHint);
+	}
+
+	updateButtonGeometry();
 }
 
 void QTMOnscreenKeyboard::initializeKeyboard() {
 	try {
-
-		object cmd = eval("(lambda args #f)");
-		object menu = call("custom-keyboard-widget", cmd);
-		object xwid = call("make-menu-widget", menu, 0);
-		if (!is_widget(xwid)) {
-			cout << "Failed to create custom keyboard widget (not a widget object)." << LF;
+		object layoutData = call("custom-keyboard-layout");
+		if (!is_list(layoutData)) {
+			cout << "custom-keyboard-layout returned a non-list result." << LF;
 			return;
 		}
 
-		mKeyboardWidget = as_widget(xwid);
-		if (is_nil(mKeyboardWidget)) {
-			cout << "Failed to create custom keyboard widget (nil widget)." << LF;
+		array<object> rows = as_array_object(layoutData);
+		mRows = parseKeyboardRows(layoutData);
+		if (N(rows) == 0) return;
+		if (mLayout == nullptr) return;
+
+		if (checkCanUpdateInPlace()) {
+			updateInPlace();
+			updateButtonGeometry();
 			return;
 		}
 
-		QWidget* keyboard = concrete(mKeyboardWidget)->as_qwidget(this);
-		if (keyboard == nullptr) {
-			cout << "Failed to convert custom keyboard widget to QWidget." << LF;
-			return;
-		}
-
-        if (!mKeyboardSizeHint.isValid()) {
-            mKeyboardSizeHint = keyboard->sizeHint();
-            setMinimumSize(mKeyboardSizeHint);
-        }
-
-		QVBoxLayout* layout = qobject_cast<QVBoxLayout*> (this->layout());
-
-        // remove any existing widgets from the layout
-        while (QLayoutItem* item = layout->takeAt(0)) {
-            if (QWidget* widget = item->widget()) {
-                widget->hide();
-                widget->setParent(nullptr);
-                widget->deleteLater();
-            }
-            delete item;
-        }
-
-		if (layout == nullptr) return;
-		layout->addWidget(keyboard, 0, Qt::AlignCenter);
+		rebuildKeyboard();
 
 	} catch (string& err) {
-		cout << "custom-keyboard-widget failed: " << err << LF;
+		cout << "custom-keyboard-layout failed: " << err << LF;
 	}
 }
