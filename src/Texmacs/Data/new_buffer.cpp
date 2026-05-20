@@ -452,6 +452,16 @@ import_loaded_tree (string s, url u, string fm) {
 }
 
 tree
+import_loaded_tree_from_object (object s, url u) {
+  set_file_focus (u);
+  tree t= stree_to_tree (s);
+  tree links= extract (t, "links");
+  if (N (links) != 0)
+    (void) call ("register-link-locations", object (u), object (links));
+  return attach_subformat (t, u, "stm-document");
+}
+
+tree
 import_tree (url u, string fm) {
   url r= resolve (u, "fr");
   if (is_none (r)) {

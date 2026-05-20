@@ -5699,6 +5699,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(tree-import-loaded-from-object <scm-arg|object> <scm-arg|url>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|import_loaded_tree_from_object> which returns
+    <scm|tree>.
+  </explain>
+
+  <\explain>
     <scm|(tree-import <scm-arg|url> <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>

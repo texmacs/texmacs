@@ -102,6 +102,7 @@ bool buffer_load (url name);
 bool buffer_export (url name, url dest, string fm);
 bool buffer_save (url name);
 tree import_loaded_tree (string s, url u, string fm);
+tree import_loaded_tree_from_object (object s, url u);
 tree import_tree (url u, string fm);
 bool export_tree (tree doc, url u, string fm);
 tree load_style_tree (string package);
