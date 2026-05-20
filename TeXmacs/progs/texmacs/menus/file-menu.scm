@@ -147,11 +147,17 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind new-file-menu
-  (if (window-per-buffer?)
-      ("New window" (new-document)))
-  (if (not (window-per-buffer?))
-      ("New document" (new-document))
-      ("New window" (new-document*)))
+  (if (get-boolean-preference "enable tab")
+    ("New tab" (new-document)))
+  (if (and (get-boolean-preference "enable tab") (not (os-android?)))
+    ("New window" (new-document*)))
+  (if (and (not (get-boolean-preference "enable tab")) (window-per-buffer?))
+    ("New window" (new-document)))
+  (if (and (not (get-boolean-preference "enable tab"))
+       (not (window-per-buffer?)))
+    ("New document" (new-document))
+    (if (not (get-boolean-preference "enable tab"))
+      ("New window" (new-document*))))
   ;;("Clone window" (clone-window))
   )
 
