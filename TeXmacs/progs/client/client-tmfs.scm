@@ -592,11 +592,20 @@
          (server (find-server-for-name name))
          (action (if dir? "remove directory" "remove file"))
          (done (if dir? "directory removed" "file removed"))
+         (rname-url (string->url
+                      (string-append
+                        (if dir? "tmfs://remote-dir/" "tmfs://remote-file/")
+                        name)))
          (cmd `(,(if dir? 'remote-dir-remove 'remote-file-remove) ,name)))
     (if (remote-home-directory? what)
         (set-message "not allowed to remove home directory" action)
         (client-remote-eval server cmd
           (lambda (removed)
+            (with-database* (user-database "sync")
+              (with ids (db-search
+                          `(("remote-name" ,(url->system rname-url))
+                            ("type" "sync")))
+                (for (id ids) (db-remove-entry id))))
             (when (buffer-exists? what)
               (buffer-close what))
             (set-message done action))
