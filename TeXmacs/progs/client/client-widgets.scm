@@ -476,7 +476,12 @@
               (string-append "The server certificate issuer is unknown\n"
                              "Do you still want to trust it ?\n\n" crt-desc))))
     (dialogue-window
-      (certificate-warning-confirm msg (lambda () (trust-certificate crt-pem)))
+      (certificate-warning-confirm
+        msg
+        (lambda ()
+          (trust-certificate crt-pem)
+          (show-message "Certificate trusted, please log in again."
+                        "Certificate Information")))
       noop
       "Certificate warning")))
 
@@ -491,7 +496,13 @@
                               " verification for all trusted certificates?\n\n"
                               crt-desc))))
     (dialogue-window
-      (certificate-warning-confirm msg disable-certificate-time-checks) noop
+      (certificate-warning-confirm
+        msg
+        (lambda ()
+          (disable-certificate-time-checks)
+          (show-message "Certificates time checks disabled, please log in again."
+                        "Certificate Information")))
+      noop
       "Certificate warning")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
