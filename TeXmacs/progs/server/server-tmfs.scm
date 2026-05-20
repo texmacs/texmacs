@@ -501,10 +501,18 @@
     (if past?
         (server-error envelope "Error: cannot modify past")
         (let* ((uid (server-get-user envelope))
-               (r (server-file-remove uid rname)))
-          (if (== (car r) :error)
-              (server-error envelope (cadr r))
-              (server-return envelope "removed"))))))
+               (rid (file-name->resource (tmfs-cdr rname))))
+          (cond ((not uid)
+                 (server-error envelope "Error: not logged in"))
+                ((not rid)
+                 (server-error envelope (string-append
+                                "Error: file '" rname "' does not exist")))
+                ((not (db-allow? rid uid "writable"))
+                 (server-error envelope (string-append
+                                "Error: write access denied for '" rname "'")))
+                (else
+                  (server-file-remove-complete rid)
+                  (server-return envelope "removed")))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remote directories
