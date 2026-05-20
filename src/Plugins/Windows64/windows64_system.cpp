@@ -19,6 +19,8 @@
 #include <io.h>
 #include <fcntl.h>
 #include <process.h>
+#include <dwmapi.h> 
+#include <windowsx.h>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -41,6 +43,7 @@
 #include <QGuiApplication>
 #include <QCoreApplication>
 #include <QStyleHints>
+#include <QWidget>
 #endif
 
 #include "analyze.hpp"
@@ -729,3 +732,42 @@ mingw_system (::array< ::string> arg,
   }
   return (wret);
 }
+
+#ifdef QTTEXMACS
+void applyWindowsAcrylicAndUnifiedToolbar(QWidget* widget) {
+  if (widget == nullptr) return;
+
+  widget->setWindowFlag(Qt::NoTitleBarBackgroundHint, true);
+
+  
+  widget->setWindowFlag(Qt::Window, true);
+  widget->setAttribute(Qt::WA_TranslucentBackground);
+  widget->setAttribute(Qt::WA_NoSystemBackground);
+
+  QPalette pal = widget->palette();
+  pal.setColor(QPalette::Window, Qt::transparent);
+  widget->setPalette(pal);
+
+  widget->show(); // Important to ensure the window is created before applying DWM attributes
+
+  HWND hwnd = reinterpret_cast<HWND>(widget->winId());
+  if (hwnd == nullptr) return;
+
+  const int DWMWA_WINDOW_CORNER_PREFERENCE_VAL = 33;
+  const int DWMWA_SYSTEMBACKDROP_TYPE_VAL = 38;
+
+  // 1. Rounded corner
+  const int cornerPreference = 2; // DWMWCP_ROUND 
+  DwmSetWindowAttribute(hwnd, DWMWA_WINDOW_CORNER_PREFERENCE_VAL, &cornerPreference, sizeof(cornerPreference));
+
+  // 2. Acrylic backdrop
+  const int backdropType = 3; 
+  DwmSetWindowAttribute(hwnd, DWMWA_SYSTEMBACKDROP_TYPE_VAL, &backdropType, sizeof(backdropType));
+
+  // 3. Extend the frame so that the Acrylic covers the client area
+  MARGINS margins = {-1, -1, -1, -1};
+  DwmExtendFrameIntoClientArea(hwnd, &margins);
+
+
+}
+#endif
