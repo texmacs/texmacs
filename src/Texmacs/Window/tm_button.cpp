@@ -287,7 +287,8 @@ texmacs_output_widget (tree doc, tree style) {
   hashmap<string,tree> h3 (UNINIT), h4 (UNINIT);
   hashmap<string,tree> h5 (UNINIT), h6 (UNINIT);
   tree prj= extract (doc, "project");
-  if (is_atomic (prj) && exists (url_system (prj->label))) {
+  if (is_atomic (prj) && N(prj->label) > 0 &&
+      exists (url_system (prj->label))) {
     tm_buffer buf= concrete_buffer_insist (url_system (prj->label));
     if (!is_nil (buf)) {
       h1= copy (buf->data->ref);
