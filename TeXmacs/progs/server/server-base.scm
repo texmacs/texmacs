@@ -372,6 +372,14 @@
   (for-each (lambda (pref) (reset-preference (car pref)))
             (server-admin-preferences)))
 
+(define (open-server-messages doc)
+  (when (not (headless?))
+    (let* ((aux "Server messages")
+	   (name (aux-name aux)))
+      (aux-set-document aux doc)
+      (if (not (buffer->window name))
+	  (load-buffer-main name :new-window)))))
+
 (tm-define (server-reset-admin-password)
   (let* ((info (server-get-user-info "admin"))
          (passwd (generate-password 20))
@@ -384,12 +392,11 @@
         (string-append "The password for the admin account has been reset.\n"
 		       "login: admin \n"
 		       "password: " passwd "\n"))
-      (when (not (headless?))
-	(open-auxiliary "New password for admin at localhost"
-          `(document (style "generic")
-	     (body (document "New password for admin at localhost"
-			     "login: admin"
-			     ,(string-append "password: " passwd)))))))))
+      (open-server-messages
+       `(document (style "generic")
+		  (body (document "New password for admin at localhost"
+				  "login: admin"
+				  ,(string-append "password: " passwd))))))))
 
 (tm-define (server-create-default-admin-account)
   (server-load-users)
