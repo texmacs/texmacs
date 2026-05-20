@@ -479,10 +479,6 @@
 		 (if (!= ret "bye")
 		     (std-client-error "Logout failed"))
                  (remove-active-connection server server-name server-port server-pseudo)
-		 (for (sv (active-servers))
-		   (and-with sv-conn (ahash-ref client-active-connections sv)
-		     (with (sv-name sv-pseudo) sv-conn
-		       (ahash-set! client-active-connections sv-name sv))))
 		 (set! remote-client-list (client-active-servers))
 		 (client-stop server))
 	(client-remote-eval* server `(remote-logout) cb)))))
