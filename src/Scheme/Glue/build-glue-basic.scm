@@ -802,6 +802,7 @@
   (buffer-export buffer_export (bool url url string))
   (buffer-save buffer_save (bool url))
   (tree-import-loaded import_loaded_tree (tree string url string))
+  (tree-import-loaded-from-object import_loaded_tree_from_object (tree object url))
   (tree-import import_tree (tree url string))
   (tree-inclusion load_inclusion (tree url))
   (tree-export export_tree (bool tree url string))

@@ -196,8 +196,7 @@
   (remote-file-browser-document '(document "")))
 
 (tm-define (buffer-set-stm u doc)
-  (let* ((s (object->tmstring doc))
-         (t (tree-import-loaded s u "stm")))
+  (with t (tree-import-loaded-from-object doc u)
     (buffer-set u t)
     (buffer-pretend-saved u)))
 
