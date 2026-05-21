@@ -540,7 +540,7 @@ calligraphy (array<point> a, array<point> pen) {
       if (k != prev_k && prev_k != -1) {
         double dphi= phi - prev_phi;
         dphi= phi - round (phi);
-        if (dphi >= 0.0 || dphi < 0.4999999) {
+        if (dphi >= 0.0 && dphi < 0.4999999) {
           int nr= k - prev_k;
           if (nr < 0) nr += p;
           for (int j=prev_k; j<(prev_k+nr); j++)
