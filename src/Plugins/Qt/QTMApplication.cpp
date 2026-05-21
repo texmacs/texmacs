@@ -37,14 +37,8 @@ void QTMApplication::load() {
   if (mUseTabWindow) new QTMMainTabWindow();
 #endif
 
-//#ifdef OS_ANDROID
   mOnscreenKeyboard = new QTMOnscreenKeyboard();
-  if (mUseTabWindow && QTMMainTabWindow::topTabWindow() != nullptr) {
-    QTMMainTabWindow::topTabWindow()->attachOnscreenKeyboard(mOnscreenKeyboard);
-  } else {
-    mOnscreenKeyboard->show();
-  }
-//#endif
+  mOnscreenKeyboard->hide();
 
 }
   
