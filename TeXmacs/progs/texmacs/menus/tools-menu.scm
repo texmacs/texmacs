@@ -71,6 +71,8 @@
   (-> "Project"
       (link project-manage-menu))
   (-> "Statistics"
+      ("Count all" (show-statistics-summary))
+      ---
       ("Count characters" (show-character-count))
       ("Count words" (show-word-count))
       ("Count lines" (show-line-count)))
