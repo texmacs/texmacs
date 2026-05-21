@@ -359,3 +359,8 @@ default_look_and_feel () {
   static const char* ret= default_look_and_feel_impl ();
   return ret;
 }
+
+#ifndef QTTEXMACS
+void
+gui_set_next_window_as_popup () {}
+#endif

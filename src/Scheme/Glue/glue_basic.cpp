@@ -179,6 +179,15 @@ tmg_qt_guiP () {
 }
 
 tmscm
+tmg_gui_set_next_window_as_popup () {
+  // TMSCM_DEFER_INTS;
+  gui_set_next_window_as_popup ();
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_gui_version () {
   // TMSCM_DEFER_INTS;
   string out= gui_version ();
@@ -11535,4 +11544,5 @@ initialize_glue_basic () {
   tmscm_install_procedure ("pdf-replace-linked-path",  tmg_pdf_replace_linked_path, 2, 0, 0);
   tmscm_install_procedure ("pdf-get-attached-main-tm",  tmg_pdf_get_attached_main_tm, 1, 0, 0);
   tmscm_install_procedure ("array-url-append",  tmg_array_url_append, 2, 0, 0);
+  tmscm_install_procedure ("gui-set-next-window-as-popup",  tmg_gui_set_next_window_as_popup, 0, 0, 0);
 }
