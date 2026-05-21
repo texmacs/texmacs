@@ -18,6 +18,14 @@
 #include "QTMMenuHelper.hpp"
 #include "QTMApplication.hpp"
 
+// Global flag: the next qt_window_widget_rep will be shown as a floating popup
+// instead of being added to the tab bar. Reset to false after each use.
+static bool g_next_window_as_popup = false;
+
+void gui_set_next_window_as_popup () {
+  g_next_window_as_popup = true;
+}
+
 #include "message.hpp"
 #include "analyze.hpp"
 #include "window.hpp"
@@ -65,6 +73,11 @@ qt_window_widget_rep::qt_window_widget_rep (QWidget* _wid, string name,
 {
   qwid->setProperty ("texmacs_window_widget",
                      QVariant::fromValue ((void*) this));
+
+  if (g_next_window_as_popup) {
+    qwid->setProperty ("tmWindowMode", QString ("popup"));
+    g_next_window_as_popup = false;
+  }
   
     // Try to connect only if the QWidget has a closed() signal
     // We need this for the QDockWidgets we use in side tools (see qt_tm_widget_rep)
@@ -201,7 +214,8 @@ qt_window_widget_rep::send (slot s, blackbox val) {
       bool flag = open_box<bool> (val);
       if (qwid) {
 #if QT_VERSION >= 0x050000
-        if (!tmapp()->useTabWindow()) {
+        bool showAsPopup = qwid->property ("tmWindowMode").toString () == "popup";
+        if (!tmapp()->useTabWindow() || showAsPopup) {
 #endif
           if (flag) {
             //QWidget* master = QApplication::activeWindow ();

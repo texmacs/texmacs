@@ -621,9 +621,11 @@
       (set! search-filter-out? #f)
       (if (side-tools?)
           (tool-focus :bottom-right tool aux)
-          (dialogue-window (search-widget u st init aux)
-                           (search-cancel u)
-                           "Search" aux)))))
+          (begin
+            (gui-set-next-window-as-popup)
+            (dialogue-window (search-widget u st init aux)
+                             (search-cancel u)
+                             "Search" aux))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Search and replace widget
