@@ -42,17 +42,43 @@
       (selection-tree)
       (buffer-tree)))
 
+(tm-define (statistics-scope-name)
+  (if (selection-active-any?) "Selection" "Document"))
+
+(tm-define (statistics-count-message scope kind nr)
+  (string-append scope " " kind " count: " (number->string nr)))
+
+(tm-define (statistics-summary-message scope characters words lines)
+  (string-append scope " statistics: "
+                 (number->string characters) " characters, "
+                 (number->string words) " words, "
+                 (number->string lines) " lines"))
+
+(tm-define (show-statistics-summary)
+  (let* ((doc (selection-or-document))
+         (scope (statistics-scope-name))
+         (characters (count-characters doc))
+         (words (count-words doc))
+         (lines (count-lines doc)))
+    (set-message (statistics-summary-message scope characters words lines) "")))
+
 (tm-define (show-character-count)
-  (with nr (count-characters (selection-or-document))
-    (set-message (string-append "Character count: " (number->string nr)) "")))
+  (let* ((doc (selection-or-document))
+         (scope (statistics-scope-name))
+         (nr (count-characters doc)))
+    (set-message (statistics-count-message scope "character" nr) "")))
 
 (tm-define (show-word-count)
-  (with nr (count-words (selection-or-document))
-    (set-message (string-append "Word count: " (number->string nr)) "")))
+  (let* ((doc (selection-or-document))
+         (scope (statistics-scope-name))
+         (nr (count-words doc)))
+    (set-message (statistics-count-message scope "word" nr) "")))
 
 (tm-define (show-line-count)
-  (with nr (count-lines (selection-or-document))
-    (set-message (string-append "Line count: " (number->string nr)) "")))
+  (let* ((doc (selection-or-document))
+         (scope (statistics-scope-name))
+         (nr (count-lines doc)))
+    (set-message (statistics-count-message scope "line" nr) "")))
 
 (define (save-aux-enabled?) (== (get-env "save-aux") "true"))
 (tm-define (toggle-save-aux)

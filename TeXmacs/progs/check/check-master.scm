@@ -20,7 +20,8 @@
         (convert tools environment-test)
         (convert mathml mathtm-test)
         (convert tmml tmmltm-test)
-        (prog prog-format-test))
+        (prog prog-format-test)
+        (texmacs texmacs tm-tools-test))
         (utils cite cite-sort-test))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -89,5 +90,6 @@
   (regtest-tmhtml)
   (regtest-tmmltm)
   (regtest-prog-format)
+  (regtest-tm-tools)
   (regtest-cite-sort)
 )
