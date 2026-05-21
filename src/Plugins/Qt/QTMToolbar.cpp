@@ -245,16 +245,24 @@ void QTMToolbar::addAction (QAction* action) {
     if (action->menu()) {
       button->setPopupMode (QToolButton::InstantPopup);
       QMenu *actionMenu = action->menu();
-      connect (actionMenu, &QMenu::aboutToShow, [this, actionMenu, button]() {
-        mCurrentMenu = actionMenu;
-        resetAllButtons(button);
+      QPointer<QMenu> safeMenu = actionMenu;
+      QPointer<QToolButton> safeButton = button;
+      connect (actionMenu, &QMenu::aboutToShow, this, [this, safeMenu, safeButton]() {
+        if (!safeMenu || !safeButton) return;
+        mCurrentMenu = safeMenu;
+        resetAllButtons(safeButton);
       });
-      connect (actionMenu, &QMenu::aboutToHide, [this, actionMenu, button]() {
-        if (mCurrentMenu == actionMenu) {
+      connect (actionMenu, &QMenu::aboutToHide, this, [this, safeMenu, safeButton]() {
+        if (!safeMenu) return;
+        if (mCurrentMenu == safeMenu) {
           mCurrentMenu = nullptr;
           QTMWidget::setFocusToLast();
         }
-        resetButton(button);
+        if (!safeButton) return;
+        QMetaObject::invokeMethod (this, [this, safeButton]() {
+          if (!safeButton) return;
+          resetButton(safeButton);
+        }, Qt::QueuedConnection);
       });
       actionMenu->installEventFilter (this);
     }
