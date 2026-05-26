@@ -40,7 +40,7 @@
 	(if (== port "6561") x
 	    (string-append x ":" port)))))
 
-(define-macro (with-post-reload . body) `(begin ,@body (revert-buffer)))
+(define-macro (with-post-reload . body) `(begin ,@body (revert-buffer-revert)))
 
 (menu-bind client-remove-account-menu
   (for (x (client-accounts))
