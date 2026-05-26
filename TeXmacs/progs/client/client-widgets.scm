@@ -972,15 +972,17 @@
 (tm-define (remote-rename-interactive server u)
   (:interactive #t)
   (:secure #t)
-  (with dir? (remote-directory? u)
-    (open-remote-file-browser
-     server
-     u
-     (list (if dir? :save-directory :save-file) "Rename as:")
-     (if dir? "Rename directory" "Rename file")
-     (lambda (new-name)
-       (when (url? new-name)
-         (remote-rename u new-name))))))
+  (if (buffer-modified? u)
+    (show-message "Buffer modified, please save before renaming." "Warning")
+    (with dir? (remote-directory? u)
+      (open-remote-file-browser
+        server
+        u
+        (list (if dir? :save-directory :save-file) "Rename as:")
+        (if dir? "Rename directory" "Rename file")
+        (lambda (new-name)
+          (when (url? new-name)
+            (remote-rename u new-name)))))))
 
 (tm-define (remote-remove-interactive server u)
   (:interactive #t)
@@ -991,7 +993,9 @@
     (user-confirm msg #f
       (lambda (answ)
         (when answ
-          (remote-remove u))))))
+          (remote-remove u)
+          (when (remote-directory? (current-buffer))
+            (revert-buffer-revert)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Permissions editor

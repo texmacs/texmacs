@@ -579,11 +579,13 @@
                   (remote-set-field server rid "name" (list name))
                   ;; Clear server message cache so renamed resources are resolved correctly
                   (client-remote-eval server '(remote-chat-room-messages-reset)
-                    (lambda (ok) (noop))
-                    (lambda (err) (noop)))
+                    ignore
+                    ignore)
                   (buffer-rename src dest)
                   (set-message (string-append "renamed as " (url->string dest))
-                               action))))))))
+                               action)
+                  (when (remote-directory? (current-buffer))
+                    (revert-buffer-revert)))))))))
 
 (tm-define (remote-remove what)
   (let* ((dir? (remote-directory? what))
