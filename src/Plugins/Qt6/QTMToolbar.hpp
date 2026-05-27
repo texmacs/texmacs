@@ -22,8 +22,11 @@
 #include <QList>
 #include <QPointer>
 
-class QTMToolbar : public QToolBar {
+class QTMToolbar : public QWidget {
   Q_OBJECT
+  Q_PROPERTY(int toolbarMargin READ toolbarMargin WRITE setToolbarMargin)
+  Q_PROPERTY(int iconWidth READ iconWidth WRITE setIconWidth)
+  Q_PROPERTY(int iconHeight READ iconHeight WRITE setIconHeight)
 
 public:
   QTMToolbar (const QString& title, QSize iconSize = QSize(), QWidget* parent = 0);
@@ -44,6 +47,14 @@ public:
   void resetAllButtons(QToolButton* except = nullptr);
   void resetButton(QToolButton* button);
 
+  void setIconSize(const QSize& size); // Sets the icon size for the toolbar
+  int toolbarMargin() const { return mToolbarMargin; }
+  void setToolbarMargin(int margin);
+  int iconWidth() const { return mIconWidth; }
+  void setIconWidth(int width);
+  int iconHeight() const { return mIconHeight; }
+  void setIconHeight(int height);
+
 protected:
   bool eventFilter (QObject* watched, QEvent* event) override;
   void setRightActVisible (bool v);
@@ -52,14 +63,16 @@ protected:
 private:
   QPointer<QScrollArea> mScrollArea;
   QPointer<QHBoxLayout> mLayout;
-  QPointer<QToolButton> mLeftBtn;
-  QPointer<QToolButton> mRightBtn;
-  QPointer<QAction>     mLeftAct;
-  QPointer<QAction>     mRightAct;
-  QPointer<QMenu>       mCurrentMenu;
+  QPointer<QWidget> mLeftBtn;
+  QPointer<QWidget> mRightBtn;
+  QPointer<QMenu>   mCurrentMenu;
+  int mIconWidth;
+  int mIconHeight;
+  int mToolbarMargin;
 
   void scrollBy (int dx);
   void updateNavButtons ();
+  void updateToolbarMetrics ();
   int scrollStep () const;
 };
 

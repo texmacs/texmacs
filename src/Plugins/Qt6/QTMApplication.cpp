@@ -20,7 +20,6 @@ void QTMApplication::load() {
   mUseTabWindow = true;
 #endif
 
-  mUseNewToolbar = get_user_preference ("new toolbar") != "off";
   mPixmapManagerInitialized = false;
 
   init_theme ();
