@@ -17,7 +17,7 @@
 #include "scheme.hpp"
 
 #ifdef QTTEXMACS
-#include "../Plugins/Qt/qt_utilities.hpp"
+#include "qt_utilities.hpp"
 #endif
 
 #define MAX_CACHED 25
