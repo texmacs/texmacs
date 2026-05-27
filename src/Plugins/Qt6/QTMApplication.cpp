@@ -4,15 +4,14 @@
 #if QT_VERSION >= 0x060000
 #include <QFileSystemWatcher>
 #endif
+#include "file.hpp"
 #include "qt_utilities.hpp"
 
 QTMApplication::QTMApplication (int& argc, char** argv) :
   QApplication (argc, argv), mOnscreenKeyboard(nullptr), mCssWatcher(nullptr) {
-#if QT_VERSION >= 0x050000
-    mCssWatcher = new QFileSystemWatcher(this);
-    connect(mCssWatcher, &QFileSystemWatcher::fileChanged, 
-            this, &QTMApplication::onCssFileChanged);
-#endif
+  mCssWatcher = new QFileSystemWatcher(this);
+  connect(mCssWatcher, &QFileSystemWatcher::fileChanged, 
+          this, &QTMApplication::onCssFileChanged);
 }
 
 void QTMApplication::load() {
@@ -21,22 +20,12 @@ void QTMApplication::load() {
   mUseTabWindow = true;
 #endif
 
-#if QT_VERSION >= 0x060000
   mUseNewToolbar = get_user_preference ("new toolbar") != "off";
-#else
-  mUseNewToolbar = false;
-#endif
-
-#if QT_VERSION >= 0x060000
   mPixmapManagerInitialized = false;
-#endif
 
   init_theme ();
 
-#if QT_VERSION >= 0x050000
   if (mUseTabWindow) new QTMMainTabWindow();
-#endif
-
   mOnscreenKeyboard = new QTMOnscreenKeyboard();
   mOnscreenKeyboard->hide();
 
@@ -44,7 +33,7 @@ void QTMApplication::load() {
   
 
 void QTMApplication::init_theme () {
-#if defined(OS_MINGW64) && QT_VERSION >= 0x060000
+#if defined(OS_MINGW64)
   setStyle(QStyleFactory::create("Windows"));
 #endif    
   string theme= get_user_preference ("gui theme", "default");
@@ -55,14 +44,28 @@ void QTMApplication::init_theme () {
   if (theme == "default") 
     theme = get_default_theme ();
   if (theme == "light")
-    tm_style_sheet= "$TEXMACS_PATH/misc/themes/standard-light.css";
+    tm_style_sheet= "$TEXMACS_PATH/misc/themes/qt6-light.css";
   else if (theme == "dark")
-    tm_style_sheet= "$TEXMACS_PATH/misc/themes/standard-dark.css";
+    tm_style_sheet= "$TEXMACS_PATH/misc/themes/qt6-dark.css";
+
+  
+  string density= get_user_preference ("gui density", "default");
+  if (density == "default")
+    density = "normal";
+  if (density == "normal")
+    tm_style_density= "$TEXMACS_PATH/misc/themes/standard-density-normal.css";
+  else if (density == "compact")
+    tm_style_density= "$TEXMACS_PATH/misc/themes/standard-density-compact.css";
+  else if (density == "large")
+    tm_style_density= "$TEXMACS_PATH/misc/themes/standard-density-large.css";
 
   
   if (mCssWatcher != nullptr) {
+    mCssWatcher->removePaths (mCssWatcher->files ());
     QString qcss_path= utf8_to_qstring (concretize (url_system (tm_style_sheet)));
     mCssWatcher->addPath(qcss_path);
+    QString qdensity_path= utf8_to_qstring (concretize (url_system (tm_style_density)));
+    mCssWatcher->addPath(qdensity_path);
   }
   
   init_palette (this);
@@ -95,13 +98,10 @@ bool QTMApplication::notify (QObject* receiver, QEvent* event)
 }
 
 void QTMApplication::notify_preference (string var) {
-  (void) var;
-#if QT_VERSION >= 0x060000
-  if (var == "gui theme") {
+  if (var == "gui theme" || var == "gui density") {
     init_theme ();
     emit themeChanged();
   }
-#endif
 }
 
 void qt_notify_preference (string var) {
