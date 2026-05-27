@@ -111,7 +111,7 @@ x11_src      := $(call findsrc_in,Plugins,@CONFIG_X11@)
 cocoa_m_src  := $(call findm_in,Plugins,@CONFIG_COCOA@ @CONFIG_MACOS@)
 cocoa_mm_src := $(call findmm_in,Plugins,@CONFIG_COCOA@ @CONFIG_MACOS@ @CONFIG_SPARKLE@)
 os_src       := $(call findsrc_in,Plugins,@CONFIG_OS_COMPAT@)
-qt_src       := $(call findsrc_in,Plugins,@CONFIG_QT@)
+qt_src       := $(call findsrc_in,Plugins,$(QT_PLUGIN_DIR))
 gs_src       := $(call findsrc_in,Plugins,@CONFIG_GS@)
 style_src    := $(call findsrc_in,Style,@CONFIG_EXPERIMENTAL@)
 typeset_src  := $(call findsrc,Typeset)
@@ -346,7 +346,7 @@ $(x11_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(x11_incl) $(CXXX11) $(CXXGUILE))
 $(os_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(os_incl) $(CXXQT) $(CXXGUILE))
-$(qt_obj): Objects/%.o: %.cpp
+$(qt_obj): Objects/%.o: ./Plugins/$(QT_PLUGIN_DIR)/%.cpp
 	$(call cxx_incl,$(qt_incl) $(CXXQT) $(CXXGUILE))
 $(moc_obj): Objects/%.o: ./Plugins/$(QT_PLUGIN_DIR)/%.cpp
 	$(call cxx_incl,$(qt_incl) $(CXXQT) $(CXXGUILE))
