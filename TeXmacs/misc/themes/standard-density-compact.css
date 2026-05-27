@@ -1,0 +1,20 @@
+#mainToolBar, #modeToolBar, #focusToolBar {
+    qproperty-toolbarMargin: 3;
+}
+
+#mainToolBar {
+    qproperty-iconWidth: 26;
+    qproperty-iconHeight: 32;
+}
+
+#modeToolBar {
+    qproperty-iconWidth: 21;
+    qproperty-iconHeight: 24;
+
+}
+
+#focusToolBar {
+    qproperty-iconWidth: 16;
+    qproperty-iconHeight: 20;
+}
+
