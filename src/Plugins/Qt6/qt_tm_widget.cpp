@@ -124,7 +124,6 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   rightLabel->setFrameStyle (QFrame::NoFrame);
   leftLabel->setIndent (8);
 
-#ifdef OS_ANDROID
   QPushButton *keyboardButton = new QPushButton ("", bar);
   QIcon keyboardIcon= tmapp()->icon_manager().getIcon("tm_prefs_keyboard");
   keyboardButton->setIcon (keyboardIcon);
@@ -132,7 +131,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   QObject::connect (keyboardButton, &QPushButton::clicked, []() {
     tmapp()->toggleOnScreenKeyboardVisibility();
   });
-#endif
+
   bar->addWidget (leftLabel, 1);
   bar->addPermanentWidget (rightLabel);
   if (tm_style_sheet == "")
