@@ -1,0 +1,178 @@
+
+/******************************************************************************
+ * MODULE     : qt_tm_widget.hpp
+ * DESCRIPTION: The main TeXmacs input widget and its embedded counterpart.
+ * COPYRIGHT  : (C) 2008  Massimiliano Gubinelli
+ *******************************************************************************
+ * This software falls under the GNU general public license version 3 or later.
+ * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
+ * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
+ ******************************************************************************/
+
+#ifndef QT_TM_WIDGET_HPP
+#define QT_TM_WIDGET_HPP
+
+#include "list.hpp"
+
+#include "qt_widget.hpp"
+#include "qt_simple_widget.hpp"
+#include "qt_window_widget.hpp"
+
+#include "QTMInteractiveInputHelper.hpp"
+#include "QTMWidget.hpp"
+#include "QTMScrollView.hpp"
+#include "QTMToolbar.hpp"
+
+#include <QMainWindow>
+#include <QStackedWidget>
+#include <QLayout>
+#include <QPointer>
+
+#if QT_VERSION >= 0x050000
+#define DISABLE_QTMTOOLBAR 0
+#else
+#define DISABLE_QTMTOOLBAR 1
+#endif
+
+class QLabel; 
+class QTMInteractivePrompt;
+
+/*! Models one main window with toolbars, an associated view, etc.
+ 
+ The underlying QWidget is a QTMWindow, whose central widget is a QWidget
+ holding the extra toolbars and the canvas for the open buffer. Each canvas
+ is of type QTMWidget and belongs to one qt_simple_widget_rep.
+ */
+class qt_tm_widget_rep: public qt_window_widget_rep {
+
+  /*
+   enum { 
+   header_visibility        =  1, // all toolbars
+   main_toolbar_visibility  =  2, 
+   mode_toolbar_visibility  =  4,
+   focus_toolbar_visibility =  8,
+   user_toolbar_visibility  = 16,
+   footer_visibility        = 32,
+   side_tools_0_visibility  = 64,
+   side_tools_1_visibility  = 128,
+   bottom_tools_visibility  = 256,
+   extra_tools_visibility   = 512
+   } visibility_t;
+   */
+  QPointer<QLabel>          rightLabel;
+  QPointer<QLabel>           leftLabel;
+#if !DISABLE_QTMTOOLBAR
+  QPointer<QTMToolbar>     menuToolBar;
+  QPointer<QTMToolbar>     mainToolBar;
+  QPointer<QTMToolbar>     modeToolBar;
+  QPointer<QTMToolbar>    focusToolBar;
+  QPointer<QTMToolbar>     userToolBar;
+#else
+  QPointer<QToolBar>       mainToolBar;
+  QPointer<QToolBar>       modeToolBar;
+  QPointer<QToolBar>      focusToolBar;
+  QPointer<QToolBar>       userToolBar;
+#endif
+  QPointer<QDockWidget>      sideTools;
+  QPointer<QDockWidget>      leftTools;
+  QPointer<QDockWidget>    bottomTools;
+  QPointer<QDockWidget>     extraTools;
+
+#ifdef Q_OS_MAC
+  QPointer<QToolBar>       dumbToolBar;
+  QPointer<QAction>  modeToolBarAction;
+  QPointer<QAction>  mainToolBarAction;
+  QPointer<QWidget>        rulerWidget;
+#endif
+
+  QTMInteractiveInputHelper helper;
+  QPointer<QTMInteractivePrompt> prompt;
+  qt_widget int_prompt;
+  qt_widget int_input;
+  
+  bool visibility[10];
+  bool full_screen;
+  
+  qt_widget main_widget;
+  qt_widget main_menu_widget;
+  qt_widget waiting_main_menu_widget;
+  qt_widget main_icons_widget;
+  qt_widget mode_icons_widget;
+  qt_widget focus_icons_widget;
+  qt_widget user_icons_widget;
+  qt_widget side_tools_widget;
+  qt_widget left_tools_widget;
+  qt_widget bottom_tools_widget;
+  qt_widget extra_tools_widget;
+  qt_widget dock_window_widget;   // trick to return correct widget position
+
+  
+public:
+  qt_tm_widget_rep (int mask, command _quit);
+  ~qt_tm_widget_rep ();
+  
+  virtual widget plain_window_widget (string name, command quit, int b);
+
+  virtual void      send (slot s, blackbox val);
+  virtual blackbox query (slot s, int type_id);
+  virtual widget    read (slot s, blackbox index);
+  virtual void     write (slot s, blackbox index, widget w);
+    
+  void set_full_screen (bool flag);
+  void update_visibility();
+  void install_main_menu ();
+  static void tweak_iconbar_size (QSize& sz);
+
+  friend class QTMInteractiveInputHelper;
+  
+protected:
+  
+      ////// Convenience methods to access our QWidgets
+  
+  QMainWindow* mainwindow () {
+    return qobject_cast<QMainWindow*> (qwid); 
+  }
+  QWidget* centralwidget () {
+    return mainwindow()->centralWidget();
+  }
+  QTMScrollView* scrollarea () {
+    return qobject_cast<QTMScrollView*> (main_widget->qwid);
+  }
+  QTMWidget* canvas () {
+    return qobject_cast<QTMWidget*> (main_widget->qwid);
+  }
+};
+
+
+//! List of widgets wanting to install their menu bar
+extern list<qt_tm_widget_rep*> waiting_widgets;
+
+//! Positive means the menu is busy.
+extern int menu_count;
+
+
+/*! A simple texmacs input widget.
+ 
+ This is a stripped down version of qt_tm_widget_rep, whose underlying widget
+ isn't a QTMWindow anymore, but a regular QTMWidget because it is intended to be
+ embedded somewhere else.
+
+*/
+class qt_tm_embedded_widget_rep: public qt_widget_rep {
+  widget main_widget;
+
+public:
+  command quit;
+  
+  qt_tm_embedded_widget_rep (command _quit);
+
+  virtual void      send (slot s, blackbox val);
+  virtual blackbox query (slot s, int type_id);
+  virtual widget    read (slot s, blackbox index);
+  virtual void     write (slot s, blackbox index, widget w);
+  
+  virtual QWidget*         as_qwidget (QWidget* parent_widget);
+  virtual QLayoutItem* as_qlayoutitem (QWidget* parent_widget);
+};
+
+#endif // QT_TM_WIDGET_HPP
