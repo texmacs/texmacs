@@ -686,6 +686,7 @@ X11_CFLAGS
 X11_CPP
 X11_CXX
 XMKMF
+QT_PLUGIN_DIR
 QT_LIBS
 QT_LDFLAGS
 QT_LFLAGS
@@ -943,6 +944,7 @@ with_osx
 enable_windows_pbd
 enable_qt
 with_qt_find_method
+enable_qt_new
 with_qt
 with_x
 enable_qtpipes
@@ -1616,6 +1618,7 @@ if test -n "$ac_init_help"; then
                           image handling, ...)
   --enable-windows-pbd    enable windows debug symbols
   --disable-qt            replace Qt by X11 interface
+  --enable-qt-new         Use the new Qt implementation
   --enable-qtpipes        replace UNIX pipes by Qt pipes
   --enable-cocoa          replace X11 by Cocoa interface
   --disable-pdf-renderer  use hummus support for native pdf exports
@@ -5776,7 +5779,7 @@ then :
 
        CXXFLAGS+=" -stdlib=libstdc++"
   else
-    if [[ "$CXXFLAGS" =~ $(echo "(^|[[:space:]])-stdlib=libstdc++($|[[:space:]])") ]]
+    if printf '%s\n' " $CXXFLAGS " | grep -F -q " -stdlib=libstdc++ "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -stdlib=libstdc++" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag -stdlib=libstdc++" >&2;}
     else CXXFLAGS+=" -stdlib=libstdc++"
@@ -5812,7 +5815,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -stdlib=libstdc++" >&2;}
 
        CFLAGS+=" -stdlib=libstdc++"
   else
-    if [[ "$CFLAGS" =~ $(echo "(^|[[:space:]])-stdlib=libstdc++($|[[:space:]])") ]]
+    if printf '%s\n' " $CFLAGS " | grep -F -q " -stdlib=libstdc++ "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -stdlib=libstdc++" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag -stdlib=libstdc++" >&2;}
     else CFLAGS+=" -stdlib=libstdc++"
@@ -6021,7 +6024,7 @@ printf "%s\n" "$as_me: WARNING: pkg-config not found : configuration may fail" >
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -6121,7 +6124,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        CPPFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $CPPFLAGS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else CPPFLAGS+=" $LC_MERGE_FLAGS_flag"
@@ -6198,7 +6201,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -6298,7 +6301,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LDFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_MERGE_FLAGS_flag"
@@ -6673,7 +6676,7 @@ printf "%s\n" "#define OS_GNU_LINUX 1" >>confdefs.h
 
        LDFLAGS+=" -rdynamic"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])-rdynamic($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " -rdynamic "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -rdynamic" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag -rdynamic" >&2;}
     else LDFLAGS+=" -rdynamic"
@@ -6809,7 +6812,7 @@ printf "%s\n" "#define OS_GNU_LINUX 1" >>confdefs.h
 
        LDFLAGS+=" -rdynamic"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])-rdynamic($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " -rdynamic "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -rdynamic" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag -rdynamic" >&2;}
     else LDFLAGS+=" -rdynamic"
@@ -6972,7 +6975,7 @@ printf "%s\n" "#define OS_MINGW64 1" >>confdefs.h
 
        LDFLAGS+=" -Wl,--stack=16777216"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])-Wl,--stack=16777216($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " -Wl,--stack=16777216 "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -Wl" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag -Wl" >&2;}
     else LDFLAGS+=" -Wl,--stack=16777216"
@@ -7008,7 +7011,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -Wl" >&2;}
 
        LDFLAGS+=" -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -ldwmapi"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])-ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -ldwmapi($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -ldwmapi "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -ldwmapi" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -ldwmapi" >&2;}
     else LDFLAGS+=" -ldbghelp -lSecur32 -lshell32 -lole32 -ladvapi32 -lsecur32 -ldwmapi"
@@ -7062,7 +7065,7 @@ printf "%s\n" "#define OS_MINGW (defined (__MINGW__) || defined (__MINGW32__))" 
 
        LDFLAGS+=" -Wl,--stack=16777216"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])-Wl,--stack=16777216($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " -Wl,--stack=16777216 "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -Wl" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag -Wl" >&2;}
     else LDFLAGS+=" -Wl,--stack=16777216"
@@ -7098,7 +7101,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -Wl" >&2;}
 
        LDFLAGS+=" -ldbghelp -lSecur32"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])-ldbghelp -lSecur32($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " -ldbghelp -lSecur32 "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -ldbghelp -lSecur32" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag -ldbghelp -lSecur32" >&2;}
     else LDFLAGS+=" -ldbghelp -lSecur32"
@@ -7164,7 +7167,7 @@ printf "%s\n" "#define OS_MACOS 1" >>confdefs.h
 
        LDFLAGS+=" -Wl,-stack_size,0x1000000,-headerpad_max_install_names"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])-Wl,-stack_size,0x1000000,-headerpad_max_install_names($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " -Wl,-stack_size,0x1000000,-headerpad_max_install_names "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -Wl" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag -Wl" >&2;}
     else LDFLAGS+=" -Wl,-stack_size,0x1000000,-headerpad_max_install_names"
@@ -7236,7 +7239,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -Wl" >&2;}
 
        LC_SCATTER_FLAGS_LIBS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$LC_SCATTER_FLAGS_LIBS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_SCATTER_FLAGS_LIBS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else LC_SCATTER_FLAGS_LIBS+=" $LC_SCATTER_FLAGS_flag"
@@ -7272,7 +7275,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -7308,7 +7311,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $CPPFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -7344,7 +7347,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $CPPFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -7380,7 +7383,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -7417,7 +7420,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -7453,7 +7456,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -7530,7 +7533,7 @@ then :
 
        CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$CXXFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $CXXFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -7566,7 +7569,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        CFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$CFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $CFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else CFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -7675,7 +7678,7 @@ printf "%s\n" "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -7783,7 +7786,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LC_SCATTER_FLAGS_LIBS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$LC_SCATTER_FLAGS_LIBS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_SCATTER_FLAGS_LIBS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else LC_SCATTER_FLAGS_LIBS+=" $LC_SCATTER_FLAGS_flag"
@@ -7819,7 +7822,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -7855,7 +7858,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $CPPFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -7891,7 +7894,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $CPPFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -7927,7 +7930,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -7964,7 +7967,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -8000,7 +8003,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -8077,7 +8080,7 @@ then :
 
        CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$CXXFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $CXXFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -8113,7 +8116,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        CFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$CFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $CFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else CFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -8222,7 +8225,7 @@ printf "%s\n" "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -8457,7 +8460,7 @@ printf "%s\n" "#define OS_GNU_LINUX 1" >>confdefs.h
 
        LDFLAGS+=" -rdynamic"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])-rdynamic($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " -rdynamic "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -rdynamic" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag -rdynamic" >&2;}
     else LDFLAGS+=" -rdynamic"
@@ -8598,7 +8601,7 @@ printf "%s\n" "#define OS_GNU_LINUX 1" >>confdefs.h
 
        LDFLAGS+=" -rdynamic"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])-rdynamic($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " -rdynamic "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -rdynamic" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag -rdynamic" >&2;}
     else LDFLAGS+=" -rdynamic"
@@ -8802,7 +8805,7 @@ fi
 
        CFLAGS+=" -static"
   else
-    if [[ "$CFLAGS" =~ $(echo "(^|[[:space:]])-static($|[[:space:]])") ]]
+    if printf '%s\n' " $CFLAGS " | grep -F -q " -static "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -static" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag -static" >&2;}
     else CFLAGS+=" -static"
@@ -8838,7 +8841,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -static" >&2;}
 
        CXXFLAGS+=" -static"
   else
-    if [[ "$CXXFLAGS" =~ $(echo "(^|[[:space:]])-static($|[[:space:]])") ]]
+    if printf '%s\n' " $CXXFLAGS " | grep -F -q " -static "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -static" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag -static" >&2;}
     else CXXFLAGS+=" -static"
@@ -8878,7 +8881,7 @@ printf "%s\n" "$as_me: WARNING: statically link main libraries for linux" >&2;}
 
        LDFLAGS+=" -Wl,-search_paths_first"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])-Wl,-search_paths_first($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " -Wl,-search_paths_first "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -Wl" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag -Wl" >&2;}
     else LDFLAGS+=" -Wl,-search_paths_first"
@@ -8967,7 +8970,7 @@ then :
 
        LDFLAGS+=" -lpthread"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])-lpthread($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " -lpthread "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -lpthread" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag -lpthread" >&2;}
     else LDFLAGS+=" -lpthread"
@@ -9058,7 +9061,7 @@ then :
 
        LDFLAGS+=" -lpthread"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])-lpthread($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " -lpthread "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -lpthread" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag -lpthread" >&2;}
     else LDFLAGS+=" -lpthread"
@@ -9163,7 +9166,7 @@ printf "%s\n" "#define USE_INTL 1" >>confdefs.h
 
        LDFLAGS+=" -lintl"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])-lintl($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " -lintl "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -lintl" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag -lintl" >&2;}
     else LDFLAGS+=" -lintl"
@@ -9260,7 +9263,7 @@ printf "%s\n" "#define USE_INTL 1" >>confdefs.h
 
        LDFLAGS+=" -lintl"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])-lintl($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " -lintl "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -lintl" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag -lintl" >&2;}
     else LDFLAGS+=" -lintl"
@@ -9420,7 +9423,7 @@ printf "%s\n" "#define guile_str_size_t $GUILE_STR_SIZE_T" >>confdefs.h
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -9520,7 +9523,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LDFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_MERGE_FLAGS_flag"
@@ -9595,7 +9598,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -9695,7 +9698,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LIBS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LIBS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LIBS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LIBS+=" $LC_MERGE_FLAGS_flag"
@@ -9894,7 +9897,7 @@ printf "%s\n" "$as_me: using guile-config: $GUILE_CONFIG" >&6;}
 
        LC_SCATTER_FLAGS_LIBS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$LC_SCATTER_FLAGS_LIBS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_SCATTER_FLAGS_LIBS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else LC_SCATTER_FLAGS_LIBS+=" $LC_SCATTER_FLAGS_flag"
@@ -9930,7 +9933,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        GUILE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$GUILE_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $GUILE_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else GUILE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -9966,7 +9969,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        GUILE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$GUILE_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $GUILE_CPPFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else GUILE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -10002,7 +10005,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        GUILE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$GUILE_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $GUILE_CPPFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else GUILE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -10038,7 +10041,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        GUILE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$GUILE_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $GUILE_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else GUILE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -10075,7 +10078,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        GUILE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$GUILE_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $GUILE_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else GUILE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -10111,7 +10114,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        GUILE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$GUILE_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $GUILE_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else GUILE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -10188,7 +10191,7 @@ then :
 
        GUILE_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$GUILE_CXXFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $GUILE_CXXFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else GUILE_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -10224,7 +10227,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        GUILE_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$GUILE_CFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $GUILE_CFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else GUILE_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -10333,7 +10336,7 @@ printf "%s\n" "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -10421,7 +10424,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        GUILE_CPPFLAGS+=" -I$LC_WITH_GUILE_tmp2/$GUILE_LIB"
   else
-    if [[ "$GUILE_CPPFLAGS" =~ $(echo "(^|[[:space:]])-I$LC_WITH_GUILE_tmp2/$GUILE_LIB($|[[:space:]])") ]]
+    if printf '%s\n' " $GUILE_CPPFLAGS " | grep -F -q " -I$LC_WITH_GUILE_tmp2/$GUILE_LIB "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -I$LC_WITH_GUILE_tmp2/$GUILE_LIB" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag -I$LC_WITH_GUILE_tmp2/$GUILE_LIB" >&2;}
     else GUILE_CPPFLAGS+=" -I$LC_WITH_GUILE_tmp2/$GUILE_LIB"
@@ -10625,7 +10628,7 @@ printf "%s\n" "$as_me: WARNING: could not find source tree for $ax_dir" >&2;}
 
        GUILE_CPPFLAGS+=" -I${GUILE_PREFIX}/include"
   else
-    if [[ "$GUILE_CPPFLAGS" =~ $(echo "(^|[[:space:]])-I${GUILE_PREFIX}/include($|[[:space:]])") ]]
+    if printf '%s\n' " $GUILE_CPPFLAGS " | grep -F -q " -I${GUILE_PREFIX}/include "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -I${GUILE_PREFIX}/include" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag -I${GUILE_PREFIX}/include" >&2;}
     else GUILE_CPPFLAGS+=" -I${GUILE_PREFIX}/include"
@@ -10661,7 +10664,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -I${GUILE_PREFIX}/include" >
 
        GUILE_CPPFLAGS+=" -I${GUILE_PREFIX}/include/guile"
   else
-    if [[ "$GUILE_CPPFLAGS" =~ $(echo "(^|[[:space:]])-I${GUILE_PREFIX}/include/guile($|[[:space:]])") ]]
+    if printf '%s\n' " $GUILE_CPPFLAGS " | grep -F -q " -I${GUILE_PREFIX}/include/guile "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -I${GUILE_PREFIX}/include/guile" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag -I${GUILE_PREFIX}/include/guile" >&2;}
     else GUILE_CPPFLAGS+=" -I${GUILE_PREFIX}/include/guile"
@@ -10836,7 +10839,7 @@ then :
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -10936,7 +10939,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LDFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_MERGE_FLAGS_flag"
@@ -12449,7 +12452,7 @@ fi
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -12549,7 +12552,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LDFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_MERGE_FLAGS_flag"
@@ -12624,7 +12627,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -12724,7 +12727,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LIBS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LIBS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LIBS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LIBS+=" $LC_MERGE_FLAGS_flag"
@@ -12877,7 +12880,7 @@ printf "%s\n" "$as_me: GUILE_LDFLAGS:$GUILE_LDFLAGS" >&6;}
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -12977,7 +12980,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LDFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_MERGE_FLAGS_flag"
@@ -13021,7 +13024,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
 
        CXXFLAGS+=" -I$GUILE_EMBEDDED_DIR"
   else
-    if [[ "$CXXFLAGS" =~ $(echo "(^|[[:space:]])-I$GUILE_EMBEDDED_DIR($|[[:space:]])") ]]
+    if printf '%s\n' " $CXXFLAGS " | grep -F -q " -I$GUILE_EMBEDDED_DIR "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -I$GUILE_EMBEDDED_DIR" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag -I$GUILE_EMBEDDED_DIR" >&2;}
     else CXXFLAGS+=" -I$GUILE_EMBEDDED_DIR"
@@ -13060,7 +13063,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -I$GUILE_EMBEDDED_DIR" >&2;}
 
        CXXFLAGS+=" -I$TMREPO/include"
   else
-    if [[ "$CXXFLAGS" =~ $(echo "(^|[[:space:]])-I$TMREPO/include($|[[:space:]])") ]]
+    if printf '%s\n' " $CXXFLAGS " | grep -F -q " -I$TMREPO/include "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -I$TMREPO/include" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag -I$TMREPO/include" >&2;}
     else CXXFLAGS+=" -I$TMREPO/include"
@@ -13237,7 +13240,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.beam conftest.$ac_ext
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -13337,7 +13340,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LDFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_MERGE_FLAGS_flag"
@@ -13381,7 +13384,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
 
        CXXFLAGS+=" -I$GUILE_EMBEDDED_DIR"
   else
-    if [[ "$CXXFLAGS" =~ $(echo "(^|[[:space:]])-I$GUILE_EMBEDDED_DIR($|[[:space:]])") ]]
+    if printf '%s\n' " $CXXFLAGS " | grep -F -q " -I$GUILE_EMBEDDED_DIR "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -I$GUILE_EMBEDDED_DIR" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag -I$GUILE_EMBEDDED_DIR" >&2;}
     else CXXFLAGS+=" -I$GUILE_EMBEDDED_DIR"
@@ -13420,7 +13423,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -I$GUILE_EMBEDDED_DIR" >&2;}
 
        CXXFLAGS+=" -I$TMREPO/include"
   else
-    if [[ "$CXXFLAGS" =~ $(echo "(^|[[:space:]])-I$TMREPO/include($|[[:space:]])") ]]
+    if printf '%s\n' " $CXXFLAGS " | grep -F -q " -I$TMREPO/include "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -I$TMREPO/include" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag -I$TMREPO/include" >&2;}
     else CXXFLAGS+=" -I$TMREPO/include"
@@ -13967,7 +13970,7 @@ printf "%s\n" "$as_me: iconv found in default compiler location" >&6;}
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -14067,7 +14070,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        ICONV_LIBS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$ICONV_LIBS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $ICONV_LIBS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else ICONV_LIBS+=" $LC_MERGE_FLAGS_flag"
@@ -14149,7 +14152,7 @@ then
 
        LC_SCATTER_FLAGS_LIBS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$LC_SCATTER_FLAGS_LIBS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_SCATTER_FLAGS_LIBS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else LC_SCATTER_FLAGS_LIBS+=" $LC_SCATTER_FLAGS_flag"
@@ -14185,7 +14188,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $ICONV_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -14221,7 +14224,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        ICONV_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $ICONV_CPPFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -14257,7 +14260,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        ICONV_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $ICONV_CPPFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -14293,7 +14296,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $ICONV_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -14330,7 +14333,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $ICONV_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -14366,7 +14369,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $ICONV_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -14443,7 +14446,7 @@ then :
 
        ICONV_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_CXXFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $ICONV_CXXFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -14479,7 +14482,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        ICONV_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_CFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $ICONV_CFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -14588,7 +14591,7 @@ printf "%s\n" "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -14696,7 +14699,7 @@ else
 
        LC_SCATTER_FLAGS_LIBS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$LC_SCATTER_FLAGS_LIBS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_SCATTER_FLAGS_LIBS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else LC_SCATTER_FLAGS_LIBS+=" $LC_SCATTER_FLAGS_flag"
@@ -14732,7 +14735,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $ICONV_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -14768,7 +14771,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        ICONV_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $ICONV_CPPFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -14804,7 +14807,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        ICONV_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $ICONV_CPPFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -14840,7 +14843,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $ICONV_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -14877,7 +14880,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $ICONV_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -14913,7 +14916,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $ICONV_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -14990,7 +14993,7 @@ then :
 
        ICONV_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_CXXFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $ICONV_CXXFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -15026,7 +15029,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        ICONV_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_CFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $ICONV_CFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -15135,7 +15138,7 @@ printf "%s\n" "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -15280,7 +15283,7 @@ fi
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -15380,7 +15383,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LDFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_MERGE_FLAGS_flag"
@@ -15509,7 +15512,7 @@ printf "%s\n" "yes" >&6; }
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -15609,7 +15612,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LDFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_MERGE_FLAGS_flag"
@@ -15684,7 +15687,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -15784,7 +15787,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LIBS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LIBS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LIBS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LIBS+=" $LC_MERGE_FLAGS_flag"
@@ -15961,7 +15964,7 @@ printf "%s\n" "$as_me: iconv found in default compiler location" >&6;}
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -16061,7 +16064,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        ICONV_LIBS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$ICONV_LIBS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $ICONV_LIBS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else ICONV_LIBS+=" $LC_MERGE_FLAGS_flag"
@@ -16143,7 +16146,7 @@ then
 
        LC_SCATTER_FLAGS_LIBS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$LC_SCATTER_FLAGS_LIBS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_SCATTER_FLAGS_LIBS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else LC_SCATTER_FLAGS_LIBS+=" $LC_SCATTER_FLAGS_flag"
@@ -16179,7 +16182,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $ICONV_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -16215,7 +16218,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        ICONV_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $ICONV_CPPFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -16251,7 +16254,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        ICONV_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $ICONV_CPPFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -16287,7 +16290,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $ICONV_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -16324,7 +16327,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $ICONV_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -16360,7 +16363,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $ICONV_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -16437,7 +16440,7 @@ then :
 
        ICONV_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_CXXFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $ICONV_CXXFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -16473,7 +16476,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        ICONV_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_CFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $ICONV_CFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -16582,7 +16585,7 @@ printf "%s\n" "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -16690,7 +16693,7 @@ else
 
        LC_SCATTER_FLAGS_LIBS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$LC_SCATTER_FLAGS_LIBS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_SCATTER_FLAGS_LIBS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else LC_SCATTER_FLAGS_LIBS+=" $LC_SCATTER_FLAGS_flag"
@@ -16726,7 +16729,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $ICONV_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -16762,7 +16765,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        ICONV_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $ICONV_CPPFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -16798,7 +16801,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        ICONV_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $ICONV_CPPFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -16834,7 +16837,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $ICONV_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -16871,7 +16874,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $ICONV_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -16907,7 +16910,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $ICONV_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -16984,7 +16987,7 @@ then :
 
        ICONV_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_CXXFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $ICONV_CXXFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -17020,7 +17023,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        ICONV_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$ICONV_CFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $ICONV_CFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else ICONV_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -17129,7 +17132,7 @@ printf "%s\n" "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -17274,7 +17277,7 @@ fi
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -17374,7 +17377,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LDFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_MERGE_FLAGS_flag"
@@ -17503,7 +17506,7 @@ printf "%s\n" "yes" >&6; }
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -17603,7 +17606,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LDFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_MERGE_FLAGS_flag"
@@ -17678,7 +17681,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -17778,7 +17781,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LIBS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LIBS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LIBS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LIBS+=" $LC_MERGE_FLAGS_flag"
@@ -17916,7 +17919,7 @@ printf "%s\n" "yes" >&6; }
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -18016,7 +18019,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LDFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_MERGE_FLAGS_flag"
@@ -18091,7 +18094,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -18191,7 +18194,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LIBS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LIBS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LIBS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LIBS+=" $LC_MERGE_FLAGS_flag"
@@ -18437,7 +18440,7 @@ fi
 
        LC_SCATTER_FLAGS_LIBS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$LC_SCATTER_FLAGS_LIBS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_SCATTER_FLAGS_LIBS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else LC_SCATTER_FLAGS_LIBS+=" $LC_SCATTER_FLAGS_flag"
@@ -18473,7 +18476,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        FREETYPE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$FREETYPE_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $FREETYPE_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else FREETYPE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -18509,7 +18512,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        FREETYPE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$FREETYPE_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $FREETYPE_CPPFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else FREETYPE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -18545,7 +18548,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        FREETYPE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$FREETYPE_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $FREETYPE_CPPFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else FREETYPE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -18581,7 +18584,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        FREETYPE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$FREETYPE_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $FREETYPE_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else FREETYPE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -18618,7 +18621,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        FREETYPE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$FREETYPE_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $FREETYPE_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else FREETYPE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -18654,7 +18657,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        FREETYPE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$FREETYPE_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $FREETYPE_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else FREETYPE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -18731,7 +18734,7 @@ then :
 
        FREETYPE_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$FREETYPE_CXXFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $FREETYPE_CXXFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else FREETYPE_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -18767,7 +18770,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        FREETYPE_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$FREETYPE_CFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $FREETYPE_CFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else FREETYPE_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -18876,7 +18879,7 @@ printf "%s\n" "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -18984,7 +18987,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LC_SCATTER_FLAGS_LIBS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$LC_SCATTER_FLAGS_LIBS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_SCATTER_FLAGS_LIBS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else LC_SCATTER_FLAGS_LIBS+=" $LC_SCATTER_FLAGS_flag"
@@ -19020,7 +19023,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        FREETYPE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$FREETYPE_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $FREETYPE_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else FREETYPE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -19056,7 +19059,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        FREETYPE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$FREETYPE_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $FREETYPE_CPPFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else FREETYPE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -19092,7 +19095,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        FREETYPE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$FREETYPE_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $FREETYPE_CPPFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else FREETYPE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -19128,7 +19131,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        FREETYPE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$FREETYPE_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $FREETYPE_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else FREETYPE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -19165,7 +19168,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        FREETYPE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$FREETYPE_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $FREETYPE_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else FREETYPE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -19201,7 +19204,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        FREETYPE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$FREETYPE_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $FREETYPE_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else FREETYPE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -19278,7 +19281,7 @@ then :
 
        FREETYPE_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$FREETYPE_CXXFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $FREETYPE_CXXFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else FREETYPE_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -19314,7 +19317,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        FREETYPE_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$FREETYPE_CFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $FREETYPE_CFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else FREETYPE_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -19423,7 +19426,7 @@ printf "%s\n" "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -19575,7 +19578,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -19675,7 +19678,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LDFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_MERGE_FLAGS_flag"
@@ -21311,7 +21314,7 @@ fi
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -21411,7 +21414,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LDFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_MERGE_FLAGS_flag"
@@ -21486,7 +21489,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -21586,7 +21589,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LIBS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LIBS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LIBS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LIBS+=" $LC_MERGE_FLAGS_flag"
@@ -21771,7 +21774,7 @@ printf "%s\n" "#define USE_ASPELL 1" >>confdefs.h
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -21871,7 +21874,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LDFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_MERGE_FLAGS_flag"
@@ -21946,7 +21949,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -22046,7 +22049,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LIBS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LIBS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LIBS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LIBS+=" $LC_MERGE_FLAGS_flag"
@@ -22189,7 +22192,7 @@ printf "%s\n" "#define USE_ASPELL 1" >>confdefs.h
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -22289,7 +22292,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LDFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_MERGE_FLAGS_flag"
@@ -22364,7 +22367,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -22464,7 +22467,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LIBS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LIBS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LIBS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LIBS+=" $LC_MERGE_FLAGS_flag"
@@ -23375,7 +23378,7 @@ ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
        LC_SCATTER_FLAGS_LIBS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$LC_SCATTER_FLAGS_LIBS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_SCATTER_FLAGS_LIBS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else LC_SCATTER_FLAGS_LIBS+=" $LC_SCATTER_FLAGS_flag"
@@ -23411,7 +23414,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        SPARKLE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$SPARKLE_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $SPARKLE_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else SPARKLE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -23447,7 +23450,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        SPARKLE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$SPARKLE_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $SPARKLE_CPPFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else SPARKLE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -23483,7 +23486,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        SPARKLE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$SPARKLE_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $SPARKLE_CPPFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else SPARKLE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -23519,7 +23522,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        SPARKLE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$SPARKLE_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $SPARKLE_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else SPARKLE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -23556,7 +23559,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        SPARKLE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$SPARKLE_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $SPARKLE_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else SPARKLE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -23592,7 +23595,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        SPARKLE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$SPARKLE_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $SPARKLE_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else SPARKLE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -23669,7 +23672,7 @@ then :
 
        SPARKLE_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$SPARKLE_CXXFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $SPARKLE_CXXFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else SPARKLE_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -23705,7 +23708,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        SPARKLE_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$SPARKLE_CFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $SPARKLE_CFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else SPARKLE_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -23814,7 +23817,7 @@ printf "%s\n" "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -23933,7 +23936,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -24033,7 +24036,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LDFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_MERGE_FLAGS_flag"
@@ -24156,7 +24159,7 @@ ac_compiler_gnu=$ac_cv_objc_compiler_gnu
 
        LC_SCATTER_FLAGS_LIBS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$LC_SCATTER_FLAGS_LIBS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_SCATTER_FLAGS_LIBS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else LC_SCATTER_FLAGS_LIBS+=" $LC_SCATTER_FLAGS_flag"
@@ -24192,7 +24195,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        SPARKLE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$SPARKLE_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $SPARKLE_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else SPARKLE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -24228,7 +24231,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        SPARKLE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$SPARKLE_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $SPARKLE_CPPFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else SPARKLE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -24264,7 +24267,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        SPARKLE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$SPARKLE_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $SPARKLE_CPPFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else SPARKLE_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -24300,7 +24303,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        SPARKLE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$SPARKLE_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $SPARKLE_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else SPARKLE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -24337,7 +24340,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        SPARKLE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$SPARKLE_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $SPARKLE_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else SPARKLE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -24373,7 +24376,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        SPARKLE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$SPARKLE_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $SPARKLE_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else SPARKLE_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -24450,7 +24453,7 @@ then :
 
        SPARKLE_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$SPARKLE_CXXFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $SPARKLE_CXXFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else SPARKLE_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -24486,7 +24489,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        SPARKLE_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$SPARKLE_CFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $SPARKLE_CFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else SPARKLE_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -24595,7 +24598,7 @@ printf "%s\n" "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -24714,7 +24717,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -24814,7 +24817,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LDFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_MERGE_FLAGS_flag"
@@ -25096,7 +25099,7 @@ then :
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -25196,7 +25199,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        CFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$CFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $CFLAGS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else CFLAGS+=" $LC_MERGE_FLAGS_flag"
@@ -25272,7 +25275,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -25372,7 +25375,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        CXXFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$CXXFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $CXXFLAGS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else CXXFLAGS+=" $LC_MERGE_FLAGS_flag"
@@ -25448,7 +25451,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -25548,7 +25551,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LDFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_MERGE_FLAGS_flag"
@@ -25631,7 +25634,7 @@ then :
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -25731,7 +25734,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        CFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$CFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $CFLAGS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else CFLAGS+=" $LC_MERGE_FLAGS_flag"
@@ -25807,7 +25810,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -25907,7 +25910,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        CXXFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$CXXFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $CXXFLAGS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else CXXFLAGS+=" $LC_MERGE_FLAGS_flag"
@@ -25983,7 +25986,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -26083,7 +26086,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LDFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_MERGE_FLAGS_flag"
@@ -26166,7 +26169,7 @@ then :
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -26266,7 +26269,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        CFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$CFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $CFLAGS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else CFLAGS+=" $LC_MERGE_FLAGS_flag"
@@ -26342,7 +26345,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -26442,7 +26445,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        CXXFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$CXXFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $CXXFLAGS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else CXXFLAGS+=" $LC_MERGE_FLAGS_flag"
@@ -26518,7 +26521,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -26618,7 +26621,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LDFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_MERGE_FLAGS_flag"
@@ -26712,7 +26715,7 @@ then :
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -26812,7 +26815,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        CFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$CFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $CFLAGS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else CFLAGS+=" $LC_MERGE_FLAGS_flag"
@@ -26888,7 +26891,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -26988,7 +26991,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        CXXFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$CXXFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $CXXFLAGS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else CXXFLAGS+=" $LC_MERGE_FLAGS_flag"
@@ -27064,7 +27067,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -27164,7 +27167,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LDFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_MERGE_FLAGS_flag"
@@ -27341,6 +27344,17 @@ then :
   withval=$with_qt_find_method; qt_find_method=$withval
 else case e in #(
   e) qt_find_method=autotroll ;;
+esac
+fi
+
+
+  # an argument to use the new qt implementation
+  # Check whether --enable-qt-new was given.
+if test ${enable_qt_new+y}
+then :
+  enableval=$enable_qt_new; qt_new=$enableval
+else case e in #(
+  e) qt_new=no ;;
 esac
 fi
 
@@ -32249,7 +32263,7 @@ fi
 
        LDFLAGS+=" -Wl,-rpath,$QT_INSTALL_LIBS"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])-Wl,-rpath,$QT_INSTALL_LIBS($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " -Wl,-rpath,$QT_INSTALL_LIBS "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -Wl" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag -Wl" >&2;}
     else LDFLAGS+=" -Wl,-rpath,$QT_INSTALL_LIBS"
@@ -32265,6 +32279,10 @@ printf "%s\n" "#define AC_QT_MAJOR_VERSION $QT_MAJOR" >>confdefs.h
 
   case $QT_MAJOR in
     4)
+      if test $qt_new = yes; then
+         # error and exit if the new qt implementation is requested but qt version is 4
+         as_fn_error $? "The new Qt implementation requires Qt 6.10 or later. Please upgrade your Qt version or disable the new Qt implementation with --disable-qt-new." "$LINENO" 5
+      fi
 
   if [[ "-std=c++0x" =~ $(echo '^-Wl,') ]]
   then CXXFLAGS+=" -std=c++0x"
@@ -32294,7 +32312,7 @@ printf "%s\n" "#define AC_QT_MAJOR_VERSION $QT_MAJOR" >>confdefs.h
 
        CXXFLAGS+=" -std=c++0x"
   else
-    if [[ "$CXXFLAGS" =~ $(echo "(^|[[:space:]])-std=c++0x($|[[:space:]])") ]]
+    if printf '%s\n' " $CXXFLAGS " | grep -F -q " -std=c++0x "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -std=c++0x" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag -std=c++0x" >&2;}
     else CXXFLAGS+=" -std=c++0x"
@@ -32303,6 +32321,10 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -std=c++0x" >&2;}
 
       ;;
     5)
+      if test $qt_new = yes; then
+         # error and exit if the new qt implementation is requested but qt version is 5
+         as_fn_error $? "The new Qt implementation requires Qt 6.10 or later. Please upgrade your Qt version or disable the new Qt implementation with --disable-qt-new." "$LINENO" 5
+      fi
 
   if [[ "-std=c++11" =~ $(echo '^-Wl,') ]]
   then QT_CXXFLAGS+=" -std=c++11"
@@ -32332,7 +32354,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -std=c++0x" >&2;}
 
        QT_CXXFLAGS+=" -std=c++11"
   else
-    if [[ "$QT_CXXFLAGS" =~ $(echo "(^|[[:space:]])-std=c++11($|[[:space:]])") ]]
+    if printf '%s\n' " $QT_CXXFLAGS " | grep -F -q " -std=c++11 "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -std=c++11" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag -std=c++11" >&2;}
     else QT_CXXFLAGS+=" -std=c++11"
@@ -32341,6 +32363,13 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -std=c++11" >&2;}
 
       ;;
     6)
+      if test $qt_new = yes; then
+        QT_MINOR=${QT_VERSION#*.}
+        QT_MINOR=${QT_MINOR%%.*}
+        if test $QT_MINOR -lt 10; then
+          as_fn_error $? "The new Qt implementation requires Qt 6.10 or later. Please upgrade your Qt version or disable the new Qt implementation with --disable-qt-new." "$LINENO" 5
+        fi
+      fi
 
   if [[ "-std=c++17" =~ $(echo '^-Wl,') ]]
   then QT_CXXFLAGS+=" -std=c++17"
@@ -32370,7 +32399,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -std=c++11" >&2;}
 
        QT_CXXFLAGS+=" -std=c++17"
   else
-    if [[ "$QT_CXXFLAGS" =~ $(echo "(^|[[:space:]])-std=c++17($|[[:space:]])") ]]
+    if printf '%s\n' " $QT_CXXFLAGS " | grep -F -q " -std=c++17 "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -std=c++17" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag -std=c++17" >&2;}
     else QT_CXXFLAGS+=" -std=c++17"
@@ -32379,6 +32408,51 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -std=c++17" >&2;}
 
       ;;
   esac
+
+  if test $qt_new = yes; then
+    QT_PLUGIN_DIR=Qt6
+  else
+    QT_PLUGIN_DIR=Qt
+  fi
+
+
+  # add Plugins/QT_PLUGIN_DIR from TeXmacs source tree to the C++ include path
+
+  if [[ "-IPlugins/$QT_PLUGIN_DIR" =~ $(echo '^-Wl,') ]]
+  then QT_CXXFLAGS+=" -IPlugins/$QT_PLUGIN_DIR"
+  elif [[ "-IPlugins/$QT_PLUGIN_DIR" =~ $(echo '^-l') ]]
+  then
+  unset STRIP_ALL_ARGS_list
+  for STRIP_ALL_ARGS_arg in "-IPlugins/$QT_PLUGIN_DIR"
+  do  while [[ $QT_CXXFLAGS != $STRIP_ALL_ARGS_list ]]
+      do STRIP_ALL_ARGS_list=$QT_CXXFLAGS
+
+  unset STRIP_ARG_memo
+  if test "$QT_CXXFLAGS" = "$STRIP_ALL_ARGS_arg"
+  then QT_CXXFLAGS=
+  else  while test "$QT_CXXFLAGS" != "$STRIP_ARG_memo"
+      do STRIP_ARG_memo="$QT_CXXFLAGS"
+        QT_CXXFLAGS="${QT_CXXFLAGS/#$STRIP_ALL_ARGS_arg[[:space:]]/}" # at the beginning
+        QT_CXXFLAGS="${QT_CXXFLAGS/%[[:space:]]$STRIP_ALL_ARGS_arg/}"    # at the end
+        QT_CXXFLAGS="${QT_CXXFLAGS//[[:space:]]$STRIP_ALL_ARGS_arg[[:space:]]/ }"  # all in the middle no consecutive
+      done
+    fi
+  QT_CXXFLAGS=$(echo $QT_CXXFLAGS)  # wipe extra blank if any
+  unset ${!STRIP_ARG_*}
+
+      done
+  done
+  unset ${!STRIP_ALL_ARGS_*}
+
+       QT_CXXFLAGS+=" -IPlugins/$QT_PLUGIN_DIR"
+  else
+    if printf '%s\n' " $QT_CXXFLAGS " | grep -F -q " -IPlugins/$QT_PLUGIN_DIR "
+    then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -IPlugins/$QT_PLUGIN_DIR" >&5
+printf "%s\n" "$as_me: WARNING: Drop duplicate flag -IPlugins/$QT_PLUGIN_DIR" >&2;}
+    else QT_CXXFLAGS+=" -IPlugins/$QT_PLUGIN_DIR"
+    fi
+  fi
+
 
   case "${host}" in
     *mingw*)
@@ -32411,7 +32485,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag -std=c++17" >&2;}
 
        QT_LDFLAGS+=" -Wl,-subsystem,windows"
   else
-    if [[ "$QT_LDFLAGS" =~ $(echo "(^|[[:space:]])-Wl,-subsystem,windows($|[[:space:]])") ]]
+    if printf '%s\n' " $QT_LDFLAGS " | grep -F -q " -Wl,-subsystem,windows "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag -Wl" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag -Wl" >&2;}
     else QT_LDFLAGS+=" -Wl,-subsystem,windows"
@@ -32573,7 +32647,7 @@ else case e in #(
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -32673,7 +32747,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        CFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$CFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $CFLAGS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else CFLAGS+=" $LC_MERGE_FLAGS_flag"
@@ -32749,7 +32823,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -32849,7 +32923,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        CXXFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$CXXFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $CXXFLAGS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else CXXFLAGS+=" $LC_MERGE_FLAGS_flag"
@@ -32940,7 +33014,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -33040,7 +33114,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        CFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$CFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $CFLAGS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else CFLAGS+=" $LC_MERGE_FLAGS_flag"
@@ -33116,7 +33190,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -33216,7 +33290,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        CXXFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$CXXFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $CXXFLAGS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else CXXFLAGS+=" $LC_MERGE_FLAGS_flag"
@@ -33305,7 +33379,7 @@ fi
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -33405,7 +33479,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LDFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_MERGE_FLAGS_flag"
@@ -33480,7 +33554,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -33580,7 +33654,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LIBS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LIBS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LIBS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LIBS+=" $LC_MERGE_FLAGS_flag"
@@ -33699,7 +33773,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -33799,7 +33873,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LDFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_MERGE_FLAGS_flag"
@@ -34453,7 +34527,7 @@ done
 
        LC_SCATTER_FLAGS_LIBS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$LC_SCATTER_FLAGS_LIBS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_SCATTER_FLAGS_LIBS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else LC_SCATTER_FLAGS_LIBS+=" $LC_SCATTER_FLAGS_flag"
@@ -34489,7 +34563,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        X11_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$X11_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $X11_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else X11_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -34525,7 +34599,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        X11_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$X11_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $X11_CPPFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else X11_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -34561,7 +34635,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        X11_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$X11_CPPFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $X11_CPPFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else X11_CPPFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -34597,7 +34671,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        X11_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$X11_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $X11_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else X11_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -34634,7 +34708,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        X11_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$X11_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $X11_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else X11_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -34670,7 +34744,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        X11_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$X11_LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $X11_LDFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else X11_LDFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -34747,7 +34821,7 @@ then :
 
        X11_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$X11_CXXFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $X11_CXXFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else X11_CXXFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -34783,7 +34857,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;
 
        X11_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
   else
-    if [[ "$X11_CFLAGS" =~ $(echo "(^|[[:space:]])$LC_SCATTER_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $X11_CFLAGS " | grep -F -q " $LC_SCATTER_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_SCATTER_FLAGS_flag" >&2;}
     else X11_CFLAGS+=" $LC_SCATTER_FLAGS_flag"
@@ -34892,7 +34966,7 @@ printf "%s\n" "$as_me: WARNING: Flags $LC_SCATTER_FLAGS_flag NOT managed" >&2;};
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -35030,7 +35104,7 @@ printf "%s\n" "$as_me: X11_LDFLAGS:$X11_LDFLAGS" >&6;}
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -35130,7 +35204,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LDFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_MERGE_FLAGS_flag"
@@ -35205,7 +35279,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -35305,7 +35379,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LIBS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LIBS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LIBS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LIBS+=" $LC_MERGE_FLAGS_flag"
@@ -36339,7 +36413,7 @@ then :
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -36439,7 +36513,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        PDF_LIBS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$PDF_LIBS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $PDF_LIBS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else PDF_LIBS+=" $LC_MERGE_FLAGS_flag"
@@ -36529,7 +36603,7 @@ printf "%s\n" "#define PDFHUMMUS_NO_DCT 1" >>confdefs.h
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -36629,7 +36703,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LDFLAGS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LDFLAGS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LDFLAGS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LDFLAGS+=" $LC_MERGE_FLAGS_flag"
@@ -36704,7 +36778,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
 
        LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
   else
-    if [[ "$LC_PREPEND_LIST_nlist" =~ $(echo "(^|[[:space:]])$LC_PREPEND_LIST_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LC_PREPEND_LIST_nlist " | grep -F -q " $LC_PREPEND_LIST_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
     else LC_PREPEND_LIST_nlist+=" $LC_PREPEND_LIST_flag"
@@ -36804,7 +36878,7 @@ printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_PREPEND_LIST_flag" >&2;}
 
        LIBS+=" $LC_MERGE_FLAGS_flag"
   else
-    if [[ "$LIBS" =~ $(echo "(^|[[:space:]])$LC_MERGE_FLAGS_flag($|[[:space:]])") ]]
+    if printf '%s\n' " $LIBS " | grep -F -q " $LC_MERGE_FLAGS_flag "
     then { printf "%s\n" "$as_me:${as_lineno-$LINENO}: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&5
 printf "%s\n" "$as_me: WARNING: Drop duplicate flag $LC_MERGE_FLAGS_flag" >&2;}
     else LIBS+=" $LC_MERGE_FLAGS_flag"
