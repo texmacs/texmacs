@@ -87,7 +87,7 @@ AC_DEFUN([LC_APPEND_FLAG],[
   then STRIP_ALL_ARGS([$2],[$1])
        $2+=" $1"
   else
-    if @<:@@<:@ "$$2" =~ $(echo "(^|@<:@@<:@:space:@:>@@:>@)$1($|@<:@@<:@:space:@:>@@:>@)") @:>@@:>@
+    if printf '%s\n' " $$2 " | grep -F -q " $1 "
     then AC_MSG_WARN(Drop duplicate flag $1)
     else $2+=" $1"
     fi
