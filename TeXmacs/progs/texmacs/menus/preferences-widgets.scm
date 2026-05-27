@@ -75,6 +75,16 @@
       ("light" "Bright")
       ("dark" "Dark"))
 
+(define-preference-names-and-validate "gui density"
+  ("compact" "Compact")
+  ("normal" "Normal")
+  ("large" "Large"))
+
+(define-preference-names-and-validate "gui:responsive tab mode"
+  ("top" "Top tabs")
+  ("side" "Side tabs")
+  ("mobile" "Mobile list"))
+
 (when (not qt6-or-later-gui?)
   (when (in? (get-preference "gui theme") '("light" "dark" "default"))
     (set-preference "gui theme" "default")))
@@ -118,6 +128,16 @@
                       '("Default" "Bright" "Dark" "")
                       '("Default" "Bright" "Dark" "Native" "Legacy" ""))
                   (get-pretty-preference "gui theme")
+            "18em")
+    (setting-enum (set-pretty-preference "gui density" answer)
+            "Interface density"
+            '("Compact" "Normal" "Large")
+            (get-pretty-preference "gui density")
+          "18em")
+        (setting-enum (set-pretty-preference "gui:responsive tab mode" answer)
+          "Responsive tabs default mode"
+          '("Top tabs" "Side tabs" "Mobile list")
+          (get-pretty-preference "gui:responsive tab mode")
                   "18em")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

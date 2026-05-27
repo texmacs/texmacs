@@ -124,6 +124,8 @@ extern bool use_native_menubar;
   // MacOS native menubar option
 extern string tm_style_sheet;
   // Qt style sheet (or "" for no style sheet)
+extern string tm_style_density;
+  // Qt style density (compact, normal, large)
 extern bool use_mini_bars;
   // Old style mini bars
 
