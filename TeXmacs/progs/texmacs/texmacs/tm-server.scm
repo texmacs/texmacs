@@ -34,6 +34,12 @@
 (define (get-default-show-table-cells)
   (if (qt-gui?) "on" "off"))
 
+(define (get-default-gui-density)
+  (if (os-android?) "large" "normal"))
+
+(define (get-default-responsive-tab-mode)
+  (if (os-android?) "mobile" "side"))
+
 (define (notify-look-and-feel var val)
   (set-message "Restart in order to let the new look and feel take effect"
                "configure look and feel"))
@@ -104,6 +110,8 @@
   ("interactive questions" (get-default-interactive-questions) noop)
   ("language" (get-locale-language) notify-language)
   ("gui theme" "default" notify-gui-theme)
+  ("gui density" (get-default-gui-density) noop)
+  ("gui:responsive tab mode" (get-default-responsive-tab-mode) noop)
   ("page medium" "paper" (lambda args (noop)))
   ("fast environments" "on" notify-fast-environments)
   ("show full context" "on" (lambda args (noop)))
@@ -164,7 +172,7 @@
              "source tool" "versioning tool" "experimental alpha" "new style fonts"
              "bitmap effects" "new style page breaking" "open console on errors"
              "open console on warnings" "gui:line-input:autocommit"
-             "use native menubar" "use unified toolbar"))
+             "use native menubar"))
   (validate-boolean-preference pref))
 
 (define (validate-enum-preference pref allowed-values)
@@ -181,6 +189,8 @@
 (validate-enum-preference "document update times" '("1" "2" "3"))
 (validate-enum-preference "updater:interval" '("0" "24" "168" "720"))
 (validate-enum-preference "gui theme" '("default" "light" "dark" ""))
+(validate-enum-preference "gui density" '("compact" "normal" "large"))
+(validate-enum-preference "gui:responsive tab mode" '("top" "side" "mobile" "grid"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Properties of some built-in routines
