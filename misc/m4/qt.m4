@@ -67,7 +67,7 @@ AC_DEFUN([LC_WITH_QT],[
   # an argument to use the new qt implementation
   AC_ARG_ENABLE([qt-new], [AS_HELP_STRING([--enable-qt-new],
                     [Use the new Qt implementation])],
-    [qt_new=$enableval], [qt_new=no])
+    [qt_new=$enableval], [AS_IF([test "x$CONFIG_OS" = "xANDROID"],[qt_new=yes],[qt_new=no])])
   
   case $qt_find_method in
     autotroll)

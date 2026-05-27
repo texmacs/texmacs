@@ -27354,7 +27354,13 @@ if test ${enable_qt_new+y}
 then :
   enableval=$enable_qt_new; qt_new=$enableval
 else case e in #(
+  e) if test "x$CONFIG_OS" = "xANDROID"
+then :
+  qt_new=yes
+else case e in #(
   e) qt_new=no ;;
+esac
+fi ;;
 esac
 fi
 
