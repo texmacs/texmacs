@@ -122,8 +122,6 @@ bool gui_interrupted (bool check = false);
 
 extern bool use_native_menubar;
   // MacOS native menubar option
-extern bool use_unified_toolbar;
-  // MacOS toolbar style option
 extern string tm_style_sheet;
   // Qt style sheet (or "" for no style sheet)
 extern bool use_mini_bars;
