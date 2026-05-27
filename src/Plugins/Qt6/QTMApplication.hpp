@@ -68,10 +68,6 @@ public:
     return mUseTabWindow;
   }
 
-  inline bool useNewToolbar() {
-    return mUseNewToolbar;
-  }
-
 #if QT_VERSION >= 0x050000
   inline QTMMainTabWindow &mainTabWindow() {
     return *QTMMainTabWindow::topTabWindow();
@@ -100,7 +96,6 @@ private:
   QTMKeyboard mKeyboard;
   QTMOnscreenKeyboard *mOnscreenKeyboard;
   bool mUseTabWindow;
-  bool mUseNewToolbar;
   QFileSystemWatcher* mCssWatcher = nullptr;
   QString mCurrentCssPath;
 };
