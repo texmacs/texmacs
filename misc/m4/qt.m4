@@ -63,6 +63,11 @@ AC_DEFUN([LC_WITH_QT],[
                     [Method to find Qt (autotroll, autotrollstatic, pkgconfig)])],
     [qt_find_method=$withval],
     [qt_find_method=autotroll])
+
+  # an argument to use the new qt implementation
+  AC_ARG_ENABLE([qt-new], [AS_HELP_STRING([--enable-qt-new],
+                    [Use the new Qt implementation])],
+    [qt_new=$enableval], [qt_new=no])
   
   case $qt_find_method in
     autotroll)
@@ -257,15 +262,40 @@ AC_DEFUN([LC_WITH_QT],[
 
   case $QT_MAJOR in
     4)
+      if test $qt_new = yes; then
+         # error and exit if the new qt implementation is requested but qt version is 4
+         AC_MSG_ERROR([The new Qt implementation requires Qt 6.10 or later. Please upgrade your Qt version or disable the new Qt implementation with --disable-qt-new.])
+      fi
       LC_APPEND_FLAG([-std=c++0x],[CXXFLAGS])
       ;;
     5)
+      if test $qt_new = yes; then
+         # error and exit if the new qt implementation is requested but qt version is 5
+         AC_MSG_ERROR([The new Qt implementation requires Qt 6.10 or later. Please upgrade your Qt version or disable the new Qt implementation with --disable-qt-new.])
+      fi
       LC_APPEND_FLAG([-std=c++11],[QT_CXXFLAGS])
       ;;
     6)
+      if test $qt_new = yes; then
+        QT_MINOR=${QT_VERSION#*.}
+        QT_MINOR=${QT_MINOR%%.*}
+        if test $QT_MINOR -lt 10; then
+          AC_MSG_ERROR([The new Qt implementation requires Qt 6.10 or later. Please upgrade your Qt version or disable the new Qt implementation with --disable-qt-new.])
+        fi
+      fi
       LC_APPEND_FLAG([-std=c++17],[QT_CXXFLAGS])
       ;;
   esac
+
+  if test $qt_new = yes; then
+    QT_PLUGIN_DIR=Qt6
+  else
+    QT_PLUGIN_DIR=Qt
+  fi
+  AC_SUBST([QT_PLUGIN_DIR])
+
+  # add Plugins/QT_PLUGIN_DIR from TeXmacs source tree to the C++ include path
+  LC_APPEND_FLAG([-IPlugins/$QT_PLUGIN_DIR],[QT_CXXFLAGS])
 
   case "${host}" in
     *mingw*)

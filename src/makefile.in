@@ -70,6 +70,7 @@ GLUE = cd Scheme/Glue; ./build-glue
 TOUCH = touch
 MOC = @MOC@
 MOCFLAGS = @QT_CPPFLAGS@
+QT_PLUGIN_DIR = @QT_PLUGIN_DIR@
 
 ###############################################################################
 # Source files
@@ -189,24 +190,18 @@ gnutls_incl   := $(system_incl)
 ###############################################################################
 
 # moc source files are generated for each header present in $(qt_moc) and
-# put in the Plugins/Qt directory
+# put in the Plugins/$(QT_PLUGIN_DIR) directory
 
 ifeq "@CONFIG_QT@" ""
 qt_moc := 
 else
-qt_moc := QTMStyle.hpp QTMGuiHelper.hpp QTMInteractiveInputHelper.hpp \
-  QTMMenuHelper.hpp QTMWidget.hpp  QTMWindow.hpp QTMScrollView.hpp \
-  QTMPipeLink.hpp QTMInteractivePrompt.hpp QTMFileDialog.hpp \
-  QTMPrintDialog.hpp QTMPrinterSettings.hpp QTMApplication.hpp \
-  QTMTreeModel.hpp QTMSockets.hpp QTMMainTabWindow.hpp \
-  QTMToolbar.hpp QTMDelayedMethodCall.hpp QTMResponsiveTabWidget.hpp \
-  QTMSettingWidgets.hpp QTMOnscreenKeyboard.hpp
+qt_moc := $(notdir $(wildcard ./Plugins/$(QT_PLUGIN_DIR)/*.hpp))
 endif
 
 qt_moc_src = $(patsubst %.hpp, moc_%.cpp,$(qt_moc))
-qt_moc_paths = $(patsubst %,./Plugins/Qt/%,$(qt_moc_src))
+qt_moc_paths = $(patsubst %,./Plugins/$(QT_PLUGIN_DIR)/%,$(qt_moc_src))
 
-$(qt_moc_paths): ./Plugins/Qt/moc_%.cpp: ./Plugins/Qt/%.hpp
+$(qt_moc_paths): ./Plugins/$(QT_PLUGIN_DIR)/moc_%.cpp: ./Plugins/$(QT_PLUGIN_DIR)/%.hpp
 	$(MOC) $(MOCFLAGS) $< -o $@
 
 ###############################################################################
@@ -235,7 +230,7 @@ deps_incl = $(call incl_flags,System System/Boot System/Classes System/Files \
   Kernel/Containers Kernel/Types Data/Convert \
   Data/Document Data/Drd Data/History Data/Parser \
   Data/Observers Data/Document Data/String Data/Tmfs Data/Tree Graphics \
-  Plugins Plugins/Pdf/LibAesgm Plugins/Qt \
+  Plugins Plugins/Pdf/LibAesgm Plugins/$(QT_PLUGIN_DIR) \
   Style/Environment Style/Evaluate Style/Memorizer \
   Typeset Edit Texmacs Texmacs/Data Scheme Graphics/Bitmap_fonts \
   Graphics/Colors Graphics/Fonts \
@@ -353,7 +348,7 @@ $(os_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(os_incl) $(CXXQT) $(CXXGUILE))
 $(qt_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(qt_incl) $(CXXQT) $(CXXGUILE))
-$(moc_obj): Objects/%.o: ./Plugins/Qt/%.cpp
+$(moc_obj): Objects/%.o: ./Plugins/$(QT_PLUGIN_DIR)/%.cpp
 	$(call cxx_incl,$(qt_incl) $(CXXQT) $(CXXGUILE))
 $(gs_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(gs_incl)  $(CXXX11))
@@ -506,7 +501,7 @@ DISTR:
 CLEAN: DISTR
 	$(RM) Objects/*.o
 	$(RM) Objects/*.lst
-	$(RM) Plugins/Qt/moc_*.cpp
+	$(RM) Plugins/$(QT_PLUGIN_DIR)/moc_*.cpp
 
 clean: CLEAN
 
