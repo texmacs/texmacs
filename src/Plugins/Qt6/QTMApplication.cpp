@@ -15,7 +15,7 @@ QTMApplication::QTMApplication (int& argc, char** argv) :
 }
 
 void QTMApplication::load() {
-  mUseTabWindow = get_user_preference ("enable tab") == "on";
+  mUseTabWindow = true;
 #ifdef OS_ANDROID
   mUseTabWindow = true;
 #endif
