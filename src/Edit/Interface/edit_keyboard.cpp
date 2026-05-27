@@ -15,7 +15,7 @@
 #include "archiver.hpp"
 
 #ifdef Q_OS_MAC
-#include "Plugins/Qt/QTMApplication.hpp"
+#include "QTMApplication.hpp"
 #endif
 
 /******************************************************************************
