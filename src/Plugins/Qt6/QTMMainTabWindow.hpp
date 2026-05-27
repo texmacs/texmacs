@@ -14,7 +14,8 @@
 #include "config.h"
 
 #include <QMainWindow>
-#include <QTabWidget>
+#include <QTabBar>
+#include <QStackedLayout>
 #include <QDockWidget>
 #include <QPointer>
 
@@ -42,6 +43,7 @@ struct DragState {
   bool isMovingWindow = false;
   int movingTabIndex = -1;
   QPoint movingTabStartPos;
+  QPoint movingWindowStartPos;
   QPointer<QTMMainTabWindow> newTabWindow = nullptr;
   QPointer<QTMMainTabWindow> targetTabWindow = nullptr;
   
@@ -59,7 +61,7 @@ struct DragState {
 /**
  * @brief A tab window that allows moving tabs between windows.
  * 
- * This class extends QMainWindow and embeds a QTabWidget to enable dynamic tab management,
+ * This class extends QMainWindow and embeds a QTabBar + QStackedLayout to enable dynamic tab management,
  * including the ability to move tabs between separate windows.
  */
 class QTMMainTabWindow : public QMainWindow {
@@ -72,8 +74,6 @@ public:
    * Initializes the tab window, sets up event filters, and applies default styles.
    */
   QTMMainTabWindow();
-
-  void attachOnscreenKeyboard(QTMOnscreenKeyboard* keyboard);
 
   void setupWindowControls();
 
@@ -122,6 +122,10 @@ public:
   }
 
 protected:
+  void resizeEvent(QResizeEvent *event) override;
+
+  void showEvent(QShowEvent *event) override;
+
   /**
    * @brief Event filter to handle custom events on this object.
    * 
@@ -186,6 +190,11 @@ protected:
    */
   void onDoubleClickOnEmptyTabBarSpace();
 
+protected:
+#if defined(OS_MINGW) || defined(OS_MACOS)
+  bool nativeEvent(const QByteArray &eventType, void *message, qintptr *result) override;
+#endif
+
 private:
   /**
    * @brief Handles mouse press on tab bar.
@@ -237,7 +246,10 @@ private:
   static constexpr int DefaultTabHeightAndroid = 45;
   static constexpr int DefaultMaxTabWidth = 200;
   
-  QPointer<QTabWidget> mTabWidget;
+  QPointer<QWidget> mTabContainer;
+  QPointer<QTabBar> mTabBar;
+  QPointer<QStackedLayout> mStackedLayout;
+  QPointer<QWidget> mWindowsCaptionSpacer;
   QPointer<QDockWidget> mKeyboardDock;
   QPoint dragPosition;
   bool isDraggingFramelessWindow = false;
