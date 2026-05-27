@@ -432,52 +432,9 @@ QTMStyle::drawControl (ControlElement element, const QStyleOption* option, QPain
 
 #if (QT_VERSION < 0x050000)
     case CE_ToolBar: {
-#ifdef UNIFIED_TOOLBAR
-      if (use_unified_toolbar &&
-          (widget) && (widget->windowTitle() == "mode toolbar")) {
-
-          // For unified tool bars, draw nothing.
-          if (QMainWindow * mainWindow = qobject_cast<QMainWindow *>(widget->window())) {
-            if ((mainWindow->unifiedTitleAndToolBarOnMac()) && 
-                (widget->parent()->objectName() != "centralWidget"))
-              break;
-          }
-
-          //QColor mainWindowGradientBeginActive (150, 150, 150);
-          //QColor mainWindowGradientBegin (200, 200, 200);
-          //QColor mainWindowGradientEnd (232, 232, 232);
-
-          QColor mainWindowGradientBeginActive (222, 222, 222);
-          QColor mainWindowGradientEndActive (202, 202, 202);
-          QColor mainWindowGradientBegin (236, 236, 236);
-          QColor mainWindowGradientEnd (226, 226, 226);
-  
-          if (widget->window()->isActiveWindow())
-            mainWindowGradientBegin = mainWindowGradientBeginActive;
-          if (widget->window()->isActiveWindow())
-            mainWindowGradientEnd = mainWindowGradientEndActive;
-
-          // draw background gradient
-          QLinearGradient linearGrad;
-          if (option->state & State_Horizontal)
-            linearGrad = QLinearGradient(0, option->rect.top(), 0, option->rect.bottom());
-          else
-            linearGrad = QLinearGradient(option->rect.left(), 0,  option->rect.right(), 0);
-          
-          linearGrad.setColorAt(0, mainWindowGradientBegin);
-          linearGrad.setColorAt(1, mainWindowGradientEnd);
-          painter->fillRect(option->rect, linearGrad);
-        }
-#endif // UNIFIED_TOOLBAR
     } break;
 #else
   case CE_ToolBar:
-#ifdef UNIFIED_TOOLBAR
-    if (use_unified_toolbar &&
-        (widget) && (widget->windowTitle() == "main toolbar"))
-      break;
-#endif // UNIFIED_TOOLBAR
-
     if ((widget) && (widget->windowTitle() == "main toolbar"))
       painter->fillRect(option->rect, QColor (208, 208, 208));
       //painter->fillRect(option->rect, QColor (192, 192, 192));
