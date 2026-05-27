@@ -1112,13 +1112,7 @@ init_style_sheet (QApplication* app) {
 #ifdef OS_GNU_LINUX
     ss= replace (ss, "Linux", "");
 #endif
-    if (use_unified_toolbar)
-      ss= replace (ss, "Uni", "");
-    else
-      ss= replace (ss, "Nonuni", "");
-    if (!use_unified_toolbar ||
-        get_preference ("main icon bar", "off") != "off")
-      ss= replace (ss, "Nounim", "");
+    ss= replace (ss, "Nonuni", "");
     ss= scale_px (ss);
     current_style_sheet= ss;
     app->setStyleSheet (to_qstring (current_style_sheet));

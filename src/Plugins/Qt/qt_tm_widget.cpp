@@ -328,8 +328,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
 #  ifdef Q_OS_MAC
   if (retina_icons > 1) {
     int toolbarHeight= 30;
-    if (!use_unified_toolbar)
-      mainToolBar->setFixedHeight (toolbarHeight + 8);
+    mainToolBar->setFixedHeight (toolbarHeight + 8);
     modeToolBar->setFixedHeight (toolbarHeight + 4);
     focusToolBar->setFixedHeight (toolbarHeight);
   }
@@ -348,10 +347,6 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
     int h1= (int) floor (38 * scale + 0.5);
     int h2= (int) floor (34 * scale + 0.5);
     int h3= (int) floor (30 * scale + 0.5);
-#if (QT_VERSION < 0x050000 && defined (Q_OS_MAC))
-    if (use_unified_toolbar && retina_icons == 2 && scale == 1.2) {
-      h1= 34; h2= 36; h3= 32; }
-#endif
     mainToolBar->setFixedHeight (h1);
     modeToolBar->setFixedHeight (h2);
     focusToolBar->setFixedHeight (h3);
@@ -390,65 +385,6 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   }
 #endif
 
-#ifdef UNIFIED_TOOLBAR
-
-  if (use_unified_toolbar) {
-    mw->setUnifiedTitleAndToolBarOnMac(true);
-    
-    //WARNING: dumbToolBar is the toolbar installed on the top area of the
-    //main widget which is  then unified in the title bar. 
-    //to overcome some limitations of the unified toolbar implementation we
-    //install the real toolbars as widgets in this toolbar.
-  
-    dumbToolBar = mw->addToolBar("dumb toolbar");
-    dumbToolBar->setMinimumHeight(30);
-
-    //these are the actions related to the various toolbars to be installed in
-    //the dumb toolbar.
-  
-    mainToolBarAction = dumbToolBar->addWidget(mainToolBar);
-    modeToolBarAction = NULL;
-
-  
-    // A ruler
-    rulerWidget = new QWidget(cw);
-    rulerWidget->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
-    rulerWidget->setMinimumHeight(1);
-    rulerWidget->setBackgroundRole(QPalette::Mid);
-    // FIXME: how to use 112 (active) and 146 (passive)
-    rulerWidget->setVisible(false);
-    rulerWidget->setAutoFillBackground(true);
-    // rulerWidget = new QLabel("pippo", cw);
-  
-    // A second ruler (this one always visible) to separate from the canvas.
-    QWidget* r2 = new QWidget(mw);
-    r2->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Fixed);
-    r2->setMinimumHeight(1);
-    r2->setBackgroundRole(QPalette::Mid);
-    r2->setVisible(true);
-    r2->setAutoFillBackground(true);
-
-    bl->insertWidget(0, modeToolBar);
-    bl->insertWidget(1, rulerWidget);
-    bl->insertWidget(2, focusToolBar);
-    bl->insertWidget(3, userToolBar);
-    bl->insertWidget(5, r2);
-
-    //mw->setContentsMargins (-2, -2, -2, -2);  // Why this?
-    bar->setContentsMargins (0, 1, 0, 1);
-  }
-  else {
-    mw->addToolBar (mainToolBar);
-    mw->addToolBarBreak ();
-    mw->addToolBar (modeToolBar);
-    mw->addToolBarBreak ();
-    mw->addToolBar (focusToolBar);
-    mw->addToolBarBreak ();
-    mw->addToolBar (userToolBar);
-    mw->addToolBarBreak ();
-  }
-
-#else
   mw->addToolBar (mainToolBar);
   mw->addToolBarBreak ();
   mw->addToolBar (modeToolBar);
@@ -457,7 +393,6 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   mw->addToolBarBreak ();
   mw->addToolBar (userToolBar);
   mw->addToolBarBreak ();
-#endif
 
   sideTools->setAllowedAreas (Qt::AllDockWidgetAreas);
   sideTools->setFeatures (QDockWidget::DockWidgetMovable |
@@ -622,79 +557,6 @@ qt_tm_widget_rep::update_visibility () {
   }
 #endif
 
-//#if 0
-#ifdef UNIFIED_TOOLBAR
-
-  // do modifications only if needed to reduce flicker
-  if (use_unified_toolbar &&
-      (XOR(old_mainVisibility,  new_mainVisibility) ||
-       XOR(old_modeVisibility,  new_modeVisibility) ))
-  {
-    // ensure that the topmost visible toolbar is always unified on Mac
-    // (actually only for main and mode toolbars, unifying focus is not
-    // appropriate)
-    
-    QBoxLayout *bl = mainwindow() && mainwindow()->centralWidget() ? 
-                     qobject_cast<QBoxLayout*>(mainwindow()->centralWidget()->layout()) : nullptr;
-    
-    if (modeToolBarAction && modeToolBar)
-      modeToolBarAction->setVisible(modeToolBar->isVisible());
-
-    if (mainToolBarAction && mainToolBar)
-      mainToolBarAction->setVisible(mainToolBar->isVisible());
-    
-    //WARNING: jugglying around bugs in Qt unified toolbar implementation
-    //do not try to change the order of the following operations....
-    
-    if (mainToolBar && mainToolBar->isVisible()) {       
-      bool tmp = modeToolBar ? modeToolBar->isVisible() : false;
-      if (dumbToolBar) {
-          if (modeToolBarAction) dumbToolBar->removeAction(modeToolBarAction);
-          if (mainToolBarAction) dumbToolBar->addAction(mainToolBarAction);
-      }
-      if (bl) {
-          if (rulerWidget) bl->insertWidget(0, rulerWidget);
-          if (modeToolBar) bl->insertWidget(0, modeToolBar);
-      }
-      if (mainToolBarAction) mainToolBarAction->setVisible(true);
-      if (rulerWidget) rulerWidget->setVisible(true);
-      if (modeToolBar) modeToolBar->setVisible(tmp);
-      if (modeToolBarAction) modeToolBarAction->setVisible(tmp);
-      if (dumbToolBar) dumbToolBar->setVisible(true);
-    } else { 
-      if (dumbToolBar && mainToolBarAction) dumbToolBar->removeAction(mainToolBarAction);
-      if (modeToolBar && modeToolBar->isVisible()) {
-        if (bl) {
-            if (rulerWidget) {
-                bl->removeWidget(rulerWidget);
-                rulerWidget->setVisible(false);
-            }
-            bl->removeWidget(modeToolBar);
-        }
-        if (dumbToolBar) {
-            if (modeToolBarAction == NULL) {
-              modeToolBarAction = dumbToolBar->addWidget(modeToolBar);
-            } else {
-              dumbToolBar->addAction(modeToolBarAction);
-            }
-            dumbToolBar->setVisible(true);
-        }
-      } else {
-        if (dumbToolBar) {
-            dumbToolBar->setVisible(false);
-            if (modeToolBarAction) dumbToolBar->removeAction(modeToolBarAction);
-        }
-      }
-    }
-  }
-  else if (!tmapp()->useNewToolbar() && mainwindow() && mainwindow()->menuBar()) {
-    bool old_menuVisibility = mainwindow()->menuBar()->isVisible();
-    bool new_menuVisibility = visibility[0];
-
-    if ( XOR(old_menuVisibility,  new_menuVisibility) )
-      mainwindow()->menuBar()->setVisible (new_menuVisibility);
-  }
-#endif // UNIFIED_TOOLBAR
 #undef XOR
 
   if (tm_style_sheet == "" && use_mini_bars && leftLabel && rightLabel) {
@@ -1333,15 +1195,6 @@ qt_tm_widget_rep::set_full_screen(bool flag) {
       pal.setColor(QPalette::Mid, QColor (0, 0, 0));
       mainwindow()->setPalette(pal);
       mainwindow()->setStyleSheet ("* { background: #000000; }");
-#ifdef UNIFIED_TOOLBAR
-      if (use_unified_toolbar) {
-        //HACK: we disable unified toolbar since otherwise
-        //  the application will crash when we return to normal mode
-        // (bug in Qt? present at least with 4.7.1)
-        mainwindow()->setUnifiedTitleAndToolBarOnMac(false);
-        mainwindow()->centralWidget()->layout()->setContentsMargins(0,0,0,0);
-      }
-#endif
 //      mainwindow()->window()->setContentsMargins(0,0,0,0);
       //win->showFullScreen();
        win->setWindowState(win->windowState() | Qt::WindowFullScreen);
@@ -1360,14 +1213,6 @@ qt_tm_widget_rep::set_full_screen(bool flag) {
 
       visibility[0] = cache;
       update_visibility();
-#ifdef UNIFIED_TOOLBAR
-      if (use_unified_toolbar) {
-        mainwindow()->centralWidget()->layout()->setContentsMargins (0,1,0,0);
-        //HACK: we reenable unified toolbar (see above HACK) 
-        //  the application will crash when we return to normal mode
-        mainwindow()->setUnifiedTitleAndToolBarOnMac(true);
-      }
-#endif
     }
   }
   
