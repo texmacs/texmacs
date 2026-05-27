@@ -75,10 +75,6 @@ operator << (tm_ostream& out, QRect rect) {
   << rect.width() << "," << rect.height() << ")";
 }
 
-/******************************************************************************
- * Conversion of data types
- ******************************************************************************/
-
 QFont
 to_qfont (int style, QFont font) {
   if ((style & WIDGET_STYLE_MINI) && tm_style_sheet == "" && use_mini_bars) {
@@ -1076,6 +1072,51 @@ scale_px (string s) {
   return r;
 }
 
+static url
+resolve_style_sheet_file (string style_sheet) {
+  url css (style_sheet);
+  if (!exists (css)) {
+    if (suffix (css) == "") css= glue (css, ".css");
+    url dir ("$TEXMACS_THEME_PATH");
+    css= resolve (dir * css);
+  }
+  return css;
+}
+
+static void
+normalize_style_sheet_content (string& ss) {
+  string p= as_string (url ("$TEXMACS_PATH"));
+#ifdef Q_OS_WIN
+  p = replace (p , "\\", "/");
+#endif
+  ss= replace (ss, "\n", " ");
+  ss= replace (ss, "\r", " ");
+  ss= replace (ss, "\t", " ");
+  ss= replace (ss, "$TEXMACS_PATH", p);
+#if (QT_VERSION < 0x050000)
+  ss= replace (ss, "Qt4", "");
+#endif
+#ifdef OS_MACOS
+  ss= replace (ss, "Macos", "");
+#else
+  ss= replace (ss, "Nomac", "");
+#endif
+#ifdef OS_MINGW
+  ss= replace (ss, "-mingw", "");
+  ss= replace (ss, "Mingw", "");
+#else
+  ss= replace (ss, "-nomingw", "");
+  ss= replace (ss, "Nomingw", "");
+#endif
+#ifdef OS_GNU_LINUX
+  ss= replace (ss, "Linux", "");
+#endif
+  ss= replace (ss, "Nonuni", "");
+  if (get_preference ("main icon bar", "off") != "off")
+    ss= replace (ss, "Nounim", "");
+  ss= scale_px (ss);
+}
+
 void
 init_style_sheet (QApplication* app) {
   string ss;
@@ -1084,39 +1125,46 @@ init_style_sheet (QApplication* app) {
     if (suffix (css) == "") css= glue (css, ".css");
     url dir ("$TEXMACS_THEME_PATH");
     css= resolve (dir * css);
-    if (is_none (css)) return;
   }
-  if (tm_style_sheet != "" && !load_string (css, ss, false)) {
-    string p= as_string (url ("$TEXMACS_PATH"));
-#ifdef Q_OS_WIN
-    p = replace (p , "\\", "/");
-#endif
-    ss= replace (ss, "\n", " ");
-    ss= replace (ss, "\t", " ");
-    ss= replace (ss, "$TEXMACS_PATH", p);
-#if (QT_VERSION < 0x050000)
-    ss= replace (ss, "Qt4", "");
-#endif
-#ifdef OS_MACOS
-    ss= replace (ss, "Macos", "");
-#else
-    ss= replace (ss, "Nomac", "");
-#endif
-#ifdef OS_MINGW
-  ss= replace (ss, "-mingw", "");    
-  ss= replace (ss, "Mingw", "");
-#else
-    ss= replace (ss, "-nomingw", "");
-    ss= replace (ss, "Nomingw", "");
-#endif
-#ifdef OS_GNU_LINUX
-    ss= replace (ss, "Linux", "");
-#endif
-    ss= replace (ss, "Nonuni", "");
-    ss= scale_px (ss);
-    current_style_sheet= ss;
-    app->setStyleSheet (to_qstring (current_style_sheet));
+  if (is_none (css)) {
+    cout << "Style sheet '" << tm_style_sheet << "' not found" << LF;
+    tm_throw("Style sheet not found");
+    return;
   }
+  if (load_string (css, ss, false)) {
+    cout << "Cannot load style sheet '" << css << "'" << LF;
+    tm_throw("Cannot load style sheet");
+    return;
+  }
+  normalize_style_sheet_content (ss);
+
+  if (tm_style_density != "") {
+    string density_ss;
+    url density_css (tm_style_density);
+    if (!exists (density_css)) {
+      if (suffix (density_css) == "") density_css= glue (density_css, ".css");
+      url dir ("$TEXMACS_THEME_PATH");
+      density_css= resolve (dir * density_css);
+    }
+    if (is_none (density_css)) {
+      cout << "Density style sheet '" << tm_style_density << "' not found" << LF;
+      tm_throw("Density style sheet not found");
+      return;
+    }
+    
+    if (load_string (density_css, density_ss, false)) {
+      cout << "Cannot load density style sheet '" << density_css << "'" << LF;
+      tm_throw("Cannot load density style sheet");
+      return;
+    }
+
+    normalize_style_sheet_content (density_ss);
+    ss << density_ss;
+  }
+
+  current_style_sheet= ss;
+
+  app->setStyleSheet (to_qstring (current_style_sheet));
 }
 
 void

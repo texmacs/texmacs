@@ -246,6 +246,7 @@ get_widget_size (widget w) {
 
 bool use_native_menubar = true;
 string tm_style_sheet;
+string tm_style_density;
 bool use_mini_bars= false;
 
 #ifdef NO_FAST_ALLOC
