@@ -78,6 +78,10 @@ public:
   }
 #endif
 
+  inline QTMOnscreenKeyboard* onscreenKeyboard() {
+    return mOnscreenKeyboard;
+  }
+
   void toggleOnScreenKeyboardVisibility();
 
   void notify_preference (string var);
