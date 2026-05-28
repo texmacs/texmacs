@@ -395,17 +395,19 @@ void QTMMainTabWindow::closeTab(int index) {
   if (mStackedLayout == nullptr || mTabBar == nullptr) return;
   if (index < 0 || index >= mStackedLayout->count()) return;
 
-  // send the close window signal to the widget
-#ifdef OS_MACOS
-  if (mTabBar->count() > 1) {
+    QWidget *closeButton = mTabBar->tabButton(index, QTabBar::RightSide);
     QWidget *w = mStackedLayout->widget(index);
-    emit w->close();
-  }
-#else
-    QWidget *w = mStackedLayout->widget(index);
-    emit w->close();
+    mTabBar->removeTab(index);
+    mStackedLayout->removeWidget(w);
+    //w->setParent(nullptr);
+    w->deleteLater(); // todo : is this ok ?
+    if (closeButton != nullptr) closeButton->deleteLater();
+
+    if (mTabBar->count() > 0 && mTabBar->currentIndex() == -1) {
+      mTabBar->setCurrentIndex(0);
+    }
+
     if (mTabBar->count() == 0) closeAndSetTopTabWindow();
-#endif
 }
 
 void QTMMainTabWindow::tabTitleChanged(QWidget *widget, QString title) {
