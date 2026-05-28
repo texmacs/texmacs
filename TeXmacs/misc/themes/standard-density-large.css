@@ -22,3 +22,8 @@
 QStatusBar {
     height: 28px;
 }
+
+QMainWindow::separator {
+    height: 20px;
+    width: 20px;
+}

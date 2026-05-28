@@ -1123,3 +1123,15 @@ QPushButton#mainTabWindowMaxButton[tmWindowControlStyle="mac"] {
 QPushButton#mainTabWindowMaxButton[tmWindowControlStyle="mac"]:hover {
     background-color: #1fac33;
 }
+
+QMainWindow::separator {
+    background: rgba(0, 0, 0, 0.5);
+}
+
+QMainWindow::separator:hover {
+    background: rgba(0, 0, 0, 0.7);
+}
+
+QMainWindow::separator:pressed {
+    background: rgba(0, 0, 0, 0.9);
+}
