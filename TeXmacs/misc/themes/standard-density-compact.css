@@ -18,3 +18,7 @@
     qproperty-iconHeight: 20;
 }
 
+QMainWindow::separator {
+    height: 4px;
+    width: 4px;
+}
