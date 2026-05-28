@@ -189,6 +189,11 @@ void QTMMainTabWindow::resizeEvent(QResizeEvent *event) {
     mTabBar->setGeometry(controlsWidth, 0, width() - controlsWidth, mTabBar->height());
   }
 #endif
+
+  // update the dock max height if exist
+  if (mKeyboardDock != nullptr) {
+    mKeyboardDock->setMaximumHeight(height() / 3);
+  }
   
 }
 
@@ -227,6 +232,9 @@ bool QTMMainTabWindow::eventFilterWindow(QObject *obj, QEvent *event) {
       mKeyboardDock->setFeatures(QDockWidget::NoDockWidgetFeatures);
       mKeyboardDock->setTitleBarWidget(new QWidget(mKeyboardDock));
       addDockWidget(Qt::BottomDockWidgetArea, mKeyboardDock);
+
+      // limit the size of the dock widget to 1/3 of the window height
+      mKeyboardDock->setMaximumHeight(height() / 3);
     }
 
     QWidget *parentWidget = keyboard->parentWidget();
