@@ -194,6 +194,10 @@ QTMMainTabWindow::QTMMainTabWindow() {
 #else
   show();
 #endif
+
+#ifdef OS_ANDROID
+  attachKeyboard();
+#endif
 }
 
 void QTMMainTabWindow::resizeEvent(QResizeEvent *event) {
@@ -234,39 +238,7 @@ bool QTMMainTabWindow::eventFilterWindow(QObject *obj, QEvent *event) {
 
   // on activated, attach the keyboard
   if (event->type() == QEvent::WindowActivate) {
-
-    QTMOnscreenKeyboard* keyboard = tmapp()->onscreenKeyboard();
-
-    if (keyboard == nullptr) return false;
-
-    // if the dock widget is created and the keyboard is not attached, attach it
-    if (mKeyboardDock == nullptr) {
-      mKeyboardDock = new QDockWidget(this);
-      mKeyboardDock->setObjectName("OnscreenKeyboardDock");
-      mKeyboardDock->setAllowedAreas(Qt::BottomDockWidgetArea);
-      mKeyboardDock->setFeatures(QDockWidget::NoDockWidgetFeatures);
-      mKeyboardDock->setTitleBarWidget(new QWidget(mKeyboardDock));
-      addDockWidget(Qt::BottomDockWidgetArea, mKeyboardDock);
-
-      // limit the size of the dock widget to 1/3 of the window height
-      mKeyboardDock->setMaximumHeight(height() / 3);
-
-      connect(keyboard, &QTMOnscreenKeyboard::visibilityChanged, this, [this](bool visible) {
-        mKeyboardDock->setVisible(visible);
-      });
-    }
-
-    QWidget *parentWidget = keyboard->parentWidget();
-
-    if (parentWidget != mKeyboardDock) {
-      QTMMainTabWindow *otherWindow = qobject_cast<QTMMainTabWindow *>(parentWidget);
-      if (otherWindow != nullptr) {
-        otherWindow->mKeyboardDock->hide();
-      }
-      mKeyboardDock->setWidget(keyboard);
-      mKeyboardDock->show();
-      keyboard->show();
-    }
+    attachKeyboard();
   }
 
 
@@ -677,5 +649,40 @@ void QTMMainTabWindow::onTabBarCountChange() {
       QWidget* closeButton = mTabBar->tabButton(i, QTabBar::RightSide);
       if (closeButton != nullptr) closeButton->setVisible(true);
     }
+  }
+}
+
+void QTMMainTabWindow::attachKeyboard() {
+  QTMOnscreenKeyboard* keyboard = tmapp()->onscreenKeyboard();
+
+  if (keyboard == nullptr) return false;
+
+  // if the dock widget is created and the keyboard is not attached, attach it
+  if (mKeyboardDock == nullptr) {
+    mKeyboardDock = new QDockWidget(this);
+    mKeyboardDock->setObjectName("OnscreenKeyboardDock");
+    mKeyboardDock->setAllowedAreas(Qt::BottomDockWidgetArea);
+    mKeyboardDock->setFeatures(QDockWidget::NoDockWidgetFeatures);
+    mKeyboardDock->setTitleBarWidget(new QWidget(mKeyboardDock));
+    addDockWidget(Qt::BottomDockWidgetArea, mKeyboardDock);
+
+    // limit the size of the dock widget to 1/3 of the window height
+    mKeyboardDock->setMaximumHeight(height() / 3);
+
+    connect(keyboard, &QTMOnscreenKeyboard::visibilityChanged, this, [this](bool visible) {
+      mKeyboardDock->setVisible(visible);
+    });
+  }
+
+  QWidget *parentWidget = keyboard->parentWidget();
+
+  if (parentWidget != mKeyboardDock) {
+    QTMMainTabWindow *otherWindow = qobject_cast<QTMMainTabWindow *>(parentWidget);
+    if (otherWindow != nullptr) {
+      otherWindow->mKeyboardDock->hide();
+    }
+    mKeyboardDock->setWidget(keyboard);
+    mKeyboardDock->show();
+    keyboard->show();
   }
 }
