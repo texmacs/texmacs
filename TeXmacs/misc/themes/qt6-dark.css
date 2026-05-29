@@ -1082,3 +1082,13 @@ QMainWindow::separator:hover {
 QMainWindow::separator:pressed {
     background: rgba(0, 0, 0, 0.9);
 }
+
+#toolbarLeftButton, #toolbarRightButton {
+    border: none;
+    border-radius: 0px;
+    width: 8px;
+}
+
+#toolbarLeftButton[tmenabled="false"], #toolbarRightButton[tmenabled="false"] {
+    color: transparent;
+}

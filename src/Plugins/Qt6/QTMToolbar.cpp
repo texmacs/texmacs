@@ -26,7 +26,9 @@
 
 QTMToolbar::QTMToolbar (const QString& title, QSize iconSize, QWidget* parent)
   : QWidget (parent)
-{  
+{
+  setObjectName ("qtmToolbar");
+  
 #if QT_VERSION >= 0x050000
   mToolbarMargin= 4;
   mIconWidth= iconSize.width();
@@ -34,31 +36,22 @@ QTMToolbar::QTMToolbar (const QString& title, QSize iconSize, QWidget* parent)
 #ifdef OS_ANDROID
   mToolbarMargin= 8;
 #endif
-  // strong focus
   setFocusPolicy (Qt::StrongFocus);
 
   if (!iconSize.isNull()) {
     setIconSize (iconSize);
   }
 
-
-
   QHBoxLayout* layout = new QHBoxLayout (this);
   layout->setContentsMargins (0, 0, 0, 0);
   layout->setSpacing (0);
   setLayout (layout);
-
-
   
-  mLeftBtn = new QWidget (this);
-  //mLeftBtn->setText (QString::fromUtf8("<"));
+  mLeftBtn = new QPushButton (this);
   mLeftBtn->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Expanding);
-  mLeftBtn->setFixedWidth (16);
+  mLeftBtn->setText (QString::fromUtf8("<"));
   mLeftBtn->setObjectName ("toolbarLeftButton");
-  // set transparent
-
-
-  //connect (mLeftBtn, &QToolButton::clicked, [this]() { scrollBy (-scrollStep()); });
+  connect (mLeftBtn, &QToolButton::clicked, [this]() { scrollBy (-scrollStep()); });
   layout->addWidget (mLeftBtn);
 
   mScrollArea = new QScrollArea (this);
@@ -83,12 +76,11 @@ QTMToolbar::QTMToolbar (const QString& title, QSize iconSize, QWidget* parent)
 
   layout->addWidget (mScrollArea);
 
-  mRightBtn = new QWidget (this);
-  //mRightBtn->setText (QString::fromUtf8(">"));
+  mRightBtn = new QPushButton (this);
   mRightBtn->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Expanding);
-  mRightBtn->setFixedWidth (16);
+  mRightBtn->setText (QString::fromUtf8(">"));
   mRightBtn->setObjectName ("toolbarRightButton");
-  //connect (mRightBtn, &QToolButton::clicked, [this]() { scrollBy (+scrollStep()); });
+  connect (mRightBtn, &QToolButton::clicked, [this]() { scrollBy (+scrollStep()); });
   layout->addWidget (mRightBtn);
 
   mScrollArea->viewport()->installEventFilter (this);
@@ -396,13 +388,13 @@ void QTMToolbar::setRightActVisible (bool v) {
 #if QT_VERSION >= 0x050000
   if (!mRightBtn) return;
   if (v) {
-    //mRightAct->setEnabled(true);
-    //mRightBtn->setText (QString::fromUtf8(">"));
-    //mRightBtn->setStyleSheet ("");
+    mRightBtn->setEnabled(true);
+    mRightBtn->setText (QString::fromUtf8(">"));
+    mRightBtn->setProperty("tmenabled", true);
   } else {
-    //mRightAct->setEnabled(false);
-    //mRightBtn->setText (QString::fromUtf8(""));
-    //mRightBtn->setStyleSheet ("color: transparent;");
+    mRightBtn->setEnabled(false);
+    mRightBtn->setText ("");
+    mRightBtn->setProperty("tmenabled", false);
   }
 #endif
 }
@@ -411,13 +403,13 @@ void QTMToolbar::setLeftActVisible (bool v) {
 #if QT_VERSION >= 0x050000
   if (!mLeftBtn) return;
   if (v) {
-    //mLeftAct->setEnabled(true);
-    //mLeftBtn->setText (QString::fromUtf8("<"));
-    //mLeftBtn->setStyleSheet ("");
+    mLeftBtn->setEnabled(true);
+    mLeftBtn->setText (QString::fromUtf8("<"));
+    mLeftBtn->setProperty("tmenabled", true);
   } else {
-    //mLeftAct->setEnabled(false);
-    //mLeftBtn->setText (QString::fromUtf8(""));
-    //mLeftBtn->setStyleSheet ("color: transparent;");
+    mLeftBtn->setEnabled(false);
+    mLeftBtn->setText ("");
+    mLeftBtn->setProperty("tmenabled", false);
   }
 #endif // QT_VERSION >= 0x050000
 }
