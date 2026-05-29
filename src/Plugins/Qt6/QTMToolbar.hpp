@@ -63,8 +63,8 @@ protected:
 private:
   QPointer<QScrollArea> mScrollArea;
   QPointer<QHBoxLayout> mLayout;
-  QPointer<QWidget> mLeftBtn;
-  QPointer<QWidget> mRightBtn;
+  QPointer<QPushButton> mLeftBtn;
+  QPointer<QPushButton> mRightBtn;
   QPointer<QMenu>   mCurrentMenu;
   int mIconWidth;
   int mIconHeight;
