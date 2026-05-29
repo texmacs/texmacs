@@ -23,6 +23,11 @@
 #include <cstdio>
 
 QTMOnscreenKeyboard::QTMOnscreenKeyboard() {
+	QSizePolicy sp_retain = sizePolicy();
+	sp_retain.setRetainSizeWhenHidden(true);
+	setSizePolicy(sp_retain);
+
+	
 	mLayout = new QVBoxLayout(this);
 	mLayout->setContentsMargins(0, 0, 0, 0);
 	mLayout->setSpacing(2);
@@ -68,7 +73,7 @@ void QTMOnscreenKeyboard::updateButtonGeometry() {
     const int fontSize = (int) round(10.0 * z);
 	for (const QPointer<QPushButton>& key : mButtons) {
         if (key == nullptr) continue;
-        key->setMinimumHeight(minHeight);
+        //key->setMinimumHeight(minHeight);
         QFont f = key->font();
         f.setPointSize(max(8, fontSize));
         key->setFont(f);
@@ -245,7 +250,7 @@ void QTMOnscreenKeyboard::rebuildKeyboard() {
 		const int hintWidth = (int) round(max(10.0, maxUnits) * 42.0);
 		const int hintHeight = max(200, N(mRows) * 44 + 10);
 		mKeyboardSizeHint = QSize(hintWidth, hintHeight);
-		setMinimumSize(mKeyboardSizeHint);
+		//setMinimumSize(mKeyboardSizeHint);
 	}
 
 	updateButtonGeometry();
