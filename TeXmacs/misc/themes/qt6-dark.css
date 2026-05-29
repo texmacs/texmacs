@@ -1031,33 +1031,35 @@ QTMSettingGroup QTMSettingSelect QComboBox {
 * QTMMainTabWindow
 ****************************************************************************/
 
-
-QTabBar#mainTabWindowTabs::tab {
-    height: 28px;
+QTabBar#mainTabWindowTabs[tmSingleTab="false"]::tab {
     text-align: left;
-    background-color: rgba(0, 0, 0, 0.5);
-    margin: 0px 2px -2px 0px;
+    background-color: rgba(0, 0, 0, 0.1);
     border: none;
-    border-bottom: 4px solid transparent;
+    border-bottom: 2px solid transparent;
 }
 
-/* active tab */
-QTabBar#mainTabWindowTabs::tab:selected {
-    height: 28px;
+QTabBar#mainTabWindowTabs[tmSingleTab="false"]::tab:selected {
     text-align: left;
-    background-color: rgba(0, 0, 0, 0.8);
-    margin: 0px 2px -2px 0px;
-    border-bottom: 4px solid #0078D7;
+    background-color: rgba(0, 0, 0, 0.5);
+    border: none;
+}
+
+QTabBar#mainTabWindowTabs[tmSingleTab="true"]::tab {
+    text-align: left;
+    background-color: transparent;
+    border: none;
+}
+
+QTabBar#mainTabWindowTabs[tmSingleTab="true"]::tab:selected {
+    text-align: left;
+    background-color: transparent;
+    border: none;
 }
 
 QTabBar#mainTabWindowTabs #closebutton {
     color: rgba(255, 0, 0, 0.4);
     background-color: transparent;
     border: none;
-}
-
-QTabWidget#mainTabWindowTabs[tmIsAndroid="true"] QTabBar::tab {
-    height: 45px;
 }
 
 QTabWidget#mainTabWindowTabs[tmTabDragHover="true"] QTabBar::tab {
@@ -1067,61 +1069,6 @@ QTabWidget#mainTabWindowTabs[tmTabDragHover="true"] QTabBar::tab {
 QTabWidget#mainTabWindowTabs::pane {
     border: 0px;
     padding: 0px;
-}
-
-
-#mainTabWindowControls {
-    background: transparent;
-}
-
-QPushButton#mainTabWindowMinButton[tmWindowControlStyle="win"],
-QPushButton#mainTabWindowMaxButton[tmWindowControlStyle="win"],
-QPushButton#mainTabWindowCloseButton[tmWindowControlStyle="win"] {
-    background-color: transparent;
-    border: none;
-    color: palette(window-text);
-    font-family: "Segoe Fluent Icons", "Segoe MDL2 Assets", sans-serif;
-    font-size: 8pt;
-}
-
-QPushButton#mainTabWindowMinButton[tmWindowControlStyle="win"]:hover,
-QPushButton#mainTabWindowMaxButton[tmWindowControlStyle="win"]:hover {
-    background-color: rgba(128, 128, 128, 0.2);
-}
-
-QPushButton#mainTabWindowCloseButton[tmWindowControlStyle="win"]:hover {
-    background-color: #e81123;
-    color: white;
-}
-
-QPushButton#mainTabWindowCloseButton[tmWindowControlStyle="mac"] {
-    background-color: #ff5f56;
-    border-radius: 6px;
-    border: 1px solid #e0443e;
-}
-
-QPushButton#mainTabWindowCloseButton[tmWindowControlStyle="mac"]:hover {
-    background-color: #ff3b30;
-}
-
-QPushButton#mainTabWindowMinButton[tmWindowControlStyle="mac"] {
-    background-color: #ffbd2e;
-    border-radius: 6px;
-    border: 1px solid #dea123;
-}
-
-QPushButton#mainTabWindowMinButton[tmWindowControlStyle="mac"]:hover {
-    background-color: #e0a82e;
-}
-
-QPushButton#mainTabWindowMaxButton[tmWindowControlStyle="mac"] {
-    background-color: #27c93f;
-    border-radius: 6px;
-    border: 1px solid #1aab29;
-}
-
-QPushButton#mainTabWindowMaxButton[tmWindowControlStyle="mac"]:hover {
-    background-color: #1fac33;
 }
 
 QMainWindow::separator {
