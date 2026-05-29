@@ -16,17 +16,14 @@ QTMApplication::QTMApplication (int& argc, char** argv) :
 
 void QTMApplication::load() {
   mUseTabWindow = true;
-#ifdef OS_ANDROID
-  mUseTabWindow = true;
-#endif
-
   mPixmapManagerInitialized = false;
 
   init_theme ();
 
-  if (mUseTabWindow) new QTMMainTabWindow();
   mOnscreenKeyboard = new QTMOnscreenKeyboard();
   mOnscreenKeyboard->hide();
+
+  if (mUseTabWindow) new QTMMainTabWindow();
 
 }
   
