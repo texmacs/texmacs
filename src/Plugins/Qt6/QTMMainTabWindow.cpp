@@ -235,6 +235,10 @@ bool QTMMainTabWindow::eventFilterWindow(QObject *obj, QEvent *event) {
 
       // limit the size of the dock widget to 1/3 of the window height
       mKeyboardDock->setMaximumHeight(height() / 3);
+
+      connect(keyboard, &QTMOnscreenKeyboard::visibilityChanged, this, [this](bool visible) {
+        mKeyboardDock->setVisible(visible);
+      });
     }
 
     QWidget *parentWidget = keyboard->parentWidget();

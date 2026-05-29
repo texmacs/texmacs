@@ -577,6 +577,6 @@ void applyMacOSUnifiedBar(QWidget* widget) {
   [nativeWindow setStyleMask:[nativeWindow styleMask] | NSFullSizeContentViewWindowMask | NSWindowTitleHidden];
   [nativeWindow setTitlebarAppearsTransparent:YES];
 
-  [nativeWindow setMovableByWindowBackground:YES];
+  //[nativeWindow setMovableByWindowBackground:YES];
 }
 #endif
