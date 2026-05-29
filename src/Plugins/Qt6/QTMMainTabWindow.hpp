@@ -75,8 +75,6 @@ public:
    */
   QTMMainTabWindow();
 
-  void setupWindowControls();
-
   /**
    * @brief Displays the given widget in the tab window.
    * 
@@ -231,6 +229,8 @@ private:
    * @param index The index of the tab to close.
    */
   void closeTab(int index);
+
+  void onTabBarCountChange();
 
 private:
   /**

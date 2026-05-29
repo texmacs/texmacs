@@ -28,6 +28,7 @@
 #include <QStyle>
 #include <QStylePainter>
 #include <QStyleOptionTab>
+#include <QLabel>
 
 #if defined(OS_MINGW)
 #include <dwmapi.h> 
@@ -60,8 +61,18 @@ protected:
       QRect textRect = style()->subElementRect(QStyle::SE_TabBarTabText, &option, this);
       textRect.adjust(6, 0, -4, 0);
 
+#ifdef OS_MINGW
+      // on windows, the text has a smaller font
       painter.setPen(option.palette.color(isEnabled() ? QPalette::Normal : QPalette::Disabled,
                                           QPalette::WindowText));
+      // reduce the font size
+      QFont f = painter.font();
+      f.setPointSize(9);
+      painter.setFont(f);
+#else
+      painter.setPen(option.palette.color(isEnabled() ? QPalette::Normal : QPalette::Disabled,
+                                          QPalette::WindowText));
+#endif
       painter.drawText(textRect, Qt::AlignLeft | Qt::AlignVCenter, option.text);
     }
   }
@@ -94,6 +105,24 @@ QTMMainTabWindow::QTMMainTabWindow() {
   headerLayout->setSpacing(0);
 #endif // OS_MACOS
 
+#ifdef OS_MINGW
+  // add a spacer of a few pixel
+  QWidget *iconSpacerLeft = new QWidget(header);
+  iconSpacerLeft->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+  iconSpacerLeft->setFixedWidth(10);
+  headerLayout->addWidget(iconSpacerLeft);
+  // add the texmacs icon as a first widget of the headerLayout
+  QLabel* iconLabel = new QLabel(header);
+  QIcon tmicon = tmapp()->icon_manager().getIcon("TeXmacs");
+  iconLabel->setPixmap(tmicon.pixmap(16, 16));
+  headerLayout->addWidget(iconLabel, 0, Qt::AlignVCenter);
+  // add another spacer
+  QWidget *iconSpacerRight = new QWidget(header);
+  iconSpacerRight->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+  iconSpacerRight->setFixedWidth(10);
+  headerLayout->addWidget(iconSpacerRight);
+#endif
+
   mTabBar = new QTMLeftAlignedTabBar(central);
   mTabBar->setTabsClosable(true);
   mTabBar->setMovable(true);
@@ -103,11 +132,7 @@ QTMMainTabWindow::QTMMainTabWindow() {
   mStackedLayout = new QStackedLayout(stackHost);
   mStackedLayout->setContentsMargins(0, 0, 0, 0);
 
-#ifdef OS_ANDROID
-  mTabBar->setProperty("tmIsAndroid", true);
-#else
-  mTabBar->setProperty("tmIsAndroid", false);
-#endif
+  mTabBar->setProperty("tmSingleTab", true);
 
 #ifndef OS_MACOS
   headerLayout->addWidget(mTabBar, 1);
@@ -151,18 +176,12 @@ QTMMainTabWindow::QTMMainTabWindow() {
   connect(mTabBar, &QTabBar::tabCloseRequested, this, &QTMMainTabWindow::closeTab);
 
   // move the tab window to the center of the screen
-#if !defined(OS_ANDROID) && QT_VERSION >= 0x060000
+#if !defined(OS_ANDROID)
   QRect screenGeometry = QApplication::screens().at(0)->geometry();
   move(screenGeometry.center() - rect().center());
-#endif
 
-#if !defined(OS_ANDROID) && QT_VERSION >= 0x060000
   installEventFilter(this);
   mTabBar->installEventFilter(this);
-#endif
-
-#if !defined(OS_ANDROID) && QT_VERSION >= 0x050000
-  setupWindowControls();
 #endif
 
   gTopTabWindow = this;
@@ -201,10 +220,6 @@ void QTMMainTabWindow::showEvent(QShowEvent *event) {
 #ifdef OS_MACOS
   applyMacOSUnifiedBar(this);
 #endif
-}
-
-void QTMMainTabWindow::setupWindowControls() {
-  
 }
 
 void QTMMainTabWindow::onWindowActivated() {
@@ -254,7 +269,6 @@ bool QTMMainTabWindow::eventFilterWindow(QObject *obj, QEvent *event) {
     }
   }
 
-#if QT_VERSION >= 0x060000
 
 #ifdef OS_WINDOWS
   const bool isFrameless = true;
@@ -313,14 +327,9 @@ bool QTMMainTabWindow::eventFilterWindow(QObject *obj, QEvent *event) {
   }
 
   return QMainWindow::eventFilter(obj, event);
-#else
-  (void) obj; (void) event;
-  return false;
-#endif
 }
 
 bool QTMMainTabWindow::eventFilterTabBar(QObject *obj, QEvent *event) {
-#if QT_VERSION >= 0x060000
   if (event->type() == QEvent::MouseButtonPress) {
     handleTabBarMousePress(static_cast<QMouseEvent *>(event));
   }
@@ -336,10 +345,6 @@ bool QTMMainTabWindow::eventFilterTabBar(QObject *obj, QEvent *event) {
   }
   
   return QMainWindow::eventFilter(obj, event);
-#else
-  (void) obj; (void) event;
-  return false;
-#endif
 }
 
 bool QTMMainTabWindow::eventFilter(QObject *obj, QEvent *event) {
@@ -383,6 +388,8 @@ void QTMMainTabWindow::showWidget(QWidget *widget) {
   // Set the custom close button on the right side of the tab
   mTabBar->setTabButton(tabIndex, QTabBar::RightSide, closeBtn);
   mTabBar->setTabButton(tabIndex, QTabBar::LeftSide, nullptr);
+
+  onTabBarCountChange();
 }
 
 void QTMMainTabWindow::removeWidget(QWidget *widget) {
@@ -400,6 +407,8 @@ void QTMMainTabWindow::removeWidget(QWidget *widget) {
     mTabBar->setCurrentIndex(0);
   }
 
+  onTabBarCountChange();
+
   if (mTabBar->count() == 0) closeAndSetTopTabWindow();
 }
 
@@ -407,19 +416,21 @@ void QTMMainTabWindow::closeTab(int index) {
   if (mStackedLayout == nullptr || mTabBar == nullptr) return;
   if (index < 0 || index >= mStackedLayout->count()) return;
 
-    QWidget *closeButton = mTabBar->tabButton(index, QTabBar::RightSide);
-    QWidget *w = mStackedLayout->widget(index);
-    mTabBar->removeTab(index);
-    mStackedLayout->removeWidget(w);
-    //w->setParent(nullptr);
-    w->deleteLater(); // todo : is this ok ?
-    if (closeButton != nullptr) closeButton->deleteLater();
+  QWidget *closeButton = mTabBar->tabButton(index, QTabBar::RightSide);
+  QWidget *w = mStackedLayout->widget(index);
+  mTabBar->removeTab(index);
+  mStackedLayout->removeWidget(w);
+  //w->setParent(nullptr);
+  w->deleteLater(); // todo : is this ok ?
+  if (closeButton != nullptr) closeButton->deleteLater();
 
-    if (mTabBar->count() > 0 && mTabBar->currentIndex() == -1) {
-      mTabBar->setCurrentIndex(0);
-    }
+  if (mTabBar->count() > 0 && mTabBar->currentIndex() == -1) {
+    mTabBar->setCurrentIndex(0);
+  }
 
-    if (mTabBar->count() == 0) closeAndSetTopTabWindow();
+  onTabBarCountChange();
+
+  if (mTabBar->count() == 0) closeAndSetTopTabWindow();
 }
 
 void QTMMainTabWindow::tabTitleChanged(QWidget *widget, QString title) {
@@ -461,11 +472,7 @@ void QTMMainTabWindow::handleTabBarMousePress(QMouseEvent *event) {
 
   if (mTabBar->count() == 1) {
     mDragState.isMovingWindow = true;
-#if QT_VERSION >= 0x060000
     mDragState.movingWindowStartPos = event->globalPosition().toPoint();
-#else
-    mDragState.movingWindowStartPos = event->globalPos();
-#endif
     mDragState.newTabWindow = this;
     mDragState.movingTabIndex = 0;
     mDragState.movingTabStartPos = event->pos();
@@ -506,21 +513,13 @@ void QTMMainTabWindow::handleTabBarMouseMove(QMouseEvent *event) {
       mDragState.newTabWindow->showWidget(widgetToMove);
       mDragState.isMovingTab = false;
       mDragState.isMovingWindow = true;
-    #if QT_VERSION >= 0x060000
       mDragState.movingWindowStartPos = event->globalPosition().toPoint();
-    #else
-      mDragState.movingWindowStartPos = event->globalPos();
-    #endif
       mDragState.movingTabIndex = 0;
     }
   }
   
   if (mDragState.isMovingWindow) {
-#if QT_VERSION >= 0x060000
     const QPoint globalPos = event->globalPosition().toPoint();
-#else
-    const QPoint globalPos = event->globalPos();
-#endif
     int globalX = globalPos.x();
     int globalY = globalPos.y();
     globalX -= mDragState.movingTabStartPos.x();
@@ -542,11 +541,7 @@ void QTMMainTabWindow::updateDropTargetHover(QMouseEvent *event) {
     tabWindow = qobject_cast<QTMMainTabWindow *>(tabWidget);
     if (tabWindow == nullptr) continue;
 
-#if QT_VERSION >= 0x060000
     QPoint globalPos = event->globalPosition().toPoint();
-#else
-    QPoint globalPos = event->globalPos();
-#endif
     QPoint localPos = tabWindow->mapFromGlobal(globalPos);
     QRect tabBarRect = tabWindow->mTabBar->rect();
     tabBarRect.setWidth(tabWindow->width());
@@ -608,7 +603,6 @@ bool QTMMainTabWindow::nativeEvent(const QByteArray &eventType, void *message, q
         int x = GET_X_LPARAM(msg->lParam);
         int y = GET_Y_LPARAM(msg->lParam);
         
-        // CORRECTION : Calcul 100% fiable via l'OS pour éviter le décalage de Qt
         RECT winRect;
         GetWindowRect(hwnd, &winRect);
         int localX = x - winRect.left;
@@ -660,3 +654,28 @@ bool QTMMainTabWindow::nativeEvent(const QByteArray &eventType, void *message, q
     return QMainWindow::nativeEvent(eventType, message, result);
 }
 #endif
+
+
+void QTMMainTabWindow::onTabBarCountChange() {
+  if (mTabBar->count() <= 1) {
+    mTabBar->setProperty("tmSingleTab", true);
+    mTabBar->style()->unpolish(mTabBar);
+    mTabBar->style()->polish(mTabBar);
+
+    // hide the close button of all tabs
+    for (int i = 0; i < mTabBar->count(); i++) {
+      QWidget* closeButton = mTabBar->tabButton(i, QTabBar::RightSide);
+      if (closeButton != nullptr) closeButton->setVisible(false);
+    }
+  } else {
+    mTabBar->setProperty("tmSingleTab", false);
+    mTabBar->style()->unpolish(mTabBar);
+    mTabBar->style()->polish(mTabBar);
+
+    // show the close button of all tabs
+    for (int i = 0; i < mTabBar->count(); i++) {
+      QWidget* closeButton = mTabBar->tabButton(i, QTabBar::RightSide);
+      if (closeButton != nullptr) closeButton->setVisible(true);
+    }
+  }
+}

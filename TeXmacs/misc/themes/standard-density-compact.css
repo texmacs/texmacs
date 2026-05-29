@@ -1,3 +1,10 @@
+QTabBar#mainTabWindowTabs::tab {
+    height: 22px;
+    margin: 2px 0px -2px 2px;
+    padding: 0px;
+    border-radius: 2px;
+}
+
 #mainToolBar, #modeToolBar, #focusToolBar {
     qproperty-toolbarMargin: 3;
 }
