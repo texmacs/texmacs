@@ -232,6 +232,8 @@ private:
 
   void onTabBarCountChange();
 
+  void attachKeyboard();
+
 private:
   /**
    * @brief Pointer to the current top tab window.
