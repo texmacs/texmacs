@@ -53,6 +53,9 @@ class qt_tm_widget_rep: public qt_window_widget_rep {
    extra_tools_visibility   = 512
    } visibility_t;
    */
+  QPointer<QWidget>         mainWidget;
+  QPointer<QVBoxLayout>     mainLayout;
+  QPointer<QWidget>         statusBar;
   QPointer<QLabel>          rightLabel;
   QPointer<QLabel>           leftLabel;
   QPointer<QTMToolbar>     menuToolBar;

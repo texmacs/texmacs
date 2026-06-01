@@ -114,43 +114,9 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
 #endif
   mw->setFocusPolicy (Qt::NoFocus);
   
-  // status bar
   
-  QStatusBar* bar= new QStatusBar(mw);
-  bar->setObjectName ("statusBar");
-  leftLabel= new QLabel (qt_translate ("Welcome to TeXmacs"), mw);
-  rightLabel= new QLabel (qt_translate ("Booting"), mw);
-  leftLabel->setFrameStyle (QFrame::NoFrame);
-  rightLabel->setFrameStyle (QFrame::NoFrame);
-  leftLabel->setIndent (8);
 
-  QPushButton *keyboardButton = new QPushButton ("", bar);
-  QIcon keyboardIcon= tmapp()->icon_manager().getIcon("tm_prefs_keyboard");
-  keyboardButton->setIcon (keyboardIcon);
-  bar->addWidget (keyboardButton);
-  QObject::connect (keyboardButton, &QPushButton::clicked, []() {
-    tmapp()->toggleOnScreenKeyboardVisibility();
-  });
 
-  bar->addWidget (leftLabel, 1);
-  bar->addPermanentWidget (rightLabel);
-  if (tm_style_sheet == "")
-    bar->setStyle (qtmstyle ());
-  
-  // NOTE (mg): the following setMinimumWidth command disable automatic 
-  // enlarging of the status bar and consequently of the main window due to 
-  // long messages in the left label. I found this strange solution here
-  // http://www.archivum.info/qt-interest@trolltech.com/2007-05/01453/Re:-QStatusBar-size.html
-  // The solution if due to Martin Petricek. He adds:
-  //    The docs says: If minimumSize() is set, the minimum size hint will be ignored.
-  //    Probably the minimum size hint was size of the lengthy message and
-  //    internal layout was enlarging the satusbar and the main window
-  //    Maybe the notice about QLayout that is at minimumSizeHint should be
-  //    also at minimumSize, didn't notice it first time and spend lot of time
-  //    trying to figure this out :)
-  
-  bar->setMinimumWidth (2);
-  mw->setStatusBar (bar);
  
   if (!use_native_menubar) {
     menuToolBar   = new QTMToolbar ("menu toolbar", QSize (), mw);
@@ -196,22 +162,6 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   }
     
   
-  QWidget *cw= new QWidget(mw);
-  cw->setObjectName("centralWidget");  // this is important for styling toolbars.
-  
-    // The main layout
-  
-  QVBoxLayout *bl = new QVBoxLayout (cw);
-  bl->setContentsMargins (0, 1, 0, 0);
-  bl->setSpacing (0);
-  cw->setLayout (bl);
-  QWidget* q = main_widget->as_qwidget(mw); // force creation of QWidget
-  q->setParent (qwid); // q->layout()->removeWidget(q) will reset the parent to this
-  bl->addWidget (q);
-  
-  mw->setCentralWidget (mw_central);
-  central_layout->addWidget (cw);
-
   mainToolBar->setObjectName ("mainToolBar");
   modeToolBar->setObjectName ("modeToolBar");
   focusToolBar->setObjectName ("focusToolBar");
@@ -231,6 +181,23 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   central_layout->addWidget (modeToolBar);
   central_layout->addWidget (focusToolBar);
   central_layout->addWidget (userToolBar);
+
+
+
+  mainWidget = new QWidget(mw);
+  mainLayout = new QVBoxLayout(mainWidget);
+  mainLayout->setContentsMargins(0, 0, 0, 0);
+  mainLayout->setSpacing(0);
+  mainWidget->setLayout(mainLayout);
+  central_layout->addWidget(mainWidget);
+
+
+  QWidget* q = main_widget->as_qwidget(mainWidget); // force creation of QWidget  
+  mainLayout->addWidget (q);
+
+
+
+
 
   sideTools->setAllowedAreas (Qt::AllDockWidgetAreas);
   sideTools->setFeatures (QDockWidget::DockWidgetMovable |
@@ -281,12 +248,40 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   leftTools->setVisible (false);
   bottomTools->setVisible (false);
   extraTools->setVisible (false);
-  mainwindow()->statusBar()->setVisible (true);
 
   QPalette pal;
   QColor bgcol= to_qcolor (tm_background);
   pal.setColor (QPalette::Mid, bgcol);
   mainwindow()->setPalette(pal);
+
+
+
+  statusBar = new QWidget(mw);
+  statusBar->setObjectName("statusBar");
+  QHBoxLayout *statusBarLayout = new QHBoxLayout(statusBar);
+  statusBarLayout->setContentsMargins(0, 0, 0, 0);
+  statusBarLayout->setSpacing(0);
+  leftLabel = new QLabel(qt_translate("Welcome to TeXmacs"), statusBar);
+  rightLabel = new QLabel(qt_translate("Booting"), statusBar);
+
+  QPushButton *keyboardButton = new QPushButton ("", statusBar);
+  keyboardButton->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Expanding);
+  QIcon keyboardIcon= tmapp()->icon_manager().getIcon("tm_prefs_keyboard");
+  keyboardButton->setIcon (keyboardIcon);
+  QObject::connect (keyboardButton, &QPushButton::clicked, []() {
+    tmapp()->toggleOnScreenKeyboardVisibility();
+  });
+
+  statusBarLayout->addWidget (keyboardButton);
+  statusBarLayout->addWidget(leftLabel, 1);
+  statusBarLayout->addWidget(rightLabel);
+
+  central_layout->addWidget(statusBar);
+  
+
+  mw->setCentralWidget (mw_central);
+
+  mw->statusBar()->setVisible (false);
 }
 
 qt_tm_widget_rep::~qt_tm_widget_rep () {
@@ -351,7 +346,7 @@ qt_tm_widget_rep::update_visibility () {
   bool old_leftVisibility = leftTools ? leftTools->isVisible() : false;
   bool old_bottomVisibility = bottomTools ? bottomTools->isVisible() : false;
   bool old_extraVisibility = extraTools ? extraTools->isVisible() : false;
-  bool old_statusVisibility = (mainwindow() && mainwindow()->statusBar()) ? mainwindow()->statusBar()->isVisible() : false;
+  bool old_statusVisibility = statusBar ? statusBar->isVisible() : false;
 
   bool new_mainVisibility = visibility[1] && visibility[0];
   bool new_modeVisibility = visibility[2] && visibility[0];
@@ -760,10 +755,13 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
     case SLOT_SCROLLABLE:
     {
       check_type_void (index, s);
-      
+
+      if (!mainWidget || !mainLayout)
+        return;
+
       QWidget* q = main_widget->qwid;
       if (q) q->hide();
-      QLayout* l = centralwidget()->layout();
+      QLayout* l = mainLayout;
       if (l && q) l->removeWidget(q);
 
       q = concrete(w)->as_qwidget(mainwindow());   // force creation of the new QWidget

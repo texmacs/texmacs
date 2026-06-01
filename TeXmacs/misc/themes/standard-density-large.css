@@ -34,3 +34,7 @@ QMainWindow::separator {
     height: 20px;
     width: 20px;
 }
+
+#statusBar > * {
+    padding: 8px;
+}
