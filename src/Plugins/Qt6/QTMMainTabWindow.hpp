@@ -18,9 +18,13 @@
 #include <QStackedLayout>
 #include <QDockWidget>
 #include <QPointer>
+#include <QList>
+
+#include <functional>
 
 class QTMOnscreenKeyboard;
 class QTMMainTabWindow;
+class QPushButton;
 
 /**
  * @brief Drag operation states.
@@ -119,6 +123,11 @@ public:
     return gTopTabWindow.data(); // todo : should we return a QPointer ? 
   }
 
+  void registerBackButtonProvider(QWidget *provider,
+                                  const std::function<void()> &onBack);
+  void unregisterBackButtonProvider(QWidget *provider);
+  void setBackButtonProviderVisible(QWidget *provider, bool visible);
+
 protected:
   void resizeEvent(QResizeEvent *event) override;
 
@@ -194,6 +203,12 @@ protected:
 #endif
 
 private:
+  struct BackButtonProvider {
+    QPointer<QWidget> provider;
+    std::function<void()> onBack;
+    bool visible = false;
+  };
+
   /**
    * @brief Handles mouse press on tab bar.
    * 
@@ -232,6 +247,10 @@ private:
 
   void onTabBarCountChange();
 
+  void onTabMoved(int from, int to);
+
+  void refreshBackButtonState();
+
   void attachKeyboard();
 
 private:
@@ -249,6 +268,7 @@ private:
   static constexpr int DefaultMaxTabWidth = 200;
   
   QPointer<QWidget> mTabContainer;
+  QPointer<QPushButton> mBackBtn;
   QPointer<QTabBar> mTabBar;
   QPointer<QStackedLayout> mStackedLayout;
   QPointer<QWidget> mWindowsCaptionSpacer;
@@ -256,6 +276,7 @@ private:
   QPoint dragPosition;
   bool isDraggingFramelessWindow = false;
   DragState mDragState;
+  QList<BackButtonProvider> mBackButtonProviders;
    
 };
 

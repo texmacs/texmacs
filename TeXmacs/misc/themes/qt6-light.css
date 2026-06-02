@@ -560,40 +560,8 @@ QTMResponsiveTabWidget {
     font-size: 14px; 
 }
 
-QPushButton#AddTabBtn, QPushButton#BackButton {
-    background-color: #FFFFFF;
-    color: #000000;
-    border-radius: 6px; 
-    padding: 6px 12px;
-    font-weight: bold;
-    border: 1px solid #C0C0C0;
-    margin: 0px;
-}
-
 QPushButton#AddTabBtn:hover, QPushButton#BackButton:hover { 
     background-color: #E0E0E0; 
-}
-
-QPushButton#WinMinBtn, QPushButton#WinMaxBtn, QPushButton#WinCloseBtn {
-    background: transparent;
-    color: #505050;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    padding: 4px 12px;
-    margin: 0px;
-    min-width: 0px;
-    min-height: 0px;
-}
-
-QPushButton#WinMinBtn:hover, QPushButton#WinMaxBtn:hover { 
-    background: #C0C0C0;
-    color: #000000; 
-}
-
-QPushButton#WinCloseBtn:hover { 
-    background: #E81123;
-    color: white; 
 }
 
 QTabBar#ResponsiveTabWidgetBar { 
@@ -865,11 +833,22 @@ QTMSettingGroup QTMSettingSelect QComboBox {
 * QTMMainTabWindow
 ****************************************************************************/
 
+QPushButton#BackButton {
+    background-color: rgba(255, 255, 255, 0.5);
+    color: #000000;
+    border-radius: 3px; 
+    padding: 6px 12px;
+    font-weight: bold;
+    border: 1px solid #C0C0C0;
+    margin: 2px;
+    font-size: 9px;
+}
+
 QTabBar#mainTabWindowTabs[tmSingleTab="false"]::tab {
     text-align: left;
     background-color: rgba(255, 255, 255, 0.1);
     border: none;
-    border-bottom: 2px solid transparent;
+    margin: 2px;
 }
 
 QTabBar#mainTabWindowTabs[tmSingleTab="false"]::tab:selected {
@@ -882,6 +861,7 @@ QTabBar#mainTabWindowTabs[tmSingleTab="true"]::tab {
     text-align: left;
     background-color: transparent;
     border: none;
+    margin: 2px;
 }
 
 QTabBar#mainTabWindowTabs[tmSingleTab="true"]::tab:selected {
