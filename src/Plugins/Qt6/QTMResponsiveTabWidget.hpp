@@ -62,6 +62,7 @@ class QTMResponsiveTabWidget : public QWidget {
 
 public:
   explicit QTMResponsiveTabWidget(QWidget *parent = nullptr);
+  ~QTMResponsiveTabWidget() override;
 
   void addTab(QWidget* widget, const QString& title, 
               const QIcon& icon = QIcon());
@@ -78,6 +79,7 @@ signals:
 
 protected:
   void showEvent(QShowEvent* event) override;
+  void hideEvent(QHideEvent* event) override;
   void changeEvent(QEvent *event) override;
 
 private slots:
@@ -95,7 +97,6 @@ private:
   bool needsBackButton() const;
   bool goBack();
 
-  QPointer<QPushButton> mBackBtn;
   QPointer<QPushButton> mAddTabBtn;
   QPointer<QPushButton> mMinBtn;
   QPointer<QPushButton> mMaxBtn;

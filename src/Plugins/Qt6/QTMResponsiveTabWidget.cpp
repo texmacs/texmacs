@@ -10,8 +10,10 @@
 ******************************************************************************/
 
 #include "QTMResponsiveTabWidget.hpp"
+#include "QTMMainTabWindow.hpp"
 
 #include "string.hpp"
+#include "boot.hpp"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -28,6 +30,20 @@
 #include <QGridLayout>
 #include <QIcon>
 #include <QScrollArea>
+
+int get_default_responsive_mode() {
+  string mode= get_user_preference ("gui:responsive tab mode", "default");
+  if (mode == "top") return 0;
+  if (mode == "side") return 1;
+  if (mode == "mobile") return 2;
+  if (mode == "grid") return 3;
+
+#ifdef OS_ANDROID
+  return 2;
+#endif
+
+  return 1;
+}
 
 QTMHorizontalTextTabBar::QTMHorizontalTextTabBar(QWidget* parent) 
   : QTabBar(parent) {
@@ -144,10 +160,6 @@ QTMResponsiveTabWidget::QTMResponsiveTabWidget(QWidget *parent)
   setAttribute(Qt::WA_StyledBackground, true);
   setMinimumSize(320, 300);
 
-  mBackBtn = new QPushButton("← Retour", this);
-  mBackBtn->setObjectName("BackButton");
-  mBackBtn->hide();
-
   mAddTabBtn = new QPushButton("+ Nouveau", this);
   mAddTabBtn->setObjectName("AddTabBtn");
   mAddTabBtn->hide();
@@ -172,28 +184,8 @@ QTMResponsiveTabWidget::QTMResponsiveTabWidget(QWidget *parent)
   mTopLayout->setContentsMargins(0, 0, 0, 0);
   mTopLayout->setSpacing(0);
 
-  mMinBtn = new QPushButton("—", this);
-  mMaxBtn = new QPushButton("◻", this);
-  mCloseBtn = new QPushButton("✕", this);
-  mMinBtn->setObjectName("WinMinBtn");
-  mMaxBtn->setObjectName("WinMaxBtn");
-  mCloseBtn->setObjectName("WinCloseBtn");
-
-  mMinBtn->hide();
-  mMaxBtn->hide();
-  mCloseBtn->hide();
-
-  connect(mMinBtn, &QPushButton::clicked, this, &QWidget::showMinimized);
-  connect(mMaxBtn, &QPushButton::clicked, 
-          [this]() { isMaximized() ? showNormal() : showMaximized(); });
-  connect(mCloseBtn, &QPushButton::clicked, this, &QWidget::close);
-
-  mTopLayout->addWidget(mBackBtn);
   mTopLayout->addWidget(mAddTabBtn);
   mTopLayout->addStretch();
-  mTopLayout->addWidget(mMinBtn);
-  mTopLayout->addWidget(mMaxBtn);
-  mTopLayout->addWidget(mCloseBtn);
 
   QVBoxLayout* mainLayout = new QVBoxLayout(this);
   mainLayout->setContentsMargins(0, 0, 0, 0);
@@ -221,30 +213,36 @@ QTMResponsiveTabWidget::QTMResponsiveTabWidget(QWidget *parent)
         if (!mListWidget) return;
         onListSelected(mListWidget->row(item));
         });
-  connect(mBackBtn, &QPushButton::clicked, 
-          this, &QTMResponsiveTabWidget::onBackClicked);
   connect(mTabBar, &QTabBar::tabMoved, 
           this, &QTMResponsiveTabWidget::onTabMoved);
   connect(mAddTabBtn, &QPushButton::clicked, 
           this, &QTMResponsiveTabWidget::newTabRequested);
 
-#ifdef OS_ANDROID
-  mMobileViewingContent = false;
-  mListWidget->clearSelection();
-  applyMode(2);
-#else
-  applyMode(1);
-#endif
+  int default_mode= get_default_responsive_mode ();
+  setProperty("tmmode", default_mode);
+  mMobileViewingContent= (default_mode != 2);
+  if (default_mode == 2 && mListWidget) mListWidget->clearSelection();
+  applyMode(default_mode);
   
-  if (parent && parent->metaObject()->className() == QString("QTMPlainWindow")) {
-    //setWindowFusion(true);
-    //setDraggable(true);
+}
+
+QTMResponsiveTabWidget::~QTMResponsiveTabWidget() {
+  if (QTMMainTabWindow* mainTab = qobject_cast<QTMMainTabWindow*>(window())) {
+    mainTab->unregisterBackButtonProvider(this);
   }
 }
 
 void QTMResponsiveTabWidget::showEvent(QShowEvent* event) {
   QWidget::showEvent(event);
   updateNestingVisuals();
+  reevaluateBackButton();
+}
+
+void QTMResponsiveTabWidget::hideEvent(QHideEvent* event) {
+  QWidget::hideEvent(event);
+  if (QTMMainTabWindow* mainTab = qobject_cast<QTMMainTabWindow*>(window())) {
+    mainTab->setBackButtonProviderVisible(this, false);
+  }
 }
 
 void QTMResponsiveTabWidget::updateNestingVisuals() {
@@ -359,22 +357,6 @@ void QTMResponsiveTabWidget::setAddButtonVisible(bool visible) {
 
 void QTMResponsiveTabWidget::setDraggable(bool draggable) { 
   if (mTopBar) mTopBar->setDraggable(draggable); 
-}
-
-void QTMResponsiveTabWidget::setWindowFusion(bool fusion) {
-  mWindowFusion = fusion;
-  if (mMinBtn) mMinBtn->setVisible(fusion);
-  if (mMaxBtn) mMaxBtn->setVisible(fusion);
-  if (mCloseBtn) mCloseBtn->setVisible(fusion);
-  if (mSizeGrip) mSizeGrip->setVisible(fusion);
-
-  if (fusion) {
-    window()->setWindowFlags(window()->windowFlags() | 
-                             Qt::FramelessWindowHint | Qt::Window);    
-  } else {
-    window()->setWindowFlags(window()->windowFlags() & 
-                             ~Qt::FramelessWindowHint & ~Qt::Window);
-  }
 }
 
 void QTMResponsiveTabWidget::applyMode(int mode) {
@@ -556,12 +538,11 @@ bool QTMResponsiveTabWidget::needsBackButton() const {
 void QTMResponsiveTabWidget::reevaluateBackButton() {
   QTMResponsiveTabWidget* parentTab = getParentTabWidget();
   if (parentTab) {
-    if (mBackBtn) mBackBtn->hide();
     parentTab->reevaluateBackButton();
   } else {
-    if (mBackBtn) {
-        if (needsBackButton()) mBackBtn->show();
-        else mBackBtn->hide();
+    if (QTMMainTabWindow* mainTab = qobject_cast<QTMMainTabWindow*>(window())) {
+      mainTab->registerBackButtonProvider(this, [this]() { onBackClicked(); });
+      mainTab->setBackButtonProviderVisible(this, needsBackButton());
     }
   }
 }
@@ -621,5 +602,6 @@ void QTMResponsiveTabWidget::changeEvent(QEvent *event) {
     // Recalculate depth immediately if this widget is moved to a new parent
     if (event->type() == QEvent::ParentChange) {
         updateNestingVisuals();
+    reevaluateBackButton();
     }
 }

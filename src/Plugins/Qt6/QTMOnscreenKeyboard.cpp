@@ -12,6 +12,7 @@
 
 #include "scheme.hpp"
 #include "qt_utilities.hpp"
+#include "QTMWidget.hpp"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -94,6 +95,8 @@ void QTMOnscreenKeyboard::onKeyboardButtonClicked(QPushButton* key) {
 
 	if (refreshLayout)
 	  QTimer::singleShot(0, this, SLOT(initializeKeyboard()));
+
+	QTMWidget::setFocusToLast();
 }
 
 bool QTMOnscreenKeyboard::hasActiveEmuModifier() const {

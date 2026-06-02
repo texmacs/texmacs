@@ -128,6 +128,22 @@ QTMMainTabWindow::QTMMainTabWindow() {
   mTabBar->setMovable(true);
   mTabBar->setObjectName("mainTabWindowTabs");
 
+  mBackBtn = new QPushButton(QString::fromUtf8("\u2190 Retour"), central);
+  mBackBtn->setObjectName("BackButton");
+  mBackBtn->setVisible(false);
+  connect(mBackBtn, &QPushButton::clicked, this, [this]() {
+    refreshBackButtonState();
+    for (int i = mBackButtonProviders.count() - 1; i >= 0; --i) {
+      const BackButtonProvider &entry = mBackButtonProviders.at(i);
+      if (entry.provider == nullptr) continue;
+      if (!entry.visible) continue;
+      if (!entry.provider->isVisibleTo(this)) continue;
+      if (entry.onBack) entry.onBack();
+      break;
+    }
+    refreshBackButtonState();
+  });
+
   QWidget* stackHost = new QWidget(central);
   mStackedLayout = new QStackedLayout(stackHost);
   mStackedLayout->setContentsMargins(0, 0, 0, 0);
@@ -135,6 +151,7 @@ QTMMainTabWindow::QTMMainTabWindow() {
   mTabBar->setProperty("tmSingleTab", true);
 
 #ifndef OS_MACOS
+  headerLayout->addWidget(mBackBtn, 0, Qt::AlignVCenter);
   headerLayout->addWidget(mTabBar, 1);
 #endif
 
@@ -172,7 +189,10 @@ QTMMainTabWindow::QTMMainTabWindow() {
 
   connect(mTabBar, &QTabBar::currentChanged, this, [this](int index) {
     if (mStackedLayout != nullptr) mStackedLayout->setCurrentIndex(index);
+    refreshBackButtonState();
   });
+  connect(mTabBar, &QTabBar::tabMoved,
+          this, &QTMMainTabWindow::onTabMoved);
   connect(mTabBar, &QTabBar::tabCloseRequested, this, &QTMMainTabWindow::closeTab);
 
   // move the tab window to the center of the screen
@@ -439,6 +459,77 @@ void QTMMainTabWindow::setHoverStyle() {
   mTabBar->update();
 }
 
+void QTMMainTabWindow::registerBackButtonProvider(
+    QWidget *provider,
+    const std::function<void()> &onBack) {
+  if (provider == nullptr) return;
+
+  for (BackButtonProvider &entry : mBackButtonProviders) {
+    if (entry.provider == provider) {
+      entry.onBack = onBack;
+      refreshBackButtonState();
+      return;
+    }
+  }
+
+  BackButtonProvider entry;
+  entry.provider = provider;
+  entry.onBack = onBack;
+  entry.visible = false;
+  mBackButtonProviders.append(entry);
+
+  connect(provider, &QObject::destroyed, this, [this, provider]() {
+    unregisterBackButtonProvider(provider);
+  });
+
+  refreshBackButtonState();
+}
+
+void QTMMainTabWindow::unregisterBackButtonProvider(QWidget *provider) {
+  if (provider == nullptr) return;
+
+  for (int i = mBackButtonProviders.count() - 1; i >= 0; --i) {
+    if (mBackButtonProviders[i].provider == provider) {
+      mBackButtonProviders.removeAt(i);
+    }
+  }
+
+  refreshBackButtonState();
+}
+
+void QTMMainTabWindow::setBackButtonProviderVisible(QWidget *provider, bool visible) {
+  if (provider == nullptr) return;
+
+  for (BackButtonProvider &entry : mBackButtonProviders) {
+    if (entry.provider == provider) {
+      entry.visible = visible;
+      refreshBackButtonState();
+      return;
+    }
+  }
+}
+
+void QTMMainTabWindow::refreshBackButtonState() {
+  if (mTabBar == nullptr || mBackBtn == nullptr) return;
+
+  BackButtonProvider *activeProvider = nullptr;
+  for (int i = mBackButtonProviders.count() - 1; i >= 0; --i) {
+    BackButtonProvider &entry = mBackButtonProviders[i];
+    if (entry.provider == nullptr) continue;
+    if (!entry.visible) continue;
+    if (!entry.provider->isVisibleTo(this)) continue;
+    activeProvider = &entry;
+    break;
+  }
+
+  if (activeProvider == nullptr || mTabBar->count() <= 0) {
+    mBackBtn->setVisible(false);
+    return;
+  }
+
+  mBackBtn->setVisible(true);
+}
+
 void QTMMainTabWindow::handleTabBarMousePress(QMouseEvent *event) {
   if (mTabBar == nullptr) return;
 
@@ -650,12 +741,28 @@ void QTMMainTabWindow::onTabBarCountChange() {
       if (closeButton != nullptr) closeButton->setVisible(true);
     }
   }
+
+  refreshBackButtonState();
+}
+
+void QTMMainTabWindow::onTabMoved(int from, int to) {
+  if (mStackedLayout == nullptr) return;
+  if (from == to) return;
+  if (from < 0 || to < 0) return;
+  if (from >= mStackedLayout->count() || to >= mStackedLayout->count()) return;
+
+  QWidget *widget = mStackedLayout->widget(from);
+  if (widget == nullptr) return;
+
+  mStackedLayout->removeWidget(widget);
+  mStackedLayout->insertWidget(to, widget);
+  mStackedLayout->setCurrentIndex(mTabBar->currentIndex());
 }
 
 void QTMMainTabWindow::attachKeyboard() {
   QTMOnscreenKeyboard* keyboard = tmapp()->onscreenKeyboard();
 
-  if (keyboard == nullptr) return false;
+  if (keyboard == nullptr) return;
 
   // if the dock widget is created and the keyboard is not attached, attach it
   if (mKeyboardDock == nullptr) {
