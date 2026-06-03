@@ -1089,3 +1089,14 @@ QMainWindow::separator:pressed {
     background: rgba(0, 0, 0, 0.4);
     border: 1px solid rgba(0, 0, 0, 0.7);
 }
+
+#keyboardToggleButton {
+    background: rgba(0, 0, 0, 0.2);
+    border: none;
+    border-radius: 0px;
+    padding: 4px;
+}
+
+#keyboardToggleButton:hover {
+    background: rgba(0, 0, 0, 0.4);
+}

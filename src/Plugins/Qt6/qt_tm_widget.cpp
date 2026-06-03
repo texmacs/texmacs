@@ -265,6 +265,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   rightLabel = new QLabel(qt_translate("Booting"), statusBar);
 
   QPushButton *keyboardButton = new QPushButton ("", statusBar);
+  keyboardButton->setObjectName("keyboardToggleButton");
   keyboardButton->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Expanding);
   QIcon keyboardIcon= tmapp()->icon_manager().getIcon("tm_prefs_keyboard");
   keyboardButton->setIcon (keyboardIcon);
