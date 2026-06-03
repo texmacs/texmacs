@@ -1052,15 +1052,15 @@ QTabWidget#mainTabWindowTabs::pane {
 }
 
 QMainWindow::separator {
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.1);
 }
 
 QMainWindow::separator:hover {
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.4);
 }
 
 QMainWindow::separator:pressed {
-    background: rgba(0, 0, 0, 0.9);
+    background: rgba(0, 0, 0, 0.7);
 }
 
 #toolbarLeftButton, #toolbarRightButton {
@@ -1071,4 +1071,21 @@ QMainWindow::separator:pressed {
 
 #toolbarLeftButton[tmenabled="false"], #toolbarRightButton[tmenabled="false"] {
     color: transparent;
+}
+
+#onscreenKeyboardButton {
+    background: transparent;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 0px;
+    padding: 0px;
+}
+
+#onscreenKeyboardButton:hover {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(0, 0, 0, 0.4);
+}
+
+#onscreenKeyboardButton:pressed {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(0, 0, 0, 0.7);
 }

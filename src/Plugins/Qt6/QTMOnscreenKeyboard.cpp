@@ -31,7 +31,7 @@ QTMOnscreenKeyboard::QTMOnscreenKeyboard() {
 	
 	mLayout = new QVBoxLayout(this);
 	mLayout->setContentsMargins(0, 0, 0, 0);
-	mLayout->setSpacing(2);
+	mLayout->setSpacing(0);
 
 	QTimer::singleShot(10, this, SLOT(initializeKeyboard()));
 }
@@ -227,13 +227,14 @@ void QTMOnscreenKeyboard::rebuildKeyboard() {
 		rowWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 		QHBoxLayout* rowLayout = new QHBoxLayout(rowWidget);
 		rowLayout->setContentsMargins(0, 0, 0, 0);
-		rowLayout->setSpacing(4);
+		rowLayout->setSpacing(0);
 
 		double rowUnits = 0.0;
 		for (int j = 0; j < N(row); j++) {
 			KeyData keyData = row[j];
 
 			QPushButton* button = new QPushButton(keyData.label, rowWidget);
+			button->setObjectName("onscreenKeyboardButton");
 			mButtons << button;
 			button->setProperty("tm-cmd", keyData.cmd);
 			button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
