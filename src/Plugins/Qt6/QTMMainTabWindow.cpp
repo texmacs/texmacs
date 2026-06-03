@@ -125,7 +125,9 @@ QTMMainTabWindow::QTMMainTabWindow() {
 
   mTabBar = new QTMLeftAlignedTabBar(mCentralContainer);
   mTabBar->setTabsClosable(true);
-  mTabBar->setMovable(true);
+  mTabBar->setMovable(false);
+  mTabBar->setUsesScrollButtons(false);
+  mTabBar->setElideMode(Qt::ElideRight);
   mTabBar->setObjectName("mainTabWindowTabs");
 
   mBackButton = new QPushButton(QString::fromUtf8("\u2190"), mCentralContainer);
@@ -316,6 +318,17 @@ bool QTMMainTabWindow::eventFilterWindow(QObject *obj, QEvent *event) {
 }
 
 bool QTMMainTabWindow::eventFilterTabBar(QObject *obj, QEvent *event) {
+#if defined(OS_MINGW)
+  if (event->type() == QEvent::MouseButtonDblClick) {
+    QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
+    if (mouseEvent->button() == Qt::LeftButton) {
+      if (isMaximized()) showNormal();
+      else showMaximized();
+      return true;
+    }
+  }
+#endif
+
   if (event->type() == QEvent::MouseButtonPress) {
     handleTabBarMousePress(static_cast<QMouseEvent *>(event));
   }
@@ -536,7 +549,8 @@ void QTMMainTabWindow::handleTabBarMousePress(QMouseEvent *event) {
     mDragState.movingWindowStartPos = event->globalPosition().toPoint();
     mDragState.newTabWindow = this;
     mDragState.movingTabIndex = 0;
-    mDragState.movingTabStartPos = event->pos();
+    QRect firstTabRect = mTabBar->tabRect(0);
+    mDragState.movingTabStartPos = event->pos() - firstTabRect.topLeft();
   } else {
     int x = event->pos().x();
     int y = event->pos().y();
@@ -544,9 +558,13 @@ void QTMMainTabWindow::handleTabBarMousePress(QMouseEvent *event) {
     int tabBarHeight = mTabBar->height();
     if (event->button() == Qt::LeftButton && 
         x >= 0 && y >= 0 && x < tabBarWidth && y < tabBarHeight) {
-      mDragState.isMovingTab = true;
-      mDragState.movingTabIndex = mTabBar->tabAt(QPoint(x, y));
-      mDragState.movingTabStartPos = event->pos();
+      int pressedTabIndex = mTabBar->tabAt(QPoint(x, y));
+      if (pressedTabIndex != -1) {
+        mDragState.isMovingTab = true;
+        mDragState.movingTabIndex = pressedTabIndex;
+        QRect pressedTabRect = mTabBar->tabRect(pressedTabIndex);
+        mDragState.movingTabStartPos = event->pos() - pressedTabRect.topLeft();
+      }
     }
   }
 }
@@ -576,6 +594,13 @@ void QTMMainTabWindow::handleTabBarMouseMove(QMouseEvent *event) {
       mDragState.isMovingWindow = true;
       mDragState.movingWindowStartPos = event->globalPosition().toPoint();
       mDragState.movingTabIndex = 0;
+    } else if (x >= 0 && y >= 0 && x < tabBarWidth && y < tabBarHeight) {
+      // Reorder tabs inside the same bar while dragging.
+      const int hoverTabIndex = mTabBar->tabAt(QPoint(x, y));
+      if (hoverTabIndex != -1 && hoverTabIndex != mDragState.movingTabIndex) {
+        mTabBar->moveTab(mDragState.movingTabIndex, hoverTabIndex);
+        mDragState.movingTabIndex = hoverTabIndex;
+      }
     }
   }
   
