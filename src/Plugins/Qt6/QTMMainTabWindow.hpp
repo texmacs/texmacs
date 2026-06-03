@@ -14,6 +14,11 @@
 #include "config.h"
 
 #include <QMainWindow>
+#include <QWidget>
+#include <QLabel>
+#include <QPushButton>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
 #include <QTabBar>
 #include <QStackedLayout>
 #include <QDockWidget>
@@ -24,7 +29,7 @@
 
 class QTMOnscreenKeyboard;
 class QTMMainTabWindow;
-class QPushButton;
+
 
 /**
  * @brief Drag operation states.
@@ -267,8 +272,15 @@ private:
   static constexpr int DefaultTabHeightAndroid = 45;
   static constexpr int DefaultMaxTabWidth = 200;
   
-  QPointer<QWidget> mTabContainer;
-  QPointer<QPushButton> mBackBtn;
+  QPointer<QWidget> mCentralContainer;
+  QPointer<QVBoxLayout> mCentralLayout;
+  QPointer<QWidget> mHeader;
+  QPointer<QHBoxLayout> mHeaderLayout;
+  QPointer<QWidget> mIconSpacerLeft;
+  QPointer<QLabel> mIconLabel;
+  QPointer<QWidget> mIconSpacerRight;
+  QPointer<QWidget> mStackHost;
+  QPointer<QPushButton> mBackButton;
   QPointer<QTabBar> mTabBar;
   QPointer<QStackedLayout> mStackedLayout;
   QPointer<QWidget> mWindowsCaptionSpacer;
