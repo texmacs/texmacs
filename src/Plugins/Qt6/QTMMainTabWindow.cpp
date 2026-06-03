@@ -92,46 +92,46 @@ QTMMainTabWindow::QTMMainTabWindow() {
 #ifdef OS_MACOS
   this->setUnifiedTitleAndToolBarOnMac(true);
   applyMacOSUnifiedBar(this);
-  QWidget* central = this;
+  mCentralContainer = this;
 #else // OS_MACOS
-  QWidget* central = new QWidget(this);
-  QVBoxLayout* centralLayout = new QVBoxLayout(central);
-  centralLayout->setContentsMargins(0, 0, 0, 0);
-  centralLayout->setSpacing(0);
+  mCentralContainer = new QWidget(this);
+  mCentralLayout = new QVBoxLayout(mCentralContainer);
+  mCentralLayout->setContentsMargins(0, 0, 0, 0);
+  mCentralLayout->setSpacing(0);
 
-  QWidget* header = new QWidget(central);
-  QHBoxLayout* headerLayout = new QHBoxLayout(header);
-  headerLayout->setContentsMargins(0, 0, 0, 0);
-  headerLayout->setSpacing(0);
+  mHeader = new QWidget(mCentralContainer);
+  mHeaderLayout = new QHBoxLayout(mHeader);
+  mHeaderLayout->setContentsMargins(0, 0, 0, 0);
+  mHeaderLayout->setSpacing(0);
 #endif // OS_MACOS
 
 #ifdef OS_MINGW
   // add a spacer of a few pixel
-  QWidget *iconSpacerLeft = new QWidget(header);
-  iconSpacerLeft->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
-  iconSpacerLeft->setFixedWidth(10);
-  headerLayout->addWidget(iconSpacerLeft);
+  mIconSpacerLeft = new QWidget(mHeader);
+  mIconSpacerLeft->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+  mIconSpacerLeft->setFixedWidth(10);
+  mHeaderLayout->addWidget(mIconSpacerLeft);
   // add the texmacs icon as a first widget of the headerLayout
-  QLabel* iconLabel = new QLabel(header);
+  mIconLabel = new QLabel(mHeader);
   QIcon tmicon = tmapp()->icon_manager().getIcon("TeXmacs");
-  iconLabel->setPixmap(tmicon.pixmap(16, 16));
-  headerLayout->addWidget(iconLabel, 0, Qt::AlignVCenter);
+  mIconLabel->setPixmap(tmicon.pixmap(16, 16));
+  mHeaderLayout->addWidget(mIconLabel, 0, Qt::AlignVCenter);
   // add another spacer
-  QWidget *iconSpacerRight = new QWidget(header);
-  iconSpacerRight->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
-  iconSpacerRight->setFixedWidth(10);
-  headerLayout->addWidget(iconSpacerRight);
+  mIconSpacerRight = new QWidget(mHeader);
+  mIconSpacerRight->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+  mIconSpacerRight->setFixedWidth(10);
+  mHeaderLayout->addWidget(mIconSpacerRight);
 #endif
 
-  mTabBar = new QTMLeftAlignedTabBar(central);
+  mTabBar = new QTMLeftAlignedTabBar(mCentralContainer);
   mTabBar->setTabsClosable(true);
   mTabBar->setMovable(true);
   mTabBar->setObjectName("mainTabWindowTabs");
 
-  mBackBtn = new QPushButton(QString::fromUtf8("\u2190 Retour"), central);
-  mBackBtn->setObjectName("BackButton");
-  mBackBtn->setVisible(false);
-  connect(mBackBtn, &QPushButton::clicked, this, [this]() {
+  mBackButton = new QPushButton(QString::fromUtf8("\u2190"), mCentralContainer);
+  mBackButton->setObjectName("BackButton");
+  mBackButton->setVisible(false);
+  connect(mBackButton, &QPushButton::clicked, this, [this]() {
     refreshBackButtonState();
     for (int i = mBackButtonProviders.count() - 1; i >= 0; --i) {
       const BackButtonProvider &entry = mBackButtonProviders.at(i);
@@ -144,38 +144,32 @@ QTMMainTabWindow::QTMMainTabWindow() {
     refreshBackButtonState();
   });
 
-  QWidget* stackHost = new QWidget(central);
-  mStackedLayout = new QStackedLayout(stackHost);
+  mStackHost = new QWidget(mCentralContainer);
+  mStackedLayout = new QStackedLayout(mStackHost);
   mStackedLayout->setContentsMargins(0, 0, 0, 0);
 
   mTabBar->setProperty("tmSingleTab", true);
 
 #ifndef OS_MACOS
-  headerLayout->addWidget(mBackBtn, 0, Qt::AlignVCenter);
-  headerLayout->addWidget(mTabBar, 1);
+  mHeaderLayout->addWidget(mBackButton, 0, Qt::AlignVCenter);
+  mHeaderLayout->addWidget(mTabBar, 1);
 #endif
 
 #if defined(OS_MINGW)
-  mWindowsCaptionSpacer = new QWidget(header);
+  mWindowsCaptionSpacer = new QWidget(mHeader);
   mWindowsCaptionSpacer->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
 
   const int reservedCaptionWidth = 200;
   mWindowsCaptionSpacer->setFixedWidth(reservedCaptionWidth);
-  headerLayout->addWidget(mWindowsCaptionSpacer);
+  mHeaderLayout->addWidget(mWindowsCaptionSpacer);
 #endif
 
-  mTabContainer = central;
 #ifdef OS_MACOS
-  setCentralWidget(stackHost);
+  setCentralWidget(mStackHost);
 #else
-  centralLayout->addWidget(header);
-  centralLayout->addWidget(stackHost);
-  setCentralWidget(central);
-#endif
-
-  // todo : keep the tab window size and position in the user preferences
-#ifndef OS_ANDROID
-  setMinimumSize(800, 600);
+  mCentralLayout->addWidget(mHeader);
+  mCentralLayout->addWidget(mStackHost);
+  setCentralWidget(mCentralContainer);
 #endif
 
   /*
@@ -510,7 +504,7 @@ void QTMMainTabWindow::setBackButtonProviderVisible(QWidget *provider, bool visi
 }
 
 void QTMMainTabWindow::refreshBackButtonState() {
-  if (mTabBar == nullptr || mBackBtn == nullptr) return;
+  if (mTabBar == nullptr || mBackButton == nullptr) return;
 
   BackButtonProvider *activeProvider = nullptr;
   for (int i = mBackButtonProviders.count() - 1; i >= 0; --i) {
@@ -523,11 +517,13 @@ void QTMMainTabWindow::refreshBackButtonState() {
   }
 
   if (activeProvider == nullptr || mTabBar->count() <= 0) {
-    mBackBtn->setVisible(false);
+    mBackButton->setVisible(false);
+    if (mIconLabel != nullptr) mIconLabel->setVisible(true);
     return;
   }
 
-  mBackBtn->setVisible(true);
+  mBackButton->setVisible(true);
+  if (mIconLabel != nullptr) mIconLabel->setVisible(false);
 }
 
 void QTMMainTabWindow::handleTabBarMousePress(QMouseEvent *event) {
