@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <QAbstractButton>
 #include <QComboBox>
+#include <QBoxLayout>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QPointer>
@@ -34,8 +35,13 @@ signals:
 
 protected:
   void mouseReleaseEvent(QMouseEvent* event) override;
+  void resizeEvent(QResizeEvent* event) override;
 
 private:
+  void updateResponsiveLayout();
+
+private:
+  QPointer<QBoxLayout> mLayout;
   QPointer<QLabel> mLabel;
   QPointer<QTMSwitchControl> mSwitch;
 };
@@ -62,7 +68,14 @@ public:
 signals:
   void currentIndexChanged(int index);
 
+protected:
+  void resizeEvent(QResizeEvent* event) override;
+
 private:
+  void updateResponsiveLayout();
+
+private:
+  QPointer<QBoxLayout> mLayout;
   QPointer<QLabel> mLabel;
   QPointer<QComboBox> mCombo;
 };

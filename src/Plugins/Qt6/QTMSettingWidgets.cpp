@@ -1,6 +1,9 @@
 #include "QTMSettingWidgets.hpp"
 #include <QPainter>
 #include <QMouseEvent>
+#include <QResizeEvent>
+
+#define RESPONSIVE_WIDTH_THRESHOLD 600
 
 QTMSwitchControl::QTMSwitchControl(QWidget* parent) : QAbstractButton(parent) {
   setCheckable(true);
@@ -35,21 +38,22 @@ QTMSettingCheckbox::QTMSettingCheckbox(QWidget* parent) : QWidget(parent) {
   setAttribute(Qt::WA_StyledBackground, true); 
   setCursor(Qt::PointingHandCursor);
 
-  QHBoxLayout* layout = new QHBoxLayout(this);
+  mLayout = new QBoxLayout(QBoxLayout::LeftToRight, this);
 
   mLabel = new QLabel(this);  
   mSwitch = new QTMSwitchControl(this);
 
-  layout->addWidget(mLabel);
-  layout->addStretch();
-  layout->addWidget(mSwitch);
+  mLayout->addWidget(mLabel);
+  mLayout->addWidget(mSwitch);
 
   connect(mSwitch, &QTMSwitchControl::toggled, this, &QTMSettingCheckbox::toggled);
+  updateResponsiveLayout();
 }
 
 void QTMSettingCheckbox::setDescriptionText(const QString& text) {
   if (!mLabel) return;
   mLabel->setText(text);
+  updateResponsiveLayout();
 }
 
 bool QTMSettingCheckbox::isChecked() const {
@@ -66,25 +70,57 @@ void QTMSettingCheckbox::mouseReleaseEvent(QMouseEvent*) {
   mSwitch->toggle();
 }
 
+void QTMSettingCheckbox::resizeEvent(QResizeEvent* event) {
+  QWidget::resizeEvent(event);
+  updateResponsiveLayout();
+}
+
+void QTMSettingCheckbox::updateResponsiveLayout() {
+  if (mLayout == nullptr || mLabel == nullptr || mSwitch == nullptr) return;
+
+  int margins = mLayout->contentsMargins().left() + mLayout->contentsMargins().right();
+  int spacing = mLayout->spacing();
+  int labelWidth = mLabel->sizeHint().width();
+  int switchWidth = mSwitch->sizeHint().width();
+  int requiredWidth = labelWidth + switchWidth + spacing + margins + 24;
+  if (requiredWidth < RESPONSIVE_WIDTH_THRESHOLD) requiredWidth = RESPONSIVE_WIDTH_THRESHOLD;
+  bool vertical = width() > 0 && width() < requiredWidth;
+
+  if (vertical) {
+    mLayout->setDirection(QBoxLayout::TopToBottom);
+    mLayout->setAlignment(mLabel, Qt::AlignLeft);
+    mLayout->setAlignment(mSwitch, Qt::AlignLeft);
+    mSwitch->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+  } else {
+    mLayout->setDirection(QBoxLayout::LeftToRight);
+    mLayout->setAlignment(mLabel, Qt::AlignLeft | Qt::AlignVCenter);
+    mLayout->setAlignment(mSwitch, Qt::AlignRight | Qt::AlignVCenter);
+    mSwitch->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+  }
+}
+
 QTMSettingSelect::QTMSettingSelect(QWidget* parent) : QWidget(parent) {
   setAttribute(Qt::WA_StyledBackground, true); 
-  QHBoxLayout* layout = new QHBoxLayout(this);
+  mLayout = new QBoxLayout(QBoxLayout::LeftToRight, this);
 
   mLabel = new QLabel(this);
 
   mCombo = new QComboBox(this);
   if (mCombo) mCombo->setCursor(Qt::PointingHandCursor);
+  if (mCombo) mCombo->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 
-  layout->addWidget(mLabel);
-  layout->addWidget(mCombo);
+  mLayout->addWidget(mLabel);
+  mLayout->addWidget(mCombo);
 
   connect(mCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), 
           this, &QTMSettingSelect::currentIndexChanged);
+  updateResponsiveLayout();
 }
 
 void QTMSettingSelect::setDescriptionText(const QString& text) {
   if (!mLabel) return;
   mLabel->setText(text);
+  updateResponsiveLayout();
 }
 
 QString QTMSettingSelect::currentText() const {
@@ -103,6 +139,7 @@ void QTMSettingSelect::setEditable(bool editable) {
 void QTMSettingSelect::addItems(const QStringList& texts) {
   if (!mCombo) return;
   mCombo->addItems(texts);
+  updateResponsiveLayout();
 }
 
 int QTMSettingSelect::currentIndex() const {
@@ -112,6 +149,35 @@ int QTMSettingSelect::currentIndex() const {
 void QTMSettingSelect::setCurrentIndex(int index) {
   if (!mCombo) return;
   mCombo->setCurrentIndex(index);
+}
+
+void QTMSettingSelect::resizeEvent(QResizeEvent* event) {
+  QWidget::resizeEvent(event);
+  updateResponsiveLayout();
+}
+
+void QTMSettingSelect::updateResponsiveLayout() {
+  if (mLayout == nullptr || mLabel == nullptr || mCombo == nullptr) return;
+
+  int margins = mLayout->contentsMargins().left() + mLayout->contentsMargins().right();
+  int spacing = mLayout->spacing();
+  int labelWidth = mLabel->sizeHint().width();
+  int comboWidth = qMax(mCombo->sizeHint().width(), 140);
+  int requiredWidth = labelWidth + comboWidth + spacing + margins + 24;
+  if (requiredWidth < RESPONSIVE_WIDTH_THRESHOLD) requiredWidth = RESPONSIVE_WIDTH_THRESHOLD;
+  bool vertical = width() > 0 && width() < requiredWidth;
+
+  if (vertical) {
+    mLayout->setDirection(QBoxLayout::TopToBottom);
+    mLayout->setAlignment(mLabel, Qt::AlignLeft);
+    mLayout->setAlignment(mCombo, Qt::AlignLeft);
+    mCombo->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+  } else {
+    mLayout->setDirection(QBoxLayout::LeftToRight);
+    mLayout->setAlignment(mLabel, Qt::AlignLeft | Qt::AlignVCenter);
+    mLayout->setAlignment(mCombo, Qt::AlignRight | Qt::AlignVCenter);
+    mCombo->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+  }
 }
 
 QTMSettingGroup::QTMSettingGroup(QWidget* parent)
