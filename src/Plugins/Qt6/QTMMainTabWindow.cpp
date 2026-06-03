@@ -192,12 +192,15 @@ QTMMainTabWindow::QTMMainTabWindow() {
   connect(mTabBar, &QTabBar::tabCloseRequested, this, &QTMMainTabWindow::closeTab);
 
   // move the tab window to the center of the screen
-#if !defined(OS_ANDROID)
   QRect screenGeometry = QApplication::screens().at(0)->geometry();
+#if !defined(OS_ANDROID)
   move(screenGeometry.center() - rect().center());
 
   installEventFilter(this);
   mTabBar->installEventFilter(this);
+#else
+  showMaximized();
+  setMaximumSize(screenGeometry.width(), screenGeometry.height());
 #endif
 
   gTopTabWindow = this;
