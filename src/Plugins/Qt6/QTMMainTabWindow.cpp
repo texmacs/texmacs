@@ -519,11 +519,13 @@ void QTMMainTabWindow::refreshBackButtonState() {
   if (activeProvider == nullptr || mTabBar->count() <= 0) {
     mBackButton->setVisible(false);
     if (mIconLabel != nullptr) mIconLabel->setVisible(true);
+    if (mIconSpacerLeft != nullptr) mIconSpacerLeft->setVisible(true);
     return;
   }
 
   mBackButton->setVisible(true);
   if (mIconLabel != nullptr) mIconLabel->setVisible(false);
+  if (mIconSpacerLeft != nullptr) mIconSpacerLeft->setVisible(false);
 }
 
 void QTMMainTabWindow::handleTabBarMousePress(QMouseEvent *event) {
