@@ -212,30 +212,25 @@ qt_window_widget_rep::send (slot s, blackbox val) {
     {
       check_type<bool> (val, s);
       bool flag = open_box<bool> (val);
+
+      // cast qwid to QTMMainTab
+      QTMMainTab *mainTab = qobject_cast<QTMMainTab *>(qwid);
+
       if (qwid) {
-#if QT_VERSION >= 0x050000
         bool showAsPopup = qwid->property ("tmWindowMode").toString () == "popup";
-        if (!tmapp()->useTabWindow() || showAsPopup) {
-#endif
+        if (!tmapp()->useTabWindow() || showAsPopup || !mainTab) {
           if (flag) {
-            //QWidget* master = QApplication::activeWindow ();
             qwid->show();
-            //qwid->activateWindow();
-            //WEIRD: in Ubuntu uncommenting the above line causes the main window 
-            //to be opened in the background.
             qwid->raise();
-            //QApplication::setActiveWindow (master);
           }
           else qwid->hide();
-#if QT_VERSION >= 0x050000
         } else {
           if (flag) {
-            tmapp()->mainTabWindow().showWidget(qwid);
+            tmapp()->mainTabWindow().showWidget(mainTab);
           } else {
-            tmapp()->mainTabWindow().removeWidget(qwid);
+            tmapp()->mainTabWindow().removeWidget(mainTab);
           }
         }
-#endif
       }
     }
       break;
@@ -254,16 +249,16 @@ qt_window_widget_rep::send (slot s, blackbox val) {
     {   
       check_type<string> (val, s);
       string name = open_box<string> (val);
+      bool showAsPopup = qwid->property ("tmWindowMode").toString () == "popup";
+      QTMMainTab *mainTab = qobject_cast<QTMMainTab *>(qwid);
         // The [*] is for QWidget::setWindowModified()
-#if QT_VERSION >= 0x050000
-      if (!tmapp()->useTabWindow()) {
-#endif
-        if (qwid) qwid->setWindowTitle (to_qstring (name * "[*]"));
-#if QT_VERSION >= 0x050000
-      } else {
-        if (qwid) tmapp()->mainTabWindow().tabTitleChanged (qwid, to_qstring (name));
+      if (qwid) {
+        if (!tmapp()->useTabWindow() || showAsPopup || !mainTab) {
+          qwid->setWindowTitle (to_qstring (name * "[*]"));
+        } else {
+          tmapp()->mainTabWindow().tabTitleChanged (mainTab, to_qstring (name));
+        }
       }
-#endif
     }
       break;
     case SLOT_MODIFIED:
