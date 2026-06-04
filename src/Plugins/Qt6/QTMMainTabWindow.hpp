@@ -13,6 +13,8 @@
 
 #include "config.h"
 
+#include "QTMMainTab.hpp"
+
 #include <QMainWindow>
 #include <QWidget>
 #include <QLabel>
@@ -91,7 +93,7 @@ public:
    * 
    * @param widget The widget to display.
    */
-  void showWidget(QWidget *widget);
+  void showWidget(QTMMainTab *widget);
 
   /**
    * @brief Removes the given widget from the tab window.
@@ -100,7 +102,7 @@ public:
    * 
    * @param widget The widget to remove.
    */
-  void removeWidget(QWidget *widget);
+  void removeWidget(QTMMainTab *widget);
 
   /**
    * @brief Updates the title of a tab.
@@ -110,7 +112,7 @@ public:
    * @param widget The widget whose tab title needs updating.
    * @param title The new title for the tab.
    */
-  void tabTitleChanged(QWidget *widget, QString title);
+  void tabTitleChanged(QTMMainTab *widget, QString title);
 
   /**
    * @brief Closes the tab window and updates the global top tab window.
@@ -128,10 +130,10 @@ public:
     return gTopTabWindow.data(); // todo : should we return a QPointer ? 
   }
 
-  void registerBackButtonProvider(QWidget *provider,
+  void registerBackButtonProvider(QTMMainTab *provider,
                                   const std::function<void()> &onBack);
-  void unregisterBackButtonProvider(QWidget *provider);
-  void setBackButtonProviderVisible(QWidget *provider, bool visible);
+  void unregisterBackButtonProvider(QTMMainTab *provider);
+  void setBackButtonProviderVisible(QTMMainTab *provider, bool visible);
 
 protected:
   void resizeEvent(QResizeEvent *event) override;
@@ -209,7 +211,7 @@ protected:
 
 private:
   struct BackButtonProvider {
-    QPointer<QWidget> provider;
+    QPointer<QTMMainTab> provider;
     std::function<void()> onBack;
     bool visible = false;
   };

@@ -432,6 +432,7 @@ QTMStyle::drawControl (ControlElement element, const QStyleOption* option, QPain
 
 #if (QT_VERSION < 0x050000)
     case CE_ToolBar: {
+
     } break;
 #else
   case CE_ToolBar:

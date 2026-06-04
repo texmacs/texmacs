@@ -12,6 +12,8 @@
 #ifndef QTMRESPONSIVETABWIDGET_HPP
 #define QTMRESPONSIVETABWIDGET_HPP
 
+#include "QTMMainTab.hpp"
+
 #include <QWidget>
 #include <QTabBar>
 #include <QFrame>
@@ -57,7 +59,7 @@ private:
   bool mDraggable;
 };
 
-class QTMResponsiveTabWidget : public QWidget {
+class QTMResponsiveTabWidget : public QTMMainTab {
   Q_OBJECT
 
 public:

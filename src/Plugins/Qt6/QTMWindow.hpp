@@ -14,6 +14,7 @@
 
 #include <QMainWindow>
 
+#include "QTMMainTab.hpp"
 #include "qt_tm_widget.hpp"
 
 
@@ -35,13 +36,13 @@
  inherit" QWidget to do this in a nicer way because QMainWindow does not
  inherit virtually from QWidget.
  */
-class QTMPlainWindow : public QWidget {
+class QTMPlainWindow : public QTMMainTab {
   Q_OBJECT
   
 public:
 
   QTMPlainWindow (QWidget* parent) 
-  : QWidget (parent) { 
+  : QTMMainTab (parent) { 
     if (DEBUG_QT) debug_qt << "Creating QTMPlainWindow" << LF;
   }
   virtual ~QTMPlainWindow () {
@@ -63,13 +64,13 @@ protected:
  \sa QTMPlainWindow
  
  */
-class QTMWindow: public QMainWindow {
+class QTMWindow: public QTMMainTab {
   Q_OBJECT
   
 public:
   
   QTMWindow (QWidget* parent)
-  : QMainWindow (parent) { 
+  : QTMMainTab (parent) { 
     if (DEBUG_QT) debug_qt << "Creating QTMWindow" << LF;
   }
   virtual ~QTMWindow () {
@@ -91,7 +92,7 @@ protected:
  This is just a container QWidget that disappears after the mouse leaves it.
  As usual, it takes ownership of its contents.
  */
-class QTMPopupWidget : public QWidget {
+class QTMPopupWidget : public QTMMainTab {
   Q_OBJECT
   
 public:
