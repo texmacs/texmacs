@@ -1,3 +1,7 @@
+// todo : faire une class Window pour le close
+// todo : faire une class Window pour avoir la bare de move sur android
+// todo : bouton retour sur android
+
 /******************************************************************************
 * MODULE     : QTMMainTabWindow.cpp
 * DESCRIPTION: A tab window that handle multiple moving tabs into windows.
@@ -361,7 +365,7 @@ bool QTMMainTabWindow::eventFilter(QObject *obj, QEvent *event) {
   return QMainWindow::eventFilter(obj, event);
 }
 
-void QTMMainTabWindow::showWidget(QWidget *widget) {
+void QTMMainTabWindow::showWidget(QTMMainTab *widget) {
   if (widget == nullptr || mTabBar == nullptr || mStackedLayout == nullptr) return;
 
   const int tabIndex = mTabBar->addTab(widget->windowTitle());
@@ -394,7 +398,7 @@ void QTMMainTabWindow::showWidget(QWidget *widget) {
   onTabBarCountChange();
 }
 
-void QTMMainTabWindow::removeWidget(QWidget *widget) {
+void QTMMainTabWindow::removeWidget(QTMMainTab *widget) {
   if (widget == nullptr || mTabBar == nullptr || mStackedLayout == nullptr) return;
   const int index = mStackedLayout->indexOf(widget);
   if (index == -1) return;
@@ -435,7 +439,7 @@ void QTMMainTabWindow::closeTab(int index) {
   if (mTabBar->count() == 0) closeAndSetTopTabWindow();
 }
 
-void QTMMainTabWindow::tabTitleChanged(QWidget *widget, QString title) {
+void QTMMainTabWindow::tabTitleChanged(QTMMainTab *widget, QString title) {
   if (mStackedLayout == nullptr || mTabBar == nullptr) return;
   int index = mStackedLayout->indexOf(widget);
   if (index != -1) mTabBar->setTabText(index, title);
@@ -470,7 +474,7 @@ void QTMMainTabWindow::setHoverStyle() {
 }
 
 void QTMMainTabWindow::registerBackButtonProvider(
-    QWidget *provider,
+  QTMMainTab *provider,
     const std::function<void()> &onBack) {
   if (provider == nullptr) return;
 
@@ -495,7 +499,7 @@ void QTMMainTabWindow::registerBackButtonProvider(
   refreshBackButtonState();
 }
 
-void QTMMainTabWindow::unregisterBackButtonProvider(QWidget *provider) {
+void QTMMainTabWindow::unregisterBackButtonProvider(QTMMainTab *provider) {
   if (provider == nullptr) return;
 
   for (int i = mBackButtonProviders.count() - 1; i >= 0; --i) {
@@ -507,7 +511,7 @@ void QTMMainTabWindow::unregisterBackButtonProvider(QWidget *provider) {
   refreshBackButtonState();
 }
 
-void QTMMainTabWindow::setBackButtonProviderVisible(QWidget *provider, bool visible) {
+void QTMMainTabWindow::setBackButtonProviderVisible(QTMMainTab *provider, bool visible) {
   if (provider == nullptr) return;
 
   for (BackButtonProvider &entry : mBackButtonProviders) {
@@ -586,7 +590,9 @@ void QTMMainTabWindow::handleTabBarMouseMove(QMouseEvent *event) {
         x < -TabDragThresholdPx || y < -TabDragThresholdPx) {
       // Detach tab into new window
       mDragState.newTabWindow = new QTMMainTabWindow();
-      QWidget *widgetToMove = mStackedLayout->widget(mDragState.movingTabIndex);
+        QTMMainTab *widgetToMove =
+          qobject_cast<QTMMainTab *>(mStackedLayout->widget(mDragState.movingTabIndex));
+        if (widgetToMove == nullptr) return;
       QWidget* closeButton = mTabBar->tabButton(mDragState.movingTabIndex, QTabBar::RightSide);
       mTabBar->removeTab(mDragState.movingTabIndex);
       mStackedLayout->removeWidget(widgetToMove);
@@ -654,7 +660,9 @@ void QTMMainTabWindow::handleTabBarMouseRelease() {
   
   if (mDragState.targetTabWindow != nullptr) {
     if (DEBUG_QT_WIDGETS) cout << "move the tab to the target tab window" << LF;
-    QWidget *widgetToMove = mStackedLayout->widget(mDragState.movingTabIndex);
+    QTMMainTab *widgetToMove =
+      qobject_cast<QTMMainTab *>(mStackedLayout->widget(mDragState.movingTabIndex));
+    if (widgetToMove == nullptr) return;
     QWidget* closeButton = mTabBar->tabButton(mDragState.movingTabIndex, QTabBar::RightSide);
     mTabBar->removeTab(mDragState.movingTabIndex);
     mStackedLayout->removeWidget(widgetToMove);
