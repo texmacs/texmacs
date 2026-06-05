@@ -216,6 +216,17 @@ private:
     bool visible = false;
   };
 
+private slots:
+  void onBackButtonClicked();
+  void onCurrentTabChanged(int index);
+  void onWindowOrTabClosed();
+  void onTabTitleChangedFromSender(const QString &title);
+  void onTabIconChangedFromSender(const QIcon &icon);
+  void onCloseButtonClicked();
+  void onCloseResetTimeout();
+  void onBackButtonProviderDestroyed(QObject *provider);
+  void onKeyboardVisibilityChanged(bool visible);
+
   /**
    * @brief Handles mouse press on tab bar.
    * 

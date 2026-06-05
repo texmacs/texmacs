@@ -23,6 +23,7 @@
 
 class QStackedWidget;
 class QListWidget;
+class QListWidgetItem;
 class QPushButton;
 class QHBoxLayout;
 class QBoxLayout;
@@ -40,6 +41,9 @@ public:
 
 public slots:
   void updateLabelColors(int index);
+
+private slots:
+  void onTabMovedNoArgs();
 };
 
 // This widget allows dragging the window by clicking and dragging 
@@ -85,6 +89,7 @@ protected:
   void changeEvent(QEvent *event) override;
 
 private slots:
+  void onListItemClicked(QListWidgetItem *item);
   void onTabSelected(int index);
   void onListSelected(int index);
   void onBackClicked();
