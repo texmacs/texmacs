@@ -30,6 +30,7 @@
 #include <QGridLayout>
 #include <QIcon>
 #include <QScrollArea>
+#include <QScroller>
 
 int get_default_responsive_mode() {
   string mode= get_user_preference ("gui:responsive tab mode", "default");
@@ -158,7 +159,6 @@ QTMResponsiveTabWidget::QTMResponsiveTabWidget(QWidget *parent)
     mCurrentMode(-1), mCurrentDepth(-1) {
 
   setAttribute(Qt::WA_StyledBackground, true);
-  setMinimumSize(320, 300);
 
   mAddTabBtn = new QPushButton("+ Nouveau", this);
   mAddTabBtn->setObjectName("AddTabBtn");
@@ -222,8 +222,7 @@ QTMResponsiveTabWidget::QTMResponsiveTabWidget(QWidget *parent)
   setProperty("tmmode", default_mode);
   mMobileViewingContent= (default_mode != 2);
   if (default_mode == 2 && mListWidget) mListWidget->clearSelection();
-  applyMode(default_mode);
-  
+  applyMode(default_mode);  
 }
 
 QTMResponsiveTabWidget::~QTMResponsiveTabWidget() {
@@ -310,9 +309,9 @@ void QTMResponsiveTabWidget::addTab(QWidget* widget, const QString& title,
     scroll->setWidgetResizable(true);
     scroll->setFrameShape(QFrame::NoFrame);
     scroll->setWidget(top);
+    scroll->viewport()->setAttribute(Qt::WA_AcceptTouchEvents, true);
+    QScroller::grabGesture(scroll->viewport(), QScroller::LeftMouseButtonGesture);
     widget = scroll;
-
-  
   }
 
   mPages.append(widget);
