@@ -59,7 +59,7 @@ public:
     QWidget::hide();
   }
 
-  inline void setVisible(bool visible) {
+  inline void setVisible(bool visible) override {
     emit visibilityChanged(visible);
     QWidget::setVisible(visible);
   }

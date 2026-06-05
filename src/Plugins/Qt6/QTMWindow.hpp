@@ -13,6 +13,7 @@
 #define QTMWINDOW_HPP
 
 #include <QMainWindow>
+#include <QWidget>
 
 #include "QTMMainTab.hpp"
 #include "qt_tm_widget.hpp"

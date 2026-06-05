@@ -580,7 +580,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     {
       check_type<coord2>(val, s);
       coord2 p= open_box<coord2> (val);
-      //if (mainwindow()) mainwindow()->resize (to_qsize (p)); // todo liza
+      if (mainwindow()) mainwindow()->resize (to_qsize (p));
     }
       break;
     case SLOT_DESTROY:
