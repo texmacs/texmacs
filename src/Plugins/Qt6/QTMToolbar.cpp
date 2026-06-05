@@ -51,7 +51,8 @@ QTMToolbar::QTMToolbar (const QString& title, QSize iconSize, QWidget* parent)
   mLeftBtn->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Expanding);
   mLeftBtn->setText (QString::fromUtf8("<"));
   mLeftBtn->setObjectName ("toolbarLeftButton");
-  connect (mLeftBtn, &QToolButton::clicked, [this]() { scrollBy (-scrollStep()); });
+  connect (mLeftBtn, &QPushButton::clicked,
+           this, &QTMToolbar::onLeftButtonClicked);
   layout->addWidget (mLeftBtn);
 
   mScrollArea = new QScrollArea (this);
@@ -80,7 +81,8 @@ QTMToolbar::QTMToolbar (const QString& title, QSize iconSize, QWidget* parent)
   mRightBtn->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Expanding);
   mRightBtn->setText (QString::fromUtf8(">"));
   mRightBtn->setObjectName ("toolbarRightButton");
-  connect (mRightBtn, &QToolButton::clicked, [this]() { scrollBy (+scrollStep()); });
+  connect (mRightBtn, &QPushButton::clicked,
+           this, &QTMToolbar::onRightButtonClicked);
   layout->addWidget (mRightBtn);
 
   mScrollArea->viewport()->installEventFilter (this);
@@ -264,33 +266,20 @@ void QTMToolbar::addAction (QAction* action) {
     
 #if QT_VERSION >= 0x050000
     // on click finish, set the focus to the last focused widget
-    connect (button, &QToolButton::clicked, []() {
-      QTMWidget::setFocusToLast();
-    });
+    connect (button, &QToolButton::clicked,
+             this, &QTMToolbar::onAnyButtonClicked);
 
     // if the action is a menu, the tool button should be a menu button
     if (action->menu()) {
       button->setPopupMode (QToolButton::InstantPopup);
       QMenu *actionMenu = action->menu();
-      QPointer<QMenu> safeMenu = actionMenu;
-      QPointer<QToolButton> safeButton = button;
-      connect (actionMenu, &QMenu::aboutToShow, this, [this, safeMenu, safeButton]() {
-        if (!safeMenu || !safeButton) return;
-        mCurrentMenu = safeMenu;
-        resetAllButtons(safeButton);
-      });
-      connect (actionMenu, &QMenu::aboutToHide, this, [this, safeMenu, safeButton]() {
-        if (!safeMenu) return;
-        if (mCurrentMenu == safeMenu) {
-          mCurrentMenu = nullptr;
-          QTMWidget::setFocusToLast();
-        }
-        if (!safeButton) return;
-        QMetaObject::invokeMethod (this, [this, safeButton]() {
-          if (!safeButton) return;
-          resetButton(safeButton);
-        }, Qt::QueuedConnection);
-      });
+      actionMenu->setProperty(
+          "tmToolbarButton",
+          QVariant::fromValue<qulonglong>(reinterpret_cast<qulonglong>(button)));
+      connect (actionMenu, &QMenu::aboutToShow,
+               this, &QTMToolbar::onActionMenuAboutToShow);
+      connect (actionMenu, &QMenu::aboutToHide,
+               this, &QTMToolbar::onActionMenuAboutToHide);
       actionMenu->installEventFilter (this);
     }
 #else
@@ -527,6 +516,50 @@ bool QTMToolbar::eventFilter (QObject* watched, QEvent* event) {
   }
 #endif // QT_VERSION >= 0x050000
   return false;
+}
+
+void QTMToolbar::onLeftButtonClicked() {
+  scrollBy(-scrollStep());
+}
+
+void QTMToolbar::onRightButtonClicked() {
+  scrollBy(+scrollStep());
+}
+
+void QTMToolbar::onAnyButtonClicked() {
+  QTMWidget::setFocusToLast();
+}
+
+void QTMToolbar::onActionMenuAboutToShow() {
+  QMenu *menu = qobject_cast<QMenu *>(sender());
+  if (!menu) return;
+
+  qulonglong rawButtonPtr = menu->property("tmToolbarButton").toULongLong();
+  QToolButton *button = reinterpret_cast<QToolButton *>(rawButtonPtr);
+  if (!button) return;
+
+  mCurrentMenu = menu;
+  resetAllButtons(button);
+}
+
+void QTMToolbar::onActionMenuAboutToHide() {
+  QMenu *menu = qobject_cast<QMenu *>(sender());
+  if (!menu) return;
+
+  if (mCurrentMenu == menu) {
+    mCurrentMenu = nullptr;
+    QTMWidget::setFocusToLast();
+  }
+
+  qulonglong rawButtonPtr = menu->property("tmToolbarButton").toULongLong();
+  QMetaObject::invokeMethod(this, "deferredResetButton", Qt::QueuedConnection,
+                            Q_ARG(qulonglong, rawButtonPtr));
+}
+
+void QTMToolbar::deferredResetButton(qulonglong buttonPtr) {
+  QToolButton *button = reinterpret_cast<QToolButton *>(buttonPtr);
+  if (!button) return;
+  resetButton(button);
 }
 
 QList<QTMToolbar*> QTMToolbar::getAllToolbarsFromMainWindow () const {

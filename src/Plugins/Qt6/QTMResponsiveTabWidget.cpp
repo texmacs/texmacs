@@ -32,6 +32,8 @@
 #include <QScrollArea>
 #include <QScroller>
 
+#include <functional>
+
 int get_default_responsive_mode() {
   string mode= get_user_preference ("gui:responsive tab mode", "default");
   if (mode == "top") return 0;
@@ -54,7 +56,11 @@ QTMHorizontalTextTabBar::QTMHorizontalTextTabBar(QWidget* parent)
   connect(this, &QTabBar::currentChanged, 
           this, &QTMHorizontalTextTabBar::updateLabelColors);
   connect(this, &QTabBar::tabMoved, 
-          this, [this]() { updateLabelColors(currentIndex()); });
+          this, &QTMHorizontalTextTabBar::onTabMovedNoArgs);
+}
+
+void QTMHorizontalTextTabBar::onTabMovedNoArgs() {
+  updateLabelColors(currentIndex());
 }
 
 int QTMHorizontalTextTabBar::addCustomTab(const QIcon &icon, 
@@ -209,10 +215,7 @@ QTMResponsiveTabWidget::QTMResponsiveTabWidget(QWidget *parent)
   connect(mTabBar, &QTabBar::currentChanged, 
           this, &QTMResponsiveTabWidget::onTabSelected);
   connect(mListWidget, &QListWidget::itemClicked, 
-        this, [this](QListWidgetItem *item) {
-        if (!mListWidget) return;
-        onListSelected(mListWidget->row(item));
-        });
+      this, &QTMResponsiveTabWidget::onListItemClicked);
   connect(mTabBar, &QTabBar::tabMoved, 
           this, &QTMResponsiveTabWidget::onTabMoved);
   connect(mAddTabBtn, &QPushButton::clicked, 
@@ -444,6 +447,11 @@ void QTMResponsiveTabWidget::onTabSelected(int index) {
   reevaluateBackButton();
 }
 
+void QTMResponsiveTabWidget::onListItemClicked(QListWidgetItem *item) {
+  if (!mListWidget) return;
+  onListSelected(mListWidget->row(item));
+}
+
 void QTMResponsiveTabWidget::onListSelected(int index) {
   if (index < 0 || mIsUpdating) return;
   mIsUpdating = true;
@@ -540,7 +548,8 @@ void QTMResponsiveTabWidget::reevaluateBackButton() {
     parentTab->reevaluateBackButton();
   } else {
     if (QTMMainTabWindow* mainTab = qobject_cast<QTMMainTabWindow*>(window())) {
-      mainTab->registerBackButtonProvider(this, [this]() { onBackClicked(); });
+      mainTab->registerBackButtonProvider(
+          this, std::bind(&QTMResponsiveTabWidget::onBackClicked, this));
       mainTab->setBackButtonProviderVisible(this, needsBackButton());
     }
   }

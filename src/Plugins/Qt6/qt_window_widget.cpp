@@ -226,18 +226,17 @@ qt_window_widget_rep::send (slot s, blackbox val) {
 
       if (qwid) {
         bool showAsPopup = qwid->property ("tmWindowMode").toString () == "popup";
-        if (!tmapp()->useTabWindow() || showAsPopup || !mainTab) {
-          if (flag) {
-            qwid->show();
-            qwid->raise();
-          }
-          else qwid->hide();
-        } else {
-          if (flag) {
-            tmapp()->mainTabWindow().showWidget(mainTab);
-          } else {
+        if (!flag) {
+          if (mainTab && mainTab->parentTabWindow() != nullptr) {
             mainTab->closeWindowOrTab();
+          } else {
+            qwid->hide();
           }
+        } else if (!tmapp()->useTabWindow() || showAsPopup || !mainTab) {
+          qwid->show();
+          qwid->raise();
+        } else {
+          tmapp()->mainTabWindow().showWidget(mainTab);
         }
       }
     }

@@ -18,6 +18,24 @@
 #include <QObject>
 #include <QTimer>
 
+#include <functional>
+#include <type_traits>
+
+template<typename T>
+class QTMDelayedMethodInvoker : public QObject {
+public:
+  QTMDelayedMethodInvoker(T* instance, void (T::*method)(), QObject *parent = nullptr)
+      : QObject(parent), mInstance(instance), mMethod(method) {}
+
+  void onTimeout() {
+    if (mInstance) (mInstance.data()->*mMethod)();
+  }
+
+private:
+  QPointer<T> mInstance;
+  void (T::*mMethod)();
+};
+
 class QTMDelayedMethodCall {
 
 public:
@@ -26,10 +44,9 @@ public:
   : delay_ms(_delay_ms), is_first_call(true) {
     timer = new QTimer();
     timer->setSingleShot(true);
-    QPointer<T> safe_instance (instance);
-    QObject::connect(timer, &QTimer::timeout, [safe_instance, method]() {
-      if (safe_instance) (safe_instance.data()->*method)();
-    });
+    auto *invoker = new QTMDelayedMethodInvoker<T>(instance, method, timer);
+    QObject::connect(timer, &QTimer::timeout,
+                     invoker, &QTMDelayedMethodInvoker<T>::onTimeout);
   }
 
   template<typename Functor>
@@ -71,7 +88,8 @@ private:
 };
 
 #define QTM_DECL_DELAYED(Method) \
-    QTMDelayedMethodCall delayed##Method{ [this]() { this->Method(); } }
+    QTMDelayedMethodCall delayed##Method{ \
+      std::bind(&std::remove_reference<decltype(*this)>::type::Method, this) }
 
 #define QTM_CALL_DELAYED(Method) \
     delayed##Method()

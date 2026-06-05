@@ -23,6 +23,7 @@
 #include <QHash>
 #include <QStringList>
 #include <QKeySequence>
+#include <QPointer>
 
 #include <QPrinter>
 #include <QPrintDialog>
@@ -712,6 +713,29 @@ parse_tm_style (int style) {
   return sheet;
 }
 
+namespace {
+class QTMThemeStyleBinding : public QObject {
+public:
+  QTMThemeStyleBinding(QWidget *widget, int style)
+      : QObject(widget), mWidget(widget), mStyle(style), mHasColor(false), mColor(black) {}
+
+  QTMThemeStyleBinding(QWidget *widget, int style, color c)
+      : QObject(widget), mWidget(widget), mStyle(style), mHasColor(true), mColor(c) {}
+
+  void apply() {
+    if (!mWidget) return;
+    if (mHasColor) qt_apply_tm_style(mWidget, mStyle, mColor);
+    else qt_apply_tm_style(mWidget, mStyle);
+  }
+
+private:
+  QPointer<QWidget> mWidget;
+  int mStyle;
+  bool mHasColor;
+  color mColor;
+};
+} // namespace
+
 void
 qt_apply_tm_style (QWidget* qwid, int style) {
   QString sheet = "* {" + parse_tm_style (style) + "}";
@@ -721,9 +745,9 @@ qt_apply_tm_style (QWidget* qwid, int style) {
   if (!qwid->property("tm_theme_connected").toBool()) {
     QTMApplication *app = qobject_cast<QTMApplication*>(QCoreApplication::instance());
     if (app) {
-      QObject::connect(app, &QTMApplication::themeChanged, qwid, [qwid,style](){
-        qt_apply_tm_style(qwid, style);
-      });
+      QTMThemeStyleBinding *binding = new QTMThemeStyleBinding(qwid, style);
+      QObject::connect(app, &QTMApplication::themeChanged,
+                       binding, &QTMThemeStyleBinding::apply);
       qwid->setProperty("tm_theme_connected", true);
     }
   }
@@ -752,9 +776,9 @@ qt_apply_tm_style (QWidget* qwid, int style, color c) {
   if (!qwid->property("tm_theme_connected").toBool()) {
     QTMApplication *app = qobject_cast<QTMApplication*>(QCoreApplication::instance());
     if (app) {
-      QObject::connect(app, &QTMApplication::themeChanged, qwid, [qwid,style,c](){
-        qt_apply_tm_style(qwid, style, c);
-      });
+      QTMThemeStyleBinding *binding = new QTMThemeStyleBinding(qwid, style, c);
+      QObject::connect(app, &QTMApplication::themeChanged,
+                       binding, &QTMThemeStyleBinding::apply);
       qwid->setProperty("tm_theme_connected", true);
     }
   }

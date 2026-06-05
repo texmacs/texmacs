@@ -238,8 +238,8 @@ void QTMOnscreenKeyboard::rebuildKeyboard() {
 			mButtons << button;
 			button->setProperty("tm-cmd", keyData.cmd);
 			button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-			connect(button, &QPushButton::clicked, this, 
-				[this, button]() { onKeyboardButtonClicked(button); });
+			connect(button, &QPushButton::clicked, this,
+				&QTMOnscreenKeyboard::onKeyboardButtonClickedFromSender);
 
 			int stretch = max(1, (int) round(keyData.widthUnits * 100.0));
 			rowLayout->addWidget(button, stretch);
@@ -284,4 +284,10 @@ void QTMOnscreenKeyboard::initializeKeyboard() {
 	} catch (string& err) {
 		cout << "custom-keyboard-layout failed: " << err << LF;
 	}
+}
+
+void QTMOnscreenKeyboard::onKeyboardButtonClickedFromSender() {
+	QPushButton* button = qobject_cast<QPushButton*>(sender());
+	if (button == nullptr) return;
+	onKeyboardButtonClicked(button);
 }
