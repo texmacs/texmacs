@@ -20,7 +20,7 @@ void QTMPlainWindow::closeEvent (QCloseEvent* event)
   if (DEBUG_QT_WIDGETS) debug_widgets << "Close QTMPlainWindow" << LF;
   // Tell QT not to close the window, qt_window_widget_rep will if need be.
   event->ignore ();
-  emit closed();
+  emit requestClose();
 }
 
 void QTMPlainWindow::moveEvent (QMoveEvent* event)
@@ -51,7 +51,7 @@ void QTMWindow::closeEvent (QCloseEvent* event)
   notify_window_destroy (name);
   // this caused bug 61884, closing can still be cancelled
 #endif
-  emit closed();
+  emit requestClose();
 }
 
 void QTMWindow::moveEvent (QMoveEvent * event)
@@ -119,7 +119,7 @@ QTMPopupWidget::mouseMoveEvent(QMouseEvent* event) {
 
   if (! this->rect().contains(QCursor::pos())) {
     hide();
-    emit closed();
+    emit requestClose();
   }
 
   event->ignore();
@@ -129,7 +129,7 @@ void
 QTMPopupWidget::keyPressEvent(QKeyEvent* event) {
   (void) event;
   hide();
-  emit closed();
+  emit requestClose();
 }
 
 void
@@ -138,6 +138,6 @@ QTMPopupWidget::closeEvent (QCloseEvent* event)
   if (DEBUG_QT_WIDGETS) debug_widgets << "Close QTMPopupWidget" << LF;
   // Tell QT not to close the window, qt_window_widget_rep will if need be.
   event->ignore ();
-  emit closed();
+  emit requestClose();
 }
 

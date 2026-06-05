@@ -49,9 +49,6 @@ public:
     if (DEBUG_QT) debug_qt << "Deleting QTMPlainWindow" << LF;
   }
   
-signals:
-  void closed ();
-  
 protected:
   virtual void  closeEvent (QCloseEvent* event);
   virtual void   moveEvent (QMoveEvent* event);
@@ -77,9 +74,6 @@ public:
     if (DEBUG_QT) debug_qt << "Deleting QTMWindow" << LF;
   }
   
-signals:
-  void closed ();
-  
 protected:
   virtual void  closeEvent (QCloseEvent* event);
   virtual void   moveEvent (QMoveEvent* event);
@@ -97,9 +91,6 @@ class QTMPopupWidget : public QTMMainTab {
   
 public:
   QTMPopupWidget (QWidget* contents);
-
-signals:
-  void closed();
   
 protected:
   virtual void closeEvent (QCloseEvent* event);

@@ -375,9 +375,7 @@ void QTMMainTabWindow::showWidget(QTMMainTab *widget) {
 
   
   connect(widget, &QTMMainTab::windowOrTabClosed, this, [this, widget]() {
-    if (mStackedLayout == nullptr) return;
-    const int index = mStackedLayout->indexOf(widget);
-    if (index != -1) closeTab(index);
+    removeWidget(widget);
   });
 
   connect(widget, &QTMMainTab::tabTitleChanged, this,
@@ -441,21 +439,11 @@ void QTMMainTabWindow::closeTab(int index) {
   if (mStackedLayout == nullptr || mTabBar == nullptr) return;
   if (index < 0 || index >= mStackedLayout->count()) return;
 
-  QWidget *closeButton = mTabBar->tabButton(index, QTabBar::RightSide);
-  QWidget *w = mStackedLayout->widget(index);
-  mTabBar->removeTab(index);
-  mStackedLayout->removeWidget(w);
-  //w->setParent(nullptr);
-  w->deleteLater(); // todo : is this ok ?
-  if (closeButton != nullptr) closeButton->deleteLater();
+  QTMMainTab *tab = qobject_cast<QTMMainTab *>(mStackedLayout->widget(index));
+  if (tab == nullptr) return;
 
-  if (mTabBar->count() > 0 && mTabBar->currentIndex() == -1) {
-    mTabBar->setCurrentIndex(0);
-  }
-
-  onTabBarCountChange();
-
-  if (mTabBar->count() == 0) closeAndSetTopTabWindow();
+  // Ask the owner to run its close workflow (save prompt, cancellation, etc.).
+  emit tab->requestClose();
 }
 
 void QTMMainTabWindow::tabTitleChanged(QTMMainTab *widget, QString title) {
