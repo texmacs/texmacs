@@ -66,7 +66,7 @@ private slots:
   void onAnyButtonClicked();
   void onActionMenuAboutToShow();
   void onActionMenuAboutToHide();
-  void deferredResetButton(qulonglong buttonPtr);
+  void deferredResetButton();
 
 private:
   QPointer<QScrollArea> mScrollArea;
@@ -74,6 +74,7 @@ private:
   QPointer<QPushButton> mLeftBtn;
   QPointer<QPushButton> mRightBtn;
   QPointer<QMenu>   mCurrentMenu;
+  QPointer<QToolButton> mPendingResetButton;
   int mIconWidth;
   int mIconHeight;
   int mToolbarMargin;

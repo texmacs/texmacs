@@ -275,7 +275,7 @@ void QTMToolbar::addAction (QAction* action) {
       QMenu *actionMenu = action->menu();
       actionMenu->setProperty(
           "tmToolbarButton",
-          QVariant::fromValue<qulonglong>(reinterpret_cast<qulonglong>(button)));
+          QVariant::fromValue<QObject*>(button));
       connect (actionMenu, &QMenu::aboutToShow,
                this, &QTMToolbar::onActionMenuAboutToShow);
       connect (actionMenu, &QMenu::aboutToHide,
@@ -534,8 +534,8 @@ void QTMToolbar::onActionMenuAboutToShow() {
   QMenu *menu = qobject_cast<QMenu *>(sender());
   if (!menu) return;
 
-  qulonglong rawButtonPtr = menu->property("tmToolbarButton").toULongLong();
-  QToolButton *button = reinterpret_cast<QToolButton *>(rawButtonPtr);
+  QToolButton *button =
+      qobject_cast<QToolButton *>(menu->property("tmToolbarButton").value<QObject*>());
   if (!button) return;
 
   mCurrentMenu = menu;
@@ -551,13 +551,14 @@ void QTMToolbar::onActionMenuAboutToHide() {
     QTMWidget::setFocusToLast();
   }
 
-  qulonglong rawButtonPtr = menu->property("tmToolbarButton").toULongLong();
-  QMetaObject::invokeMethod(this, "deferredResetButton", Qt::QueuedConnection,
-                            Q_ARG(qulonglong, rawButtonPtr));
+  mPendingResetButton =
+      qobject_cast<QToolButton *>(menu->property("tmToolbarButton").value<QObject*>());
+  QMetaObject::invokeMethod(this, "deferredResetButton", Qt::QueuedConnection);
 }
 
-void QTMToolbar::deferredResetButton(qulonglong buttonPtr) {
-  QToolButton *button = reinterpret_cast<QToolButton *>(buttonPtr);
+void QTMToolbar::deferredResetButton() {
+  QToolButton *button = mPendingResetButton.data();
+  mPendingResetButton = nullptr;
   if (!button) return;
   resetButton(button);
 }
