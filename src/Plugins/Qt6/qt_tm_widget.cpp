@@ -46,15 +46,19 @@ list<qt_tm_widget_rep*> waiting_widgets;
 
 void
 QTMInteractiveInputHelper::commit (int result) {
+  QPointer<QObject> safeSender = sender();
+  if (!safeSender) return;
+
   if (wid && result == QDialog::Accepted) {
     QString  item = "#f";
-    QComboBox* cb = sender()->findChild<QComboBox*> ("input");
+    QComboBox* cb = safeSender->findChild<QComboBox*> ("input");
     if (cb)  item = cb->currentText();
     static_cast<qt_input_text_widget_rep*>(wid->int_input.rep)->input =
       from_qstring (item);
     static_cast<qt_input_text_widget_rep*>(wid->int_input.rep)->cmd ();
   }
-  sender()->deleteLater();
+
+  if (safeSender) safeSender->deleteLater();
 }
 
 
