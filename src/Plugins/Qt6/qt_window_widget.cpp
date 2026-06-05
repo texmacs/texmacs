@@ -79,12 +79,10 @@ qt_window_widget_rep::qt_window_widget_rep (QWidget* _wid, string name,
     g_next_window_as_popup = false;
   }
   
-    // Try to connect only if the QWidget has a closed() signal
-    // We need this for the QDockWidgets we use in side tools (see qt_tm_widget_rep)
-  if (qwid->metaObject() -> 
-      indexOfSignal (QMetaObject::normalizedSignature ("closed()").constData ()) != -1) {
-    QTMCommand* qtmcmd = new QTMCommand (qwid, quit);
-    QObject::connect(qwid, SIGNAL (closed()), qtmcmd, SLOT (apply()));
+  QPointer<QTMMainTab> mainTab = qobject_cast<QTMMainTab *>(qwid);
+  if (mainTab) {
+    QTMCommand* qtmcmd = new QTMCommand (mainTab, quit);
+    QObject::connect(mainTab, SIGNAL (requestClose()), qtmcmd, SLOT (apply()));
   }
 
   if (!has_resizable_children (_wid))
@@ -238,7 +236,7 @@ qt_window_widget_rep::send (slot s, blackbox val) {
           if (flag) {
             tmapp()->mainTabWindow().showWidget(mainTab);
           } else {
-            tmapp()->mainTabWindow().removeWidget(mainTab);
+            mainTab->closeWindowOrTab();
           }
         }
       }
@@ -359,14 +357,10 @@ qt_popup_widget_rep::qt_popup_widget_rep (widget wid, command _quit)
   
   qwid = new QTMPopupWidget(concrete(wid)->as_qwidget(nullptr));
 
-  if (qwid->metaObject() ->
-      indexOfSignal (QMetaObject::normalizedSignature ("closed()").constData ()) != -1) {
-  QTMCommand* qtmcmd = new QTMCommand(qwid, quit);
-#if QT_VERSION < 0x060000
-  QObject::connect(qobject_cast<QTMPopupWidget*>(qwid), SIGNAL (closed()), qtmcmd, SLOT (apply()));
-#else
-  QObject::connect(qobject_cast<QTMPopupWidget*>(qwid), &QTMPopupWidget::closed, qtmcmd, &QTMCommand::apply);
-#endif
+  QPointer<QTMMainTab> mainTab = qobject_cast<QTMMainTab *>(qwid);
+  if (mainTab) {
+    QTMCommand* qtmcmd = new QTMCommand(qwid, quit);
+    QObject::connect(mainTab, SIGNAL (requestClose()), qtmcmd, SLOT (apply()));
   }
 }
 

@@ -48,5 +48,7 @@ void QTMMainTab::resizeWindowOrTab(const QSize &size) {
 
 void QTMMainTab::closeWindowOrTab() {
     emit windowOrTabClosed();
-	close();
+	if (findParentTabWindow(this) == nullptr) {
+		close();
+	}
 }
