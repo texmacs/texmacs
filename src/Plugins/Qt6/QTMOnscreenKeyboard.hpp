@@ -79,6 +79,8 @@ private slots:
    */
   void onKeyboardButtonClicked(QPushButton* key);
 
+  void onKeyboardButtonClickedFromSender();
+
 protected:
   /**
    * @brief Resize handler used to update button geometry.

@@ -60,6 +60,14 @@ protected:
   void setRightActVisible (bool v);
   void setLeftActVisible (bool v);
 
+private slots:
+  void onLeftButtonClicked();
+  void onRightButtonClicked();
+  void onAnyButtonClicked();
+  void onActionMenuAboutToShow();
+  void onActionMenuAboutToHide();
+  void deferredResetButton(qulonglong buttonPtr);
+
 private:
   QPointer<QScrollArea> mScrollArea;
   QPointer<QHBoxLayout> mLayout;

@@ -138,18 +138,8 @@ QTMMainTabWindow::QTMMainTabWindow() {
   mBackButton = new QPushButton(QString::fromUtf8("\u2190"), mCentralContainer);
   mBackButton->setObjectName("BackButton");
   mBackButton->setVisible(false);
-  connect(mBackButton, &QPushButton::clicked, this, [this]() {
-    refreshBackButtonState();
-    for (int i = mBackButtonProviders.count() - 1; i >= 0; --i) {
-      const BackButtonProvider &entry = mBackButtonProviders.at(i);
-      if (entry.provider == nullptr) continue;
-      if (!entry.visible) continue;
-      if (!entry.provider->isVisibleTo(this)) continue;
-      if (entry.onBack) entry.onBack();
-      break;
-    }
-    refreshBackButtonState();
-  });
+  connect(mBackButton, &QPushButton::clicked,
+          this, &QTMMainTabWindow::onBackButtonClicked);
 
   mStackHost = new QWidget(mCentralContainer);
   mStackedLayout = new QStackedLayout(mStackHost);
@@ -188,10 +178,8 @@ QTMMainTabWindow::QTMMainTabWindow() {
   // remove the border and padding
   setDefaultStyle();
 
-  connect(mTabBar, &QTabBar::currentChanged, this, [this](int index) {
-    if (mStackedLayout != nullptr) mStackedLayout->setCurrentIndex(index);
-    refreshBackButtonState();
-  });
+  connect(mTabBar, &QTabBar::currentChanged,
+          this, &QTMMainTabWindow::onCurrentTabChanged);
   connect(mTabBar, &QTabBar::tabMoved,
           this, &QTMMainTabWindow::onTabMoved);
 
@@ -378,21 +366,14 @@ void QTMMainTabWindow::showWidget(QTMMainTab *widget) {
   mStackedLayout->setCurrentWidget(widget);
 
   
-  connect(widget, &QTMMainTab::windowOrTabClosed, this, [this, widget]() {
-    removeWidget(widget);
-  });
+    connect(widget, &QTMMainTab::windowOrTabClosed,
+      this, &QTMMainTabWindow::onWindowOrTabClosed);
 
-  connect(widget, &QTMMainTab::tabTitleChanged, this,
-          [this, widget](const QString &title) {
-            tabTitleChanged(widget, title);
-          });
+    connect(widget, &QTMMainTab::tabTitleChanged,
+      this, &QTMMainTabWindow::onTabTitleChangedFromSender);
 
-  connect(widget, &QTMMainTab::tabIconChanged, this,
-          [this, widget](const QIcon &icon) {
-            if (mStackedLayout == nullptr || mTabBar == nullptr) return;
-            const int index = mStackedLayout->indexOf(widget);
-            if (index != -1) mTabBar->setTabIcon(index, icon);
-          });
+    connect(widget, &QTMMainTab::tabIconChanged,
+      this, &QTMMainTabWindow::onTabIconChangedFromSender);
 
   // Create a custom close button for this tab
   QPushButton* closeBtn = new QPushButton(mTabBar);
@@ -407,10 +388,8 @@ void QTMMainTabWindow::showWidget(QTMMainTab *widget) {
   closeBtn->setFont(f);
 
   // Connect the button to close the tab
-  connect(closeBtn, &QPushButton::clicked, this, [this, closeBtn]() {
-    const int idx = findCloseButtonTabIndex(mTabBar, closeBtn);
-    if (idx != -1) closeTab(idx);
-  });
+  connect(closeBtn, &QPushButton::clicked,
+          this, &QTMMainTabWindow::onCloseButtonClicked);
 
   // Set the custom close button on the right side of the tab
   mTabBar->setTabButton(tabIndex, QTabBar::RightSide, closeBtn);
@@ -453,15 +432,14 @@ void QTMMainTabWindow::closeTab(int index) {
   tab->setProperty("tmCloseRequestPending", true);
 
   // If the close is cancelled upstream, allow retry after a short delay.
-  QPointer<QTMMainTabWindow> self = this;
-  QPointer<QTMMainTab> guardedTab = tab;
-  QTimer::singleShot(1500, this, [self, guardedTab]() {
-    if (self == nullptr || guardedTab == nullptr) return;
-    if (self->mStackedLayout == nullptr) return;
-    if (self->mStackedLayout->indexOf(guardedTab) != -1) {
-      guardedTab->setProperty("tmCloseRequestPending", false);
-    }
-  });
+  QTimer *resetTimer = new QTimer(tab);
+  resetTimer->setSingleShot(true);
+  resetTimer->setProperty(
+      "tmCloseResetTab",
+      QVariant::fromValue<qulonglong>(reinterpret_cast<qulonglong>(tab)));
+  connect(resetTimer, &QTimer::timeout,
+          this, &QTMMainTabWindow::onCloseResetTimeout);
+  resetTimer->start(1500);
 
   // Ask the owner to run its close workflow (save prompt, cancellation, etc.).
   emit tab->requestClose();
@@ -520,9 +498,8 @@ void QTMMainTabWindow::registerBackButtonProvider(
   entry.visible = false;
   mBackButtonProviders.append(entry);
 
-  connect(provider, &QObject::destroyed, this, [this, provider]() {
-    unregisterBackButtonProvider(provider);
-  });
+  connect(provider, &QObject::destroyed,
+          this, &QTMMainTabWindow::onBackButtonProviderDestroyed);
 
   refreshBackButtonState();
 }
@@ -838,9 +815,8 @@ void QTMMainTabWindow::attachKeyboard() {
     // limit the size of the dock widget to 1/3 of the window height
     mKeyboardDock->setMaximumHeight(height() / 3);
 
-    connect(keyboard, &QTMOnscreenKeyboard::visibilityChanged, this, [this](bool visible) {
-      mKeyboardDock->setVisible(visible);
-    });
+    connect(keyboard, &QTMOnscreenKeyboard::visibilityChanged,
+            this, &QTMMainTabWindow::onKeyboardVisibilityChanged);
   }
 
   QWidget *parentWidget = keyboard->parentWidget();
@@ -854,4 +830,66 @@ void QTMMainTabWindow::attachKeyboard() {
     mKeyboardDock->show();
     keyboard->show();
   }
+}
+
+void QTMMainTabWindow::onBackButtonClicked() {
+  refreshBackButtonState();
+  for (int i = mBackButtonProviders.count() - 1; i >= 0; --i) {
+    const BackButtonProvider &entry = mBackButtonProviders.at(i);
+    if (entry.provider == nullptr) continue;
+    if (!entry.visible) continue;
+    if (!entry.provider->isVisibleTo(this)) continue;
+    if (entry.onBack) entry.onBack();
+    break;
+  }
+  refreshBackButtonState();
+}
+
+void QTMMainTabWindow::onCurrentTabChanged(int index) {
+  if (mStackedLayout != nullptr) mStackedLayout->setCurrentIndex(index);
+  refreshBackButtonState();
+}
+
+void QTMMainTabWindow::onWindowOrTabClosed() {
+  QTMMainTab *widget = qobject_cast<QTMMainTab *>(sender());
+  if (widget == nullptr) return;
+  removeWidget(widget);
+}
+
+void QTMMainTabWindow::onTabTitleChangedFromSender(const QString &title) {
+  QTMMainTab *widget = qobject_cast<QTMMainTab *>(sender());
+  if (widget == nullptr) return;
+  tabTitleChanged(widget, title);
+}
+
+void QTMMainTabWindow::onTabIconChangedFromSender(const QIcon &icon) {
+  QTMMainTab *widget = qobject_cast<QTMMainTab *>(sender());
+  if (widget == nullptr || mStackedLayout == nullptr || mTabBar == nullptr) return;
+  const int index = mStackedLayout->indexOf(widget);
+  if (index != -1) mTabBar->setTabIcon(index, icon);
+}
+
+void QTMMainTabWindow::onCloseButtonClicked() {
+  QPushButton *closeBtn = qobject_cast<QPushButton *>(sender());
+  const int idx = findCloseButtonTabIndex(mTabBar, closeBtn);
+  if (idx != -1) closeTab(idx);
+}
+
+void QTMMainTabWindow::onCloseResetTimeout() {
+  QTimer *resetTimer = qobject_cast<QTimer *>(sender());
+  if (resetTimer == nullptr || mStackedLayout == nullptr) return;
+  qulonglong rawTabPtr = resetTimer->property("tmCloseResetTab").toULongLong();
+  QTMMainTab *guardedTab = reinterpret_cast<QTMMainTab *>(rawTabPtr);
+  if (guardedTab == nullptr) return;
+  if (mStackedLayout->indexOf(guardedTab) != -1) {
+    guardedTab->setProperty("tmCloseRequestPending", false);
+  }
+}
+
+void QTMMainTabWindow::onBackButtonProviderDestroyed(QObject *provider) {
+  unregisterBackButtonProvider(qobject_cast<QWidget *>(provider));
+}
+
+void QTMMainTabWindow::onKeyboardVisibilityChanged(bool visible) {
+  if (mKeyboardDock != nullptr) mKeyboardDock->setVisible(visible);
 }

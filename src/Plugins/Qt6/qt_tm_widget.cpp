@@ -274,9 +274,8 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   keyboardButton->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Expanding);
   QIcon keyboardIcon= tmapp()->icon_manager().getIcon("tm_prefs_keyboard");
   keyboardButton->setIcon (keyboardIcon);
-  QObject::connect (keyboardButton, &QPushButton::clicked, []() {
-    tmapp()->toggleOnScreenKeyboardVisibility();
-  });
+  QObject::connect (keyboardButton, &QPushButton::clicked,
+                    tmapp(), &QTMApplication::toggleOnScreenKeyboardVisibility);
 
   statusBarLayout->addWidget (keyboardButton);
   statusBarLayout->addWidget(leftLabel, 1);

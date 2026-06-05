@@ -1154,9 +1154,8 @@ void QTMScrollArea::setWidgetAndConnect (QWidget* w) {
   
   for (QTMListView* listView : listViews) {
     
-    connect(listView, &QObject::destroyed, this, [this, listView]() {
-        listViews.removeAll(listView);
-    });
+    connect(listView, &QObject::destroyed,
+        this, &QTMScrollArea::onTrackedListViewDestroyed);
 
     if (!listView->isScrollable()) {
 #if QT_VERSION < 0x060000
@@ -1168,6 +1167,12 @@ void QTMScrollArea::setWidgetAndConnect (QWidget* w) {
 #endif
     }
   }
+}
+
+void QTMScrollArea::onTrackedListViewDestroyed(QObject *obj) {
+  QTMListView *listView = qobject_cast<QTMListView *>(obj);
+  if (listView == nullptr) return;
+  listViews.removeAll(listView);
 }
 
 /*! Scrolls the area to a given index in a QTMListView. */
