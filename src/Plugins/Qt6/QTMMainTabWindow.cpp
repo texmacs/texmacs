@@ -33,6 +33,7 @@
 #include <QStylePainter>
 #include <QStyleOptionTab>
 #include <QLabel>
+#include <QTimer>
 
 #if defined(OS_MINGW)
 #include <dwmapi.h> 
@@ -128,7 +129,7 @@ QTMMainTabWindow::QTMMainTabWindow() {
 #endif
 
   mTabBar = new QTMLeftAlignedTabBar(mCentralContainer);
-  mTabBar->setTabsClosable(true);
+  mTabBar->setTabsClosable(false);
   mTabBar->setMovable(false);
   mTabBar->setUsesScrollButtons(false);
   mTabBar->setElideMode(Qt::ElideRight);
@@ -193,7 +194,6 @@ QTMMainTabWindow::QTMMainTabWindow() {
   });
   connect(mTabBar, &QTabBar::tabMoved,
           this, &QTMMainTabWindow::onTabMoved);
-  connect(mTabBar, &QTabBar::tabCloseRequested, this, &QTMMainTabWindow::closeTab);
 
   // move the tab window to the center of the screen
   QRect screenGeometry = QApplication::screens().at(0)->geometry();
@@ -368,6 +368,7 @@ bool QTMMainTabWindow::eventFilter(QObject *obj, QEvent *event) {
 void QTMMainTabWindow::showWidget(QTMMainTab *widget) {
   if (widget == nullptr || mTabBar == nullptr || mStackedLayout == nullptr) return;
 
+  widget->setProperty("tmCloseRequestPending", false);
   widget->setMinimumSize(0, 0);
   widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
@@ -426,7 +427,8 @@ void QTMMainTabWindow::removeWidget(QTMMainTab *widget) {
   QWidget* closeButton = mTabBar->tabButton(index, QTabBar::RightSide);
   mTabBar->removeTab(index);
   mStackedLayout->removeWidget(widget);
-  widget->setParent(nullptr);
+  widget->hide();
+  widget->setProperty("tmCloseRequestPending", false);
   if (closeButton != nullptr) closeButton->deleteLater();
 
   if (mTabBar->count() > 0 && mTabBar->currentIndex() == -1) {
@@ -444,6 +446,22 @@ void QTMMainTabWindow::closeTab(int index) {
 
   QTMMainTab *tab = qobject_cast<QTMMainTab *>(mStackedLayout->widget(index));
   if (tab == nullptr) return;
+
+  // Guard against duplicate close requests from multiple close triggers
+  // (custom button + tab bar close request in the same UI cycle).
+  if (tab->property("tmCloseRequestPending").toBool()) return;
+  tab->setProperty("tmCloseRequestPending", true);
+
+  // If the close is cancelled upstream, allow retry after a short delay.
+  QPointer<QTMMainTabWindow> self = this;
+  QPointer<QTMMainTab> guardedTab = tab;
+  QTimer::singleShot(1500, this, [self, guardedTab]() {
+    if (self == nullptr || guardedTab == nullptr) return;
+    if (self->mStackedLayout == nullptr) return;
+    if (self->mStackedLayout->indexOf(guardedTab) != -1) {
+      guardedTab->setProperty("tmCloseRequestPending", false);
+    }
+  });
 
   // Ask the owner to run its close workflow (save prompt, cancellation, etc.).
   emit tab->requestClose();
