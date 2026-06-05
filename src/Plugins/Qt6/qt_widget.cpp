@@ -237,7 +237,7 @@ qt_widget_rep::plain_window_widget (string name, command quit, int border) {
   int l,t,r,b;
   win->layout()->getContentsMargins (&l, &t, &r, &b);
   win->layout()->setContentsMargins (l+border, t+border, r+border, b+border);
-  win->setWindowTitle (to_qstring (name));  // HACK: remove me (see bug#40837)
+  win->setWindowOrTabTitle (to_qstring (name));  // HACK: remove me (see bug#40837)
   
   qt_window_widget_rep* wid = tm_new<qt_window_widget_rep> (win, name, quit);
   wid->add_child (this);
