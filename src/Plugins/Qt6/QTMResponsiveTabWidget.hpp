@@ -59,7 +59,7 @@ private:
   bool mDraggable;
 };
 
-class QTMResponsiveTabWidget : public QTMMainTab {
+class QTMResponsiveTabWidget : public QWidget {
   Q_OBJECT
 
 public:
