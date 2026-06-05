@@ -82,7 +82,7 @@ qt_window_widget_rep::qt_window_widget_rep (QWidget* _wid, string name,
   QPointer<QTMMainTab> mainTab = qobject_cast<QTMMainTab *>(qwid);
   if (mainTab) {
     QTMCommand* qtmcmd = new QTMCommand (mainTab, quit);
-    QObject::connect(mainTab, SIGNAL (requestClose()), qtmcmd, SLOT (apply()));
+    QObject::connect(mainTab, SIGNAL (requestClose()), qtmcmd, SLOT (apply()), Qt::UniqueConnection);
   }
 
   if (!has_resizable_children (_wid))
@@ -360,7 +360,7 @@ qt_popup_widget_rep::qt_popup_widget_rep (widget wid, command _quit)
   QPointer<QTMMainTab> mainTab = qobject_cast<QTMMainTab *>(qwid);
   if (mainTab) {
     QTMCommand* qtmcmd = new QTMCommand(qwid, quit);
-    QObject::connect(mainTab, SIGNAL (requestClose()), qtmcmd, SLOT (apply()));
+    QObject::connect(mainTab, SIGNAL (requestClose()), qtmcmd, SLOT (apply()), Qt::UniqueConnection);
   }
 }
 
