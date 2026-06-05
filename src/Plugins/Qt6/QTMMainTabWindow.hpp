@@ -130,10 +130,10 @@ public:
     return gTopTabWindow.data(); // todo : should we return a QPointer ? 
   }
 
-  void registerBackButtonProvider(QTMMainTab *provider,
+  void registerBackButtonProvider(QWidget *provider,
                                   const std::function<void()> &onBack);
-  void unregisterBackButtonProvider(QTMMainTab *provider);
-  void setBackButtonProviderVisible(QTMMainTab *provider, bool visible);
+  void unregisterBackButtonProvider(QWidget *provider);
+  void setBackButtonProviderVisible(QWidget *provider, bool visible);
 
 protected:
   void resizeEvent(QResizeEvent *event) override;
@@ -211,7 +211,7 @@ protected:
 
 private:
   struct BackButtonProvider {
-    QPointer<QTMMainTab> provider;
+    QPointer<QWidget> provider;
     std::function<void()> onBack;
     bool visible = false;
   };

@@ -128,7 +128,12 @@ qt_window_widget_rep::~qt_window_widget_rep ()
 widget
 qt_window_widget_rep::popup_window_widget (string s)
 {
-  qwid->setWindowTitle (to_qstring (s));
+  QPointer<QTMMainTab> mainTab = qobject_cast<QTMMainTab *>(qwid);
+  if (mainTab) {
+    mainTab->setWindowOrTabTitle (to_qstring (s));
+  } else {
+    qwid->setWindowTitle (to_qstring (s));
+  }
   qwid->setWindowModality (Qt::NonModal);
   qwid->setWindowFlags (Qt::Popup);
   return this;
@@ -183,8 +188,13 @@ qt_window_widget_rep::send (slot s, blackbox val) {
       check_type<coord2>(val, s);
       coord2 p = open_box<coord2> (val);
       if (qwid) {
+        QPointer<QTMMainTab> mainTab = qobject_cast<QTMMainTab *>(qwid);
         QSize size = to_qsize (p);
-        qwid->resize (size);
+        if (mainTab) {
+          mainTab->resizeWindowOrTab (size);
+        } else {
+          qwid->resize (size);
+        }
       }
     }
       break; 
@@ -253,10 +263,10 @@ qt_window_widget_rep::send (slot s, blackbox val) {
       QTMMainTab *mainTab = qobject_cast<QTMMainTab *>(qwid);
         // The [*] is for QWidget::setWindowModified()
       if (qwid) {
-        if (!tmapp()->useTabWindow() || showAsPopup || !mainTab) {
+        if (!mainTab) {
           qwid->setWindowTitle (to_qstring (name * "[*]"));
         } else {
-          tmapp()->mainTabWindow().tabTitleChanged (mainTab, to_qstring (name));
+          mainTab->setWindowOrTabTitle (to_qstring (name));
         }
       }
     }
@@ -369,14 +379,23 @@ qt_popup_widget_rep::~qt_popup_widget_rep () {
 
 widget
 qt_popup_widget_rep::popup_window_widget(string s) {
-  qwid->setWindowTitle (to_qstring (s)); // useless for Qt::Popup
-
+  QPointer<QTMMainTab> mainTab = qobject_cast<QTMMainTab *>(qwid);
+  if (mainTab) {
+    mainTab->setWindowOrTabTitle (to_qstring (s));
+  } else {
+    qwid->setWindowTitle (to_qstring (s));
+  }
   return this;
 }
 
 widget
 qt_popup_widget_rep::tooltip_window_widget (string s) {
-  qwid->setWindowTitle (to_qstring (s));
+  QPointer<QTMMainTab> mainTab = qobject_cast<QTMMainTab *>(qwid);
+  if (mainTab) {
+    mainTab->setWindowOrTabTitle (to_qstring (s));
+  } else {
+    qwid->setWindowTitle (to_qstring (s));
+  }
   qwid->setWindowModality (Qt::NonModal);
   qwid->setWindowFlags (Qt::ToolTip);
   return this;
@@ -391,7 +410,12 @@ qt_popup_widget_rep::send (slot s, blackbox val) {
     case SLOT_SIZE:
     {
       check_type<coord2>(val, s);
-      qwid->resize (to_qsize (open_box<coord2> (val)));
+      QPointer<QTMMainTab> mainTab = qobject_cast<QTMMainTab *>(qwid);
+      if (mainTab) {
+        mainTab->resizeWindowOrTab (to_qsize (open_box<coord2> (val)));
+      } else {
+        qwid->resize (to_qsize (open_box<coord2> (val)));
+      }
     }
       break;
       
@@ -405,7 +429,12 @@ qt_popup_widget_rep::send (slot s, blackbox val) {
 #if QT_VERSION >= 0x060000
       pos= ensure_visible_position (pos, qwid->screen (), qwid->size());
 #endif
-      qwid->move (pos);
+      QPointer<QTMMainTab> mainTab = qobject_cast<QTMMainTab *>(qwid);
+      if (mainTab) {
+        // todo : do nothing ??
+      } else {
+        qwid->move (pos);
+      }
     }
       break;
       

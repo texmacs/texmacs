@@ -153,7 +153,7 @@ void QTMDraggableTopBar::mouseMoveEvent(QMouseEvent *event) {
 }
 
 QTMResponsiveTabWidget::QTMResponsiveTabWidget(QWidget *parent)
-  : QTMMainTab(parent), mCurrentGridCols(-1), mMobileViewingContent(true),
+  : QWidget(parent), mCurrentGridCols(-1), mMobileViewingContent(true),
     mIsUpdating(false), mWindowFusion(false), mIsResizing(false),
     mCurrentMode(-1), mCurrentDepth(-1) {
 

@@ -263,6 +263,11 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   statusBarLayout->setSpacing(0);
   leftLabel = new QLabel(qt_translate("Welcome to TeXmacs"), statusBar);
   rightLabel = new QLabel(qt_translate("Booting"), statusBar);
+  leftLabel->setMinimumWidth (0);
+  rightLabel->setMinimumWidth (0);
+  leftLabel->setSizePolicy (QSizePolicy::Ignored, QSizePolicy::Preferred);
+  rightLabel->setSizePolicy (QSizePolicy::Minimum, QSizePolicy::Preferred);
+  rightLabel->setAlignment (Qt::AlignRight | Qt::AlignVCenter);
 
   QPushButton *keyboardButton = new QPushButton ("", statusBar);
   keyboardButton->setObjectName("keyboardToggleButton");
@@ -575,7 +580,7 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     {
       check_type<coord2>(val, s);
       coord2 p= open_box<coord2> (val);
-      if (mainwindow()) mainwindow()->resize (to_qsize (p));
+      //if (mainwindow()) mainwindow()->resize (to_qsize (p)); // todo liza
     }
       break;
     case SLOT_DESTROY:

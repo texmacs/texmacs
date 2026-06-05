@@ -368,10 +368,29 @@ bool QTMMainTabWindow::eventFilter(QObject *obj, QEvent *event) {
 void QTMMainTabWindow::showWidget(QTMMainTab *widget) {
   if (widget == nullptr || mTabBar == nullptr || mStackedLayout == nullptr) return;
 
-  const int tabIndex = mTabBar->addTab(widget->windowTitle());
+  const int tabIndex = mTabBar->addTab(widget->windowIcon(), widget->windowTitle());
   mStackedLayout->addWidget(widget);
   mTabBar->setCurrentIndex(tabIndex);
   mStackedLayout->setCurrentWidget(widget);
+
+  
+  connect(widget, &QTMMainTab::windowOrTabClosed, this, [this, widget]() {
+    if (mStackedLayout == nullptr) return;
+    const int index = mStackedLayout->indexOf(widget);
+    if (index != -1) closeTab(index);
+  });
+
+  connect(widget, &QTMMainTab::tabTitleChanged, this,
+          [this, widget](const QString &title) {
+            tabTitleChanged(widget, title);
+          });
+
+  connect(widget, &QTMMainTab::tabIconChanged, this,
+          [this, widget](const QIcon &icon) {
+            if (mStackedLayout == nullptr || mTabBar == nullptr) return;
+            const int index = mStackedLayout->indexOf(widget);
+            if (index != -1) mTabBar->setTabIcon(index, icon);
+          });
 
   // Create a custom close button for this tab
   QPushButton* closeBtn = new QPushButton(mTabBar);
@@ -474,7 +493,7 @@ void QTMMainTabWindow::setHoverStyle() {
 }
 
 void QTMMainTabWindow::registerBackButtonProvider(
-  QTMMainTab *provider,
+  QWidget *provider,
     const std::function<void()> &onBack) {
   if (provider == nullptr) return;
 
@@ -499,7 +518,7 @@ void QTMMainTabWindow::registerBackButtonProvider(
   refreshBackButtonState();
 }
 
-void QTMMainTabWindow::unregisterBackButtonProvider(QTMMainTab *provider) {
+void QTMMainTabWindow::unregisterBackButtonProvider(QWidget *provider) {
   if (provider == nullptr) return;
 
   for (int i = mBackButtonProviders.count() - 1; i >= 0; --i) {
@@ -511,7 +530,7 @@ void QTMMainTabWindow::unregisterBackButtonProvider(QTMMainTab *provider) {
   refreshBackButtonState();
 }
 
-void QTMMainTabWindow::setBackButtonProviderVisible(QTMMainTab *provider, bool visible) {
+void QTMMainTabWindow::setBackButtonProviderVisible(QWidget *provider, bool visible) {
   if (provider == nullptr) return;
 
   for (BackButtonProvider &entry : mBackButtonProviders) {
