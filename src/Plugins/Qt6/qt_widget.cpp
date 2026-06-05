@@ -215,28 +215,31 @@ qt_widget_rep::plain_window_widget (string name, command quit, int border) {
                   << type_as_string() << LF;
 
   QTMPlainWindow* win = new QTMPlainWindow (nullptr);
-  QLayoutItem*     li = as_qlayoutitem(win);
+  QWidget* contentHost = new QWidget(win);
+  QLayoutItem*     li = as_qlayoutitem(contentHost);
   if (li) {
     QLayout* l = li->layout();
     if (! l) {
-      l = new QVBoxLayout (win);
+      l = new QVBoxLayout (contentHost);
       l->addItem (li); // Layout owns the QLayoutItem
     }
-    win->setLayout (l);// Transfers ownership of QWidgets in QLayoutItems to win
+    contentHost->setLayout (l); // Transfers ownership of QWidgets in QLayoutItems to contentHost
   } else {
-    QWidget* qw = as_qwidget(win);
+    QWidget* qw = as_qwidget(contentHost);
     if (qw) {
-      QLayout* l = new QVBoxLayout (win);
-      win->setLayout (l); // And the QLayout to the QTMPlainWindow.
-      l->addWidget (qw);  // qw now belongs to the QWidget with the layout (win)
+      QLayout* l = new QVBoxLayout (contentHost);
+      contentHost->setLayout (l); // And the QLayout to the content host.
+      l->addWidget (qw);  // qw now belongs to the QWidget with the layout
     } else {
       FAILED ("attempt to create a window around a nil QWidget");
     }
   }
+
+  win->setCentralWidget(contentHost);
   
   int l,t,r,b;
-  win->layout()->getContentsMargins (&l, &t, &r, &b);
-  win->layout()->setContentsMargins (l+border, t+border, r+border, b+border);
+  contentHost->layout()->getContentsMargins (&l, &t, &r, &b);
+  contentHost->layout()->setContentsMargins (l+border, t+border, r+border, b+border);
   win->setWindowOrTabTitle (to_qstring (name));  // HACK: remove me (see bug#40837)
   
   qt_window_widget_rep* wid = tm_new<qt_window_widget_rep> (win, name, quit);

@@ -39,7 +39,8 @@ void QTMMainTab::setWindowOrTabIcon(const QIcon &icon) {
 void QTMMainTab::resizeWindowOrTab(const QSize &size) {
 	QTMMainTabWindow *tabWindow = findParentTabWindow(this);
 	if (tabWindow != nullptr) {
-        // todo : what should we do here ?
+		resize(size);
+		updateGeometry();
 		return;
 	}
 

@@ -368,6 +368,9 @@ bool QTMMainTabWindow::eventFilter(QObject *obj, QEvent *event) {
 void QTMMainTabWindow::showWidget(QTMMainTab *widget) {
   if (widget == nullptr || mTabBar == nullptr || mStackedLayout == nullptr) return;
 
+  widget->setMinimumSize(0, 0);
+  widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
   const int tabIndex = mTabBar->addTab(widget->windowIcon(), widget->windowTitle());
   mStackedLayout->addWidget(widget);
   mTabBar->setCurrentIndex(tabIndex);

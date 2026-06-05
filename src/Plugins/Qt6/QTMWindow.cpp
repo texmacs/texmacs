@@ -29,7 +29,7 @@ void QTMPlainWindow::moveEvent (QMoveEvent* event)
     // FIXME: rather use a slot for this
   coord2 pos= from_qpoint (frameGeometry().topLeft());
   notify_window_move (name, pos.x1, pos.x2);
-  QWidget::moveEvent (event);
+  QMainWindow::moveEvent (event);
 }
 
 void QTMPlainWindow::resizeEvent (QResizeEvent* event)
@@ -38,7 +38,7 @@ void QTMPlainWindow::resizeEvent (QResizeEvent* event)
     // FIXME: rather use a slot for this
   coord2 sz= from_qsize (frameSize());
   notify_window_resize (name, sz.x1, sz.x2);
-  QWidget::resizeEvent (event);
+  QMainWindow::resizeEvent (event);
 }
 
 void QTMWindow::closeEvent (QCloseEvent* event)
@@ -78,12 +78,12 @@ void QTMWindow::resizeEvent (QResizeEvent * event)
 
 
 QTMPopupWidget::QTMPopupWidget(QWidget* contents) {
-  
-  QHBoxLayout* l = new QHBoxLayout();
-  l->addWidget (contents);
-  l->setContentsMargins (0,0,0,0);
-  l->setEnabled (false);   // Tell the layout not to adjust itself (!)
-  setLayout (l);
+  QWidget* central = new QWidget(this);
+  QHBoxLayout* l = new QHBoxLayout(central);
+  l->addWidget(contents);
+  l->setContentsMargins(0, 0, 0, 0);
+  l->setEnabled(false);   // Tell the layout not to adjust itself (!)
+  setCentralWidget(central);
 
   resize (contents->size());
   setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
