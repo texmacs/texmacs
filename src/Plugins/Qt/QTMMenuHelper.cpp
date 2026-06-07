@@ -22,7 +22,6 @@
 #include "QTMStyle.hpp"
 #include "QTMTreeModel.hpp"
 #include "QTMApplication.hpp"
-#include "QTMMainTabWindow.hpp"
 
 #include <QToolTip>
 #include <QCompleter>
@@ -837,12 +836,6 @@ QTMTabWidget::QTMTabWidget (QWidget *p) : QTabWidget(p) {
 void
 QTMTabWidget::resizeOthers (int current) {
 BEGIN_SLOT
-
-#if QT_VERSION >= 0x050000
-  if (qobject_cast<QTMMainTabWindow*>(window())) {
-    return;
-  }
-#endif
 
   for (int i = 0; i < count(); ++i) {
     if (i != current)

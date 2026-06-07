@@ -35,6 +35,7 @@
   (x-gui? gui_is_x (bool))
   (qt-gui? gui_is_qt (bool))
   (gui-set-next-window-as-popup gui_set_next_window_as_popup (void))
+  (support-functionalty? support_functionalty (string))
   (gui-version gui_version (string))
   (default-look-and-feel default_look_and_feel (string))
   (default-chinese-font default_chinese_font_name (string))

@@ -188,6 +188,19 @@ tmg_gui_set_next_window_as_popup () {
 }
 
 tmscm
+tmg_support_functionaltyP (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "support-functionalty?");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  bool out= support_functionalty (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
 tmg_gui_version () {
   // TMSCM_DEFER_INTS;
   string out= gui_version ();
@@ -11545,4 +11558,5 @@ initialize_glue_basic () {
   tmscm_install_procedure ("pdf-get-attached-main-tm",  tmg_pdf_get_attached_main_tm, 1, 0, 0);
   tmscm_install_procedure ("array-url-append",  tmg_array_url_append, 2, 0, 0);
   tmscm_install_procedure ("gui-set-next-window-as-popup",  tmg_gui_set_next_window_as_popup, 0, 0, 0);
+  tmscm_install_procedure ("support-functionalty?",  tmg_support_functionaltyP, 1, 0, 0);
 }

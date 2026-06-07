@@ -681,6 +681,19 @@ gui_version () {
 #endif
 }
 
+bool
+qt_support_functionalty (string s) {
+  if (s == "tab") {
+    return true;
+  }
+#ifndef OS_ANDROID
+  if (s == "multiwindow") {
+    return true;
+  }
+#endif
+  return false;
+}
+
 /******************************************************************************
  * Queued processing
  ******************************************************************************/
