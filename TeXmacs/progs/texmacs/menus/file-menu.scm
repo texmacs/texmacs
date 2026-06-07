@@ -148,9 +148,14 @@
 
 (menu-bind new-file-menu
   (if (get-boolean-preference "enable tab")
-    ("New tab" (new-document)))
+    ("New tab" (new-document*)))
+  (if (get-boolean-preference "enable tab")
+    ("New document in this tab" (new-document)))
   (if (and (get-boolean-preference "enable tab") (not (os-android?)))
-    ("New window" (new-document*)))
+    ("New window"
+     (begin
+       (gui-set-next-window-as-popup)
+       (new-document*))))
   (if (and (not (get-boolean-preference "enable tab")) (window-per-buffer?))
     ("New window" (new-document)))
   (if (and (not (get-boolean-preference "enable tab"))
