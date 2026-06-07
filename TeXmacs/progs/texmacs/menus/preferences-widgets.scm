@@ -129,16 +129,18 @@
                       '("Default" "Bright" "Dark" "Native" "Legacy" ""))
                   (get-pretty-preference "gui theme")
             "18em")
-    (setting-enum (set-pretty-preference "gui density" answer)
-            "Interface density"
-            '("Compact" "Normal" "Large")
-            (get-pretty-preference "gui density")
-          "18em")
-        (setting-enum (set-pretty-preference "gui:responsive tab mode" answer)
-          "Responsive tabs default mode"
-          '("Top tabs" "Side tabs" "Mobile list")
-          (get-pretty-preference "gui:responsive tab mode")
-                  "18em")))
+    (if (support-functionality? "density")
+      (setting-enum (set-pretty-preference "gui density" answer)
+              "Interface density"
+              '("Compact" "Normal" "Large")
+              (get-pretty-preference "gui density")
+            "18em")
+    )
+    (setting-enum (set-pretty-preference "gui:responsive tab mode" answer)
+      "Responsive tabs default mode"
+      '("Top tabs" "Side tabs" "Mobile list")
+      (get-pretty-preference "gui:responsive tab mode")
+              "18em")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Keyboard preferences

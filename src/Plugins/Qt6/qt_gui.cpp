@@ -686,6 +686,9 @@ qt_support_functionality (string s) {
   if (s == "tab") {
     return true;
   }
+  if (s == "density") {
+    return true;
+  }
 #ifndef OS_ANDROID
   if (s == "multiwindow") {
     return true;
