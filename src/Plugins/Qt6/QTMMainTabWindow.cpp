@@ -57,6 +57,23 @@ protected:
     Q_UNUSED(event);
 
     QStylePainter painter(this);
+    const bool isDropTargetHover = property("tmTabDragHover").toBool();
+
+    if (isDropTargetHover) {
+      painter.save();
+      painter.setRenderHint(QPainter::Antialiasing, true);
+
+      // Draw a soft overlay + outline to show this tab bar is a drop target.
+      QRect hoverRect = rect().adjusted(1, 1, -2, -2);
+      QColor fillColor(54, 157, 255, 32);
+      QColor borderColor(54, 157, 255, 190);
+      painter.setPen(QPen(borderColor, 2));
+      painter.setBrush(fillColor);
+      painter.drawRoundedRect(hoverRect, 6, 6);
+
+      painter.restore();
+    }
+
     for (int i = 0; i < count(); ++i) {
       QStyleOptionTab option;
       initStyleOption(&option, i);
@@ -665,12 +682,30 @@ void QTMMainTabWindow::handleTabBarMouseRelease() {
   
   if (mDragState.targetTabWindow != nullptr) {
     if (DEBUG_QT_WIDGETS) cout << "move the tab to the target tab window" << LF;
-    QTMMainTab *widgetToMove =
-      qobject_cast<QTMMainTab *>(mStackedLayout->widget(mDragState.movingTabIndex));
+    QTMMainTabWindow *sourceTabWindow = mDragState.newTabWindow;
+    if (sourceTabWindow == nullptr) sourceTabWindow = this;
+    if (sourceTabWindow->mTabBar == nullptr ||
+        sourceTabWindow->mStackedLayout == nullptr) {
+      mDragState.targetTabWindow->setDefaultStyle();
+      mDragState.targetTabWindow = nullptr;
+      mDragState.newTabWindow = nullptr;
+      return;
+    }
+
+    const int sourceIndex = mDragState.movingTabIndex;
+    if (sourceIndex < 0 || sourceIndex >= sourceTabWindow->mStackedLayout->count()) {
+      mDragState.targetTabWindow->setDefaultStyle();
+      mDragState.targetTabWindow = nullptr;
+      mDragState.newTabWindow = nullptr;
+      return;
+    }
+
+    QTMMainTab *widgetToMove = qobject_cast<QTMMainTab *>(
+      sourceTabWindow->mStackedLayout->widget(sourceIndex));
     if (widgetToMove == nullptr) return;
-    QWidget* closeButton = mTabBar->tabButton(mDragState.movingTabIndex, QTabBar::RightSide);
-    mTabBar->removeTab(mDragState.movingTabIndex);
-    mStackedLayout->removeWidget(widgetToMove);
+    QWidget* closeButton = sourceTabWindow->mTabBar->tabButton(sourceIndex, QTabBar::RightSide);
+    sourceTabWindow->mTabBar->removeTab(sourceIndex);
+    sourceTabWindow->mStackedLayout->removeWidget(widgetToMove);
     widgetToMove->setParent(nullptr);
     if (closeButton != nullptr) closeButton->deleteLater();
     mDragState.targetTabWindow->showWidget(widgetToMove);
@@ -678,11 +713,14 @@ void QTMMainTabWindow::handleTabBarMouseRelease() {
     mDragState.targetTabWindow->activateWindow();
     mDragState.targetTabWindow = nullptr;
     
-    if (mTabBar->count() == 0) {
+    sourceTabWindow->onTabBarCountChange();
+    if (sourceTabWindow->mTabBar->count() == 0) {
       if (DEBUG_QT_WIDGETS) cout << "close the tab window" << LF;
-      closeAndSetTopTabWindow();
+      sourceTabWindow->closeAndSetTopTabWindow();
     }
   }
+
+  mDragState.newTabWindow = nullptr;
 }
 
 #if defined(OS_MINGW) || defined(OS_MACOS)
