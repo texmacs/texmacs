@@ -259,10 +259,8 @@ void QTMToolbar::addAction (QAction* action) {
           QTMWidget::setFocusToLast();
         }
         if (!safeButton) return;
-        QMetaObject::invokeMethod (this, [this, safeButton]() {
-          if (!safeButton) return;
-          resetButton(safeButton);
-        }, Qt::QueuedConnection);
+        mPendingResetButton = safeButton;
+        QMetaObject::invokeMethod (this, "resetPendingButton", Qt::QueuedConnection);
       });
       actionMenu->installEventFilter (this);
     }
@@ -554,6 +552,14 @@ void QTMToolbar::resetButton(QToolButton* button) {
   if (!button) return;
   button->setDown (false);
   button->setAttribute(Qt::WA_UnderMouse, false);
+#endif // QT_VERSION >= 0x050000
+}
+
+void QTMToolbar::resetPendingButton() {
+#if QT_VERSION >= 0x050000
+  if (!mPendingResetButton) return;
+  resetButton(mPendingResetButton);
+  mPendingResetButton = nullptr;
 #endif // QT_VERSION >= 0x050000
 }
 

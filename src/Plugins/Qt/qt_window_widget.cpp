@@ -213,29 +213,16 @@ qt_window_widget_rep::send (slot s, blackbox val) {
       check_type<bool> (val, s);
       bool flag = open_box<bool> (val);
       if (qwid) {
-#if QT_VERSION >= 0x050000
-        bool showAsPopup = qwid->property ("tmWindowMode").toString () == "popup";
-        if (!tmapp()->useTabWindow() || showAsPopup) {
-#endif
-          if (flag) {
-            //QWidget* master = QApplication::activeWindow ();
-            qwid->show();
-            //qwid->activateWindow();
-            //WEIRD: in Ubuntu uncommenting the above line causes the main window 
-            //to be opened in the background.
-            qwid->raise();
-            //QApplication::setActiveWindow (master);
-          }
-          else qwid->hide();
-#if QT_VERSION >= 0x050000
-        } else {
-          if (flag) {
-            tmapp()->mainTabWindow().showWidget(qwid);
-          } else {
-            tmapp()->mainTabWindow().removeWidget(qwid);
-          }
+        if (flag) {
+          //QWidget* master = QApplication::activeWindow ();
+          qwid->show();
+          //qwid->activateWindow();
+          //WEIRD: in Ubuntu uncommenting the above line causes the main window 
+          //to be opened in the background.
+          qwid->raise();
+          //QApplication::setActiveWindow (master);
         }
-#endif
+        else qwid->hide();
       }
     }
       break;
@@ -255,15 +242,7 @@ qt_window_widget_rep::send (slot s, blackbox val) {
       check_type<string> (val, s);
       string name = open_box<string> (val);
         // The [*] is for QWidget::setWindowModified()
-#if QT_VERSION >= 0x050000
-      if (!tmapp()->useTabWindow()) {
-#endif
-        if (qwid) qwid->setWindowTitle (to_qstring (name * "[*]"));
-#if QT_VERSION >= 0x050000
-      } else {
-        if (qwid) tmapp()->mainTabWindow().tabTitleChanged (qwid, to_qstring (name));
-      }
-#endif
+      if (qwid) qwid->setWindowTitle (to_qstring (name * "[*]"));
     }
       break;
     case SLOT_MODIFIED:

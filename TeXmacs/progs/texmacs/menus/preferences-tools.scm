@@ -62,9 +62,7 @@
       (meti (hlist // (text "Use print dialogue"))
         (toggle (set-boolean-preference "gui:print dialogue" answer)
                 (get-boolean-preference "gui:print dialogue"))))
-    (meti (hlist // (text "Use multi-tabs"))
-      (toggle (set-boolean-preference "enable tab" answer)
-              (get-boolean-preference "enable tab")))))
+    ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preferences tool

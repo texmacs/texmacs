@@ -738,8 +738,6 @@
       (assuming (os-macos?)
         (setting-toggle (set-boolean-preference "use unified toolbar" answer)
                         "Use unified toolbars" (get-boolean-preference "use unified toolbar")))
-      (setting-toggle (set-boolean-preference "enable tab" answer)
-                      "Use multi-tabs" (get-boolean-preference "enable tab"))
       (assuming (qt6-or-later-gui?)
         (setting-toggle (set-boolean-preference "new toolbar" answer)
                         "Use new toolbar" (get-boolean-preference "new toolbar"))
