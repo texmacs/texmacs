@@ -361,13 +361,13 @@ default_look_and_feel () {
 }
 
 #ifdef QTTEXMACS
-bool qt_support_functionalty (string s);
+bool qt_support_functionality (string s);
 #endif
 
 bool
-support_functionalty (string functionalty) {
+support_functionality (string functionality) {
 #ifdef QTTEXMACS
-  return qt_support_functionalty (functionalty);
+  return qt_support_functionality (functionality);
 #endif
   return false;
 }
