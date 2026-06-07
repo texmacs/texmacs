@@ -682,7 +682,7 @@ gui_version () {
 }
 
 bool
-qt_support_functionalty (string s) {
+qt_support_functionality (string s) {
   (void) s;
   return false;
 }
