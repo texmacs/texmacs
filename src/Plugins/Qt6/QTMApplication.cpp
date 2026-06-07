@@ -16,7 +16,6 @@ QTMApplication::QTMApplication (int& argc, char** argv) :
 
 void QTMApplication::load() {
   mUseTabWindow = true;
-  set_user_preference ("enable tab", "on");
   mPixmapManagerInitialized = false;
 
   init_theme ();

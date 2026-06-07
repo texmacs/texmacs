@@ -28,9 +28,6 @@
   (when (== val (get-default-buffer-management))
     (reset-preference "buffer management")))
 
-(define (get-default-enable-tab)
-  (if (os-android?) "on" "off"))
-
 (define (get-default-show-table-cells)
   (if (qt-gui?) "on" "off"))
 
@@ -102,7 +99,6 @@
   ("case sensitive shortcuts" "default" noop)
   ("detailed menus" "detailed" noop)
   ("buffer management" (get-default-buffer-management) notify-buffer-management)
-  ("enable tab" (get-default-enable-tab) notify-restart)
   ("new toolbar" "on" notify-restart)
   ("disable texmacs window positioning" "off" noop)
   ("use experimental keyboard patches" "off" noop)
@@ -159,7 +155,7 @@
   (when (nin? (get-preference pref) '("on" "off"))
     (reset-preference pref)))
 
-(for (pref '("enable tab" "new toolbar" "disable texmacs window positioning"
+(for (pref '("new toolbar" "disable texmacs window positioning"
              "use experimental keyboard patches" "fast environments"
              "show full context" "show table cells" "show focus"
              "show only semantic focus" "semantic editing" "semantic selections"

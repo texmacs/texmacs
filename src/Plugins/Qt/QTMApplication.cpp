@@ -16,11 +16,6 @@ QTMApplication::QTMApplication (int& argc, char** argv) :
 }
 
 void QTMApplication::load() {
-  mUseTabWindow = get_user_preference ("enable tab") == "on";
-#ifdef OS_ANDROID
-  mUseTabWindow = true;
-#endif
-
 #if QT_VERSION >= 0x060000
   mUseNewToolbar = get_user_preference ("new toolbar") != "off";
 #else
@@ -32,10 +27,6 @@ void QTMApplication::load() {
 #endif
 
   init_theme ();
-
-#if QT_VERSION >= 0x050000
-  if (mUseTabWindow) new QTMMainTabWindow();
-#endif
 
   mOnscreenKeyboard = new QTMOnscreenKeyboard();
   mOnscreenKeyboard->hide();

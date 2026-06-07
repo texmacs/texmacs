@@ -25,7 +25,6 @@
 #include "QTMKeyboard.hpp"
 #include "QTMOnscreenKeyboard.hpp"
 #include "QTMIconManager.hpp"
-#include "QTMMainTabWindow.hpp"
 
 void init_palette (QApplication* app);
 void init_style_sheet (QApplication* app);
@@ -64,19 +63,9 @@ public:
     return mKeyboard;
   }
 
-  inline bool useTabWindow() {
-    return mUseTabWindow;
-  }
-
   inline bool useNewToolbar() {
     return mUseNewToolbar;
   }
-
-#if QT_VERSION >= 0x050000
-  inline QTMMainTabWindow &mainTabWindow() {
-    return *QTMMainTabWindow::topTabWindow();
-  }
-#endif
 
   void toggleOnScreenKeyboardVisibility();
 
@@ -95,7 +84,6 @@ private:
 #endif
   QTMKeyboard mKeyboard;
   QTMOnscreenKeyboard *mOnscreenKeyboard;
-  bool mUseTabWindow;
   bool mUseNewToolbar;
   QFileSystemWatcher* mCssWatcher = nullptr;
   QString mCurrentCssPath;

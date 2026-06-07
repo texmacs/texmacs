@@ -360,6 +360,18 @@ default_look_and_feel () {
   return ret;
 }
 
+#ifdef QTTEXMACS
+bool qt_support_functionalty (string s);
+#endif
+
+bool
+support_functionalty (string functionalty) {
+#ifdef QTTEXMACS
+  return qt_support_functionalty (functionalty);
+#endif
+  return false;
+}
+
 #ifndef QTTEXMACS
 void
 gui_set_next_window_as_popup () {}

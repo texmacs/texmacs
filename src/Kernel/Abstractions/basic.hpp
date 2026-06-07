@@ -216,6 +216,7 @@ bool os_android ();
 bool use_macos_fonts ();
 const char* default_look_and_feel ();
 void gui_set_next_window_as_popup ();
+bool support_functionalty (string);
 
 template<typename T>
 struct type_helper {

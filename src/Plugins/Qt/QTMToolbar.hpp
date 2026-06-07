@@ -49,6 +49,9 @@ protected:
   void setRightActVisible (bool v);
   void setLeftActVisible (bool v);
 
+private slots:
+  void resetPendingButton();
+
 private:
   QPointer<QScrollArea> mScrollArea;
   QPointer<QHBoxLayout> mLayout;
@@ -57,6 +60,7 @@ private:
   QPointer<QAction>     mLeftAct;
   QPointer<QAction>     mRightAct;
   QPointer<QMenu>       mCurrentMenu;
+  QPointer<QToolButton> mPendingResetButton;
 
   void scrollBy (int dx);
   void updateNavButtons ();
