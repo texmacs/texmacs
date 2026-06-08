@@ -377,14 +377,14 @@ void QTMToolbar::setRightActVisible (bool v) {
 #if QT_VERSION >= 0x050000
   if (!mRightBtn) return;
   if (v) {
-    mRightBtn->setEnabled(true);
     mRightBtn->setText (QString::fromUtf8(">"));
-    mRightBtn->setProperty("tmenabled", true);
+    mRightBtn->setProperty("tmenabled", "true");
   } else {
-    mRightBtn->setEnabled(false);
-    mRightBtn->setText ("");
-    mRightBtn->setProperty("tmenabled", false);
+    // mRightBtn->setText ("");
+    mRightBtn->setProperty("tmenabled", "false");
   }
+  mRightBtn->style()->unpolish(mRightBtn);
+  mRightBtn->style()->polish(mRightBtn);
 #endif
 }
 
@@ -392,14 +392,14 @@ void QTMToolbar::setLeftActVisible (bool v) {
 #if QT_VERSION >= 0x050000
   if (!mLeftBtn) return;
   if (v) {
-    mLeftBtn->setEnabled(true);
     mLeftBtn->setText (QString::fromUtf8("<"));
-    mLeftBtn->setProperty("tmenabled", true);
+    mLeftBtn->setProperty("tmenabled", "true");
   } else {
-    mLeftBtn->setEnabled(false);
-    mLeftBtn->setText ("");
-    mLeftBtn->setProperty("tmenabled", false);
+    // mLeftBtn->setText ("");
+    mLeftBtn->setProperty("tmenabled", "false");
   }
+  mLeftBtn->style()->unpolish(mLeftBtn);
+  mLeftBtn->style()->polish(mLeftBtn);
 #endif // QT_VERSION >= 0x050000
 }
 
