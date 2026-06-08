@@ -871,11 +871,9 @@ void QTMMainTabWindow::attachKeyboard() {
     }
     mKeyboardDock->setWidget(keyboard);
     if (isVisible) {
-      cout << "show the keyboard dock" << LF;
       mKeyboardDock->show();
       keyboard->show();
     } else {
-      cout << "hide the keyboard dock" << LF;
       mKeyboardDock->hide();
     }
   }
