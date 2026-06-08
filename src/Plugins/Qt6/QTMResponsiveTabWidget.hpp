@@ -37,6 +37,7 @@ class QTMHorizontalTextTabBar : public QTabBar {
 public:
   explicit QTMHorizontalTextTabBar(QWidget* parent = nullptr);
   int addCustomTab(const QIcon &icon, const QString &text);
+  void setCustomTabIcon(int index, const QIcon &icon);
   QSize tabSizeHint(int index) const override;
 
 public slots:
