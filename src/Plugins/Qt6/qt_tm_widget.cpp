@@ -104,7 +104,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
 #endif
 
 #if QT_VERSION >= 0x060000 && !defined(OS_MACOS)
-  mw->setWindowIcon(tmapp()->icon_manager().getIcon("TeXmacs"));
+  tmapp()->icon_manager().setWindowIcon(mw, "TeXmacs");
 #endif
  
   // there is a bug in the early implementation of toolbars in Qt 4.6
@@ -276,8 +276,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   QPushButton *keyboardButton = new QPushButton ("", statusBar);
   keyboardButton->setObjectName("keyboardToggleButton");
   keyboardButton->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Expanding);
-  QIcon keyboardIcon= tmapp()->icon_manager().getIcon("tm_prefs_keyboard");
-  keyboardButton->setIcon (keyboardIcon);
+  tmapp()->icon_manager().setPushButtonIcon (keyboardButton, "tm_prefs_keyboard");
   QObject::connect (keyboardButton, &QPushButton::clicked,
                     tmapp(), &QTMApplication::toggleOnScreenKeyboardVisibility);
 
