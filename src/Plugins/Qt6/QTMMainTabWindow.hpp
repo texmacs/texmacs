@@ -140,6 +140,8 @@ protected:
 
   void showEvent(QShowEvent *event) override;
 
+  void closeEvent(QCloseEvent *event) override;
+
   /**
    * @brief Event filter to handle custom events on this object.
    * 
