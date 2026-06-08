@@ -25,6 +25,10 @@ void QTMApplication::load() {
 
   if (mUseTabWindow) new QTMMainTabWindow();
 
+  QTimer::singleShot (2000, this, [] () {
+    std_error << "test liza" << LF;
+  });
+
 }
   
 
