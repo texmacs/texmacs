@@ -19,6 +19,15 @@
 #include <QIcon>
 #include <QMap>
 #include <QString>
+#include <QPointer>
+#include <QLabel>
+#include <QPushButton>
+#include <QAction>
+#include <QMainWindow>
+#include <QTabWidget>
+#include <QToolButton>
+#include "QTMResponsiveTabWidget.hpp"
+
 #include "url.hpp"
 #include "gui.hpp"
 
@@ -28,6 +37,20 @@ public:
   QTMIconManager () {};
   
   QIcon getIcon (url file_name);
+
+  void setLabelPixmap(QPointer<QLabel> label, url file_name, int width = 0, int height = 0);
+
+  void setPushButtonIcon(QPointer<QPushButton> button, url file_name);
+
+  void setActionIcon(QPointer<QAction> action, url file_name);
+
+  void setWindowIcon(QPointer<QMainWindow> window, url file_name);
+
+  void setTabIcon(QPointer<QTabWidget> tabwidget, int index, url file_name);
+
+  void setTabIcon(QPointer<QTMResponsiveTabWidget> tabbar, int index, url file_name);
+
+  void setToolButtonIcon(QPointer<QToolButton> button, url file_name);
 
   static inline bool is_dark_mode () {
     return occurs ("dark", tm_style_sheet); }

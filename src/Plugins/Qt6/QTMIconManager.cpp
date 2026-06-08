@@ -13,9 +13,10 @@
 
 #if QT_VERSION >= 0x060000
 #include <QIconEngine>
-
+#include <QTimer>
 
 #include "QTMIconManager.hpp"
+#include "QTMApplication.hpp"
 #include "qt_picture.hpp"
 #include "qt_utilities.hpp"
 
@@ -133,9 +134,6 @@ private:
         load_pixmap (m_file_name, icon)) {
       return icon;
     }
-    if (m_file_name != url ("TeXmacs"))
-      std_error << "Icon not found: " << m_file_name << LF;
-    load_svg (url ("$TEXMACS_PATH/misc/images/texmacs.svg"), icon);
     return icon;
   }
 };
@@ -151,6 +149,85 @@ QTMIconManager::getIcon (url file_name) {
   engine_cache[qfile_name]= icon;
   
   return icon;
+}
+
+void QTMIconManager::setLabelPixmap(QPointer<QLabel> label, url file_name, int width, int height) {
+  if (get_env ("TEXMACS_PIXMAP_PATH") == "") {
+    QTimer::singleShot (1, [this, label, file_name, width, height]() {
+      setLabelPixmap(label, file_name, width, height);
+    });
+  }
+  if (label) {
+    QIcon icon= this->getIcon (file_name);
+    if (width > 0 && height > 0) {
+      QPixmap pixmap= icon.pixmap (width, height);
+      label->setPixmap (pixmap);
+    } else {
+      label->setPixmap (icon.pixmap (icon.availableSizes().last()));
+    }
+  }
+}
+
+void QTMIconManager::setPushButtonIcon(QPointer<QPushButton> button, url file_name) {
+  if (button) {
+    QIcon icon= this->getIcon (file_name);
+    button->setIcon (icon);
+  }
+}
+
+void QTMIconManager::setActionIcon(QPointer<QAction> action, url file_name) {
+  if (action) {
+    QIcon icon= this->getIcon (file_name);
+    action->setIcon (icon);
+  }
+}
+
+void QTMIconManager::setWindowIcon(QPointer<QMainWindow> window, url file_name) {
+  if (get_env ("TEXMACS_PIXMAP_PATH") == "") {
+    QTimer::singleShot (1000, [this, window, file_name]() {
+      setWindowIcon(window, file_name);
+    });
+  }
+  if (window) {
+    QIcon icon= this->getIcon (file_name);
+    window->setWindowIcon (icon);
+  }
+}
+
+void QTMIconManager::setTabIcon(QPointer<QTabWidget> tabwidget, int index, url file_name) {
+  if (get_env ("TEXMACS_PIXMAP_PATH") == "") {
+    QTimer::singleShot (1, [this, tabwidget, index, file_name]() {
+      setTabIcon(tabwidget, index, file_name);
+    });
+  }
+  if (tabwidget) {
+    QIcon icon= this->getIcon (file_name);
+    tabwidget->setTabIcon (index, icon);
+  }
+}
+
+void QTMIconManager::setTabIcon(QPointer<QTMResponsiveTabWidget> tabbar, int index, url file_name) {
+  if (get_env ("TEXMACS_PIXMAP_PATH") == "") {
+    QTimer::singleShot (1, [this, tabbar, index, file_name]() {
+      setTabIcon(tabbar, index, file_name);
+    });
+  }
+  if (tabbar) {
+    QIcon icon= this->getIcon (file_name);
+    tabbar->setTabIcon (index, icon);
+  }
+}
+
+void QTMIconManager::setToolButtonIcon(QPointer<QToolButton> button, url file_name) {
+  if (get_env ("TEXMACS_PIXMAP_PATH") == "") {
+    QTimer::singleShot (1, [this, button, file_name]() {
+      setToolButtonIcon(button, file_name);
+    });
+  }
+  if (button) {
+    QIcon icon= this->getIcon (file_name);
+    button->setIcon (icon);
+  }
 }
 
 #endif // QT_VERSION >= 0x060000
