@@ -256,6 +256,16 @@ void QTMMainTabWindow::showEvent(QShowEvent *event) {
 #endif
 }
 
+void QTMMainTabWindow::closeEvent(QCloseEvent *event) {
+  for (int i = 0; i < mStackedLayout->count(); ++i) {
+    QPointer<QTMMainTab> tab = qobject_cast<QTMMainTab *>(mStackedLayout->widget(i));
+    if (tab != nullptr) {
+      emit tab->requestClose();
+    }
+  }
+  event->ignore();
+}
+
 void QTMMainTabWindow::onWindowActivated() {
   gTopTabWindow = this;
 }
