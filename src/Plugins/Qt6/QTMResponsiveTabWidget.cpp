@@ -81,15 +81,13 @@ int QTMHorizontalTextTabBar::addCustomTab(const QIcon &icon,
   QHBoxLayout* hlayout = new QHBoxLayout(hwidget);
   hlayout->setContentsMargins(10, 0, 10, 0);
 
-  if (!icon.isNull()) {
-    QLabel* iconLabel = new QLabel(hwidget);
-    iconLabel->setObjectName("ResponsiveTabIcon");
-    iconLabel->setPixmap(icon.pixmap(18, 18));
-    iconLabel->setFixedSize(18, 18);
-    iconLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
-    hlayout->addWidget(iconLabel);
-    hlayout->addStretch();
-  }
+  QLabel* iconLabel = new QLabel(hwidget);
+  iconLabel->setObjectName("ResponsiveTabIcon");
+  if (!icon.isNull()) iconLabel->setPixmap(icon.pixmap(18, 18));
+  iconLabel->setFixedSize(18, 18);
+  iconLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
+  hlayout->addWidget(iconLabel);
+  hlayout->addStretch();
 
   QLabel* textLabel = new QLabel(text, hwidget);
   textLabel->setObjectName("ResponsiveTabLabel");
@@ -108,17 +106,28 @@ int QTMHorizontalTextTabBar::addCustomTab(const QIcon &icon,
   return index;
 }
 
+void QTMHorizontalTextTabBar::setCustomTabIcon(int index, const QIcon &icon) {
+  if (icon.isNull()) return;
+  QPointer<QWidget> vwidget = tabButton(index, QTabBar::LeftSide);
+  if (vwidget) {
+    QPointer<QLabel> iconLabel = vwidget->findChild<QLabel*>("ResponsiveTabIcon");
+    if (iconLabel) {
+      iconLabel->setPixmap(icon.pixmap(18, 18));
+    }
+  }
+}
+
 QSize QTMHorizontalTextTabBar::tabSizeHint(int index) const {
-  QWidget* btn = tabButton(index, QTabBar::LeftSide);
+  QPointer<QWidget> btn = tabButton(index, QTabBar::LeftSide);
   if (btn) return btn->size();
   return QTabBar::tabSizeHint(index);
 }
 
 void QTMHorizontalTextTabBar::updateLabelColors(int index) {
   for (int i = 0; i < count(); ++i) {
-    QWidget* vwidget = tabButton(i, QTabBar::LeftSide);
+    QPointer<QWidget> vwidget = tabButton(i, QTabBar::LeftSide);
     if (vwidget) {
-      QLabel* label = vwidget->findChild<QLabel*>("ResponsiveTabLabel");
+      QPointer<QLabel> label = vwidget->findChild<QLabel*>("ResponsiveTabLabel");
       if (label) {
         label->setProperty("activeTab", i == index);
         label->style()->unpolish(label);
@@ -341,7 +350,7 @@ void QTMResponsiveTabWidget::addTab(QWidget* widget, const QString& title,
 
 void QTMResponsiveTabWidget::setTabIcon(int index, const QIcon& icon) {
   if (mTabBar && index >= 0 && index < count()) {
-      mTabBar->setTabIcon(index, icon);
+      mTabBar->setCustomTabIcon(index, icon);
   }
 }
 
