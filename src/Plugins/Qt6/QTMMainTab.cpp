@@ -20,6 +20,10 @@ QTMMainTab::QTMMainTab(QWidget *parent) : QMainWindow(parent) {
 	mIcon = windowIcon();
 }
 
+QTMMainTab::~QTMMainTab() {
+	emit windowOrTabClosed();
+}
+
 QPointer<QTMMainTabWindow> QTMMainTab::parentTabWindow() const {
 	return QPointer<QTMMainTabWindow>(findParentTabWindow(this));
 }
