@@ -203,6 +203,7 @@ QTMMainTabWindow::QTMMainTabWindow() {
   // move the tab window to the center of the screen
   QRect screenGeometry = QApplication::screens().at(0)->geometry();
 #if !defined(OS_ANDROID)
+  resize(screenGeometry.width() * 0.75, screenGeometry.height() * 0.75);
   move(screenGeometry.center() - rect().center());
 
   installEventFilter(this);
@@ -861,12 +862,22 @@ void QTMMainTabWindow::attachKeyboard() {
 
   if (parentWidget != mKeyboardDock) {
     QTMMainTabWindow *otherWindow = qobject_cast<QTMMainTabWindow *>(parentWidget);
+    bool isVisible = false;
     if (otherWindow != nullptr) {
-      otherWindow->mKeyboardDock->hide();
+      if (otherWindow->mKeyboardDock != nullptr) {
+        isVisible = otherWindow->mKeyboardDock->isVisible();
+        otherWindow->mKeyboardDock->hide();
+      }
     }
     mKeyboardDock->setWidget(keyboard);
-    mKeyboardDock->show();
-    keyboard->show();
+    if (isVisible) {
+      cout << "show the keyboard dock" << LF;
+      mKeyboardDock->show();
+      keyboard->show();
+    } else {
+      cout << "hide the keyboard dock" << LF;
+      mKeyboardDock->hide();
+    }
   }
 }
 
