@@ -72,6 +72,7 @@ public:
 
   void addTab(QWidget* widget, const QString& title, 
               const QIcon& icon = QIcon());
+  void setTabIcon(int index, const QIcon& icon);
   int count() const;
   void setCurrentIndex(int index);
   int currentIndex() const;

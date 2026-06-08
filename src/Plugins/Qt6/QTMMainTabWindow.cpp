@@ -135,8 +135,9 @@ QTMMainTabWindow::QTMMainTabWindow() {
   mHeaderLayout->addWidget(mIconSpacerLeft);
   // add the texmacs icon as a first widget of the headerLayout
   mIconLabel = new QLabel(mHeader);
-  QIcon tmicon = tmapp()->icon_manager().getIcon("TeXmacs");
-  mIconLabel->setPixmap(tmicon.pixmap(16, 16));
+  // QIcon tmicon = tmapp()->icon_manager().getIcon("TeXmacs");
+  // mIconLabel->setPixmap(tmicon.pixmap(16, 16));
+  tmapp()->icon_manager().setLabelPixmap(mIconLabel, "TeXmacs", 16, 16);
   mHeaderLayout->addWidget(mIconLabel, 0, Qt::AlignVCenter);
   // add another spacer
   mIconSpacerRight = new QWidget(mHeader);

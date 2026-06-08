@@ -339,6 +339,12 @@ void QTMResponsiveTabWidget::addTab(QWidget* widget, const QString& title,
   }
 }
 
+void QTMResponsiveTabWidget::setTabIcon(int index, const QIcon& icon) {
+  if (mTabBar && index >= 0 && index < count()) {
+      mTabBar->setTabIcon(index, icon);
+  }
+}
+
 int QTMResponsiveTabWidget::count() const { 
     return mTabBar ? mTabBar->count() : 0; 
 }
