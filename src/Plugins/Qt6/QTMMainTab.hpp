@@ -11,6 +11,8 @@ class QTMMainTab : public QMainWindow {
 public:
     QTMMainTab(QWidget *parent = nullptr);
 
+    ~QTMMainTab();
+
     QPointer<QTMMainTabWindow> parentTabWindow() const;
 
     void setWindowOrTabTitle(const QString &title);
