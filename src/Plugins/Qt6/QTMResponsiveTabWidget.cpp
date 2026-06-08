@@ -352,6 +352,10 @@ void QTMResponsiveTabWidget::setTabIcon(int index, const QIcon& icon) {
   if (mTabBar && index >= 0 && index < count()) {
       mTabBar->setCustomTabIcon(index, icon);
   }
+  if (mListWidget && index >= 0 && index < mListWidget->count()) {
+      QListWidgetItem* item = mListWidget->item(index);
+      if (item) item->setIcon(icon);
+  }
 }
 
 int QTMResponsiveTabWidget::count() const { 
