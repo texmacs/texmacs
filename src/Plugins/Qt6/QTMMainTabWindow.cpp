@@ -183,7 +183,7 @@ QTMMainTabWindow::QTMMainTabWindow() {
   setCentralWidget(mStackHost);
 #else
   mCentralLayout->addWidget(mHeader);
-  mCentralLayout->addWidget(mStackHost);
+  mCentralLayout->addWidget(mStackHost, 1);
   setCentralWidget(mCentralContainer);
 #endif
 
@@ -257,6 +257,12 @@ void QTMMainTabWindow::showEvent(QShowEvent *event) {
 }
 
 void QTMMainTabWindow::closeEvent(QCloseEvent *event) {
+  // Allow real close when the window is already empty.
+  if (mStackedLayout == nullptr || mStackedLayout->count() == 0) {
+    event->accept();
+    return;
+  }
+
   for (int i = 0; i < mStackedLayout->count(); ++i) {
     QPointer<QTMMainTab> tab = qobject_cast<QTMMainTab *>(mStackedLayout->widget(i));
     if (tab != nullptr) {
