@@ -19,21 +19,11 @@
 
 (define (refresh-console . x)
   (refresh-now "console-widget-categories")
-  (refresh-now "console-widget-messages"))
+  (noop))
 
 (define-preferences
   ("console details" "normal" refresh-console)
   ("console size" "100" refresh-console))
-
-(define (encode-size sz)
-  (cond ((== sz "All") "1000000")
-        ((string-starts? sz "Last ") (string-drop sz 5))
-        (else "100")))
-
-(define (decode-size sz)
-  (cond ((not (string->number sz)) "Last 100")
-        ((> (string->number sz) 10000) "All")
-        (else (string-append "Last " sz))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Message selection
@@ -94,49 +84,19 @@
 
 (tm-define console-active? (make-ahash-table))
 (tm-define console-categories (make-ahash-table))
-(tm-define console-selected (make-ahash-table))
 
 (tm-widget ((console-widget kind))
-  (padded
-    (horizontal
-      (vertical
-        (bold (text "Categories"))
-        === ===
-        (resize '("100px" "100px" "100px") '("300px" "600px" "1000px")
-          (refreshable "console-widget-categories"
-            (choices (begin
-                       (ahash-set! console-selected kind answer)
-                       (refresh-now "console-widget-messages"))
-                     (ahash-ref console-categories kind)
-                     (ahash-ref console-selected kind)))))
-      ///
-      (vertical
-        (bold (text "Messages"))
-        === ===
-        (resize '("500px" "800px" "1200px" "left")
-                '("300px" "600px" "1000px" "bottom")
-          (refreshable "console-widget-messages"
-            (texmacs-output
-              (messages->document kind (ahash-ref console-selected kind))
-              '(style "generic"))))))
-    ======
-    (explicit-buttons
-      (hlist
-        (enum (set-preference "console details" (locase-all answer))
-              '("Normal" "Detailed")
-              (upcase-first (get-preference "console details")) "80px")
-        // //
-        (enum (set-preference "console size" (encode-size answer))
-              '("Last 25" "Last 100" "Last 250" "Last 1000" "All")
-              (decode-size (get-preference "console size")) "80px")
-        >>>
-        (=> "Preferences"
-            ("Automatically open this console on errors"
-             (toggle-preference "open console on errors"))
-            ("Automatically open this console on warnings"
-             (toggle-preference "open console on warnings")))
-        // //
-        ("Clear" (clear-debug-messages) (refresh-console))))))
+  (refreshable "console-widget-categories"
+    (responsive-tabs
+      (responsive-tab (text "All")
+        (texmacs-output
+          (messages->document kind (ahash-ref console-categories kind))
+          '(style "generic")))
+      (loop (cat (ahash-ref console-categories kind))
+        (responsive-tab (text (upcase-first cat))
+          (texmacs-output
+            (messages->document kind (list cat))
+            '(style "generic")))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Automatic updates of consoles
@@ -148,12 +108,8 @@
 
 (tm-define (update-consoles)
   (for (kind (ahash-set->list console-active?))
-    (let* ((old (ahash-ref console-categories kind))
-           (new (list-message-types kind))
-           (delta (list-difference new old)))
-      (ahash-set! console-categories kind new)
-      (ahash-set! console-selected kind
-                  (list-union (ahash-ref console-selected kind) delta))))
+    (let* ((new (list-message-types kind)))
+      (ahash-set! console-categories kind new)))
   (when (nnull? (ahash-set->list console-active?))
     (refresh-console))
   (when (and (or (and console-errors?
@@ -185,7 +141,6 @@
   (when (not (ahash-ref console-active? kind))
     (ahash-set! console-active? kind #t)
     (ahash-set! console-categories kind (list-message-types kind))
-    (ahash-set! console-selected kind (ahash-ref console-categories kind))
     (top-window (console-widget kind) kind
                 (lambda x (ahash-remove! console-active? kind)))))
 
