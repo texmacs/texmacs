@@ -676,6 +676,43 @@
       ;;(dynamic (script-preferences-widget))
       )))
 
+(define (console-size-encode sz)
+  (cond ((== sz "All") "1000000")
+        ((string-starts? sz "Last ") (string-drop sz 5))
+        (else "100")))
+
+(define (console-size-decode sz)
+  (cond ((not (string->number sz)) "Last 100")
+        ((> (string->number sz) 10000) "All")
+        (else (string-append "Last " sz))))
+
+(tm-widget (debug-console-preferences-widget)
+  (setting-group "Debug console"
+    (setting-enum (set-preference "console details" (locase-all answer))
+                  "Details"
+                  '("Normal" "Detailed")
+                  (upcase-first (get-preference "console details"))
+                  "12em")
+    (setting-enum (set-preference "console size" (console-size-encode answer))
+                  "Messages limit"
+                  '("Last 25" "Last 100" "Last 250" "Last 1000" "All")
+                  (console-size-decode (get-preference "console size"))
+                  "12em")
+    (setting-toggle (set-boolean-preference "open console on errors" answer)
+                    "Automatically open on errors"
+                    (get-boolean-preference "open console on errors"))
+    (setting-toggle (set-boolean-preference "open console on warnings" answer)
+                    "Automatically open on warnings"
+                    (get-boolean-preference "open console on warnings"))
+    (explicit-buttons
+      (hlist
+        (text "Messages") >>
+        ("Clear" (clear-debug-messages))))
+    (explicit-buttons
+      (hlist
+        (text "Console") >>
+        ("Open debug console" (open-debug-console))))))
+
 (tm-widget (misc-preferences-widget)
   (setting-group "Other"
     (setting-enum (set-pretty-preference "autosave" answer)
@@ -880,6 +917,8 @@
       (assuming (== (get-preference "experimental encryption") "on")
         (responsive-icon-tab "tm_prefs_security.xpm" (text "Security")
             (dynamic (security-preferences-widget))))
+        (responsive-icon-tab "tm_prefs_other.xpm" (text "Debug")
+          (dynamic (debug-console-preferences-widget)))
       (responsive-icon-tab "tm_prefs_other.xpm" (text "Other")
           (dynamic (other-preferences-widget)))))
 
