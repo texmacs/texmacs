@@ -238,7 +238,7 @@ void QTMOnscreenKeyboard::rebuildKeyboard() {
 			mButtons << button;
 			button->setProperty("tm-cmd", keyData.cmd);
 			button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-			connect(button, &QPushButton::clicked, this,
+			connect(button, &QPushButton::pressed, this,
 				&QTMOnscreenKeyboard::onKeyboardButtonClickedFromSender);
 
 			int stretch = max(1, (int) round(keyData.widthUnits * 100.0));
