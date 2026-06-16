@@ -19,9 +19,11 @@
  * Load the url to a string, and return a boolean indicator
  * @param u the url to load
  * @param s the loaded string
+ * @param fatal abort with an error if the file cannot be loaded
+ * @param lock take an flock on the file while reading (default true)
  * @return If there are errors, return true, else, return false
  */
-bool load_string (url file_name, string& s, bool fatal);
+bool load_string (url file_name, string& s, bool fatal, bool lock= true);
 bool save_string (url file_name, string s, bool fatal=false);
 bool append_string (url u, string s, bool fatal= false);
 
