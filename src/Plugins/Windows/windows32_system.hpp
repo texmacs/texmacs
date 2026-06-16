@@ -43,6 +43,16 @@ int64_t texmacs_get_last_error();
 string texmacs_get_last_error_str();
 
 /*
+ * @brief Acquire advisory lock on file
+ */
+void texmacs_lock_file(FILE *&file, bool nonblock=false);
+
+/*
+ * @brief Release advisory lock on file
+ */
+void texmacs_unlock_file(FILE *&file);
+
+/*
  * @brief Proxy function to call the fopen function 
  * with UTF-8 encoded strings
  * @param lock: not used on Windows

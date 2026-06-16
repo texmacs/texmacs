@@ -59,9 +59,11 @@ string texmacs_get_last_error_str() {
   return strerror(errno);
 }
 
-void texmacs_lock_file(FILE *&file) {
+void texmacs_lock_file(FILE *&file, bool nonblock) {
   int file_descriptor = fileno(file);
-  if (flock(file_descriptor, LOCK_EX) == -1) {
+  int flags = LOCK_EX;
+  if (nonblock) flags |= LOCK_NB;
+  if (flock(file_descriptor, flags) == -1) {
     fclose(file);
     file = nullptr;
   }
