@@ -731,21 +731,6 @@ immediate_options (int argc, char** argv) {
 int
 texmacs_entrypoint (int argc, char** argv) {
   immediate_options (argc, argv);
-#ifdef QTTEXMACS
-  if (!headless_mode) {
-#if QT_VERSION >= 0x060000
-    QGuiApplication::setHighDpiScaleFactorRoundingPolicy
-      (Qt::HighDpiScaleFactorRoundingPolicy::Round);
-#if defined(OS_GNULINUX) || defined(OS_FREEBSD)
-    QApplication::setStyle("fusion");
-#endif
-#endif
-    qtmapp= new QTMApplication (argc, argv);
-  }
-#endif
-#ifdef OS_ANDROID
-  init_android();
-#endif
 
 #ifdef STACK_SIZE
   struct rlimit limit;
@@ -764,6 +749,28 @@ texmacs_entrypoint (int argc, char** argv) {
   windows_delayed_refresh (1000000000);
   TeXmacs_init_paths (argc, argv);
   load_user_preferences ();
+
+
+#ifdef QTTEXMACS
+  if (!headless_mode) {
+    string scaling = get_user_preference ("gui scaling");
+    cout << "scaling: " << scaling << LF;
+    if (scaling != "default" && scaling != "")
+      set_env ("QT_SCALE_FACTOR", scaling);
+#if QT_VERSION >= 0x060000
+    QGuiApplication::setHighDpiScaleFactorRoundingPolicy
+      (Qt::HighDpiScaleFactorRoundingPolicy::Round);
+#if defined(OS_GNULINUX) || defined(OS_FREEBSD)
+    QApplication::setStyle("fusion");
+#endif
+#endif
+    qtmapp= new QTMApplication (argc, argv);
+  }
+#endif
+#ifdef OS_ANDROID
+  init_android();
+#endif
+
 #ifndef OS_MINGW
   set_env ("LC_NUMERIC", "POSIX");
 #endif

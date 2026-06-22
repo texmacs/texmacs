@@ -140,7 +140,14 @@
       "Responsive tabs default mode"
       '("Top tabs" "Side tabs" "Mobile list")
       (get-pretty-preference "gui:responsive tab mode")
-              "18em")))
+              "18em")
+    (setting-enum (set-pretty-preference "gui scaling" answer)
+      "Interface scaling"
+      '("default", "x0.25", "x0.5", "x1", "x2", "x3")
+      (get-pretty-preference "gui scaling")
+              "18em")
+    ) ; setting-group
+) ; tm-widget
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Keyboard preferences

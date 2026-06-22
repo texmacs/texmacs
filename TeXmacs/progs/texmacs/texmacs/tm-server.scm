@@ -107,6 +107,7 @@
   ("language" (get-locale-language) notify-language)
   ("gui theme" "default" notify-gui-theme)
   ("gui density" (get-default-gui-density) noop)
+  ("gui scaling" "default" notify-restart)
   ("gui:responsive tab mode" (get-default-responsive-tab-mode) noop)
   ("page medium" "paper" (lambda args (noop)))
   ("fast environments" "on" notify-fast-environments)
