@@ -143,7 +143,7 @@
               "18em")
     (setting-enum (set-pretty-preference "gui scaling" answer)
       "Interface scaling"
-      '("default", "x0.25", "x0.5", "x1", "x2", "x3")
+      '("default", "0.25", "0.5", "1", "2", "3")
       (get-pretty-preference "gui scaling")
               "18em")
     ) ; setting-group
