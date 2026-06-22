@@ -81,7 +81,33 @@ void android_extract_from_asset(QString asset_path)
   resource_files.close();
 }
 
+void start_android_service() {
+#ifdef Q_OS_ANDROID
+    QJniObject activity = QJniObject::callStaticObjectMethod("org/qtproject/qt/android/QtNative", "activity", "()Landroid/app/Activity;");
+    if (activity.isValid()) {
+        QJniObject intent("android/content/Intent");
+        QJniObject className = QJniObject::fromString("org.texmacs.TexmacsService");
+        
+        intent.callObjectMethod(
+            "setClassName", 
+            "(Landroid/content/Context;Ljava/lang/String;)Landroid/content/Intent;", 
+            activity.object(), 
+            className.object<jstring>()
+        );
+                          
+        QJniObject::callStaticMethod<void>(
+            "androidx/core/content/ContextCompat", 
+            "startForegroundService", 
+            "(Landroid/content/Context;Landroid/content/Intent;)V", 
+            activity.object(), 
+            intent.object()
+        );
+    }
+#endif
+}
+
 void init_android()
 {
   android_extract_from_asset(QDir::homePath());
+  start_android_service();
 }
