@@ -827,9 +827,6 @@
 
 (tm-widget (other-preferences-widget)
     (dynamic (misc-preferences-widget))
-    ======
-    (bold (text "Experimental features (to be used with care)"))
-    ======
     (dynamic (experimental-preferences-widget)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -924,7 +921,7 @@
       (assuming (== (get-preference "experimental encryption") "on")
         (responsive-icon-tab "tm_prefs_security.xpm" (text "Security")
             (dynamic (security-preferences-widget))))
-        (responsive-icon-tab "tm_prefs_other.xpm" (text "Debug")
+        (responsive-icon-tab "tm_program.xpm" (text "Debug")
           (dynamic (debug-console-preferences-widget)))
       (responsive-icon-tab "tm_prefs_other.xpm" (text "Other")
           (dynamic (other-preferences-widget)))))
