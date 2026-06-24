@@ -1,11 +1,15 @@
 #include "QTMSettingWidgets.hpp"
 #include <QPainter>
 #include <QMouseEvent>
+#include <QResizeEvent>
+
+#define RESPONSIVE_WIDTH_THRESHOLD 600
 
 QTMSwitchControl::QTMSwitchControl(QWidget* parent) : QAbstractButton(parent) {
   setCheckable(true);
   setFixedSize(50, 28);
   setCursor(Qt::PointingHandCursor);
+  setProperty("isSettingWidget", true);
 }
 
 void QTMSwitchControl::paintEvent(QPaintEvent*) {
@@ -34,22 +38,24 @@ void QTMSwitchControl::paintEvent(QPaintEvent*) {
 QTMSettingCheckbox::QTMSettingCheckbox(QWidget* parent) : QWidget(parent) {
   setAttribute(Qt::WA_StyledBackground, true); 
   setCursor(Qt::PointingHandCursor);
+  setProperty("isSettingWidget", true);
 
-  QHBoxLayout* layout = new QHBoxLayout(this);
+  mLayout = new QBoxLayout(QBoxLayout::LeftToRight, this);
 
   mLabel = new QLabel(this);  
   mSwitch = new QTMSwitchControl(this);
 
-  layout->addWidget(mLabel);
-  layout->addStretch();
-  layout->addWidget(mSwitch);
+  mLayout->addWidget(mLabel);
+  mLayout->addWidget(mSwitch);
 
   connect(mSwitch, &QTMSwitchControl::toggled, this, &QTMSettingCheckbox::toggled);
+  updateResponsiveLayout();
 }
 
 void QTMSettingCheckbox::setDescriptionText(const QString& text) {
   if (!mLabel) return;
   mLabel->setText(text);
+  updateResponsiveLayout();
 }
 
 bool QTMSettingCheckbox::isChecked() const {
@@ -66,25 +72,69 @@ void QTMSettingCheckbox::mouseReleaseEvent(QMouseEvent*) {
   mSwitch->toggle();
 }
 
+void QTMSettingCheckbox::resizeEvent(QResizeEvent* event) {
+  QWidget::resizeEvent(event);
+  updateResponsiveLayout();
+}
+
+void QTMSettingCheckbox::updateResponsiveLayout() {
+  if (mLayout == nullptr || mLabel == nullptr || mSwitch == nullptr) return;
+
+  int margins = mLayout->contentsMargins().left() + mLayout->contentsMargins().right();
+  int spacing = mLayout->spacing();
+  int labelWidth = mLabel->sizeHint().width();
+  int switchWidth = mSwitch->sizeHint().width();
+  int requiredWidth = labelWidth + switchWidth + spacing + margins + 24;
+  if (requiredWidth < RESPONSIVE_WIDTH_THRESHOLD) requiredWidth = RESPONSIVE_WIDTH_THRESHOLD;
+  bool vertical = width() > 0 && width() < requiredWidth;
+
+  if (vertical) {
+    mLayout->setDirection(QBoxLayout::TopToBottom);
+    mLayout->setAlignment(mLabel, Qt::AlignLeft);
+    mLayout->setAlignment(mSwitch, Qt::AlignLeft);
+    mSwitch->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+  } else {
+    mLayout->setDirection(QBoxLayout::LeftToRight);
+    mLayout->setAlignment(mLabel, Qt::AlignLeft | Qt::AlignVCenter);
+    mLayout->setAlignment(mSwitch, Qt::AlignRight | Qt::AlignVCenter);
+    mSwitch->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+  }
+}
+
+
+class MyComboBox : public QComboBox {
+public:
+  using QComboBox::QComboBox;
+  QSize sizeHint() const override {
+    QSize size = QComboBox::sizeHint();
+    size.setWidth(size.width() + 32);
+    return size;
+  }
+};
+
 QTMSettingSelect::QTMSettingSelect(QWidget* parent) : QWidget(parent) {
   setAttribute(Qt::WA_StyledBackground, true); 
-  QHBoxLayout* layout = new QHBoxLayout(this);
+  setProperty("isSettingWidget", true);
+  mLayout = new QBoxLayout(QBoxLayout::LeftToRight, this);
 
   mLabel = new QLabel(this);
 
-  mCombo = new QComboBox(this);
+  mCombo = new MyComboBox(this);
   if (mCombo) mCombo->setCursor(Qt::PointingHandCursor);
+  if (mCombo) mCombo->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 
-  layout->addWidget(mLabel);
-  layout->addWidget(mCombo);
+  mLayout->addWidget(mLabel);
+  mLayout->addWidget(mCombo);
 
   connect(mCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), 
           this, &QTMSettingSelect::currentIndexChanged);
+  updateResponsiveLayout();
 }
 
 void QTMSettingSelect::setDescriptionText(const QString& text) {
   if (!mLabel) return;
   mLabel->setText(text);
+  updateResponsiveLayout();
 }
 
 QString QTMSettingSelect::currentText() const {
@@ -103,6 +153,7 @@ void QTMSettingSelect::setEditable(bool editable) {
 void QTMSettingSelect::addItems(const QStringList& texts) {
   if (!mCombo) return;
   mCombo->addItems(texts);
+  updateResponsiveLayout();
 }
 
 int QTMSettingSelect::currentIndex() const {
@@ -114,10 +165,68 @@ void QTMSettingSelect::setCurrentIndex(int index) {
   mCombo->setCurrentIndex(index);
 }
 
+void QTMSettingSelect::resizeEvent(QResizeEvent* event) {
+  QWidget::resizeEvent(event);
+  updateResponsiveLayout();
+}
+
+void QTMSettingSelect::updateResponsiveLayout() {
+  if (mLayout == nullptr || mLabel == nullptr || mCombo == nullptr) return;
+
+  int margins = mLayout->contentsMargins().left() + mLayout->contentsMargins().right();
+  int spacing = mLayout->spacing();
+  int labelWidth = mLabel->sizeHint().width();
+  int comboWidth = qMax(mCombo->sizeHint().width(), 140);
+  int requiredWidth = labelWidth + comboWidth + spacing + margins + 24;
+  if (requiredWidth < RESPONSIVE_WIDTH_THRESHOLD) requiredWidth = RESPONSIVE_WIDTH_THRESHOLD;
+  bool vertical = width() > 0 && width() < requiredWidth;
+
+  if (vertical) {
+    mLayout->setDirection(QBoxLayout::TopToBottom);
+    mLayout->setAlignment(mLabel, Qt::AlignLeft);
+    mLayout->setAlignment(mCombo, Qt::AlignLeft);
+    mCombo->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+  } else {
+    mLayout->setDirection(QBoxLayout::LeftToRight);
+    mLayout->setAlignment(mLabel, Qt::AlignLeft | Qt::AlignVCenter);
+    mLayout->setAlignment(mCombo, Qt::AlignRight | Qt::AlignVCenter);
+    mCombo->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+  }
+}
+
+QTMSettingTitle::QTMSettingTitle(QWidget* parent) : QWidget(parent) {
+  setAttribute(Qt::WA_StyledBackground, true); 
+  setProperty("isSettingWidget", true);
+
+  mLayout = new QBoxLayout(QBoxLayout::LeftToRight, this);
+  mLabel = new QLabel(this);
+  mLabel->setObjectName("setting-title-label");
+  mLayout->addWidget(mLabel);
+}
+
+void QTMSettingTitle::setTitleText(const QString& text) {
+  if (!mLabel) return;
+  mLabel->setText(text);
+}
+
+QTMSettingWrapper::QTMSettingWrapper(QWidget *wrapped, QWidget* parent) : QWidget(parent) {
+  setAttribute(Qt::WA_StyledBackground, true); 
+  setProperty("isSettingWidget", true);
+
+  mLayout = new QBoxLayout(QBoxLayout::LeftToRight, this);
+  mWrapped = wrapped;
+  if (mWrapped) {
+    mWrapped->setParent(this);
+    mLayout->addWidget(mWrapped);
+  }
+}
+
 QTMSettingGroup::QTMSettingGroup(QWidget* parent)
   : QWidget(parent), mOuterMargin(10), mContentItems(0) {
   setAttribute(Qt::WA_StyledBackground, true);
   setObjectName("setting-group");
+
+  setProperty("stretchToTop", true);
 
   mOuterLayout = new QVBoxLayout(this);
   mOuterLayout->setSpacing(0);
@@ -128,8 +237,9 @@ QTMSettingGroup::QTMSettingGroup(QWidget* parent)
   mOuterLayout->addWidget(mWrap);
 
   mLayout = new QVBoxLayout(mWrap);
-  mTitle = new QLabel(mWrap);
+  mTitle = new QTMSettingTitle(mWrap);
   mTitle->setObjectName("setting-group-title");
+
 
   mLayout->setSpacing(0);
   mLayout->setContentsMargins(0, 0, 0, 0);
@@ -151,7 +261,9 @@ void QTMSettingGroup::setOuterMargin(int margin) {
 
 void QTMSettingGroup::setTitleText(const QString& text) {
   if (!mTitle) return;
-  mTitle->setText(text);
+  QString formattedText = text;
+  formattedText.replace(" -> ", " → ");
+  mTitle->setTitleText(formattedText);
 }
 
 void QTMSettingGroup::addItem(QLayoutItem* item) {
@@ -159,12 +271,21 @@ void QTMSettingGroup::addItem(QLayoutItem* item) {
   if (QWidget* widget = item->widget()) {
     if (widget->parentWidget() != contentWidget())
       widget->setParent(contentWidget());
-    mLayout->addItem(item);
+    
+    // is this a setting widget ? if not, we need to add a padding
+    if (!widget->property("isSettingWidget").toBool()) {
+      mLayout->addWidget(new QTMSettingWrapper(widget, contentWidget()));
+    } else {
+      mLayout->addItem(item);
+    }
   }
   else if (QLayout* layout = item->layout()) {
-    mLayout->addLayout(layout);
+    QWidget* container = new QWidget(contentWidget());
+    container->setLayout(layout);
+    mLayout->addWidget(new QTMSettingWrapper(container, contentWidget()));
   }
   else {
+    // todo
     mLayout->addItem(item);
   }
 

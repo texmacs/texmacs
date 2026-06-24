@@ -77,7 +77,7 @@ int QTMHorizontalTextTabBar::addCustomTab(const QIcon &icon,
   vlayout->addWidget(hwidget);
   vlayout->addStretch();
 
-  hwidget->setFixedWidth(110);
+  hwidget->setMinimumWidth(110);
   vwidget->setFixedHeight(35);
 
   setTabButton(index, QTabBar::LeftSide, vwidget);
@@ -288,12 +288,16 @@ void QTMResponsiveTabWidget::addTab(QWidget* widget, const QString& title,
 
   if (!widget) return;
 
-                                        bool containsResponsive = false;
+  bool containsResponsive = false;
+  bool strechToTop = false;
   QList<QWidget*> allChildren = widget->findChildren<QWidget*>();
   for (QWidget* child : allChildren) {
     if (qobject_cast<QTMResponsiveTabWidget*>(child)) {
       containsResponsive = true;
       break;
+    }
+    if (child->property("stretchToTop").toBool()) {
+      strechToTop = true;
     }
   }
   
@@ -303,7 +307,9 @@ void QTMResponsiveTabWidget::addTab(QWidget* widget, const QString& title,
     QVBoxLayout *layout = new QVBoxLayout(top);
     layout->setContentsMargins(0, 0, 0, 0);
     layout->addWidget(widget);
-    layout->addStretch();
+    if (strechToTop) {
+        layout->addStretch();
+    }
     top->setLayout(layout);
 
   

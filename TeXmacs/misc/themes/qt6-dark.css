@@ -270,11 +270,7 @@ MingwQComboBox::drop-down {
 }
 
 QComboBox::down-arrow {
-    border-image: url($TEXMACS_PATH/misc/pixmaps/modern/16x16/focus/tm_similar_next_x4.png) 0 0 0 0 stretch stretch;
-}
-
-MingwQComboBox::down-arrow {
-    border-image: url("$TEXMACS_PATH/misc/pixmaps/modern/16x16/focus/tm_similar_next_x4.png") 7 7 7 7 stretch stretch;
+    border-image: url($TEXMACS_PATH/misc/pixmaps/dark/tm_similar_next.svg);
 }
 
 QComboBox QAbstractItemView {
@@ -983,8 +979,17 @@ QTMSettingGroup QWidget#setting-group-refreshable-root {
     background: transparent;
 }
 
+QTMSettingTitle QLabel {
+    background: transparent;
+    font-weight: bold;
+    font-size: 15px;
+}
+
 QTMSettingGroup QTMSettingCheckbox,
-QTMSettingGroup QTMSettingSelect {
+QTMSettingGroup QTMSettingSelect,
+QTMSettingGroup QTMSettingWrapper,
+QTMSettingGroup QTMSettingTitle
+{
     background: transparent;
     border-bottom: 1px solid #4A4A4A;
     margin: 0px;
@@ -1037,13 +1042,16 @@ QTabBar#mainTabWindowTabs[tmSingleTab="true"]::tab:selected {
 }
 
 QTabBar#mainTabWindowTabs #closebutton {
-    color: rgba(255, 0, 0, 0.4);
+    color: rgba(255, 255, 255, 0.3);
     background-color: transparent;
     border: none;
 }
 
-QTabWidget#mainTabWindowTabs[tmTabDragHover="true"] QTabBar::tab {
-    background-color: rgba(255, 0, 0, 0.5);
+QTabBar#mainTabWindowTabs #closebutton:hover {
+    color: rgba(255, 0, 0, 0.3);
+    background-color: rgba(255, 0, 0, 0.1);
+    border: 1px solid rgba(255, 0, 0, 0.3);
+    border-radius: 3px;
 }
 
 QTabWidget#mainTabWindowTabs::pane {

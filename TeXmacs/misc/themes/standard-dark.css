@@ -4,7 +4,7 @@
 ****************************************************************************/
 
 QWidget {
-    background: #404040;
+    /* background: #404040; */
     color: #e0e0e0;
     font-size: 14px;
     icon-size: 16px;
@@ -963,8 +963,17 @@ QTMSettingGroup QWidget#setting-group-refreshable-root {
     background: transparent;
 }
 
+QTMSettingTitle QLabel {
+    background: transparent;
+    font-weight: bold;
+    font-size: 15px;
+}
+
 QTMSettingGroup QTMSettingCheckbox,
-QTMSettingGroup QTMSettingSelect {
+QTMSettingGroup QTMSettingSelect,
+QTMSettingGroup QTMSettingWrapper,
+QTMSettingGroup QTMSettingTitle
+{
     background: transparent;
     border-bottom: 1px solid #4A4A4A;
     margin: 0px;
