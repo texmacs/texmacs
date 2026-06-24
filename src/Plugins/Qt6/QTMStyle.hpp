@@ -13,6 +13,7 @@
 #define QTMSTYLE_HPP
 
 #include <QStyle>
+#include <QPointer>
 
 int qt_zoom (int sz);
 
@@ -30,15 +31,15 @@ class QTMProxyStyle: public QStyle {
   Q_OBJECT
   
 protected:
-  QStyle* base;
+  QPointer<QStyle> base;
   
 public:
-  explicit QTMProxyStyle (QStyle* _base = NULL);
+  explicit QTMProxyStyle (QPointer<QStyle> _base = NULL);
   
-  QStyle *baseStyle() const;
+  QPointer<QStyle> baseStyle() const;
   
 #if (QT_VERSION < 0x046000)
-  const QStyle * proxy () const { return this; }
+  const QPointer<QStyle> proxy () const { return this; }
 #endif  
   
 #if (QT_VERSION >= 0x050000)
@@ -77,7 +78,7 @@ class QTMStyle: public QTMProxyStyle {
   Q_OBJECT
   
 public:
-  QTMStyle (QStyle* _style = NULL): QTMProxyStyle (_style) { }
+  QTMStyle (QPointer<QStyle> _style = NULL): QTMProxyStyle (_style) { }
   
   void drawComplexControl (ComplexControl control, const QStyleOptionComplex* option, QPainter* painter, const QWidget* widget = 0) const;
   void drawPrimitive (PrimitiveElement element, const QStyleOption *option, QPainter *painter, const QWidget *widget) const;
