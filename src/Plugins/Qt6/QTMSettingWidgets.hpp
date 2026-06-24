@@ -80,6 +80,30 @@ private:
   QPointer<QComboBox> mCombo;
 };
 
+class QTMSettingTitle : public QWidget {
+  Q_OBJECT
+
+public:
+  explicit QTMSettingTitle(QWidget* parent = nullptr);
+  void setTitleText(const QString& text);
+
+private:
+  QPointer<QBoxLayout> mLayout;
+  QPointer<QLabel> mLabel;
+
+};
+
+class QTMSettingWrapper : public QWidget {
+  Q_OBJECT
+
+public:
+  explicit QTMSettingWrapper(QWidget *wrapped, QWidget* parent = nullptr);
+
+private:
+  QPointer<QBoxLayout> mLayout;
+  QPointer<QWidget> mWrapped;
+};
+
 class QTMSettingGroup : public QWidget {
   Q_OBJECT
   Q_PROPERTY(int outerMargin READ outerMargin WRITE setOuterMargin)
@@ -93,7 +117,7 @@ public:
   void setOuterMargin(int margin);
 
 private:
-  QPointer<QLabel> mTitle;
+  QPointer<QTMSettingTitle> mTitle;
   QPointer<QWidget> mWrap;
   QPointer<QVBoxLayout> mOuterLayout;
   QPointer<QVBoxLayout> mLayout;

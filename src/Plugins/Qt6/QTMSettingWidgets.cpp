@@ -9,6 +9,7 @@ QTMSwitchControl::QTMSwitchControl(QWidget* parent) : QAbstractButton(parent) {
   setCheckable(true);
   setFixedSize(50, 28);
   setCursor(Qt::PointingHandCursor);
+  setProperty("isSettingWidget", true);
 }
 
 void QTMSwitchControl::paintEvent(QPaintEvent*) {
@@ -37,6 +38,7 @@ void QTMSwitchControl::paintEvent(QPaintEvent*) {
 QTMSettingCheckbox::QTMSettingCheckbox(QWidget* parent) : QWidget(parent) {
   setAttribute(Qt::WA_StyledBackground, true); 
   setCursor(Qt::PointingHandCursor);
+  setProperty("isSettingWidget", true);
 
   mLayout = new QBoxLayout(QBoxLayout::LeftToRight, this);
 
@@ -99,13 +101,25 @@ void QTMSettingCheckbox::updateResponsiveLayout() {
   }
 }
 
+
+class MyComboBox : public QComboBox {
+public:
+  using QComboBox::QComboBox;
+  QSize sizeHint() const override {
+    QSize size = QComboBox::sizeHint();
+    size.setWidth(size.width() + 32);
+    return size;
+  }
+};
+
 QTMSettingSelect::QTMSettingSelect(QWidget* parent) : QWidget(parent) {
   setAttribute(Qt::WA_StyledBackground, true); 
+  setProperty("isSettingWidget", true);
   mLayout = new QBoxLayout(QBoxLayout::LeftToRight, this);
 
   mLabel = new QLabel(this);
 
-  mCombo = new QComboBox(this);
+  mCombo = new MyComboBox(this);
   if (mCombo) mCombo->setCursor(Qt::PointingHandCursor);
   if (mCombo) mCombo->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 
@@ -180,10 +194,39 @@ void QTMSettingSelect::updateResponsiveLayout() {
   }
 }
 
+QTMSettingTitle::QTMSettingTitle(QWidget* parent) : QWidget(parent) {
+  setAttribute(Qt::WA_StyledBackground, true); 
+  setProperty("isSettingWidget", true);
+
+  mLayout = new QBoxLayout(QBoxLayout::LeftToRight, this);
+  mLabel = new QLabel(this);
+  mLabel->setObjectName("setting-title-label");
+  mLayout->addWidget(mLabel);
+}
+
+void QTMSettingTitle::setTitleText(const QString& text) {
+  if (!mLabel) return;
+  mLabel->setText(text);
+}
+
+QTMSettingWrapper::QTMSettingWrapper(QWidget *wrapped, QWidget* parent) : QWidget(parent) {
+  setAttribute(Qt::WA_StyledBackground, true); 
+  setProperty("isSettingWidget", true);
+
+  mLayout = new QBoxLayout(QBoxLayout::LeftToRight, this);
+  mWrapped = wrapped;
+  if (mWrapped) {
+    mWrapped->setParent(this);
+    mLayout->addWidget(mWrapped);
+  }
+}
+
 QTMSettingGroup::QTMSettingGroup(QWidget* parent)
   : QWidget(parent), mOuterMargin(10), mContentItems(0) {
   setAttribute(Qt::WA_StyledBackground, true);
   setObjectName("setting-group");
+
+  setProperty("stretchToTop", true);
 
   mOuterLayout = new QVBoxLayout(this);
   mOuterLayout->setSpacing(0);
@@ -194,8 +237,9 @@ QTMSettingGroup::QTMSettingGroup(QWidget* parent)
   mOuterLayout->addWidget(mWrap);
 
   mLayout = new QVBoxLayout(mWrap);
-  mTitle = new QLabel(mWrap);
+  mTitle = new QTMSettingTitle(mWrap);
   mTitle->setObjectName("setting-group-title");
+
 
   mLayout->setSpacing(0);
   mLayout->setContentsMargins(0, 0, 0, 0);
@@ -217,7 +261,9 @@ void QTMSettingGroup::setOuterMargin(int margin) {
 
 void QTMSettingGroup::setTitleText(const QString& text) {
   if (!mTitle) return;
-  mTitle->setText(text);
+  QString formattedText = text;
+  formattedText.replace(" -> ", " → ");
+  mTitle->setTitleText(formattedText);
 }
 
 void QTMSettingGroup::addItem(QLayoutItem* item) {
@@ -225,12 +271,21 @@ void QTMSettingGroup::addItem(QLayoutItem* item) {
   if (QWidget* widget = item->widget()) {
     if (widget->parentWidget() != contentWidget())
       widget->setParent(contentWidget());
-    mLayout->addItem(item);
+    
+    // is this a setting widget ? if not, we need to add a padding
+    if (!widget->property("isSettingWidget").toBool()) {
+      mLayout->addWidget(new QTMSettingWrapper(widget, contentWidget()));
+    } else {
+      mLayout->addItem(item);
+    }
   }
   else if (QLayout* layout = item->layout()) {
-    mLayout->addLayout(layout);
+    QWidget* container = new QWidget(contentWidget());
+    container->setLayout(layout);
+    mLayout->addWidget(new QTMSettingWrapper(container, contentWidget()));
   }
   else {
+    // todo
     mLayout->addItem(item);
   }
 

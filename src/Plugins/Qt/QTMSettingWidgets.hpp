@@ -5,6 +5,7 @@
 #include <QLabel>
 #include <QAbstractButton>
 #include <QComboBox>
+#include <QBoxLayout>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QPointer>
@@ -34,8 +35,13 @@ signals:
 
 protected:
   void mouseReleaseEvent(QMouseEvent* event) override;
+  void resizeEvent(QResizeEvent* event) override;
 
 private:
+  void updateResponsiveLayout();
+
+private:
+  QPointer<QBoxLayout> mLayout;
   QPointer<QLabel> mLabel;
   QPointer<QTMSwitchControl> mSwitch;
 };
@@ -62,9 +68,40 @@ public:
 signals:
   void currentIndexChanged(int index);
 
+protected:
+  void resizeEvent(QResizeEvent* event) override;
+
 private:
+  void updateResponsiveLayout();
+
+private:
+  QPointer<QBoxLayout> mLayout;
   QPointer<QLabel> mLabel;
   QPointer<QComboBox> mCombo;
+};
+
+class QTMSettingTitle : public QWidget {
+  Q_OBJECT
+
+public:
+  explicit QTMSettingTitle(QWidget* parent = nullptr);
+  void setTitleText(const QString& text);
+
+private:
+  QPointer<QBoxLayout> mLayout;
+  QPointer<QLabel> mLabel;
+
+};
+
+class QTMSettingWrapper : public QWidget {
+  Q_OBJECT
+
+public:
+  explicit QTMSettingWrapper(QWidget *wrapped, QWidget* parent = nullptr);
+
+private:
+  QPointer<QBoxLayout> mLayout;
+  QPointer<QWidget> mWrapped;
 };
 
 class QTMSettingGroup : public QWidget {
@@ -80,7 +117,7 @@ public:
   void setOuterMargin(int margin);
 
 private:
-  QPointer<QLabel> mTitle;
+  QPointer<QTMSettingTitle> mTitle;
   QPointer<QWidget> mWrap;
   QPointer<QVBoxLayout> mOuterLayout;
   QPointer<QVBoxLayout> mLayout;
