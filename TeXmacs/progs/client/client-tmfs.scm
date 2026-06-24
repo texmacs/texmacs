@@ -387,6 +387,10 @@
             (lambda (err)
               (set-message err "save remote file")))))))
 
+(tmfs-autosave-handler (remote-file name suf)
+  ;;(display* "AUTOSAVE ") (write name) (display* "\n")
+  (url-backup (url-glue name suf)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Remote directories
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
