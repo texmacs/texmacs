@@ -1,60 +1,20 @@
 
 /******************************************************************************
- * MODULE     : cpp_language.cpp
- * DESCRIPTION: the "cpp" language
- * COPYRIGHT  : (C) 2008  Francis Jamet
- *******************************************************************************
- * This software falls under the GNU general public license and comes WITHOUT
- * ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
- * If you don't have this file, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
- ******************************************************************************/
+* MODULE     : cpp_language.cpp
+* DESCRIPTION: the "cpp" language
+* COPYRIGHT  : (C) 2008  Francis Jamet
+*******************************************************************************
+* This software falls under the GNU general public license and comes WITHOUT
+* ANY WARRANTY WHATSOEVER. See the file $TEXMACS_PATH/LICENSE for more details.
+* If you don't have this file, write to the Free Software Foundation, Inc.,
+* 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+******************************************************************************/
 
 #include "analyze.hpp"
 #include "impl_language.hpp"
 #include "scheme.hpp"
 
 extern tree the_et;
-
-/*
- static bool
- is_line (tree t) {
- path p= obtain_ip (t);
- if (is_nil (p) || last_item (p) < 0) return false;
- tree pt= subtree (the_et, reverse (p->next));
- if (!is_func (pt, DOCUMENT)) return false;
- return true;
- }
-
-static int
-line_number (tree t) {
-  path p= obtain_ip (t);
-  if (is_nil (p) || last_item (p) < 0) return -1;
-  tree pt= subtree (the_et, reverse (p->next));
-  if (!is_func (pt, DOCUMENT)) return -1;
-  return p->item;
-}
-
-static int
-number_of_lines (tree t) {
-  path p= obtain_ip (t);
-  if (is_nil (p) || last_item (p) < 0) return -1;
-  tree pt= subtree (the_et, reverse (p->next));
-  if (!is_func (pt, DOCUMENT)) return -1;
-  return N(pt);
-}
-
-static tree
-line_inc (tree t, int i) {
-  if (i == 0) return t;
-  path p= obtain_ip (t);
-  if (is_nil (p) || last_item (p) < 0) return tree (ERROR);
-  tree pt= subtree (the_et, reverse (p->next));
-  if (!is_func (pt, DOCUMENT)) return tree (ERROR);
-  if ((p->item + i < 0) || (p->item + i >= N(pt))) return tree (ERROR);
-  return pt[p->item + i];
-}
- */
 
 static void parse_number (string s, int& pos);
 static void parse_string (string s, int& pos);
@@ -105,7 +65,8 @@ cpp_language_rep::hyphenate (string s, int after, string& left, string& right) {
 
 static void
 cpp_color_setup_constants (hashmap<string, string> & t) {
-  string c= "constant";
+  //string c= "constant";
+  string c= "constant-color";
   t ("true")= c;
   t ("false")= c;
   t ("cout")= c;
@@ -122,7 +83,8 @@ cpp_color_setup_constants (hashmap<string, string> & t) {
 
 static void
 cpp_color_setup_keywords (hashmap<string, string> & t)  {
-  string c= "keyword";
+  //string c= "keyword";
+  string c= "keyword-color";
   t ("asm")= c;
   t ("auto")= c;
   t ("break")= c;
@@ -183,7 +145,8 @@ cpp_color_setup_keywords (hashmap<string, string> & t)  {
 
 static void
 cpp_color_setup_types (hashmap<string, string> & t) {
-  string c= "constant_type";
+  //string c= "constant_type";
+  string c= "defined-color";
   t ("bool")= c;
   t ("char")= c;
   t ("double")= c;
@@ -224,22 +187,40 @@ cpp_color_setup_types (hashmap<string, string> & t) {
 
 static void
 cpp_color_setup_otherlexeme (hashmap<string, string>& t) {
-  string c= "black";
+  //string c= "black";
+  string c= "operator-color";
   t ("+")= c;
   t ("-")= c;
+  t ("*")= c;
   t ("/")= c;
-  t ("=")= c;
-  t (".")= c;
+  t ("%")= c;
+  t ("|")= c;
+  t ("&")= c;
+  t ("^")= c;
+  t ("<less><less>")= c;
+  t ("<gtr><gtr>")= c;
+  t ("==")= c;
+  t ("!=")= c;
   t ("<less>")= c;
   t ("gtr")= c;
-  t ("|")= c;
+  t ("<less>=")= c;
+  t ("<gtr>=")= c;
+  t ("&&")= c;
+  t ("||")= c;
   t ("!")= c;
-  t ("...")= c;
-  t (",")= c;
   t ("+=")= c;
   t ("-=")= c;
   t ("*=")= c;
   t ("/=")= c;
+  t ("%=")= c;
+  t ("|=")= c;
+  t ("&=")= c;
+  t ("^=")= c;
+  t ("=")= c;
+  t (":")= c;
+  t ("::")= c;
+  t (".")= c;
+  t ("-<gtr>")= c;
   t (",")= c;
   t (";")= c;
   t ("(")= c;
@@ -248,15 +229,7 @@ cpp_color_setup_otherlexeme (hashmap<string, string>& t) {
   t ("]")= c;
   t ("{")= c;
   t ("}")= c;
-  t ("<less><less>")= c;
-  t ("<gtr><gtr>")= c;
-  t ("<less>=")= c;
-  t ("==")= c;
-  t ("<gtr>=")= c;
-  t ("&&")= c;
-  t ("||")= c;
-  t ("!=")= c;
-  
+  t ("...")= c;  
 }
 
 static inline bool
@@ -316,7 +289,7 @@ parse_string (string s, int& pos) {
 }
 
 static void
-parse_keyword (hashmap<string,string>& t, string s, int& pos) {
+parse_cpp_keyword (hashmap<string,string>& t, string s, int& pos) {
   int i= pos;
   if (pos >= N(s) || is_number (s[i])) return;
   while (i < N(s) && belongs_to_identifier (s[i])) i++;
@@ -325,7 +298,7 @@ parse_keyword (hashmap<string,string>& t, string s, int& pos) {
 }
 
 static void
-parse_type (hashmap<string,string>& t, string s, int& pos) {
+parse_cpp_type (hashmap<string,string>& t, string s, int& pos) {
   int i= pos;
   if (pos >= N(s) || is_number (s[i])) return;
   while (i < N(s) && belongs_to_identifier (s[i])) i++;
@@ -334,7 +307,7 @@ parse_type (hashmap<string,string>& t, string s, int& pos) {
 }
 
 static void
-parse_constant (hashmap<string,string>& t, string s, int& pos) {
+parse_cpp_constant (hashmap<string,string>& t, string s, int& pos) {
   int i= pos;
   if (pos >= N(s) || is_number (s[i])) return;
   while (i < N(s) && belongs_to_identifier (s[i])) i++;
@@ -534,7 +507,8 @@ cpp_language_rep::get_color (tree t, int start, int end) {
   static string none= "";
   if (start >= end) return none;
   if (in_cpp_comment (start, t))
-    return decode_color ("cpp", encode_color ("comment"));
+    //return decode_color ("cpp", encode_color ("comment"));
+    return "comment-color";
   string s= t->label;
   int  pos= 0;
   int opos= 0;
@@ -559,9 +533,10 @@ cpp_language_rep::get_color (tree t, int start, int end) {
         pos++;
       } while (false);
     } while (pos <= start);
-    if (type == "preprocessor_directive")
-      decode_color("cpp", encode_color (type));
-    return decode_color("cpp", encode_color("preprocessor"));
+    //if (type == "preprocessor_directive")
+    //  decode_color("cpp", encode_color (type));
+    //return decode_color("cpp", encode_color("preprocessor"));
+    return "preprocessor-color";
   }
   pos= 0;
   do {
@@ -573,35 +548,44 @@ cpp_language_rep::get_color (tree t, int start, int end) {
         break;
       parse_string (s, pos);
       if (opos < pos) {
-        type= "constant_string";
+        //type= "constant_string";
+        type= "string-color";
         break;
       }
       parse_comment_single_line (s, pos);
       if (opos < pos) {
-        type= "comment";
+        //type= "comment";
+        type= "comment-color";
         break;
       }
-      parse_keyword (colored, s, pos);
+      parse_cpp_keyword (colored, s, pos);
       if (opos < pos) {
-        type= "keyword";
+        //type= "keyword";
+        //type= "keyword-color";
+        type= colored [s (opos, pos)];
         break;
       }
-      parse_type (colored, s, pos);
+      parse_cpp_type (colored, s, pos);
       if (opos < pos) {
-        type= "constant_type";
+        //type= "constant_type";
+        type= "defined-color";
         break;
       }
       parse_other_lexeme (colored, s, pos);  //not left parenthesis
-      if (opos < pos)
-        break;
-      parse_constant (colored, s, pos);
       if (opos < pos) {
-        type= "constant";
+        type= "operator-color";
+        break;
+      }
+      parse_cpp_constant (colored, s, pos);
+      if (opos < pos) {
+        //type= "constant";
+        type= "constant-color";
         break;
       }
       parse_number (s, pos);
       if (opos < pos) {
-        type= "constant_number";
+        //type= "constant_number";
+        type= "number-color";
         break;
       }
       parse_identifier (colored, s, pos);
@@ -611,5 +595,6 @@ cpp_language_rep::get_color (tree t, int start, int end) {
     } while (false);
   } while (pos <= start);
   if (type == none) return none;
-  return decode_color ("cpp", encode_color (type));
+  //return decode_color ("cpp", encode_color (type));
+  return type;
 }

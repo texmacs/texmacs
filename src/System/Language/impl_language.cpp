@@ -2,6 +2,7 @@
 /******************************************************************************
 * MODULE     : impl_language.cpp
 * COPYRIGHT  : (C) 2019-2020  Darcy Shen
+*              (C) 2008  Francis Jamet
 *******************************************************************************
 * This software falls under the GNU general public license version 3 or later.
 * It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
