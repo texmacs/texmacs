@@ -20,6 +20,7 @@
 #include <QPainterPath>
 #include <QMainWindow>
 #include <QApplication>
+#include <QPointer>
 
 int
 qt_zoom (int sz) {
@@ -41,10 +42,13 @@ qtmstyle () {
  * QTMProxyStyle (does not own *style)
  ******************************************************************************/
 
-QTMProxyStyle::QTMProxyStyle (QStyle* _base) : QStyle (), base (_base) { }
+QTMProxyStyle::QTMProxyStyle (QPointer<QStyle> _base) : QStyle (), base (_base) { }
 
-inline  QStyle *QTMProxyStyle::baseStyle() const {
-  return ( base ? base : qApp->style() );
+inline  QPointer<QStyle> QTMProxyStyle::baseStyle() const {
+  if (base) return base;
+  if (qApp && qApp->style()) return qApp->style();
+  std_warning << "QTMProxyStyle::baseStyle() returning nullptr, this should not happen";
+  return nullptr;
 }
 
 #if (QT_VERSION >= 0x050000)
@@ -60,112 +64,168 @@ QTMProxyStyle::layoutSpacing (QSizePolicy::ControlType control1,
 
 void
 QTMProxyStyle::drawComplexControl (ComplexControl control, const QStyleOptionComplex* option, QPainter* painter, const QWidget* widget) const {
-  baseStyle()->drawComplexControl (control, option, painter, widget);
+  if (QPointer<QStyle> style = baseStyle()) {
+    style->drawComplexControl (control, option, painter, widget);
+  }
 }
 
 void
 QTMProxyStyle::drawControl (ControlElement element, const QStyleOption* option, QPainter* painter, const QWidget* widget) const {
-  baseStyle()->drawControl (element, option, painter, widget);
+  if (QPointer<QStyle> style = baseStyle()) {
+    style->drawControl (element, option, painter, widget);
+  }
 }
 
 void
 QTMProxyStyle::drawItemPixmap (QPainter* painter, const QRect& rect, int alignment, const QPixmap& pixmap) const {
-  baseStyle()->drawItemPixmap (painter, rect, alignment, pixmap);
+  if (QPointer<QStyle> style = baseStyle()) {
+    style->drawItemPixmap (painter, rect, alignment, pixmap);
+  }
 }
 
 void
 QTMProxyStyle::drawItemText (QPainter* painter, const QRect& rect, int alignment, const QPalette& pal, bool enabled, const QString& text, QPalette::ColorRole textRole) const {
-  baseStyle()->drawItemText (painter, rect, alignment, pal, enabled, text, textRole);
+  if (QPointer<QStyle> style = baseStyle()) {
+    style->drawItemText (painter, rect, alignment, pal, enabled, text, textRole);
+  }
 }
 
 void
 QTMProxyStyle::drawPrimitive (PrimitiveElement elem, const QStyleOption* option, QPainter* painter, const QWidget* widget) const {
-  baseStyle()->drawPrimitive (elem, option, painter, widget);
+  if (QPointer<QStyle> style = baseStyle()) {
+    style->drawPrimitive (elem, option, painter, widget);
+  }
 }
 
 QPixmap
 QTMProxyStyle::generatedIconPixmap (QIcon::Mode iconMode, const QPixmap& pixmap, const QStyleOption* option) const {
-  return baseStyle()->generatedIconPixmap (iconMode, pixmap, option);
+  if (QPointer<QStyle> style = baseStyle()) {
+    return style->generatedIconPixmap (iconMode, pixmap, option);
+  }
+  return QPixmap();
 }
 
 QStyle::SubControl
 QTMProxyStyle::hitTestComplexControl (ComplexControl control, const QStyleOptionComplex* option, const QPoint& pos, const QWidget* widget) const {
-  return baseStyle()->hitTestComplexControl (control, option, pos, widget);
+  if (QPointer<QStyle> style = baseStyle()) {
+    return style->hitTestComplexControl (control, option, pos, widget);
+  }
+  return QStyle::SC_None;
 }
 
 QRect
 QTMProxyStyle::itemPixmapRect (const QRect& rect, int alignment, const QPixmap& pixmap) const {
-  return baseStyle()->itemPixmapRect (rect, alignment, pixmap);
+  if (QPointer<QStyle> style = baseStyle()) {
+    return style->itemPixmapRect (rect, alignment, pixmap);
+  }
+  return QRect();
 }
 
 QRect
 QTMProxyStyle::itemTextRect (const QFontMetrics& metrics, const QRect& rect, int alignment, bool enabled, const QString& text) const {
-  return baseStyle()->itemTextRect (metrics, rect, alignment, enabled, text);
+  if (QPointer<QStyle> style = baseStyle()) {
+    return style->itemTextRect (metrics, rect, alignment, enabled, text);
+  }
+  return QRect();
 }
 
 int
 QTMProxyStyle::pixelMetric (PixelMetric metric, const QStyleOption* option, const QWidget* widget) const {
-  return baseStyle()->pixelMetric (metric, option, widget);
+  if (QPointer<QStyle> style = baseStyle()) {
+    return style->pixelMetric (metric, option, widget);
+  }
+  return 0;
 }
 
 void
 QTMProxyStyle::polish (QWidget* widget) {
-  baseStyle()->polish (widget);
+  if (QPointer<QStyle> style = baseStyle()) {
+    style->polish (widget);
+  }
 }
 
 void
 QTMProxyStyle::polish (QApplication* app) {
-  baseStyle()->polish (app);
+  if (QPointer<QStyle> style = baseStyle()) {
+    style->polish (app);
+  }
 }
 
 void
 QTMProxyStyle::polish (QPalette& pal) {
-  baseStyle()->polish (pal);
+  if (QPointer<QStyle> style = baseStyle()) {
+    style->polish (pal);
+  }
 }
 
 QSize
 QTMProxyStyle::sizeFromContents (ContentsType type, const QStyleOption* option, const QSize& contentsSize, const QWidget* widget) const {
-  return baseStyle()->sizeFromContents (type, option, contentsSize, widget);
+  if (QPointer<QStyle> style = baseStyle()) {
+    return style->sizeFromContents (type, option, contentsSize, widget);
+  }
+  return QSize();
 }
 
 QIcon
 QTMProxyStyle::standardIcon (StandardPixmap standardIcon, const QStyleOption* option, const QWidget* widget) const {
-  return baseStyle()->standardIcon (standardIcon, option, widget);
+  if (QPointer<QStyle> style = baseStyle()) {
+    return style->standardIcon (standardIcon, option, widget);
+  }
+  return QIcon();
 }
 
 QPalette
 QTMProxyStyle::standardPalette () const {
-  return baseStyle()->standardPalette ();
+  if (QPointer<QStyle> style = baseStyle()) {
+    return style->standardPalette ();
+  }
+  return QPalette();
 }
 
 QPixmap
 QTMProxyStyle::standardPixmap (StandardPixmap standardPixmap, const QStyleOption* option, const QWidget* widget) const {
-  return baseStyle()->standardPixmap (standardPixmap, option, widget);
+  if (QPointer<QStyle> style = baseStyle()) {
+    return style->standardPixmap (standardPixmap, option, widget);
+  }
+  return QPixmap();
 }
 
 int
 QTMProxyStyle::styleHint (StyleHint hint, const QStyleOption* option, const QWidget* widget, QStyleHintReturn* returnData) const {
-  return baseStyle()->styleHint (hint, option, widget, returnData);
+  if (QPointer<QStyle> style = baseStyle()) {
+    return style->styleHint (hint, option, widget, returnData);
+  }
+  return 0;
 }
 
 QRect
 QTMProxyStyle::subControlRect (ComplexControl control, const QStyleOptionComplex* option, SubControl subControl, const QWidget* widget) const {
-  return baseStyle()->subControlRect (control, option, subControl, widget);
+  if (QPointer<QStyle> style = baseStyle()) {
+    return style->subControlRect (control, option, subControl, widget);
+  }
+  return QRect();
 }
 
 QRect
 QTMProxyStyle::subElementRect (SubElement element, const QStyleOption* option, const QWidget* widget) const {
-  return baseStyle()->subElementRect (element, option, widget);
+  if (QPointer<QStyle> style = baseStyle()) {
+    return style->subElementRect (element, option, widget);
+  }
+  return QRect();
 }
 
 void
 QTMProxyStyle::unpolish (QWidget* widget) {
-  baseStyle()->unpolish (widget);
+  if (QPointer<QStyle> style = baseStyle()) {
+    style->unpolish (widget);
+  }
 }
 
 void
 QTMProxyStyle::unpolish (QApplication* app) {
-  baseStyle()->unpolish (app);
+  if (QPointer<QStyle> style = baseStyle()) {
+    style->unpolish (app);
+  }
 }
 
 
