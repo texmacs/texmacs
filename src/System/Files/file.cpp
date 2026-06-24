@@ -440,6 +440,22 @@ is_scratch (url u) {
   return head (u) == url ("$TEXMACS_HOME_PATH/texts/scratch");
 }
 
+url
+url_backup (url u) {
+  url dir ("$TEXMACS_HOME_PATH/texts/backup");
+  int h= hash (u->t);
+  string name= basename (u) * "-" * as_hexadecimal (h);
+  string suf = suffix (u);
+  url name_u= name;
+  if (suf != "") name_u= glue (name_u, "." * suf);
+  return dir * name_u;
+}
+
+bool
+is_backup (url u) {
+  return head (u) == url ("$TEXMACS_HOME_PATH/texts/backup");
+}
+
 string
 file_format (url u) {
   if (is_rooted_tmfs (u))

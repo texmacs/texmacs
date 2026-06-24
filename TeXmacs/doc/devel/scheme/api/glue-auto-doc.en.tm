@@ -155,6 +155,22 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(gui-set-next-window-as-popup)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|gui_set_next_window_as_popup> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
+    <scm|(support-functionality? <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|support_functionality> which returns
+    <scm|bool>.
+  </explain>
+
+  <\explain>
     <scm|(gui-version)>
 <explain-synopsis|no synopsis>
   <|explain>
@@ -4447,6 +4463,22 @@ source code.
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|is_scratch> which returns
+    <scm|bool>.
+  </explain>
+
+  <\explain>
+    <scm|(url-backup <scm-arg|url>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|url_backup> which returns
+    <scm|url>.
+  </explain>
+
+  <\explain>
+    <scm|(url-backup? <scm-arg|url>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|is_backup> which returns
     <scm|bool>.
   </explain>
 
