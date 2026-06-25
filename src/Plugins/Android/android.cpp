@@ -25,6 +25,7 @@
 #include <QStringList>
 #include <QDebug>
 #include <QDirIterator>
+#include <QTimer>
 
 #include <libguile.h>
 
