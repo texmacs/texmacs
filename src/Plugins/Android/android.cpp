@@ -82,28 +82,30 @@ void android_extract_from_asset(QString asset_path)
 }
 
 void start_android_service() {
-#ifdef Q_OS_ANDROID
-    QJniObject activity = QJniObject::callStaticObjectMethod("org/qtproject/qt/android/QtNative", "activity", "()Landroid/app/Activity;");
-    if (activity.isValid()) {
-        QJniObject intent("android/content/Intent");
-        QJniObject className = QJniObject::fromString("org.texmacs.TexmacsService");
-        
-        intent.callObjectMethod(
-            "setClassName", 
-            "(Landroid/content/Context;Ljava/lang/String;)Landroid/content/Intent;", 
-            activity.object(), 
-            className.object<jstring>()
-        );
-                          
-        QJniObject::callStaticMethod<void>(
-            "androidx/core/content/ContextCompat", 
-            "startForegroundService", 
-            "(Landroid/content/Context;Landroid/content/Intent;)V", 
-            activity.object(), 
-            intent.object()
-        );
-    }
-#endif
+  QJniObject activity = QJniObject::callStaticObjectMethod("org/qtproject/qt/android/QtNative", "activity", "()Landroid/app/Activity;");
+  if (!activity.isValid()) {
+    QTimer::singleShot(1000, []() { 
+      std_warning << "Cannot start Android service: activity is not valid\n";
+    });
+    return;
+  }
+  QJniObject intent("android/content/Intent");
+  QJniObject className = QJniObject::fromString("org.texmacs.TexmacsService");
+  
+  intent.callObjectMethod(
+      "setClassName", 
+      "(Landroid/content/Context;Ljava/lang/String;)Landroid/content/Intent;", 
+      activity.object(), 
+      className.object<jstring>()
+  );
+                    
+  QJniObject::callStaticMethod<void>(
+      "androidx/core/content/ContextCompat", 
+      "startForegroundService", 
+      "(Landroid/content/Context;Landroid/content/Intent;)V", 
+      activity.object(), 
+      intent.object()
+  );
 }
 
 void init_android()
