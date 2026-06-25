@@ -754,7 +754,6 @@ texmacs_entrypoint (int argc, char** argv) {
 #ifdef QTTEXMACS
   if (!headless_mode) {
     string scaling = get_user_preference ("gui scaling");
-    cout << "scaling: " << scaling << LF;
     if (scaling != "default" && scaling != "")
       set_env ("QT_SCALE_FACTOR", scaling);
 #if QT_VERSION >= 0x060000
