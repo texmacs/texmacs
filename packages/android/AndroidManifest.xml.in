@@ -11,7 +11,6 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-
     <uses-permission android:name="android.permission.MANAGE_DOCUMENTS" />
     
     <supports-screens 
@@ -19,6 +18,7 @@
         android:largeScreens="true"
         android:normalScreens="true"
         android:smallScreens="true" />
+
     <application
         android:name="org.qtproject.qt.android.bindings.QtApplication"
         android:hardwareAccelerated="true"
@@ -41,12 +41,18 @@
         </activity>
 
         <activity
+            android:name=".ExtractionActivity"
+            android:configChanges="orientation|screenSize"
+            android:exported="false" />
+
+        <activity
             android:name="org.qtproject.qt.android.bindings.QtActivity"
             android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|layoutDirection|locale|fontScale|keyboard|keyboardHidden|navigation|mcc|mnc|density"
             android:launchMode="singleTop"
             android:screenOrientation="unspecified"
             android:label="TeXmacs"
-            android:exported="false"> <meta-data android:name="android.app.lib_name" android:value="TeXmacsLauncher"/>
+            android:exported="false">
+                <meta-data android:name="android.app.lib_name" android:value="TeXmacsLauncher"/>
         </activity>
 
         <provider
@@ -63,5 +69,6 @@
             android:name="org.texmacs.TexmacsService"
             android:exported="false"
             android:foregroundServiceType="dataSync" />
+            
     </application>
 </manifest>
