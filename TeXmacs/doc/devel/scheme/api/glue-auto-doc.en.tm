@@ -3947,6 +3947,22 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(json-\<gtr\>tree <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|json_to_tree> which returns
+    <scm|tree>.
+  </explain>
+
+  <\explain>
+    <scm|(tree-\<gtr\>json <scm-arg|content>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|tree_to_json> which returns
+    <scm|string>.
+  </explain>
+
+  <\explain>
     <scm|(url-\<gtr\>url <scm-arg|url>)>
 <explain-synopsis|no synopsis>
   <|explain>
