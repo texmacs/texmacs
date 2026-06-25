@@ -434,12 +434,14 @@ ollama_output (string val, string model, string chat) {
   int end= search_forwards ("\",\"done\":", pos, val);
   if (end < 0) return "";
   string r= ai_unquote (val (pos, end));
+  r= replace (r, "\r\n", "\n");
   r= replace (r, "`\\u003c", "<");
   r= replace (r, "\\u003e`", ">");
   r= replace (r, "\\u0026", "&");
   r= replace (r, "\\u003c", "<");
   r= replace (r, "\\u003e", ">");
-  if (occurs ("u003cbodyu003e", r)) {
+  if (occurs ("u003cbodyu003e", r) ||
+      occurs ("u003cdiv id=", r)) {
     r= replace (r, "u003c", "<");
     r= replace (r, "u003e", ">");
   }
