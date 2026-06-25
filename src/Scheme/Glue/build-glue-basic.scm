@@ -553,6 +553,8 @@
   (cpp-ai-chat ai_chat (string string string string))
   (cpp-ai-correct ai_correct (tree content string string))
   (cpp-ai-translate ai_translate (tree content string string string))
+  (json->tree json_to_tree (tree string))
+  (tree->json tree_to_json (string content))
 
   ;; routines for urls
   (url->url url (url url))
