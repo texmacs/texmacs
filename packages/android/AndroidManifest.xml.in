@@ -47,7 +47,7 @@
             android:screenOrientation="unspecified"
             android:label="TeXmacs"
             android:exported="false"> <meta-data android:name="android.app.lib_name" android:value="TeXmacsLauncher"/>
-    </activity>
+        </activity>
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -58,5 +58,10 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/qtprovider_paths"/>
         </provider>
+
+        <service
+            android:name="org.texmacs.TexmacsService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
     </application>
 </manifest>
