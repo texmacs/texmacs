@@ -111,6 +111,6 @@ void start_android_service() {
 
 void init_android()
 {
-  android_extract_from_asset(QDir::homePath());
+  // android_extract_from_asset(QDir::homePath());
   start_android_service();
 }

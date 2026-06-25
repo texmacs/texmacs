@@ -45,7 +45,7 @@ public class PermissionsActivity extends Activity {
         super.onCreate(savedInstanceState);
 
         if (hasNotificationPermission() && hasStoragePermission()) {
-            launchQtApp();
+            launchExtractionActivity();
             return;
         }
 
@@ -125,7 +125,7 @@ public class PermissionsActivity extends Activity {
         setMargins(btnLaunch, 0, 80, 0, 0);
         btnLaunch.setOnClickListener(v -> {
             if (hasNotificationPermission() && hasStoragePermission()) {
-                launchQtApp();
+                launchExtractionActivity();
             }
         });
         rootLayout.addView(btnLaunch);
@@ -171,7 +171,7 @@ public class PermissionsActivity extends Activity {
         if (!isLaunching) {
             updateUI();
             if (hasNotificationPermission() && hasStoragePermission()) {
-                launchQtApp();
+                launchExtractionActivity();
             }
         }
     }
@@ -182,7 +182,7 @@ public class PermissionsActivity extends Activity {
         // Triggered immediately after standard permission popups
         updateUI();
         if (hasNotificationPermission() && hasStoragePermission()) {
-            launchQtApp();
+            launchExtractionActivity();
         }
     }
 
@@ -263,11 +263,11 @@ public class PermissionsActivity extends Activity {
         }
     }
 
-    private void launchQtApp() {
+    private void launchExtractionActivity() {
         if (isLaunching) return;
         isLaunching = true;
 
-        Intent intent = new Intent(this, org.qtproject.qt.android.bindings.QtActivity.class);
+        Intent intent = new Intent(this, ExtractionActivity.class);
         if (getIntent() != null && getIntent().getExtras() != null) {
             intent.putExtras(getIntent().getExtras());
         }
