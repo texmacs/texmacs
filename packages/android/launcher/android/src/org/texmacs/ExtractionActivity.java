@@ -132,12 +132,13 @@ public class ExtractionActivity extends Activity {
                     // Mise à jour de l'UI (le nom du fichier)
                     final int currentProgress = (int) (((i + 1) / (float) totalFiles) * 100);
                     final String currentFile = filename;
+                    int finalI = i;
                     handler.post(() -> {
                         progressBar.setProgress(currentProgress);
-                        textStatus.setText("Extraction en cours (" + (i + 1) + "/" + totalFiles + ")");
+                        textStatus.setText("Extraction en cours (" + (finalI + 1) + "/" + totalFiles + ")");
                         textFilename.setText(currentFile);
                     });
-
+                    
                     // Copie physique du fichier
                     extractSingleFile(id, filename);
                 }
