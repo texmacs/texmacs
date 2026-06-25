@@ -103,62 +103,66 @@ public class ExtractionActivity extends Activity {
 
         executor.execute(() -> {
             try {
-                // 1. Lire le fichier de mapping
                 InputStream is = getAssets().open("raw/resource_files.txt");
                 BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-                
+
                 List<String> lines = new ArrayList<>();
                 String line;
                 while ((line = reader.readLine()) != null) {
                     if (!line.trim().isEmpty()) {
-                        lines.add(line);
+                        lines.add(line.trim());
                     }
                 }
                 reader.close();
 
                 int totalFiles = lines.size();
+                android.util.Log.i("TeXmacsExtract", "Fichier resource_files.txt lu. Nombre de lignes : " + totalFiles);
+
                 if (totalFiles == 0) {
-                    throw new Exception("resource_files.txt est vide.");
+                    throw new Exception("resource_files.txt est vide ou introuvable.");
                 }
 
-                // 2. Extraire les fichiers un par un
+                int filesExtracted = 0;
+
                 for (int i = 0; i < totalFiles; i++) {
-                    String[] parts = lines.get(i).split(" ");
-                    if (parts.length != 3) continue;
+                    String[] parts = lines.get(i).split("\\s+");
+
+                    if (parts.length < 2) {
+                        android.util.Log.w("TeXmacsExtract", "Ligne mal formatée ignorée : '" + lines.get(i) + "'");
+                        continue;
+                    }
 
                     String id = parts[0];
-                    String filename = parts[1]; // Chemin relatif attendu
+                    String filename = parts[1];
 
-                    // Mise à jour de l'UI (le nom du fichier)
                     final int currentProgress = (int) (((i + 1) / (float) totalFiles) * 100);
-                    final String currentFile = filename;
                     int finalI = i;
                     handler.post(() -> {
                         progressBar.setProgress(currentProgress);
-                        textStatus.setText("Extraction en cours (" + (finalI + 1) + "/" + totalFiles + ")");
-                        textFilename.setText(currentFile);
+                        textStatus.setText("Extraction (" + (finalI + 1) + "/" + totalFiles + ")");
+                        textFilename.setText(filename);
                     });
-                    
-                    // Copie physique du fichier
+
                     extractSingleFile(id, filename);
+                    filesExtracted++;
                 }
 
-                // 3. Terminé avec succès
+                android.util.Log.i("TeXmacsExtract", "Extraction terminée. Fichiers extraits : " + filesExtracted);
+
                 handler.post(() -> {
                     progressBar.setProgress(100);
                     textStatus.setText("Extraction terminée !");
-                    textFilename.setText("Lancement en cours...");
                     launchNextActivity();
                 });
 
             } catch (Exception e) {
                 e.printStackTrace();
+                android.util.Log.e("TeXmacsExtract", "CRASH PENDANT L'EXTRACTION", e);
                 final String errorMsg = e.getMessage();
                 handler.post(() -> {
                     textStatus.setText("Erreur d'extraction");
                     textStatus.setTextColor(Color.RED);
                     textFilename.setText(errorMsg);
-                    Toast.makeText(ExtractionActivity.this, "Erreur critique : " + errorMsg, Toast.LENGTH_LONG).show();
                 });
             }
         });
