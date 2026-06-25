@@ -1,4 +1,4 @@
-<TeXmacs|2.1.2>
+<TeXmacs|2.1.5>
 
 <style|<tuple|source|std>>
 
@@ -671,7 +671,11 @@
 
   <assign|version-old|<macro|old|new|<render-old|<arg|old>>>>
 
+  <assign|version-old|<macro|old|new|<on-event|focus|<render-old|<arg|old>>|display-balloon|<quote-arg|old>|<with|preview-bg-color|<blend|#fffd|<value|new-version-color>>|<small|<preview-balloon|<render-new|<arg|new>>>>>|left|Bottom|keyboard>>>
+
   <assign|version-new|<macro|old|new|<render-new|<arg|new>>>>
+
+  <assign|version-new|<macro|old|new|<on-event|focus|<render-new|<arg|new>>|display-balloon|<quote-arg|new>|<with|preview-bg-color|<blend|#fffd|<value|old-version-color>>|<small|<preview-balloon|<render-old|<arg|old>>>>>|left|Bottom|keyboard>>>
 
   <assign|version-both-small|<macro|old|new|<render-old|<arg|old>><render-new|<arg|new>>>>
 
