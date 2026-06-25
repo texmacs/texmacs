@@ -68,6 +68,7 @@ edit_interface_rep::edit_interface_rep ():
   zpixel (max ((SI) tm_round (std_shrinkf * PIXEL), pixel)),
   copy_always (),
   last_x (0), last_y (0), last_t (0),
+  last_scx (0), last_scy (0),
   tremble_count (0), tremble_right (false),
   table_selection (false), mouse_adjusting (false),
   oc (0, 0), temp_invalid_cursor (false),
@@ -732,7 +733,7 @@ edit_interface_rep::apply_changes () {
     }
     //cout << "Tremble- " << tremble_count << LF;
   }
-  
+
   if (env_change == 0) {
     if (last_change-last_update > 0 &&
         idle_time (INTERRUPTED_EVENT) >= 1000/6)
@@ -1015,7 +1016,12 @@ edit_interface_rep::apply_changes () {
         invalidate (alt_selection_rects[i] & visible);
     }
   }
-  
+
+  SI ser_scx, ser_scy;
+  SERVER (scroll_where (ser_scx, ser_scy));
+  bool sc_changed= ser_scx != last_scx || ser_scy != last_scy;
+  last_scx= ser_scx; last_scy= ser_scy;
+
   // cout << "Handling locus highlighting\n";
   if (env_change & (THE_TREE+THE_ENVIRONMENT+THE_EXTENTS)) {
     update_mouse_loci ();
@@ -1023,7 +1029,8 @@ edit_interface_rep::apply_changes () {
     if (!is_nil (focus_ids) && got_focus)
       call ("link-follow-ids", object (focus_ids), object ("focus"));
   }
-  else if (env_change & THE_SELECTION) {
+  else if ((env_change & (THE_TREE+THE_CURSOR+THE_SELECTION)) ||
+           sc_changed) {
     update_focus_loci ();
     call ("close-tooltip");
     if (!is_nil (focus_ids) && got_focus)
