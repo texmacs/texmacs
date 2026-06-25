@@ -54,6 +54,7 @@ protected:
   time_t        last_t;
   SI            start_x, start_y;
   SI            end_x, end_y;
+  SI            last_scx, last_scy;
   int           tremble_count;
   bool          tremble_right;
   bool          table_selection;
