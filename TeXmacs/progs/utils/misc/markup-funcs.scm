@@ -203,3 +203,23 @@
          (table ,@(map (lambda (row) (ext-listing-row body row))
                        (.. 0 (tm-arity body)))))
       body))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Spell checking
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define (ext-correction t)
+  (with i (with p (tree->path t) (if p (cAr p) 0))
+    `(row (cell (show-key ,(number->string (+ i 1))))
+          (cell ,t))))
+
+(tm-define (ext-corrections t)
+  (:secure #t)
+  `(tformat
+    (twith "table-valign" "T")
+    (cwith "1" "-1" "1" "1" "cell-halign" "r")
+    (cwith "1" "-1" "1" "1" "cell-lsep" "0em")
+    (cwith "1" "-1" "1" "1" "cell-rsep" "0em")
+    (cwith "1" "-1" "2" "2" "cell-halign" "l")
+    (cwith "1" "-1" "2" "2" "cell-rsep" "0em")
+    (table ,@(map ext-correction (tree-children t)))))
