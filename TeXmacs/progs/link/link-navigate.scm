@@ -618,6 +618,9 @@
     (set! the-navigation-list #f)
     (navigation-item-follow hit)))
 
+(define (filter-on-focus nl)
+  (list-filter nl (lambda (ni) (== (car ni) "focus"))))
+
 (tm-define (navigation-list-follow nl)
   (:synopsis "Follow one of the links in the navigation list @nl")
   (with types (navigation-list-types nl)
@@ -626,6 +629,10 @@
           (set! nl (list-difference nl auto-nl))))
     (with xtypes (navigation-list-xtypes nl)
       (cond ((null? xtypes) (noop))
+            ((and (in? "focus" xtypes) (nnull? (filter-on-focus nl)))
+             (with nl* (filter-on-focus nl)
+               (for-each navigation-item-follow nl*)
+               (navigation-list-follow (list-difference nl nl*))))
             ((and (navigation-build-link-pages?) (>= (length nl) 2))
              (id-set-visited (navigation-source (car nl)))
              (build-navigation-page nl))
