@@ -35,6 +35,10 @@
 #include <QLabel>
 #include <QTimer>
 
+#ifdef OS_ANDROID
+#include "android.hpp"
+#endif
+
 #if defined(OS_MINGW)
 #include <dwmapi.h> 
 #include <windowsx.h>
@@ -260,6 +264,21 @@ void QTMMainTabWindow::closeEvent(QCloseEvent *event) {
   // Allow real close when the window is already empty.
   if (mStackedLayout == nullptr || mStackedLayout->count() == 0) {
     event->accept();
+#ifdef OS_ANDROID
+    // todo : move this somewhere else, to avoid spaghetti code
+    bool hasOtherTabWindows = false;
+    for (QWidget *widget : QApplication::topLevelWidgets()) {
+      QTMMainTabWindow *tabWindow = qobject_cast<QTMMainTabWindow *>(widget);
+      if (tabWindow && tabWindow != this) {
+        hasOtherTabWindows = true;
+        break;
+      }
+    }
+    if (!hasOtherTabWindows) {
+      stop_android_service();
+      QTimer::singleShot(100, qApp, &QCoreApplication::quit);
+    }
+#endif
     return;
   }
 
