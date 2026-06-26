@@ -489,7 +489,7 @@
   (:secure #t)
   (when (== (tm->stree type) "select")
     (mouse-toggle-button t cmd)
-    (close-tooltip)))
+    (close-tooltips)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Confirming gap input
