@@ -17,4 +17,16 @@
  */
 void init_android();
 
+/*
+ * @brief Start the android background service. This function will start 
+ * the service if it is not already running.
+ */
+void start_android_service();
+
+/*
+ * @brief Stop the android background service. This function will stop 
+ * the service if it is running.
+ */
+void stop_android_service();
+
 #endif
