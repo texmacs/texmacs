@@ -14,6 +14,8 @@
 #include "Boxes/construct.hpp"
 #include "analyze.hpp"
 
+path the_editor_path ();
+
 /******************************************************************************
 * Case boxes
 ******************************************************************************/
@@ -107,6 +109,12 @@ case_box_rep::satisfies (tree t, tree cond) {
   }
   if (t == cond || cond == "any") return true;
   if (cond == "mouse-over") return entered;
+  if (cond == "focus") {
+    path cp= is_nil (ip)? ip: (ip->item < 0? ip->next: ip);
+    cp= reverse (cp);
+    bool r= (cp < path_up (the_editor_path ()));
+    return r;
+  }
   return false;
 }
 

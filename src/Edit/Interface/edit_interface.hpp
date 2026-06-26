@@ -153,6 +153,7 @@ public:
   rectangle get_window_extents ();
 
   /* keyboard handling */
+  bool keyboard_message (string message);
   int  get_input_mode ();
   void set_input_mode (int mode);
   void set_input_normal ();
