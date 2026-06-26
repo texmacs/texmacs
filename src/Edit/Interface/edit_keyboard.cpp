@@ -349,6 +349,18 @@ edit_interface_rep::kbd_shortcut (string cmd) {
 * Event handlers
 ******************************************************************************/
 
+bool
+edit_interface_rep::keyboard_message (string message) {
+  rectangles rs;
+  tree r= eb->message ("kbd-release", oc->ox, oc->oy, rs);
+  if (N(rs) != 0) invalidate (rs);
+  bool changed= (r != "");
+  cursor cu= get_cursor ();
+  r= eb->message (message, cu->ox, cu->oy, rs);
+  if (N(rs) != 0) invalidate (rs);
+  return changed || r != "";
+}
+
 void
 edit_interface_rep::handle_keypress (string key, time_t t) {
   if (is_nil (buf)) return;
@@ -394,6 +406,7 @@ edit_interface_rep::handle_keypress (string key, time_t t) {
       call ("link-follow-ids", object (focus_ids), object ("focus"));
     notify_change (THE_DECORATIONS);
     end_editing ();
+    keyboard_message ("kbd-" * key);
     //time_t t2= texmacs_time ();
     //if (t2 - t1 >= 10) cout << "handle_keypress took " << t2-t1 << "ms\n";
 #ifdef USE_EXCEPTIONS

@@ -495,6 +495,11 @@ edit_main_rep::the_shifted_path () {
   return shift (et, tp, 1);
 }
 
+path
+the_editor_path () {
+  return get_current_editor()->the_path ();
+}
+
 /******************************************************************************
 * Miscellaneous
 ******************************************************************************/
