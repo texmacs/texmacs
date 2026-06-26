@@ -177,7 +177,6 @@
 (lazy-define (texmacs menus file-menu) recent-file-list recent-directory-list)
 (lazy-define (texmacs menus view-menu) set-bottom-bar test-bottom-bar?)
 (lazy-tool (texmacs menus preferences-tools) preferences-tool)
-(lazy-tool (texmacs menus view-tools) retina-settings-tool)
 (tm-define (notify-set-attachment name key val) (noop))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 ;(display* "memory: " (texmacs-memory) " bytes\n")
