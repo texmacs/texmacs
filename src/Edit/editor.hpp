@@ -649,6 +649,7 @@ public:
 EXTEND_NULL_CODE(widget,editor);
 
 editor new_editor (server_rep* sv, tm_buffer buf);
+path the_editor_path ();
 
 #define SERVER(cmd) {                 \
   url temp= get_current_view_safe (); \
