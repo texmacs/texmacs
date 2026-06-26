@@ -53,7 +53,7 @@
                (when (string? cmd)
                  ;;(display* "gui-on-select " cmd "\n")
                  (secure-eval (string->object cmd)))
-               (close-tooltip))
+               (close-tooltips))
              (update-menus)
              "done"))))
 
@@ -295,7 +295,7 @@
                (cmd (string-append "(with answer '" (object->string sel)
                                    " " c ")")))
           (focus-on-canvas)
-          (close-tooltip)
+          (close-tooltips)
           (tree-set (tree-ref u 1) new)
           (when (tree-in? u :up '(input-popup input-list))
             (tree-set (tree-ref u :up 3) new))
@@ -351,7 +351,7 @@
     (secure-eval (string->object cmd*))
     (delayed
       (:pause 25)
-      (close-tooltip)
+      (close-tooltips)
       (update-menus))))
 
 (tm-define (keyboard-press key time)

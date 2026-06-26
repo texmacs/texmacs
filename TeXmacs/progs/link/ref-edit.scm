@@ -466,6 +466,6 @@
                     (set-message `(concat (verbatim ,id1) " <rightarrow> "
                                           (verbatim ,id2)) "")))
                 (begin
-                  (close-tooltip)
+                  (close-tooltips)
                   (set-message "" "")))))))))
 

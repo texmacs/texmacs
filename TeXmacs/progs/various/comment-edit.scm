@@ -307,7 +307,7 @@
       (if tip
           (show-tooltip id (cursor-tree) tip
                         "auto" "auto" "keyboard" 0.7)
-          (close-tooltip)))))
+          (close-tooltips)))))
 
 (tm-define (mouse-event key x y mods time data)
   (with before? (behind-folded-comment?)
