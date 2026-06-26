@@ -109,6 +109,38 @@ void start_android_service() {
   );
 }
 
+void stop_android_service() {
+  QJniObject activity = QJniObject::callStaticObjectMethod("org/qtproject/qt/android/QtNative", "activity", "()Landroid/app/Activity;");
+  if (!activity.isValid()) {
+    QTimer::singleShot(1000, []() { 
+      std_warning << "Cannot stop Android service: activity is not valid\n";
+    });
+    return;
+  }
+  
+  QJniObject intent("android/content/Intent");
+  QJniObject className = QJniObject::fromString("org.texmacs.TexmacsService");
+  
+  // Configuration de l'Intent avec la classe du service
+  intent.callObjectMethod(
+      "setClassName", 
+      "(Landroid/content/Context;Ljava/lang/String;)Landroid/content/Intent;", 
+      activity.object(), 
+      className.object<jstring>()
+  );
+                    
+  // Appel de stopService(Intent) sur l'Activity (qui hérite de Context)
+  jboolean stopped = activity.callMethod<jboolean>(
+      "stopService", 
+      "(Landroid/content/Intent;)Z", 
+      intent.object()
+  );
+  
+  if (!stopped) {
+      std_warning << "Service was not running or could not be stopped.\n";
+  }
+}
+
 void init_android()
 {
   // android_extract_from_asset(QDir::homePath());

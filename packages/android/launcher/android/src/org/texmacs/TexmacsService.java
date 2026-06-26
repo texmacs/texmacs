@@ -75,7 +75,7 @@ public class TexmacsService extends Service {
             // Arrête le service
             stopSelf();
             
-            // android.os.Process.killProcess(android.os.Process.myPid());
+            android.os.Process.killProcess(android.os.Process.myPid());
             
             return START_NOT_STICKY;
         }

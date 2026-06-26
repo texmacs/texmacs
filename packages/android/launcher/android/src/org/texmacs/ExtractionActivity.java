@@ -140,7 +140,11 @@ public class ExtractionActivity extends Activity {
                     handler.post(() -> {
                         progressBar.setProgress(currentProgress);
                         textStatus.setText("Extraction (" + (finalI + 1) + "/" + totalFiles + ")");
-                        textFilename.setText(filename);
+                        if (filename.length() > 40) {
+                            textFilename.setText("..." + filename.substring(filename.length() - 40));
+                        } else {
+                            textFilename.setText(filename);
+                        }
                     });
 
                     extractSingleFile(id, filename);
