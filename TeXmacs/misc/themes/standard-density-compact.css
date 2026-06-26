@@ -33,3 +33,7 @@ QMainWindow::separator {
 #statusBar > * {
     padding: 2px;
 }
+
+QTMSettingGroup {
+    qproperty-outerMargin: 1;
+}
