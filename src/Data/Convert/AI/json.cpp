@@ -102,6 +102,7 @@ json_parse_array (string s, int& pos, int mode) {
     t << json_parse (s, pos, mode);
     json_skip (s, pos);
   }
+  if (pos < N(s) && s[pos] == ']') pos++;
   return t;
 }
 
@@ -126,6 +127,7 @@ json_parse_object (string s, int& pos, int mode) {
       json_skip (s, pos);
     }
   }
+  if (pos < N(s) && s[pos] == '}') pos++;
   return t;
 }
 
