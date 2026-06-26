@@ -1,7 +1,9 @@
 package org.texmacs;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -20,6 +22,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -34,6 +37,8 @@ public class ExtractionActivity extends Activity {
     // Chemin de base où extraire les fichiers (à adapter selon les besoins de TeXmacs)
     // getFilesDir() pointe vers /data/user/0/org.texmacs/files/
     private String destBasePath;
+
+    private static final String PREFS_NAME = "TeXmacsAssetsMD5";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,27 +121,46 @@ public class ExtractionActivity extends Activity {
                 reader.close();
 
                 int totalFiles = lines.size();
-                android.util.Log.i("TeXmacsExtract", "Fichier resource_files.txt lu. Nombre de lignes : " + totalFiles);
 
                 if (totalFiles == 0) {
                     throw new Exception("resource_files.txt est vide ou introuvable.");
                 }
 
                 int filesExtracted = 0;
+                int filesSkipped = 0;
+
+                SharedPreferences prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+                SharedPreferences.Editor editor = prefs.edit();
 
                 for (int i = 0; i < totalFiles; i++) {
                     String[] parts = lines.get(i).split("\\s+");
 
-                    if (parts.length < 2) {
+                    if (parts.length < 3) {
                         android.util.Log.w("TeXmacsExtract", "Ligne mal formatée ignorée : '" + lines.get(i) + "'");
                         continue;
                     }
 
                     String id = parts[0];
                     String filename = parts[1];
+                    String expectedMd5 = parts[2];
 
                     final int currentProgress = (int) (((i + 1) / (float) totalFiles) * 100);
                     int finalI = i;
+
+                    File outFile = new File(destBasePath + filename);
+                    String storedMd5 = prefs.getString(filename, "");
+                    if (outFile.exists() && storedMd5.equals(expectedMd5)) {
+                        filesSkipped++;
+                        if (i % 50 == 0 || i == totalFiles - 1) {
+                            handler.post(() -> {
+                                progressBar.setProgress(currentProgress);
+                                textStatus.setText("Vérification (" + (finalI + 1) + "/" + totalFiles + ")");
+                            });
+                        }
+                        continue;
+                    }
+
+
                     handler.post(() -> {
                         progressBar.setProgress(currentProgress);
                         textStatus.setText("Extraction (" + (finalI + 1) + "/" + totalFiles + ")");
@@ -149,7 +173,11 @@ public class ExtractionActivity extends Activity {
 
                     extractSingleFile(id, filename);
                     filesExtracted++;
+
+                    editor.putString(filename, expectedMd5);
                 }
+
+                editor.apply();
 
                 android.util.Log.i("TeXmacsExtract", "Extraction terminée. Fichiers extraits : " + filesExtracted);
 
