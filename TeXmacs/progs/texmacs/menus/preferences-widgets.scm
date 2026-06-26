@@ -37,6 +37,39 @@
       (notify-restart))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Retina settings
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (get-retina-preference which)
+  (if (cpp-has-preference? which)
+      (get-preference which)
+      (cond ((== which "retina-scale")
+             (cond ((== (get-retina-scale) 1.0) "1")
+                   ((== (get-retina-scale) 2.0) "2")
+                   (else (number->string (get-retina-scale)))))
+            (else ""))))
+
+(tm-define (set-retina-preference which val)
+  (set-preference which val))
+
+(tm-define (get-retina-boolean-preference which)
+  (if (cpp-has-preference? which)
+      (preference-on? which)
+      (cond ((== which "retina-factor") (== (get-retina-factor) 2))
+            ((== which "retina-zoom") (== (get-retina-zoom) 2))
+            ((== which "retina-icons") (== (get-retina-icons) 2))
+            (else #f))))
+
+(tm-define (set-retina-boolean-preference which on?)
+  (set-retina-preference which (if on? "on" "off")))
+
+(tm-define (reset-retina-preferences)
+  (reset-preference "retina-factor")
+  (reset-preference "retina-zoom")
+  (reset-preference "retina-icons")
+  (reset-preference "retina-scale"))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Appearance preferences
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -90,7 +123,8 @@
     (set-preference "gui theme" "default")))
 
 (tm-widget (general-preferences-widget)
-  (setting-group "General"
+  ;; --- Groupe 1 : Apparence globale ---
+  (setting-group "Appearance"
     (setting-enum (set-pretty-preference* "look and feel" answer)
                   "Look and feel"
                   '("Default" "Emacs" "Gnome" "KDE" "Mac OS" "Windows")
@@ -101,6 +135,16 @@
                   (map upcase-first supported-languages)
                   (get-pretty-preference "language")
                   "18em")
+    (setting-enum (set-pretty-preference* "gui theme" answer)
+                  "User interface theme"
+                  (if qt6-or-later-gui?
+                      '("Default" "Bright" "Dark" "")
+                      '("Default" "Bright" "Dark" "Native" "Legacy" ""))
+                  (get-pretty-preference "gui theme")
+                  "18em"))
+
+  ;; --- Groupe 2 : Comportement et menus ---
+  (setting-group "Interaction"
     (setting-enum (set-pretty-preference "complex actions" answer)
                   "Complex actions"
                   '("Through the menus" "Through popup windows")
@@ -121,32 +165,38 @@
                   '("Documents in separate windows"
                     "Multiple documents share window")
                   (get-pretty-preference "buffer management")
-                  "18em")
-    (setting-enum (set-pretty-preference* "gui theme" answer)
-                  "User interface theme"
-                  (if qt6-or-later-gui?
-                      '("Default" "Bright" "Dark" "")
-                      '("Default" "Bright" "Dark" "Native" "Legacy" ""))
-                  (get-pretty-preference "gui theme")
-            "18em")
+                  "18em"))
+
+  ;; --- Groupe 3 : Tailles, densité et écrans haute résolution ---
+  (setting-group "Scaling and Display"
     (if (support-functionality? "density")
       (setting-enum (set-pretty-preference "gui density" answer)
-              "Interface density"
-              '("Compact" "Normal" "Large")
-              (get-pretty-preference "gui density")
-            "18em")
+                    "Interface density"
+                    '("Compact" "Normal" "Large")
+                    (get-pretty-preference "gui density")
+                    "18em")
     )
     (setting-enum (set-pretty-preference "gui:responsive tab mode" answer)
-      "Responsive tabs default mode"
-      '("Top tabs" "Side tabs" "Mobile list")
-      (get-pretty-preference "gui:responsive tab mode")
-              "18em")
+                  "Responsive tabs default mode"
+                  '("Top tabs" "Side tabs" "Mobile list")
+                  (get-pretty-preference "gui:responsive tab mode")
+                  "18em")
     (setting-enum (set-pretty-preference "gui scaling" answer)
-      "Interface scaling"
-      '("default", "0.25", "0.5", "1", "2", "3")
-      (get-pretty-preference "gui scaling")
-              "18em")
-    ) ; setting-group
+                  "Interface scaling"
+                  '("default" "0.25" "0.5" "1" "2" "3")
+                  (get-pretty-preference "gui scaling")
+                  "18em")
+    (if (qt5-gui?)
+      (setting-toggle (set-retina-boolean-preference "retina-factor" answer)
+                      "Use retina fonts"
+                      (get-retina-boolean-preference "retina-factor"))
+    )
+    (if (qt5-gui?)
+      (setting-toggle (set-retina-boolean-preference "retina-icons" answer)
+                      "Use retina icons"
+                      (get-retina-boolean-preference "retina-icons"))
+    )
+  ) ; setting-group
 ) ; tm-widget
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
