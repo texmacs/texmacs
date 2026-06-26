@@ -613,7 +613,9 @@
 
   <assign|preview-bg-color|#edc>
 
-  <assign|preview-balloon|<macro|body|<tabular|<tformat|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-background|<value|preview-bg-color>>|<twith|table-width|40em>|<twith|table-hmode|min>|<cwith|1|1|1|1|cell-lsep|1spc>|<cwith|1|1|1|1|cell-rsep|1spc>|<cwith|1|1|1|1|cell-bsep|1spc>|<cwith|1|1|1|1|cell-tsep|1spc>|<table|<row|<\cell>
+  <assign|preview-padding|1spc>
+
+  <assign|preview-balloon|<macro|body|<tabular|<tformat|<cwith|1|1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-background|<value|preview-bg-color>>|<twith|table-width|40em>|<twith|table-hmode|min>|<cwith|1|1|1|1|cell-lsep|<value|preview-padding>>|<cwith|1|1|1|1|cell-rsep|<value|preview-padding>>|<cwith|1|1|1|1|cell-bsep|<value|preview-padding>>|<cwith|1|1|1|1|cell-tsep|<value|preview-padding>>|<table|<row|<\cell>
     <arg|body>
   </cell>>>>>>>
 
@@ -671,11 +673,11 @@
 
   <assign|version-old|<macro|old|new|<render-old|<arg|old>>>>
 
-  <assign|version-old|<macro|old|new|<on-event|focus|<render-old|<arg|old>>|display-balloon|<quote-arg|old>|<with|preview-bg-color|<blend|#fffd|<value|new-version-color>>|<small|<preview-balloon|<render-new|<arg|new>>>>>|left|Bottom|keyboard>>>
+  <assign|version-old|<macro|old|new|<on-event|focus|<render-old|<arg|old>>|display-balloon|<quote-arg|old>|<with|preview-bg-color|<blend|#fffd|<value|new-version-color>>|preview-padding|0.5spc|<small|<preview-balloon|<render-new|<arg|new>>>>>|left|BOTTOM|keyboard>>>
 
   <assign|version-new|<macro|old|new|<render-new|<arg|new>>>>
 
-  <assign|version-new|<macro|old|new|<on-event|focus|<render-new|<arg|new>>|display-balloon|<quote-arg|new>|<with|preview-bg-color|<blend|#fffd|<value|old-version-color>>|<small|<preview-balloon|<render-old|<arg|old>>>>>|left|Bottom|keyboard>>>
+  <assign|version-new|<macro|old|new|<on-event|focus|<render-new|<arg|new>>|display-balloon|<quote-arg|new>|<with|preview-bg-color|<blend|#fffd|<value|old-version-color>>|preview-padding|0.5spc|<small|<preview-balloon|<render-old|<arg|old>>>>>|left|BOTTOM|keyboard>>>
 
   <assign|version-both-small|<macro|old|new|<render-old|<arg|old>><render-new|<arg|new>>>>
 
@@ -688,6 +690,26 @@
   <assign|version-both|<macro|old|new|<compound|<if|<equal|<get-label|<arg|old>>|document>|version-both-big|version-both-small>|<arg|old>|<arg|new>>>>
 
   <assign|version-suppressed|<macro|<math|<op|\<times\>>>>>
+
+  <\active*>
+    <\src-comment>
+      Versions with errors, proposed corrections, and comments on the
+      corrections
+    </src-comment>
+  </active*>
+
+  <assign|version-comment|<macro|body|comment|<on-event|focus|<arg|body>|display-balloon|<quote-arg|body>|<small|<preview-balloon|<arg|comment>>>|left|TOP|keyboard>>>
+
+  <assign|version-error|<macro|body|msg|<on-event|focus|<arg|body>|display-balloon|<quote-arg|body>|<with|preview-bg-color|<blend|#fffb|orange>|preview-padding|0.5spc|<small|<preview-balloon|<with|color|<blend|#000d|orange>|<arg|msg>>>>>|left|TOP|keyboard>>>
+
+  <assign|show-key|<macro|key|<active*|<move|<small|<with|font-family|tt|<with|ornament-color|#e8e0d8|ornament-sunny-color|#f4f0ec|ornament-shadow-color|#d0c0b0|ornament-vpadding|2ln|ornament-border|2ln|ornament-hpadding|4ln|ornament-shape|rounded|ornament-corner|50%|<ornament|<compound|inflate|<with|color|dark
+  brown|<arg|key>>>>>>>||0.075ex>>>>
+
+  <assign|version-corrections|<xmacro|items|<extern|ext-corrections|<quote-arg|items>>>>
+
+  <drd-props|version-corrections|arity|<tuple|repeat|1|1>|accessible|all>
+
+  \;
 </body>
 
 <\initial>
