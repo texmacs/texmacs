@@ -1029,7 +1029,8 @@ edit_interface_rep::apply_changes () {
     if (!is_nil (focus_ids) && got_focus)
       call ("link-follow-ids", object (focus_ids), object ("focus"));
   }
-  else if ((env_change & (THE_TREE+THE_CURSOR+THE_SELECTION)) ||
+  else if ((env_change & (THE_CURSOR+THE_FOCUS+THE_SELECTION+
+                          THE_LOCUS+THE_TOOLTIP)) ||
            sc_changed) {
     update_focus_loci ();
     call ("close-tooltips");
