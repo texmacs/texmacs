@@ -121,7 +121,7 @@ converter_rep::load () {
     hashtree_from_dictionary (dic,"unicode-symbol-oneway", UTF8, BIT2BIT, true);
     ht = dic;
   }
-  if (from=="Strict-Cork" && to=="UTF-8" ) {
+  else if (from=="Strict-Cork" && to=="UTF-8" ) {
     hashtree<char,string> dic;
     hashtree_from_dictionary (dic,"corktounicode", BIT2BIT, UTF8, false);
     hashtree_from_dictionary (dic,"cork-unicode-oneway", BIT2BIT, UTF8, false);
@@ -326,6 +326,23 @@ utf8_to_cork (string input) {
     string s= input (start, i);
     string r= apply (conv, s);
     if (r == s && code >= 256)
+      r= "<#" * as_hexadecimal (code) * ">";
+    output << r;
+  }
+  return output;
+}
+
+string
+var_utf8_to_cork (string input) {
+  converter conv= load_converter ("UTF-8", "Cork");
+  int start, i, n= N(input);
+  string output;
+  for (i=0; i<n; ) {
+    start= i;
+    unsigned int code= decode_from_utf8 (input, i);
+    string s= input (start, i);
+    string r= apply (conv, s);
+    if ((r == s && code >= 256) || (code >= 0x2018 && code <= 0x201D))
       r= "<#" * as_hexadecimal (code) * ">";
     output << r;
   }
