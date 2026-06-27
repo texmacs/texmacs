@@ -137,6 +137,20 @@
 (tm-define (go-to-previous-tag-same-argument lab)
   (go-to-same-buffer (lambda (t p) (path-previous-tag-same-argument t p lab))))
 
+(tm-define (go-to-next-tag-argument lab i)
+  (with-innermost t lab
+    (tree-go-to t :last :end))
+  (go-to-next-tag lab)
+  (with-innermost t lab
+    (tree-go-to t i :start)))
+
+(tm-define (go-to-previous-tag-argument lab i)
+  (with-innermost t lab
+    (tree-go-to t 0 :start))
+  (go-to-previous-tag lab)
+  (with-innermost t lab
+    (tree-go-to t i :end)))
+
 ; Hook for notifications of any cursor movement after it happens (mouse too)
 (tm-define (notify-cursor-moved status)
   (noop))
