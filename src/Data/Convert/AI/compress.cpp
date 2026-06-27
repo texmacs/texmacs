@@ -22,6 +22,9 @@ static hashmap<tree,string> compressed_code;
 
 tree html_as_compressed (string s, int& pos, string close, int mode);
 
+#define COMPRESS_LINE_FEEDS  1
+#define COMPRESS_SNIPPET     2
+
 /******************************************************************************
 * Compressing non-textual markup as trees
 ******************************************************************************/
@@ -111,10 +114,10 @@ compressed_as_html (string& s, tree t, int mode) {
   int i, n= N(t);
   if (is_document (t)) {
     for (i=0; i<n; i++) {
-      s << "<p>";
+      s << "<P>";
       compressed_as_html (s, t[i], mode);
-      s << "</p>";
-      if (i < (n-1) && mode != 0) s << "\n";
+      s << "</P>";
+      if (i < (n-1) && (mode & COMPRESS_LINE_FEEDS) != 0) s << "\n";
     }
   }
   else if (is_concat (t)) {
@@ -122,14 +125,14 @@ compressed_as_html (string& s, tree t, int mode) {
       compressed_as_html (s, t[i], mode);
   }
   else if (is_compound (t, "compressed", 1) && is_atomic (t[0]))
-    s << "<a id=\"" << t[0]->label << "\">";
+    s << "<A id=\"" << t[0]->label << "\">";
   else if (is_compound (t, "compressed") && N(t) > 1 && is_atomic (t[0])) {
     for (i=1; i<n; i++) {
-      s << "<div id=\"";
+      s << "<DIV id=\"";
       if (i > 1) s << "cont-";
       s << t[0]->label << "\">";
       compressed_as_html (s, t[i], mode);
-      s << "</div>";
+      s << "</DIV>";
     }
   }
 }
@@ -139,7 +142,8 @@ compress_html (tree t, int mode) {
   string r;
   tree c= compress_tree (t);
   compressed_as_html (r, c, mode);
-  return "<body>" * r * "</body>";
+  if ((mode & COMPRESS_SNIPPET) != 0) return r;
+  return "<BODY>" * r * "</BODY>";
 }
 
 /******************************************************************************
@@ -202,7 +206,7 @@ html_as_compressed (string s, int& pos, int mode) {
     r= replace (r, "&gt;", ">");
     r= replace (r, "&amp;", "&");
     r= html_to_utf8 (r);
-    r= utf8_to_cork (r);
+    r= var_utf8_to_cork (r);
     r= replace (r, "<varspace>", " ");
     r= replace (r, "<#202F>", " ");
     return r;
@@ -210,36 +214,36 @@ html_as_compressed (string s, int& pos, int mode) {
   string var, val;
   string tag= parse_html_tag (s, pos, var, val);
   //cout << "tag = " << tag << ", " << var << ", " << val << "\n";
-  if (tag == "body") {
+  if (tag == "BODY") {
     skip_html_space (s, pos);
-    tree r= html_as_compressed (s, pos, "</body>", mode);
+    tree r= html_as_compressed (s, pos, "</BODY>", mode);
     skip_html_space (s, pos);
     return r;
   }    
-  if (tag == "p") {
+  if (tag == "P") {
     tree doc (DOCUMENT);
-    doc << html_as_compressed (s, pos, "</p>", mode);
+    doc << html_as_compressed (s, pos, "</P>", mode);
     skip_html_space (s, pos);
-    while (test (s, pos, "<p>")) {
+    while (test (s, pos, "<P>")) {
       pos += 3;
       if (test (s, pos, "\\n")) skip_html_space (s, pos);
-      doc << html_as_compressed (s, pos, "</p>", mode);
+      doc << html_as_compressed (s, pos, "</P>", mode);
       skip_html_space (s, pos);
     }
     return doc;
   }
-  else if (tag == "a") {
+  else if (tag == "A") {
     if (var != "id") return "";
     return compound ("compressed", val);
   }
-  else if (tag == "div") {
+  else if (tag == "DIV") {
     if (var != "id") return "";
-    string cont= "<div id=\"cont-" * val * "\">";
+    string cont= "<DIV id=\"cont-" * val * "\">";
     tree r= compound ("compressed", val);
-    r << html_as_compressed (s, pos, "</div>", mode);
+    r << html_as_compressed (s, pos, "</DIV>", mode);
     while (test (s, pos, cont)) {
       pos += N(cont);
-      r << html_as_compressed (s, pos, "</div>", mode);
+      r << html_as_compressed (s, pos, "</DIV>", mode);
     }
     return r;
   }
