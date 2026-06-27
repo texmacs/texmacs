@@ -41,6 +41,7 @@
 #define THE_LOCUS ((int) 128)
 #define THE_MENUS ((int) 256)
 #define THE_FREEZE ((int) 512)
+#define THE_TOOLTIP ((int) 1024)
 
 class tm_buffer_rep;
 class tm_view_rep;
