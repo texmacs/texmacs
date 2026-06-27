@@ -260,3 +260,8 @@
 (tm-define (close-tooltips)
   (for (id (tooltip-ids))
     (close-tooltip id)))
+
+(tm-define (refresh-tooltips)
+  (delayed
+    (:idle 100)
+    (notify-change 1024)))
