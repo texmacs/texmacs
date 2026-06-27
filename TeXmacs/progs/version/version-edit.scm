@@ -76,17 +76,21 @@
 
 (tm-define (version-first-difference)
   (go-start)
-  (version-next-difference))
+  (version-next-difference)
+  (refresh-tooltips))
 
 (tm-define (version-previous-difference)
-  (go-to-previous-tag (group-resolve 'version-tag)))
+  (go-to-previous-tag (group-resolve 'xversion-tag))
+  (recenter-window))
 
 (tm-define (version-next-difference)
-  (go-to-next-tag (group-resolve 'version-tag)))
+  (go-to-next-tag (group-resolve 'xversion-tag))
+  (recenter-window))
 
 (tm-define (version-last-difference)
   (go-end)
-  (version-previous-difference))
+  (version-previous-difference)
+  (refresh-tooltips))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Switch between different visualizations
