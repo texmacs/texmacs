@@ -322,3 +322,15 @@ tree_to_json (tree t, int mode) {
   json_print (r, t, mode, 0);
   return r;
 }
+
+/******************************************************************************
+* Further JSON tools
+******************************************************************************/
+
+tree
+json_get (tree t, tree key, int mode) {
+  if (!is_func (t, ATTR)) return json_null (mode);
+  for (int i=0; i+1 < N(t); i += 2)
+    if (t[i] == key) return t[i+1];
+  return json_null (mode);
+}
