@@ -521,6 +521,7 @@
 "cpp-ai-translate"
 "json->tree"
 "tree->json"
+"lantool-correct"
 "url->url"
 "root->url"
 "string->url"

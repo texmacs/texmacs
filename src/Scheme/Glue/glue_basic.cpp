@@ -6710,6 +6710,21 @@ tmg_tree_2json (tmscm arg1) {
 }
 
 tmscm
+tmg_lantool_correct (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "lantool-correct");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "lantool-correct");
+
+  string in1= tmscm_to_string (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  string out= lantool_correct (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
 tmg_url_2url (tmscm arg1) {
   TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "url->url");
 
@@ -11334,6 +11349,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("cpp-ai-translate",  tmg_cpp_ai_translate, 4, 0, 0);
   tmscm_install_procedure ("json->tree",  tmg_json_2tree, 1, 0, 0);
   tmscm_install_procedure ("tree->json",  tmg_tree_2json, 1, 0, 0);
+  tmscm_install_procedure ("lantool-correct",  tmg_lantool_correct, 2, 0, 0);
   tmscm_install_procedure ("url->url",  tmg_url_2url, 1, 0, 0);
   tmscm_install_procedure ("root->url",  tmg_root_2url, 1, 0, 0);
   tmscm_install_procedure ("string->url",  tmg_string_2url, 1, 0, 0);

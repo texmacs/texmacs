@@ -18,3 +18,5 @@
 
 (define-group variant-tag (version-tag))
 (define-group similar-tag (version-tag))
+
+(define-group spell-tag spell-error)

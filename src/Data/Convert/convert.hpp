@@ -138,6 +138,7 @@ tree decompress_html (string s, int mode= 0);
 tree json_to_tree (string s, int mode= 0);
 string tree_to_json (tree t, int mode= 0);
 tree json_get (tree t, tree key, int mode= 0);
+string lantool_correct (string s, string out);
 string ai_command (string s, string model, string agent, string chat= "");
 string ai_output (string s, string model, string chat= "");
 string ai_latex_command (string s, string model, string chat= "");

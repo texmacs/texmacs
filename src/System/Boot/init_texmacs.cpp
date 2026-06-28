@@ -203,6 +203,7 @@ init_user_dirs () {
   make_dir ("$TEXMACS_HOME_PATH/langs/natural");
   make_dir ("$TEXMACS_HOME_PATH/langs/natural/dic");
   make_dir ("$TEXMACS_HOME_PATH/langs/natural/hyphen");
+  make_dir ("$TEXMACS_HOME_PATH/langs/natural/spell");
   make_dir ("$TEXMACS_HOME_PATH/langs/programming");
   make_dir ("$TEXMACS_HOME_PATH/misc");
   make_dir ("$TEXMACS_HOME_PATH/misc/patterns");
