@@ -193,6 +193,7 @@ tm_server_rep::interpose_handler () {
   perform_select ();
   exec_pending_commands ();
 #endif
+  async_eval_pending ();
 
   if (!headless_mode) {
     int i, j;

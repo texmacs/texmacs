@@ -403,6 +403,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(async-eval-system <scm-arg|string> <scm-arg|object>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|async_eval_system> which returns
+    <scm|bool>.
+  </explain>
+
+  <\explain>
     <scm|(get-locale-language)>
 <explain-synopsis|no synopsis>
   <|explain>
