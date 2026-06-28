@@ -107,11 +107,12 @@
           (let* ((html* (lantool-correct html out))
                  (repl (decompress-html html* 1))
                  (ok "The new version contains no errors."))
-            (when (not (tm-func? repl 'spell-error))
+            (when (null? (tm-search repl spell-context?))
               (set! repl `(spell-error ,repl ,(translate ok))))
-            (tree-remove! t 1 (- (tm-arity t) 1))
-            (tree-insert! t 1 (cdr (tm-children repl)))
-            (refresh-tooltips)))))))
+            (when (tm-func? repl 'spell-error)
+              (tree-remove! t 1 (- (tm-arity t) 1))
+              (tree-insert! t 1 (cdr (tm-children repl)))
+              (refresh-tooltips))))))))
 
 (tm-define (lantool-recheck)
   (with-innermost t spell-context?
