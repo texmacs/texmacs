@@ -3971,6 +3971,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(lantool-correct <scm-arg|string> <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|lantool_correct> which returns
+    <scm|string>.
+  </explain>
+
+  <\explain>
     <scm|(url-\<gtr\>url <scm-arg|url>)>
 <explain-synopsis|no synopsis>
   <|explain>
