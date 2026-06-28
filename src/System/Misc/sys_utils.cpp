@@ -242,3 +242,96 @@ tm_poll (struct tm_pollfd* fds, int nfds, int timeout_ms) {
   return ret;
 #endif
 }
+
+/******************************************************************************
+* Asynchroneous execution of commands
+******************************************************************************/
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+#include <string.h>
+#include "scheme.hpp"
+
+struct async_handle {
+  FILE*  fp;
+  object call_back;
+  bool   done;
+  char*  buf;
+  int    len;
+  int    cap;
+  async_handle (FILE* fp2, object call_back2):
+    fp (fp2), call_back (call_back2), done (false),
+    buf ((char*) malloc (4096)), len (0), cap (4096) {}
+};
+
+array<async_handle*> async_busy;
+
+void*
+async_read_output (void* arg) {
+  typedef FILE* FILEp;
+  typedef char* charp;
+  async_handle* handle= (async_handle*) arg;
+  FILEp& fp  = handle->fp;
+  bool&  done= handle->done;
+  charp& buf = handle->buf;
+  int&   len = handle->len;
+  int&   cap = handle->cap;
+
+  while (true) {
+    char buffer[4096];
+    int bytes_read;
+    bytes_read= fread (buffer, 1, sizeof (buffer), fp);
+    if (bytes_read <= 0) break;
+    if (bytes_read + len > cap) {
+      char* buf2= (char*) malloc (2 * cap);
+      for (int i=0; i<len; i++) buf2[i]= buf[i];
+      free ((void*) buf);
+      buf= buf2;
+      cap= 2 * cap;
+    }
+    for (int i=0; i<bytes_read; i++)
+      buf[len+i]= buffer[i];
+    len += bytes_read;
+  }
+
+  pclose (fp);
+  fp  = NULL;
+  done= true;
+  return NULL;
+}
+
+bool
+async_eval_system (string cmd, object call_back) {
+  int i, n= N(cmd);
+  char* cmd_= (char*) malloc (n+1);
+  for (i=0; i<n; i++) cmd_[i]= cmd[i];
+  cmd_[n]= '\0';
+
+  FILE *fp = popen (cmd_, "r");
+  if (!fp) return true;
+  async_handle* handle= tm_new<async_handle> (fp, call_back);
+  async_busy << handle;
+
+  pthread_t thread;
+  pthread_create (&thread, NULL, async_read_output, handle);
+  pthread_detach (thread);
+
+  free ((void*) cmd_);
+  return false;
+}
+
+void
+async_eval_pending () {
+  for (int i=0; i<N(async_busy); )
+    if (async_busy[i]->done) {
+      async_handle* handle= async_busy[i];
+      string out (handle->buf, handle->len);
+      call (async_busy[i]->call_back, out);
+      free (handle->buf);
+      tm_delete<async_handle> (handle);
+      async_busy= append (range (async_busy, 0, i),
+                          range (async_busy, i + 1, N(async_busy)));
+    }
+    else i++;
+}

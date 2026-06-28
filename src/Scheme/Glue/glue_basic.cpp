@@ -516,6 +516,21 @@ tmg_evaluate_system (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
 }
 
 tmscm
+tmg_async_eval_system (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "async-eval-system");
+  TMSCM_ASSERT_OBJECT (arg2, TMSCM_ARG2, "async-eval-system");
+
+  string in1= tmscm_to_string (arg1);
+  object in2= tmscm_to_object (arg2);
+
+  // TMSCM_DEFER_INTS;
+  bool out= async_eval_system (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
 tmg_get_locale_language () {
   // TMSCM_DEFER_INTS;
   string out= get_locale_language ();
@@ -10873,6 +10888,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("eval-system",  tmg_eval_system, 1, 0, 0);
   tmscm_install_procedure ("var-eval-system",  tmg_var_eval_system, 1, 0, 0);
   tmscm_install_procedure ("evaluate-system",  tmg_evaluate_system, 4, 0, 0);
+  tmscm_install_procedure ("async-eval-system",  tmg_async_eval_system, 2, 0, 0);
   tmscm_install_procedure ("get-locale-language",  tmg_get_locale_language, 0, 0, 0);
   tmscm_install_procedure ("get-locale-charset",  tmg_get_locale_charset, 0, 0, 0);
   tmscm_install_procedure ("locale-to-language",  tmg_locale_to_language, 1, 0, 0);
