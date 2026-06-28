@@ -208,18 +208,40 @@
 ;; Spell checking
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define (ext-correction t)
+(define (ext-spell-proposition t)
   (with i (with p (tree->path t) (if p (cAr p) 0))
-    `(row (cell (show-key ,(number->string (+ i 1))))
+    `(row (cell (show-key ,(number->string (- i 1))))
           (cell ,t))))
 
-(tm-define (ext-corrections t)
+(define (ext-show-key s)
+  (with k (tm->stree (kbd-system-rewrite s))
+    (if (tm-func? k 'render-key 1)
+        `(show-key ,(cadr k))
+        `(show-key ,k))))
+
+(tm-define (ext-spell-propositions t)
   (:secure #t)
   `(tformat
     (twith "table-valign" "T")
     (cwith "1" "-1" "1" "1" "cell-halign" "r")
-    (cwith "1" "-1" "1" "1" "cell-lsep" "0em")
-    (cwith "1" "-1" "1" "1" "cell-rsep" "0em")
     (cwith "1" "-1" "2" "2" "cell-halign" "l")
-    (cwith "1" "-1" "2" "2" "cell-rsep" "0em")
-    (table ,@(map ext-correction (tree-children t)))))
+    (cwith "1" "-1" "1" "-1" "cell-lsep" "1spc")
+    (cwith "1" "-1" "1" "-1" "cell-rsep" "1spc")
+    (cwith "1" "1" "1" "-1" "cell-tsep" "0.3em")
+    (cwith "-3" "-3" "1" "-1" "cell-tsep" "0.6em")
+    (cwith "-1" "-1" "1" "-1" "cell-bsep" "0.3em")
+    (table
+      ,@(map ext-spell-proposition (tree-children t))
+      (row (cell ,(ext-show-key "return"))
+           (cell (em ,(translate "Accept once"))))
+      (row (cell ,(ext-show-key "+"))
+           (cell (em ,(translate "Insert into personal dictionary"))))
+      (row (cell ,(ext-show-key "C-c"))
+           (cell (em ,(translate "Exit spell checking mode"))))
+      )))
+
+(tm-define (ext-spell-error t)
+  (:secure #t)
+  `(spell-error* ,(tree-ref t 0)
+                 ,(tree-ref t 1)
+                 (spell-propositions ,@(cddr (tree-children t)))))

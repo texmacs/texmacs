@@ -691,23 +691,38 @@
 
   <assign|version-suppressed|<macro|<math|<op|\<times\>>>>>
 
+  <assign|version-comment|<macro|body|comment|<on-event|focus|<arg|body>|display-balloon|<quote-arg|body>|<small|<preview-balloon|<arg|comment>>>|left|TOP|keyboard>>>
+
   <\active*>
     <\src-comment>
-      Versions with errors, proposed corrections, and comments on the
-      corrections
+      Spell checking
     </src-comment>
   </active*>
 
-  <assign|version-comment|<macro|body|comment|<on-event|focus|<arg|body>|display-balloon|<quote-arg|body>|<small|<preview-balloon|<arg|comment>>>|left|TOP|keyboard>>>
+  <assign|spell-title-color|#edc>
 
-  <assign|version-error|<macro|body|msg|<on-event|focus|<arg|body>|display-balloon|<quote-arg|body>|<with|preview-bg-color|<blend|#fffb|orange>|preview-padding|0.5spc|<small|<preview-balloon|<with|color|<blend|#000d|orange>|<arg|msg>>>>>|left|TOP|keyboard>>>
+  <assign|spell-body-color|<blend|#fffd|<value|new-version-color>>>
 
-  <assign|show-key|<macro|key|<active*|<move|<small|<with|font-family|tt|<with|ornament-color|#e8e0d8|ornament-sunny-color|#f4f0ec|ornament-shadow-color|#d0c0b0|ornament-vpadding|2ln|ornament-border|2ln|ornament-hpadding|4ln|ornament-shape|rounded|ornament-corner|50%|<ornament|<compound|inflate|<with|color|dark
-  brown|<arg|key>>>>>>>||0.075ex>>>>
+  <assign|spell-padding|1spc>
 
-  <assign|version-corrections|<xmacro|items|<extern|ext-corrections|<quote-arg|items>>>>
+  <assign|spell-balloon|<macro|title|body|<tabular|<tformat|<cwith|1|-1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-background|<value|spell-title-color>>|<cwith|2|2|1|1|cell-background|<value|spell-body-color>>|<twith|table-width|25em>|<twith|table-hmode|min>|<cwith|1|1|1|1|cell-lsep|<value|spell-padding>>|<cwith|1|1|1|1|cell-rsep|<value|spell-padding>>|<cwith|1|1|1|1|cell-bsep|<value|spell-padding>>|<cwith|1|1|1|1|cell-tsep|<value|spell-padding>>|<cwith|1|1|1|1|cell-bborder|0.3333ln>|<table|<row|<\cell>
+    <arg|title>
+  </cell>>|<row|<\cell>
+    <arg|body>
+  </cell>>>>>>>
 
-  <drd-props|version-corrections|arity|<tuple|repeat|1|1>|accessible|all>
+  <assign|spell-error*|<macro|body|msg|proposals|<on-event|focus|<render-old|<arg|body>>|display-balloon|<quote-arg|body>|<very-small|<spell-balloon|<arg|msg>|<arg|proposals>>>|left|BOTTOM|keyboard>>>
+
+  <assign|show-key|<macro|key|<active*|<move|<with|font-family|tt|<with|ornament-color|#e8e0d8|ornament-sunny-color|#f4f0ec|ornament-shadow-color|#d0c0b0|ornament-vpadding|2ln|ornament-border|2ln|ornament-hpadding|4ln|ornament-shape|rounded|ornament-corner|50%|<ornament|<compound|inflate|<with|color|dark
+  brown|<arg|key>>>>>>||0.075ex>>>>
+
+  <assign|spell-propositions|<xmacro|items|<extern|ext-spell-propositions|<quote-arg|items>>>>
+
+  <assign|spell-error|<xmacro|items|<extern|ext-spell-error|<quote-arg|items>>>>
+
+  <drd-props|spell-propositions|arity|<tuple|repeat|1|1>|accessible|all>
+
+  <drd-props|spell-error|arity|<tuple|repeat|1|1>|accessible|all>
 
   \;
 </body>
