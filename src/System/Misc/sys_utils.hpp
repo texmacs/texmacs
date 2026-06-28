@@ -53,6 +53,10 @@ array<string> evaluate_system (array<string> arg,
 			       array<int> fd_in, array<string> in,
 			       array<int> fd_out);
 
+class object;
+bool async_eval_system (string cmd, object call_back);
+void async_eval_pending ();
+
 string get_printing_default ();
 bool has_printing_cmd (void);
 string get_printing_cmd (void);

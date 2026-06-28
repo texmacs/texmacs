@@ -75,6 +75,7 @@
 "eval-system"
 "var-eval-system"
 "evaluate-system"
+"async-eval-system"
 "get-locale-language"
 "get-locale-charset"
 "locale-to-language"
