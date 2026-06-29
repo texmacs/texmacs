@@ -35,11 +35,8 @@
 #include <QFocusEvent>
 #include <QPainter>
 #include <QApplication>
-
-#ifdef OS_ANDROID
 #include <QScrollBar>
 #include <QScroller>
-#endif
 
 #include <QBuffer>
 #include <QMimeData>
@@ -63,16 +60,16 @@ QTMWidget::QTMWidget (QWidget* _parent, qt_widget _tmwid)
   setObjectName (to_qstring ("QTMWidget" * as_string (QTMWcounter++)));// What is this for? (maybe only debugging?)
   setFocusPolicy (Qt::StrongFocus);
   setAttribute (Qt::WA_InputMethodEnabled);
-#ifdef OS_ANDROID
+//#ifdef OS_ANDROID
   setAttribute(Qt::WA_AcceptTouchEvents);
   setAttribute(Qt::WA_TouchPadAcceptSingleTouchEvents);
-#endif
+//#endif
   surface ()->setMouseTracking (true);
   surface ()->setAcceptDrops (true);
 
-#ifdef OS_ANDROID
+//#ifdef OS_ANDROID
   QScroller::grabGesture(this, QScroller::TouchGesture);
-#endif
+//#endif
   grabGesture (Qt::PanGesture);
   grabGesture (Qt::PinchGesture);
   grabGesture (Qt::SwipeGesture);
