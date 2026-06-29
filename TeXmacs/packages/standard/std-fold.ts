@@ -705,7 +705,7 @@
 
   <assign|spell-padding|1spc>
 
-  <assign|spell-balloon|<macro|title|body|<tabular|<tformat|<cwith|1|-1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-background|<value|spell-title-color>>|<cwith|2|2|1|1|cell-background|<value|spell-body-color>>|<twith|table-width|25em>|<twith|table-hmode|min>|<cwith|1|1|1|1|cell-lsep|<value|spell-padding>>|<cwith|1|1|1|1|cell-rsep|<value|spell-padding>>|<cwith|1|1|1|1|cell-bsep|<value|spell-padding>>|<cwith|1|1|1|1|cell-tsep|<value|spell-padding>>|<cwith|1|1|1|1|cell-bborder|0.3333ln>|<table|<row|<\cell>
+  <assign|spell-balloon|<macro|title|body|<tabular|<tformat|<cwith|1|-1|1|1|cell-hyphen|t>|<cwith|1|1|1|1|cell-background|<value|spell-title-color>>|<cwith|2|2|1|1|cell-background|<value|spell-body-color>>|<twith|table-width|30em>|<twith|table-hmode|min>|<cwith|1|1|1|1|cell-lsep|<value|spell-padding>>|<cwith|1|1|1|1|cell-rsep|<value|spell-padding>>|<cwith|1|1|1|1|cell-bsep|<value|spell-padding>>|<cwith|1|1|1|1|cell-tsep|<value|spell-padding>>|<cwith|1|1|1|1|cell-bborder|0.3333ln>|<table|<row|<\cell>
     <arg|title>
   </cell>>|<row|<\cell>
     <arg|body>
