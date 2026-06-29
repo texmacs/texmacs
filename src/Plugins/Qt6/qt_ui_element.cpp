@@ -873,16 +873,6 @@ qt_ui_element_rep::as_qwidget (QWidget* parent_widget) {
       T1     widths = x.x3;
       T1    heights = x.x4;
 
-      QScreen* screen = QGuiApplication::primaryScreen();
-      QRect screen_geometry = screen->geometry();
-
-      float width_dividor = ceil(1200.0f /  (float)screen_geometry.width());
-      float height_dividor = ceil(800.0f / (float)screen_geometry.height());
-      float dividor = max (width_dividor, height_dividor);
-
-      cout << "screen: " << screen_geometry.width() << "x" << screen_geometry.height() 
-           << ", dividor: " << dividor << LF;
-
       qwid = wid->as_qwidget(parent_widget);
       qt_apply_tm_style (qwid, style);
       
@@ -896,32 +886,9 @@ qt_ui_element_rep::as_qwidget (QWidget* parent_widget) {
                                         qwid->minimumSizeHint(),
                                         qwid->fontMetrics());
 
-      minSize /= dividor;
-      defSize /= dividor;
-      maxSize /= dividor;
-
-      if (defSize.width() > screen_geometry.width() 
-      || defSize.height() > screen_geometry.height()
-      || minSize.width() > screen_geometry.width()
-      || minSize.height() > screen_geometry.height()) {
-        float def_w_dividor = ceil ((float)defSize.width() / (float)screen_geometry.width());
-        float def_h_dividor = ceil ((float)defSize.height() / (float)screen_geometry.height());
-        float min_w_dividor = ceil ((float)minSize.width() / (float)screen_geometry.width());
-        float min_h_dividor = ceil ((float)minSize.height() / (float)screen_geometry.height());
-        float dividor = max (max (def_w_dividor, def_h_dividor), max (min_w_dividor, min_h_dividor));
-        minSize /= dividor; defSize /= dividor; maxSize /= dividor;
-        minSize *= 0.75; defSize *= 0.75; maxSize *= 0.75;
-      }
-
-      if (minSize == defSize && defSize == maxSize) {        
-        qwid->setFixedSize (defSize);
-        qwid->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-      } else {
-        qwid->setSizePolicy (QSizePolicy::Ignored, QSizePolicy::Ignored);
-        qwid->setMinimumSize (minSize);
-        qwid->setMaximumSize (maxSize);
-        qwid->resize (defSize);
-      }
+      
+      qwid->setMinimumSize (minSize);
+        
     }
       break;
       
