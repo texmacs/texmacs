@@ -101,7 +101,7 @@
     (with dic (spell-dictionary lan)
       (if (url-exists? dic)
           (with l (load-object dic)
-            (ahash-set! spell-dictionaries lan dic)
+            (ahash-set! spell-dictionaries lan l)
             (for (w l)
               (ahash-set! spell-accepted-words (list lan w) #t)))
           (ahash-set! spell-dictionaries lan '())))))
