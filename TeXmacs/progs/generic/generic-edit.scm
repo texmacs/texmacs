@@ -1043,7 +1043,8 @@
          (p  (tree->path body))
          (st (tree->stree body))
          (id (or (list p st) st)))
-    (show-tooltip id body balloon ha va kind 0.833333)))
+    (when (or (!= kind "keyboard") p)
+      (show-tooltip id body balloon ha va kind 0.833333))))
 
 (tm-define (make-balloon)
   (:synopsis "Insert a balloon")
