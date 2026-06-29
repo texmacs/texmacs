@@ -328,7 +328,13 @@ void QTMResponsiveTabWidget::addTab(QWidget* widget, const QString& title,
     scroll->setFrameShape(QFrame::NoFrame);
     scroll->setWidget(top);
     scroll->viewport()->setAttribute(Qt::WA_AcceptTouchEvents, true);
-    QScroller::grabGesture(scroll->viewport(), QScroller::LeftMouseButtonGesture);
+
+    QScroller *scroller = QScroller::scroller(scroll->viewport());
+    scroller->grabGesture(scroll->viewport(), QScroller::LeftMouseButtonGesture);
+    QScrollerProperties props = scroller->scrollerProperties();
+    props.setScrollMetric(QScrollerProperties::MousePressEventDelay, 0.15);
+    scroller->setScrollerProperties(props);
+
     widget = scroll;
   }
 
