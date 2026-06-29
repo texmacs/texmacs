@@ -79,8 +79,10 @@ lantool_correct (string s, string out) {
       //cout << "===> Old     " << old << "\n";
       //cout << "===> Replace " << repl << "\n";
       if (occurs ("<", old) || occurs (">", old) ||
+          starts (old, "&") || ends (old, ";") ||
           old == "DIV" ||
           old == "id" ||
+          old == "amp" || old == "lt" || old == "gt" ||
           old == "cont" || starts (old, "cont-") ||
           (N(old) >= 2 && old[0] == 'x' && old[1] >= '0' && old[1] <= '9') ||
           old == "\"" || starts (old, "\"x")) {
