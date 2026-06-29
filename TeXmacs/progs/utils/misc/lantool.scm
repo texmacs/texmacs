@@ -104,7 +104,7 @@
                   (:idle 100)
                   (recenter-window)
                   (refresh-tooltips)))))))
-      (set-message "LanguageTool not installed" "Spell check"))
+      (set-message "No running LanguageTool server" "Spell check"))
   (tree-pointer-detach tp)
   (next))
 
