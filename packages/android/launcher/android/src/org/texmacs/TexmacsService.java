@@ -19,6 +19,8 @@ public class TexmacsService extends Service {
     
     private NotificationManager notificationManager;
 
+    public native void callScheme(String scheme);
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -75,6 +77,7 @@ public class TexmacsService extends Service {
             // Arrête le service
             stopSelf();
             
+            callScheme("(autosave-all)");
             android.os.Process.killProcess(android.os.Process.myPid());
             
             return START_NOT_STICKY;
