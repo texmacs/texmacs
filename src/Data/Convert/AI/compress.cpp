@@ -202,6 +202,7 @@ html_as_compressed (string s, int& pos, int mode) {
     int start= pos;
     while (pos < n && s[pos] != '<') pos++;
     string r= s (start, pos);
+    //cout << "Old = " << r << "\n";
     r= replace (r, "&lt;", "<");
     r= replace (r, "&gt;", ">");
     r= replace (r, "&amp;", "&");
@@ -209,6 +210,7 @@ html_as_compressed (string s, int& pos, int mode) {
     r= var_utf8_to_cork (r);
     r= replace (r, "<varspace>", " ");
     r= replace (r, "<#202F>", " ");
+    //cout << "New = " << r << "\n";
     return r;
   }
   string var, val;
