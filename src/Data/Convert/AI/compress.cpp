@@ -43,7 +43,9 @@ compress_tree (tree t) {
   tree val (L(t));
   for (i=0; i<n; i++)
     if (the_drd->is_accessible_child (t, i) &&
-        the_drd->get_env_child (t, i, MODE, "text") == "text") {
+        the_drd->get_env_child (t, i, MODE, "text") == "text" &&
+        the_drd->get_env_child (t, i, LANGUAGE, "current") == "current" &&
+        !is_compound (t, "bib-list")) {
       val << compound ("decompressed");
       r << compress_tree (t[i]);
     }
