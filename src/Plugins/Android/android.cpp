@@ -16,6 +16,7 @@
 #include "file.hpp"
 #include "tm_timer.hpp"
 #include "data_cache.hpp"
+#include "scheme.hpp"
 
 #include <QApplication>
 #include <QFile>
@@ -145,4 +146,36 @@ void init_android()
 {
   // android_extract_from_asset(QDir::homePath());
   start_android_service();
+}
+
+extern "C"
+JNIEXPORT void JNICALL Java_org_texmacs_TexmacsService_callScheme(JNIEnv *env, jobject obj, jstring scheme) {
+  if (scheme == nullptr) {
+    std_warning << "The scheme string passed from Java is null\n";
+    return; 
+  }
+
+  const char *scheme_str = env->GetStringUTFChars(scheme, nullptr);
+  if (scheme_str == nullptr) {
+    std_warning << "Failed to get scheme string from Java\n";
+    return;
+  }
+
+  // copy the char*
+  const char *scheme_copy = strdup(scheme_str);
+
+  std_warning << "Invoking scheme call in the main Qt thread from Java" << LF;
+
+  // launch call() in the main qt thread
+  QMetaObject::invokeMethod(QApplication::instance(), [scheme_copy]() {
+    std_warning << "Calling scheme: " << scheme_copy << LF;
+    try {
+      call(scheme_copy);
+    } catch (...) {
+      std_warning << "Unknown C++ exception in callScheme from Java\n";
+    }
+    free((void*)scheme_copy);
+  }, Qt::QueuedConnection);
+
+  env->ReleaseStringUTFChars(scheme, scheme_str);
 }
