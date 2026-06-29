@@ -19,6 +19,9 @@
 #include <QMenuBar>
 #include <QLayoutItem>
 #include <QPushButton>
+#include <QScrollArea>
+#include <QScroller>
+#include <QScrollBar>
 #include "QTMApplication.hpp"
 
 #include "config.h"
@@ -922,7 +925,16 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       check_type_void (index, s);
     {
       bottom_tools_widget = concrete (w);
-      QWidget* new_qwidget = bottom_tools_widget->as_qwidget(mainwindow());
+      QScrollArea* new_qwidget = new QScrollArea();
+      QWidget* new_qwidget_content = bottom_tools_widget->as_qwidget(new_qwidget);
+      new_qwidget->setWidgetResizable (true);
+      new_qwidget->setWidget (new_qwidget_content);
+      new_qwidget->setFrameStyle (QFrame::NoFrame);
+
+      new_qwidget->setAttribute(Qt::WA_AcceptTouchEvents);
+      new_qwidget->setAttribute(Qt::WA_TouchPadAcceptSingleTouchEvents);
+      QScroller::grabGesture(new_qwidget, QScroller::TouchGesture);
+
       if (bottomTools) {
           QWidget* old_qwidget = bottomTools->widget();
           if (old_qwidget) old_qwidget->deleteLater();
