@@ -92,7 +92,8 @@
                 (st* (tm->stree t))
                 (html* (lantool-correct html out))
                 (new-t (decompress-html html* 1)))
-           (when (== st st*)
+           (when (and (== st st*)
+                      (nnull? (tm-search new-t spell-context?)))
              (if (or (tm-func? t 'document) (tm-func? new-t 'document))
                  (begin
                    (tree-select t)
