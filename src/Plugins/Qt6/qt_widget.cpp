@@ -25,6 +25,9 @@
 #include "window.hpp"
 #include <QWidget>
 #include <QWidgetItem>
+#include <QScrollArea>
+#include <QScrollBar>
+#include <QScroller>
 #include "QTMMenuHelper.hpp"
 #include "QTMWindow.hpp"
 
@@ -235,7 +238,17 @@ qt_widget_rep::plain_window_widget (string name, command quit, int border) {
     }
   }
 
-  win->setCentralWidget(contentHost);
+  QScrollArea *scrollArea = new QScrollArea(win);
+  scrollArea->setWidget(contentHost);
+  scrollArea->setWidgetResizable(true);
+  scrollArea->setFrameShape(QFrame::NoFrame);
+  scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+  scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+  win->setCentralWidget(scrollArea);
+
+  scrollArea->setAttribute(Qt::WA_AcceptTouchEvents);
+  scrollArea->setAttribute(Qt::WA_TouchPadAcceptSingleTouchEvents);
+  QScroller::grabGesture(scrollArea, QScroller::TouchGesture);
   
   int l,t,r,b;
   contentHost->layout()->getContentsMargins (&l, &t, &r, &b);
