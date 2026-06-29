@@ -80,11 +80,11 @@
   (refresh-tooltips))
 
 (tm-define (version-previous-difference)
-  (go-to-previous-tag (group-resolve 'xversion-tag))
+  (go-to-previous-tag (group-resolve 'version-tag))
   (recenter-window))
 
 (tm-define (version-next-difference)
-  (go-to-next-tag (group-resolve 'xversion-tag))
+  (go-to-next-tag (group-resolve 'version-tag))
   (recenter-window))
 
 (tm-define (version-last-difference)
