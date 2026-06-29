@@ -219,6 +219,9 @@
         `(show-key ,(cadr k))
         `(show-key ,k))))
 
+(define (ext-translate s)
+  `(translate ,s "english" (value "language")))
+
 (tm-define (ext-spell-propositions t)
   (:secure #t)
   `(tformat
@@ -233,11 +236,11 @@
     (table
       ,@(map ext-spell-proposition (tree-children t))
       (row (cell ,(ext-show-key "return"))
-           (cell (em ,(translate "Accept once"))))
+           (cell (em ,(ext-translate "Accept once"))))
       (row (cell ,(ext-show-key "+"))
-           (cell (em ,(translate "Insert into personal dictionary"))))
+           (cell (em ,(ext-translate "Insert into personal dictionary"))))
       (row (cell ,(ext-show-key "C-c"))
-           (cell (em ,(translate "Exit spell checking mode"))))
+           (cell (em ,(ext-translate "Exit spell checking mode"))))
       )))
 
 (tm-define (ext-spell-error t)
