@@ -115,6 +115,7 @@
   ("page medium" "paper" (lambda args (noop)))
   ("fast environments" "on" notify-fast-environments)
   ("continuous spell checking" "off" notify-continuous-spell-checking)
+  ("grammar checking" "off" (lambda args (noop)))
   ("show full context" "on" (lambda args (noop)))
   ("show table cells" (get-default-show-table-cells) (lambda args (noop)))
   ("show focus" "on" (lambda args (noop)))
