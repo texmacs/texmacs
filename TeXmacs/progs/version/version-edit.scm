@@ -25,7 +25,7 @@
   (not (not (tree-innermost version-context?))))
 
 (texmacs-modes
-  (in-versioning% (inside-version?) with-versioning-tool%))
+  (in-versioning% (inside-version?)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Style parameters
@@ -105,7 +105,19 @@
          (with t (tree-innermost version-context?)
            (variant-set t tag)))))
 
+(tm-define (version-show-paragraph tag)
+  (selection-cancel)
+  (version-show tag)
+  (with t (cursor-tree)
+    (while (and (not (tree-is-buffer? t))
+                (tree-ref t :up)
+                (not (tree-is? t :up 'document)))
+      (set! t (tree-ref t :up)))
+    (tree-replace t version-context? tag)))
+
 (tm-define (version-show-all tag)
+  (selection-cancel)
+  (version-show tag)
   (tree-replace (buffer-tree) version-context? tag))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -146,8 +158,11 @@
                          (retain-version t (tree-ref t which)))
                         ((tree-is? t 'version-old)
                          (retain-version t (tree-ref t 0)))
+                        ((and (tree-is? t 'version-both)
+                              (== which 'current-old))
+                         (retain-version t (tree-ref t 0)))
                         (else
-                          (retain-version t (tree-ref t 1)))))))
+                         (retain-version t (tree-ref t 1)))))))
 
 (define (version-retain-version where which)
   (with w (if (version-context? where) (tree-up where) where)
