@@ -387,6 +387,12 @@ edit_select_rep::selection_correct (path i1, path i2, path& o1, path& o2) {
   ::selection_correct (subtree (et, rp), i1 / rp, i2 / rp, o1, o2);
   set_access_mode (old_mode);
   o1= rp * o1; o2= rp * o2;
+
+  path cp= common (o1, o2);
+  if (is_document (subtree (et, cp)) &&
+      N(o1) > N(cp) && o1[N(cp)] == 0 &&
+      is_compound (subtree (et, cp * 0), "hide-preamble"))
+    o1= cp * path (1, start (subtree (et, cp * 1)));
 }
 
 path
