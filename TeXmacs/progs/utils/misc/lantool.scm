@@ -76,13 +76,27 @@
           ;;(display* "cmd] " cmd "\n")
           (async-eval-system cmd (lantool-return html tmp return))))))
 
-(tm-define (lantool-process t return)
+(tm-define (lantool-process-old t return)
   (spell-initiate (get-env "language"))
   (lantool-process* t return))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; LanguageTool processes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define-macro (tree-replace! old-t new-t)
+  `(begin
+     ;;(display* "Old] " (tm->stree ,old-t) "\n")
+     ;;(display* "New] " (tm->stree ,new-t) "\n")
+     (if (or (tm-func? ,old-t 'document)
+           (tm-func? ,new-t 'document)
+           (and (and-with p (tm-ref ,old-t :up) (tm-func? p 'concat))
+                (tm-func? ,new-t 'concat)))
+       (begin
+         (tree-select ,old-t)
+         (clipboard-cut "dummy")
+         (insert ,new-t))
+       (tree-set! ,old-t ,new-t))))
 
 (tm-define ((lantool-processed-one serial tp st next) html out)
   (cond ((not (process-active? serial)) (noop))
@@ -94,12 +108,7 @@
                 (new-t (decompress-html html* 1)))
            (when (and (== st st*)
                       (nnull? (tm-search new-t spell-context?)))
-             (if (or (tm-func? t 'document) (tm-func? new-t 'document))
-                 (begin
-                   (tree-select t)
-                   (clipboard-cut "dummy")
-                   (insert new-t))
-                 (tree-set! t new-t))
+             (tree-replace! t new-t)
              (when (not (tree-innermost spell-context?))
                (with l (tree-search t spell-context?)
                  (when (nnull? l)
@@ -116,10 +125,9 @@
   (lantool-process* (tree-pointer->tree tp)
                     (lantool-processed-one serial tp st next)))
 
-(tm-define (lantool-process-document t)
+(tm-define (lantool-process t)
   (spell-initiate (get-env "language"))
-  (with end (make-process-end 'lantool 'spell)
-    ((make-process-document process-serial lantool-process-one t end))))
+  ((make-process lantool-process-one 'lantool 'spell)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Testing
@@ -174,7 +182,7 @@
       (lantool-process* w (lantool-rechecked t* p)))))
 
 (kbd-map
-  ("C-F13" (lantool-process (buffer-tree) lantool-test))
-  ("C-F14" (lantool-process (selection-tree) lantool-finalize*))
-  ("C-F15" (lantool-process (buffer-tree) lantool-finalize))
-  ("C-F16" (lantool-process-document (buffer-tree))))
+  ("C-F13" (lantool-process-old (buffer-tree) lantool-test))
+  ("C-F14" (lantool-process-old (selection-tree) lantool-finalize*))
+  ("C-F15" (lantool-process-old (buffer-tree) lantool-finalize))
+  ("C-F16" (lantool-process (buffer-tree))))
