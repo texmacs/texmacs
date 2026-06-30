@@ -48,7 +48,7 @@ inline QString texmacs_string_to_qstring(string utf8_string) {
 inline string texmacs_qstring_to_string(const QString &local_string) {
   return string(
     local_string.toUtf8().data(),
-    (int)local_string.size()
+    (int)local_string.toUtf8().size()
   );
 }
 

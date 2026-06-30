@@ -29,4 +29,6 @@ void start_android_service();
  */
 void stop_android_service();
 
+string android_suffix_from_mime(string tm_uriString);
+
 #endif
