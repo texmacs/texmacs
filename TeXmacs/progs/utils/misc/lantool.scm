@@ -78,6 +78,7 @@
           (async-eval-system cmd (lantool-return lan html tmp return))))))
 
 (tm-define (lantool-process-old t return)
+  (spell-initiate)
   (lantool-process* t return))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -126,6 +127,7 @@
                     (lantool-processed-one serial tp st next)))
 
 (tm-define (make-lantool-process)
+  (spell-initiate)
   (make-process lantool-process-one 'lantool 'spell))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
