@@ -45,6 +45,7 @@ utf8_forward (string s, int& i, int nr) {
 
 string
 lantool_correct (string s, string out) {
+  //cout << "s ===> " << s << "\n";
   tree t= json_to_tree (out, 0);
   tree l= json_get (t, "matches");
   //cout << "===> Got " << N(l) << " matches\n";
@@ -103,5 +104,6 @@ lantool_correct (string s, string out) {
     }
   }
   r << s (pos, N(s));
+  //cout << "r ===> " << r << "\n";
   return r;
 }
