@@ -1,7 +1,7 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : lantool.scm
+;; MODULE      : spell-lantool.scm
 ;; DESCRIPTION : interface with LanguageTool
 ;; COPYRIGHT   : (C) 2026  Joris van der Hoeven
 ;;
@@ -11,7 +11,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (utils misc lantool)
+(texmacs-module (version spell-lantool)
   (version version-compare)
   (version spell-edit))
 
