@@ -882,7 +882,7 @@ tmscm_to_array_SI (tmscm p) {
   return a;
 }
 
-static bool
+/* static */ bool
 tmscm_is_array_string (tmscm p) {
   if (tmscm_is_null (p)) return true;
   else return tmscm_is_pair (p) && 

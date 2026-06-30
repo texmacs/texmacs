@@ -137,6 +137,8 @@ bool is_path (object obj) { return tmscm_is_path (object_to_tmscm (obj)); }
 bool is_url (object obj) { return tmscm_is_url (object_to_tmscm (obj)); }
 bool is_array_double (object obj) {
   return tmscm_is_array_double (object_to_tmscm (obj)); }
+bool is_array_string (object obj) {
+  return tmscm_is_array_string (object_to_tmscm (obj)); }
 bool is_widget (object obj) { return tmscm_is_widget (object_to_tmscm (obj)); }
 bool is_patch (object obj) { return tmscm_is_patch (object_to_tmscm (obj)); }
 bool is_modification (object obj) {
@@ -263,6 +265,13 @@ as_array_double (object obj) {
   ASSERT (is_array_double (obj), "array<double> expected");
   tmscm t= object_to_tmscm (obj);
   return tmscm_to_array_double (t);
+}
+
+array<string>
+as_array_string (object obj) {
+  ASSERT (is_array_string (obj), "array<string> expected");
+  tmscm t= object_to_tmscm (obj);
+  return tmscm_to_array_string (t);
 }
 
 modification
