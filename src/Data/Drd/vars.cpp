@@ -41,6 +41,7 @@ string CONTEXT_COLOR ("context-color");
 string SELECTION_COLOR ("selection-color");
 string TABLE_SELECTION_COLOR ("table-selection-color");
 string MATCH_COLOR ("match-color");
+string SPELL_ERROR_COLOR ("spell-error-color");
 string CLICKABLE_COLOR ("clickable-color");
 string CORRECT_COLOR ("correct-color");
 string INCORRECT_COLOR ("incorrect-color");

@@ -248,6 +248,7 @@
 "tree-search-tree"
 "tree-search-tree-at"
 "tree-spell"
+"tree-spell*"
 "tree-spell-at"
 "tree-spell-selection"
 "previous-search-hit"

@@ -805,6 +805,8 @@
     (setting-group "Experimental features"
       (setting-toggle (set-boolean-preference "experimental encryption" answer)
                       "Encryption" (get-boolean-preference "experimental encryption"))
+      (setting-toggle (set-boolean-preference "continuous spell checking" answer)
+                      "Continuous spell checking" (get-boolean-preference "continuous spell checking"))
       (setting-toggle (set-boolean-preference "fast environments" answer)
                       "Fast environments" (get-boolean-preference "fast environments"))
       (setting-toggle (set-boolean-preference "experimental alpha" answer)
@@ -846,6 +848,8 @@
 (tm-widget (experimental-preferences-widget*)
   (setting-toggle (set-boolean-preference "experimental encryption" answer)
                   "Encryption" (get-boolean-preference "experimental encryption"))
+  (setting-toggle (set-boolean-preference "continuous spell checking" answer)
+                  "Continuous spell checking" (get-boolean-preference "continuous spell checking"))
   (setting-toggle (set-boolean-preference "fast environments" answer)
                   "Fast environments" (get-boolean-preference "fast environments"))
   ;;(setting-toggle (set-boolean-preference "experimental alpha" answer)

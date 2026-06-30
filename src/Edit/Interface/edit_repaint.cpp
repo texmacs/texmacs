@@ -159,6 +159,15 @@ edit_interface_rep::draw_selection (renderer ren, rectangle r) {
     ren->draw_rectangles (alt_selection_rects[i] & visible);
 #endif
   }
+  for (int i=0; i<N(spell_error_rects); i++) {
+    color col= get_env_color (SPELL_ERROR_COLOR);
+    ren->set_pencil (pencil (col, ren->pixel));
+#ifdef QTTEXMACS
+    ren->draw_selection (spell_error_rects[i] & visible);
+#else
+    ren->draw_rectangles (spell_error_rects[i] & visible);
+#endif
+  }
   if (!is_nil (selection_rects)) {
     color col= get_env_color (SELECTION_COLOR);
     if (table_selection) col= get_env_color (TABLE_SELECTION_COLOR);

@@ -250,6 +250,7 @@
   (tree-search-tree search (array_path content content path int))
   (tree-search-tree-at search (array_path content content path path int))
   (tree-spell spell (array_path string content path int))
+  (tree-spell* spell_with_cache (array_path string content path int))
   (tree-spell-at spell (array_path string content path path int))
   (tree-spell-selection spell (array_path string content path path path int))
   (previous-search-hit previous_search_hit (array_path array_path path bool))
