@@ -17,6 +17,7 @@
 #include "tm_timer.hpp"
 #include "data_cache.hpp"
 #include "scheme.hpp"
+#include "string.hpp"
 
 #include <QApplication>
 #include <QFile>
@@ -27,6 +28,7 @@
 #include <QDebug>
 #include <QDirIterator>
 #include <QTimer>
+#include <QJniObject>
 
 #include <libguile.h>
 
@@ -178,4 +180,87 @@ JNIEXPORT void JNICALL Java_org_texmacs_TexmacsService_callScheme(JNIEnv *env, j
   }, Qt::QueuedConnection);
 
   env->ReleaseStringUTFChars(scheme, scheme_str);
+}
+
+string android_suffix_from_mime(string tm_uriString) {
+    QString uriString = QString::fromUtf8(&tm_uriString[0], N(tm_uriString));
+
+    if (!uriString.startsWith("content://")) {
+        return ""; // Ou gérer avec QMimeDatabase pour les fichiers classiques
+    }
+
+#if QT_VERSION >= 0x060000
+    // Version Qt 6
+    QJniObject jniUriString = QJniObject::fromString(uriString);
+    QJniObject uri = QJniObject::callStaticMethod<jobject>(
+        "android/net/Uri",
+        "parse",
+        "(Ljava/lang/String;)Landroid/net/Uri;",
+        jniUriString.object<jstring>()
+        );
+
+    QJniObject context = QNativeInterface::QAndroidApplication::context();
+#else
+    // Version Qt 5
+    QAndroidJniObject jniUriString = QAndroidJniObject::fromString(uriString);
+    QAndroidJniObject uri = QAndroidJniObject::callStaticObjectMethod(
+        "android/net/Uri",
+        "parse",
+        "(Ljava/lang/String;)Landroid/net/Uri;",
+        jniUriString.object<jstring>()
+        );
+
+    QAndroidJniObject context = QtAndroid::androidContext();
+#endif
+
+    if (!context.isValid() || !uri.isValid()) {
+        return "";
+    }
+
+    // Appel de context.getContentResolver()
+#if QT_VERSION >= 0x060000
+    QJniObject contentResolver = context.callObjectMethod(
+        "getContentResolver",
+        "()Landroid/content/ContentResolver;"
+        );
+#else
+    QAndroidJniObject contentResolver = context.callObjectMethod(
+        "getContentResolver",
+        "()Landroid/content/ContentResolver;"
+        );
+#endif
+
+    if (!contentResolver.isValid()) {
+        return "";
+    }
+
+    // Appel de contentResolver.getType(uri)
+#if QT_VERSION >= 0x060000
+    QJniObject mimeType = contentResolver.callObjectMethod(
+        "getType",
+        "(Landroid/net/Uri;)Ljava/lang/String;",
+        uri.object()
+        );
+#else
+    QAndroidJniObject mimeType = contentResolver.callObjectMethod(
+        "getType",
+        "(Landroid/net/Uri;)Ljava/lang/String;",
+        uri.object()
+        );
+#endif
+
+    if (mimeType.isValid()) {
+        QString qMimeType = mimeType.toString();
+        QStringList list = qMimeType.split("/");
+        if (list.size() > 1) {
+            qMimeType = list[1];
+        }
+        string tmMimeType(
+          qMimeType.toUtf8().constData(),
+          qMimeType.toUtf8().size()
+        );
+        return tmMimeType;
+    }
+
+    return "";
 }
