@@ -14,7 +14,7 @@
 (texmacs-module (version spell-kbd)
   (:use (generic generic-kbd)
         (version spell-edit)
-        (utils misc lantool)))
+        (version spell-lantool)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic shortcuts
