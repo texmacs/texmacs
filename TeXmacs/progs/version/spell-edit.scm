@@ -144,7 +144,30 @@
           (else t))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Terminate spell checking
+;; Continuous spell check
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (spell-user-words lan)
+  (spell-load-dictionary lan)
+  (list-filter (ahash-ref spell-dictionaries lan) string?))
+
+(tm-define (continuous-spell-check)
+  (delayed
+    (:idle 100)
+    (if (get-boolean-preference "continuous spell checking")
+        (let* ((t (buffer-tree))
+               (lan (get-init "language"))
+               (errs (tree-spell* lan t (tree->path t) 1000000))
+               (old-errs (get-alt-selection "spell-errors")))
+          (when (!= errs old-errs)
+            (set-alt-selection "spell-errors" errs)
+            (notify-change 2048)))
+        (when (nnull? (get-alt-selection "spell-errors"))
+          (set-alt-selection "spell-errors" (list))
+          (notify-change 2048)))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Manually initiate and terminate spell checking
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (spell-terminate* t)

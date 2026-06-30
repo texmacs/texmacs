@@ -496,6 +496,7 @@
 (lazy-keyboard (version version-kbd) with-versioning-tool?)
 (lazy-keyboard (version spell-kbd) always?)
 (lazy-define (version version-tmfs) update-buffer commit-buffer)
+(lazy-define (version spell-edit) spell-user-words continuous-spell-check)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 

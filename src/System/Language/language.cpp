@@ -437,6 +437,7 @@ ad_hoc_language (language base, tree hyphs) {
 #endif
 
 static bool spell_active= false;
+static hashmap<string,bool> spell_init (false);
 static hashmap<string,bool> spell_busy (false);
 static hashmap<string,int > spell_cache (0);
 static hashmap<string,bool> spell_temp (false);
@@ -456,6 +457,14 @@ spell_done () {
 
 string
 spell_start (string lan) {
+  if (!spell_init->contains (lan)) {
+    array<string> a= as_array_string (call ("spell-user-words", lan));
+    for (int i=0; i<N(a); i++) {
+      string key= lan * ":" * a[i];
+      spell_cache (key)= 1;
+    }
+    spell_init (lan)= true;
+  }
   if (spell_busy->contains (lan)) return "ok";
   spell_busy (lan)= true;
   return ispell_start (lan);
@@ -521,6 +530,7 @@ check_word (string lan, string s) {
   if (val == 0) {
     tree t= spell_check (lan, s);
     if (t == "ok") val= 1;
+    else if (spell_cache[lan * ":" * s] == 1) val= 1;
     else val= -1;
     spell_cache (key)= val;
   }

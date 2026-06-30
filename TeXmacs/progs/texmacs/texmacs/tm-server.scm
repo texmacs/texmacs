@@ -80,6 +80,9 @@
 (define (notify-fast-environments var val)
   (set-fast-environments (== val "on")))
 
+(define (notify-continuous-spell-checking var val)
+  (if (current-view) (notify-change 2048)))
+
 (define (notify-new-page-breaking var val)
   (noop))
 
@@ -111,6 +114,7 @@
   ("gui:responsive tab mode" (get-default-responsive-tab-mode) noop)
   ("page medium" "paper" (lambda args (noop)))
   ("fast environments" "on" notify-fast-environments)
+  ("continuous spell checking" "off" notify-continuous-spell-checking)
   ("show full context" "on" (lambda args (noop)))
   ("show table cells" (get-default-show-table-cells) (lambda args (noop)))
   ("show focus" "on" (lambda args (noop)))
