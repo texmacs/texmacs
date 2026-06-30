@@ -12,7 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (version spell-edit)
-  (:use (version version-edit)
+  (:use (utils library cursor)
+        (version version-edit)
         (convert tools tmconcat)))
 
 (tm-define spell-language #f)
@@ -197,15 +198,28 @@
       (with tail (make-process-documents serial fun (cdr ts) next)
         (make-process-document serial fun (car ts) tail))))
 
+(tm-define ((make-process-clean next))
+  (with-innermost t 'identity
+    (and-with p (tree->path t)
+      (with-cursor (append p (list 0) (path-start (tm-ref t 0) '()))
+        (remove-structure-upwards))))
+  (next))
+
 (tm-define (make-process fun . types)
   (with end (apply make-process-end types)
-    (with sels (selection-trees)
-      ;;(for (sel sels)
-      ;;  (display* (tree->path sel) "\n"))
-      (selection-cancel)
-      (if (nnull? sels)
-          (make-process-documents process-serial fun sels end)
-          (make-process-document process-serial fun (buffer-tree) end)))))
+    (cond ((not (selection-active-any?))
+           (make-process-document process-serial fun (buffer-tree) end))
+          ((selection-active-small?)
+           (with sel (selection-tree)
+             (clipboard-cut "dummy")
+             (insert-go-to `(identity ,sel) (cons 0 (path-start sel '())))
+             (and-with t (tree-innermost 'identity)
+               (with clean (make-process-clean end)
+                 (make-process-document process-serial fun t clean)))))
+          (else
+            (with sels (selection-trees)
+              (selection-cancel)
+              (make-process-documents process-serial fun sels end))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Terminate spell checking
