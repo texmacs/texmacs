@@ -24,13 +24,14 @@
 (define lantool-support :uninit)
 
 (tm-define (supports-lantool?)
-  (if (!= lantool-support :uninit) lantool-support
-      (let* ((cmd (string-append "curl -X POST " lantool-server
-                                 " -d \"language=en-US\""
-                                 " -d \"text=Some text with a error.\""))
-             (val (eval-system cmd)))
-        (set! lantool-support (string-occurs? "{\"software\":{" val))
-        lantool-support)))
+  (and (get-boolean-preference "grammar checking")  
+       (if (!= lantool-support :uninit) lantool-support
+           (let* ((cmd (string-append "curl -X POST " lantool-server
+                                      " -d \"language=en-US\""
+                                      " -d \"text=Some text with a error.\""))
+                  (val (eval-system cmd)))
+             (set! lantool-support (string-occurs? "{\"software\":{" val))
+             lantool-support))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Checking a chunk of text with LanguageTool

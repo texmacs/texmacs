@@ -65,6 +65,8 @@
   ("Replace" (interactive-replace))
   (if (not (in-math?))
       ("Spell" (interactive-spell)))
+  (if (and (not (in-math?)) (supports-lantool?))
+      ("Grammar" (lantool-check)))
   (if (in-math?)
       (=> "Correct" (link math-correct-menu)))
   (if (detailed-menus?)
