@@ -244,12 +244,16 @@
 ;; Terminate spell checking
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (spell-terminate* t)
+(define (spell-terminate* t)
   (cond ((tree-atomic? t) (noop))
         ((tm-func? t 'spell-error)
          (tree-remove-node! t 0)
          (tree-correct-upwards t))
         (else (for-each spell-terminate* (tree-children t)))))
+
+(tm-define (spell-initiate)
+  (process-deactivate 'spell)
+  (spell-terminate* (buffer-tree)))
 
 (tm-define (spell-terminate . opt-t)
   (process-deactivate 'spell)
