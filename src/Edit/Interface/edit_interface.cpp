@@ -20,6 +20,7 @@
 #include "drd_mode.hpp"
 #include "message.hpp"
 #include "tree_traverse.hpp"
+#include "tree_search.hpp"
 #include "boot.hpp"
 #ifdef EXPERIMENTAL
 #include "../../Style/Evaluate/evaluate_main.hpp"
@@ -793,9 +794,10 @@ edit_interface_rep::apply_changes () {
       }
     }
   }
-  
+
   // cout << "Handling selection\n";
-  if (env_change & (THE_TREE+THE_ENVIRONMENT+THE_SELECTION)) {
+  if (env_change & (THE_TREE + THE_ENVIRONMENT +
+                    THE_SELECTION + THE_SPELL_ERRORS)) {
     if (!is_nil (selection_rects)) {
       invalidate (selection_rects);
       if (!selection_active_any ()) {
@@ -812,8 +814,16 @@ edit_interface_rep::apply_changes () {
       if (is_empty (alt_sel))
         alt_selection_rects= array<rectangles> ();
     }
+    if (N (spell_error_rects) != 0) {
+      rectangles visible (rectangle (vx1, vy1, vx2, vy2));
+      for (int i=0; i<N(spell_error_rects); i++)
+        invalidate (spell_error_rects[i] & visible);
+      range_set errs= get_alt_selection ("spell_errors");
+      if (is_empty (errs))
+        alt_selection_rects= array<rectangles> ();
+    }
   }
-  
+
   // cout << "Handling environment\n";
   if (env_change & THE_ENVIRONMENT)
     typeset_invalidate_all ();
@@ -1014,6 +1024,36 @@ edit_interface_rep::apply_changes () {
       rectangles visible (new_visible);
       for (int i=0; i<N(alt_selection_rects); i++)
         invalidate (alt_selection_rects[i] & visible);
+    }
+  }
+
+  // cout << "Handling continuous spell errors";
+  if (env_change & (THE_TREE + THE_ENVIRONMENT)) {
+    if (get_preference ("continuous spell checking", "off") != "off")
+      call ("continuous-spell-check");
+    else set_alt_selection ("spell-errors", range_set ());
+  }
+  if (env_change & (THE_CURSOR + THE_FOCUS + THE_TREE +
+                    THE_ENVIRONMENT + THE_SELECTION + THE_SPELL_ERRORS)) {
+    range_set errs= get_alt_selection ("spell-errors");
+    if (!is_empty (errs)) {
+      spell_error_rects= array<rectangles> (); int b= 0, e= N(errs);
+      if (e - b >= 200) {
+        b= max (find_alt_selection_index (errs, vy2, b, e) - 100, b);
+        e= min (find_alt_selection_index (errs, vy1, b, e) + 100, e);
+      }
+      for (int i=b; i+1<e; i+=2) {
+        range_set sub_sel= simple_range (errs[i], errs[i+1]);
+        selection sel= compute_selection (sub_sel);
+        rectangles rs= thicken (sel->rs, pixel, 3*pixel);
+#ifndef QTTEXMACS
+        rs= simplify (::correct (rs - thicken (rs, -pixel, -pixel)));
+#endif
+        if (N(rs) != 0) spell_error_rects << rs;
+      }
+      rectangles visible (new_visible);
+      for (int i=0; i<N(spell_error_rects); i++)
+        invalidate (spell_error_rects[i] & visible);
     }
   }
 

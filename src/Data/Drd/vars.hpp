@@ -43,6 +43,7 @@ extern string CONTEXT_COLOR;
 extern string SELECTION_COLOR;
 extern string TABLE_SELECTION_COLOR;
 extern string MATCH_COLOR;
+extern string SPELL_ERROR_COLOR;
 extern string CLICKABLE_COLOR;
 extern string CORRECT_COLOR;
 extern string INCORRECT_COLOR;

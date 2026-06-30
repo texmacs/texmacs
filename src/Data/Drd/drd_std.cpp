@@ -1020,6 +1020,7 @@ init_std_drd () {
   init_var (SELECTION_COLOR, TYPE_COLOR);
   init_var (TABLE_SELECTION_COLOR, TYPE_COLOR);
   init_var (MATCH_COLOR, TYPE_COLOR);
+  init_var (SPELL_ERROR_COLOR, TYPE_COLOR);
   init_var (CLICKABLE_COLOR, TYPE_COLOR);
   init_var (CORRECT_COLOR, TYPE_COLOR);
   init_var (INCORRECT_COLOR, TYPE_COLOR);

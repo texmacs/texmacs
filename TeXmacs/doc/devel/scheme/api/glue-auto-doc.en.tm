@@ -1787,6 +1787,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(tree-spell* <scm-arg|string> <scm-arg|content> <scm-arg|path> <scm-arg|int>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|spell_with_cache> which returns
+    <scm|array_path>.
+  </explain>
+
+  <\explain>
     <scm|(tree-spell-at <scm-arg|string> <scm-arg|content> <scm-arg|path> <scm-arg|path> <scm-arg|int>)>
 <explain-synopsis|no synopsis>
   <|explain>

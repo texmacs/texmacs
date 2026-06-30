@@ -205,6 +205,37 @@ spell (tree mode, tree lan, range_set& sel, tree t,
 }
 
 /******************************************************************************
+* Caching
+******************************************************************************/
+
+hashmap<tree,range_set> spell_cache;
+hashmap<tree,range_set> spell_cache_dup;
+
+range_set
+spell_with_cache (string lan, tree t, path p, int limit) {
+  if (is_document (t)) {
+    //cout << "spell...\n";
+    range_set r;
+    for (int i=0; i<N(t); i++)
+      r << spell_with_cache (lan, t[i], p * i);
+    //cout << "...done\n";
+    return r;
+  }
+  else {
+    tree key= tuple (lan, t);
+    if (!spell_cache->contains (key)) {
+      range_set r= spell (lan, t, path (), limit);
+      spell_cache (key)= r;
+    }
+    range_set cached= spell_cache[key];
+    range_set ret (N(cached));
+    for (int i=0; i<N(cached); i++)
+      ret[i]= p * cached[i];
+    return ret;
+  }
+}
+
+/******************************************************************************
 * Front end
 ******************************************************************************/
 
@@ -214,7 +245,9 @@ spell (string lan, tree t, path p, int limit) {
   spell_max_hits= limit;
   range_set sel;
   //cout << "Spell " << what << "\n";
+  spell_start (lan);
   spell ("text", lan, sel, t, p);
+  spell_done (lan);
   //cout << "Selected " << sel << "\n";
   spell_max_hits= 1000000;
   return sel;
@@ -226,7 +259,9 @@ spell (string lan, tree t, path p, path pos, int limit) {
   spell_max_hits= limit;
   range_set sel;
   //cout << "Spell " << what << "\n";
+  spell_start (lan);
   spell ("text", lan, sel, t, p, pos);
+  spell_done (lan);
   //cout << "Selected " << sel << "\n";
   spell_max_hits= 1000000;
   return sel;
@@ -238,7 +273,9 @@ spell (string lan, tree t, path p, path pos1, path pos2, int limit) {
   spell_max_hits= limit;
   range_set sel;
   //cout << "Spell " << what << "\n";
+  spell_start (lan);
   spell ("text", lan, sel, t, p, pos1, pos2);
+  spell_done (lan);
   //cout << "Selected " << sel << "\n";
   spell_max_hits= 1000000;
   return sel;

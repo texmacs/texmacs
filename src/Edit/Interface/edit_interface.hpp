@@ -61,6 +61,7 @@ protected:
   int           mouse_adjusting;  // mask with active key modifiers upon click
   rectangles    selection_rects;
   array<rectangles> alt_selection_rects;
+  array<rectangles> spell_error_rects;
   rectangle     last_visible;
   rectangles    env_rects;
   rectangles    foc_rects;
