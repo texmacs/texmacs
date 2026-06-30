@@ -12,7 +12,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (version spell-edit)
-  (:use (utils library cursor)
+  (:use (utils library tree)
         (version version-edit)
         (convert tools tmconcat)))
 
@@ -200,9 +200,8 @@
 
 (tm-define ((make-process-clean next))
   (with-innermost t 'identity
-    (and-with p (tree->path t)
-      (with-cursor (append p (list 0) (path-start (tm-ref t 0) '()))
-        (remove-structure-upwards))))
+    (tree-remove-node! t 0)
+    (tree-correct-upwards t))
   (next))
 
 (tm-define (make-process fun . types)
@@ -232,20 +231,17 @@
 (tm-define (spell-terminate* t)
   (cond ((tree-atomic? t) (noop))
         ((tm-func? t 'spell-error)
-         (tree-set! t (tree-ref t 0)))
-        ((tm-func? t 'concat)
-         (for-each spell-terminate* (tree-children t))
-         (tree-set! t (apply tmconcat (tree-children t))))
+         (tree-remove-node! t 0)
+         (tree-correct-upwards t))
         (else (for-each spell-terminate* (tree-children t)))))
 
 (tm-define (spell-terminate . opt-t)
   (set! spell-language #f)
   (process-deactivate 'spell)
   (with-innermost t spell-context?
-    (and-with r (tm-ref t 0)
-      (tree-cut t)
-      (insert r)
-      (close-tooltips)))
+    (tree-remove-node! t 0)
+    (tree-correct-upwards t)
+    (close-tooltips))
   (cond ((null? opt-t)
          (spell-terminate* (buffer-tree)))
         ((tree? (car opt-t))
