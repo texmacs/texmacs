@@ -152,7 +152,7 @@
       ;;(display* "Interrupt process " serial "\n")
       (ahash-remove! process-active serial))))
 
-(tm-define ((make-process-range serial fun tp1 tp2 next))
+(tm-define ((make-process-docrange serial fun tp1 tp2 next))
   (let* ((t1 (tree-pointer->tree tp1))
          (t2 (tree-pointer->tree tp2))
          (p1 (and t1 (tree->path t1)))
@@ -175,8 +175,8 @@
                   (t2* (tm-ref t1 :up mid2))
                   (tp1* (if (== mid1 l1) tp1 (tree->tree-pointer t1*)))
                   (tp2* (if (== mid2 l2) tp2 (tree->tree-pointer t2*)))
-                  (proc2 (make-process-range serial fun tp2* tp2 next))
-                  (proc1 (make-process-range serial fun tp1 tp1* proc2)))
+                  (proc2 (make-process-docrange serial fun tp2* tp2 next))
+                  (proc1 (make-process-docrange serial fun tp1 tp1* proc2)))
              (proc1)))
           (else (next)))))
 
@@ -187,10 +187,25 @@
           ((and (tm-func? t 'document) (> (tm-arity t) 1))
            (let* ((tp1 (tree->tree-pointer (tm-ref t 0)))
                   (tp2 (tree->tree-pointer (tm-ref t :last))))
-             (make-process-range serial fun tp1 tp2 next)))
+             (make-process-docrange serial fun tp1 tp2 next)))
           (else
             (with tp (tree->tree-pointer t)
-              (make-process-range serial fun tp tp next))))))
+              (make-process-docrange serial fun tp tp next))))))
+
+(tm-define (make-process-documents serial fun ts next)
+  (if (null? ts) next
+      (with tail (make-process-documents serial fun (cdr ts) next)
+        (make-process-document serial fun (car ts) tail))))
+
+(tm-define (make-process fun . types)
+  (with end (apply make-process-end types)
+    (with sels (selection-trees)
+      ;;(for (sel sels)
+      ;;  (display* (tree->path sel) "\n"))
+      (selection-cancel)
+      (if (nnull? sels)
+          (make-process-documents process-serial fun sels end)
+          (make-process-document process-serial fun (buffer-tree) end)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Terminate spell checking
