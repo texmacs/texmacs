@@ -130,34 +130,12 @@
   (spell-initiate)
   (make-process lantool-process-one 'lantool 'spell))
 
+(tm-define (lantool-check)
+  ((make-lantool-process)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; Testing
+;; Continuous rechecking
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(tm-define (lantool-test html out)
-  (when out
-    (display* "--- input ---\n")
-    (display* html "\n")
-    (display* "--- lantool ---\n")
-    (display* out "\n")
-    (with html* (lantool-correct html out)
-      (display* "--- output ---\n")
-      (display* html* "\n")
-      (display* "--- result ---\n")
-      (display* (decompress-html html* 1) "\n"))))
-
-(tm-define (lantool-finalize html out)
-  (when out
-    (with html* (lantool-correct html out)
-      (tree-set (buffer-tree) (decompress-html html* 1)))
-    (spell-go-to-first*)))
-
-(tm-define (lantool-finalize* html out)
-  (when out
-    (with html* (lantool-correct html out)
-      (clipboard-cut "dummy")
-      (insert (decompress-html html* 1)))
-    (spell-go-to-first*)))
 
 (tm-define ((lantool-rechecked old-t* old-p) html out)
   (when out
@@ -182,8 +160,22 @@
                (t* (tm->stree t)))
       (lantool-process* w (lantool-rechecked t* p)))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Testing
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (lantool-test html out)
+  (when out
+    (display* "--- input ---\n")
+    (display* html "\n")
+    (display* "--- lantool ---\n")
+    (display* out "\n")
+    (with html* (lantool-correct html out)
+      (display* "--- output ---\n")
+      (display* html* "\n")
+      (display* "--- result ---\n")
+      (display* (decompress-html html* 1) "\n"))))
+
 (kbd-map
-  ("C-F13" (lantool-process-old (buffer-tree) lantool-test))
-  ("C-F14" (lantool-process-old (selection-tree) lantool-finalize*))
-  ("C-F15" (lantool-process-old (buffer-tree) lantool-finalize))
-  ("C-F16" ((make-lantool-process))))
+  ("C-F15" (lantool-process-old (buffer-tree) lantool-test))
+  ("C-F16" (lantool-check)))
