@@ -65,6 +65,10 @@
 #include "file.hpp"
 #include "analyze.hpp"
 
+#ifdef OS_ANDROID
+#include "android.hpp"
+#endif
+
 #include <ctype.h>
 
 #ifdef OS_MINGW
@@ -633,6 +637,11 @@ tail (url u) {
 
 string
 suffix (url u) {
+#ifdef OS_ANDROID
+  if (is_content (u)) {
+    return android_suffix_from_mime(concretize(u));
+  }
+#endif
   u= tail (u);
   if (!is_atomic (u)) return "";
   string s= as_string (u);
