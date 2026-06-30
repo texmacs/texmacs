@@ -16,7 +16,18 @@
         (version version-edit)
         (convert tools tmconcat)))
 
-(tm-define spell-language #f)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Language for a given tree
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (tree-get-env t var)
+  (let* ((bt (buffer-tree))
+         (bp (tree->path bt))
+         (tp (tree->path t))
+         (val (get-init var))
+         (rp (and tp (list-starts? tp bp) (list-drop tp (length bp)))))
+    (if (not rp) val
+        (tm->stree (tree-descendant-env bt rp var val)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Spell context
@@ -102,6 +113,7 @@
     (with dic (spell-dictionary lan)
       (if (url-exists? dic)
           (with l (load-object dic)
+            ;;(display* "\nDictionary " lan " -> " l "\n\n")
             (ahash-set! spell-dictionaries lan l)
             (for (w l)
               (ahash-set! spell-accepted-words (list lan w) #t)))
@@ -113,16 +125,21 @@
       (save-object dic l))))
 
 (tm-define (spell-retain-permanent)
-  (with lan spell-language
-    (with-innermost t spell-context?
+  (with-innermost t spell-context?
+    (with lan (tree-get-env t "language")
+      (spell-load-dictionary lan)
       (and-with l (ahash-ref spell-dictionaries lan)
-        (ahash-set! spell-dictionaries lan (cons (tm->stree (tm-ref t 0)) l))
-        (spell-save-dictionary lan))
+        (with w (tm->stree (tm-ref t 0))
+          (ahash-set! spell-dictionaries lan (cons w l))
+          (ahash-set! spell-accepted-words (list lan w) #t)
+          (spell-save-dictionary lan)))
       (spell-retain 0 #t))))
 
 (tm-define (spell-replace-cached t)
   (let* ((i (ahash-ref spell-replace-cache (tm->stree t)))
-         (key (list spell-language (tm->stree (tm-ref t 0)))))
+         (lan (tree-get-env t "language"))
+         (key (list lan (tm->stree (tm-ref t 0)))))
+    (spell-load-dictionary lan)
     (cond (i (tree-ref t (if (== i 0) i (+ i 1))))
           ((ahash-ref spell-accepted-words key) (tree-ref t 0))
           (else t))))
@@ -146,6 +163,9 @@
     (lambda ()
       ;;(display* "Terminate process " serial "\n")
       (ahash-remove! process-active serial))))
+
+(tm-define (process-running? type)
+  (in? type (append-map cdr (ahash-table->list process-active))))
 
 (tm-define (process-deactivate type)
   (for (serial (map car (ahash-table->list process-active)))
@@ -224,10 +244,6 @@
 ;; Terminate spell checking
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (spell-initiate lan)
-  (set! spell-language lan)
-  (spell-load-dictionary lan))
-
 (tm-define (spell-terminate* t)
   (cond ((tree-atomic? t) (noop))
         ((tm-func? t 'spell-error)
@@ -236,7 +252,6 @@
         (else (for-each spell-terminate* (tree-children t)))))
 
 (tm-define (spell-terminate . opt-t)
-  (set! spell-language #f)
   (process-deactivate 'spell)
   (with-innermost t spell-context?
     (tree-remove-node! t 0)

@@ -43,30 +43,31 @@
     (and (>= pos 0)
          (substring s pos (string-length s)))))
 
-(define ((lantool-return html tmp return) output)
+(define ((lantool-return lan html tmp return) output)
   (with r (lantool-reply output)
     (system-remove tmp)
-    (ahash-set! lantool-cache (list spell-language html) r)
+    (ahash-set! lantool-cache (list lan html) r)
     (return html r)))
 
 (tm-define (lantool-process* t return)
   (let* ((html (compress-html t 1))
-         (r (ahash-ref lantool-cache (list spell-language html))))
+         (lan (tree-get-env t "language"))
+         (r (ahash-ref lantool-cache (list lan html))))
     ;;(display* "cached? " (if r "yes" "no") "\n")
-    (when (not spell-language) (set! r html))
+    (when (not (process-running? 'spell)) (set! r html))
     (if r (return html r)
         (let* ((html (compress-html t 1))
                (tmp (url-glue (url-temp) ".html"))
                (dummy (string-save html tmp))
-               (loc (language-to-locale spell-language))
-               (lan (string-replace loc "_" "-"))
+               (loc (language-to-locale lan))
+               (loc* (string-replace loc "_" "-"))
                (disable "UPPERCASE_SENTENCE_START")
                ;;(cmd (string-append "languagetool"
                ;;                    " --json "
                ;;                    " -d WHITESPACE_RULE"
                ;;                    " " (url->string tmp)))
                (cmd (string-append "curl -X POST " lantool-server
-                                   " -d \"language=" lan "\""
+                                   " -d \"language=" loc* "\""
                                    " -d \"contentType=text/html\""
                                    " -d \"disabledRules=" disable "\""
                                    " --data-urlencode \"text=$(cat "
@@ -74,10 +75,9 @@
                                    ")\" 2> /dev/null"))
                )
           ;;(display* "cmd] " cmd "\n")
-          (async-eval-system cmd (lantool-return html tmp return))))))
+          (async-eval-system cmd (lantool-return lan html tmp return))))))
 
 (tm-define (lantool-process-old t return)
-  (spell-initiate (get-env "language"))
   (lantool-process* t return))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -125,9 +125,8 @@
   (lantool-process* (tree-pointer->tree tp)
                     (lantool-processed-one serial tp st next)))
 
-(tm-define (lantool-process t)
-  (spell-initiate (get-env "language"))
-  ((make-process lantool-process-one 'lantool 'spell)))
+(tm-define (make-lantool-process)
+  (make-process lantool-process-one 'lantool 'spell))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Testing
@@ -185,4 +184,4 @@
   ("C-F13" (lantool-process-old (buffer-tree) lantool-test))
   ("C-F14" (lantool-process-old (selection-tree) lantool-finalize*))
   ("C-F15" (lantool-process-old (buffer-tree) lantool-finalize))
-  ("C-F16" (lantool-process (buffer-tree))))
+  ("C-F16" ((make-lantool-process))))
