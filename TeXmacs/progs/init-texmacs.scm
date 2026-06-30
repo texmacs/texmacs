@@ -139,7 +139,6 @@
 (use-modules (utils misc artwork))
 (use-modules (utils misc tooltip))
 (use-modules (utils misc ai))
-(use-modules (utils misc lantool))
 (use-modules (utils handwriting handwriting))
 (lazy-tmfs-handler (utils automate auto-tmfs) automate)
 (lazy-define (utils automate auto-tmfs) auto-load-help)
