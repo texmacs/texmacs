@@ -219,7 +219,11 @@ html_as_compressed (string s, int& pos, int mode) {
   string tag= parse_html_tag (s, pos, var, val);
   //cout << "tag = " << tag << ", " << var << ", " << val << "\n";
   if (tag == "BODY") {
+    int old_pos= pos;
     skip_html_space (s, pos);
+    if (test (s, old_pos, " "))
+      if (!test (s, pos, "<p>") || !test (s, pos, "<P>"))
+        pos= old_pos;
     tree r= html_as_compressed (s, pos, "</BODY>", mode);
     skip_html_space (s, pos);
     return r;
