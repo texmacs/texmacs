@@ -41,8 +41,9 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (selection-subtrees t p1 p2)
-  (cond ((or (null? p1) (null? p2)) '())
+  (cond ((or (null? p1) (null? p2) (== p1 p2)) '())
 	((and (== p1 (list 0)) (== p2 (list (tree-right-index t)))) (list t))
+	((and (== p1 (path-start t '())) (== p2 (path-end t '()))) (list t))
 	((tree-atomic? t) '())
 	((== p1 (list (tree-right-index t))) '())
 	((== p2 (list 0)) '())
