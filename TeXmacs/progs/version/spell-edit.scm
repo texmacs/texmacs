@@ -131,8 +131,7 @@
         (with w (tm->stree (tm-ref t 0))
           (ahash-set! spell-dictionaries lan (cons w l))
           (ahash-set! spell-accepted-words (list lan w) #t)
-          (when (string? w)
-            (spell-notify-insert lan w))
+          (when (string? w) (spell-notify-insert lan w))
           (spell-save-dictionary lan)))
       (spell-retain 0 #t))))
 

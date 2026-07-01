@@ -18,6 +18,7 @@
 #include "vars.hpp"
 #include "hashset.hpp"
 #include "universal.hpp"
+#include "tm_timer.hpp"
 
 int  spell_max_hits= 1000000;
 void spell (range_set& sel, tree t, tree what, path p);
@@ -208,8 +209,21 @@ spell (tree mode, tree lan, range_set& sel, tree t,
 * Caching
 ******************************************************************************/
 
+time_t spell_stamp= 0;
 hashmap<tree,range_set> spell_cache;
 hashmap<tree,range_set> spell_cache_dup;
+
+void
+spell_evict_outdated () {
+  time_t new_stamp= texmacs_time ();
+  if (spell_stamp == 0 || new_stamp > spell_stamp + 300000) {
+    //cout << "Replace cache "
+    //     << N(spell_cache) << ", " << N(spell_cache_dup) << "\n";
+    spell_cache_dup= spell_cache;
+    spell_cache    = hashmap<tree,range_set> ();
+    spell_stamp    = new_stamp;
+  }
+}
 
 range_set
 spell_with_cache (string lan, tree t, path p, int limit) {
@@ -219,13 +233,18 @@ spell_with_cache (string lan, tree t, path p, int limit) {
     for (int i=0; i<N(t); i++)
       r << spell_with_cache (lan, t[i], p * i);
     //cout << "...done\n";
+    spell_evict_outdated ();
     return r;
   }
   else {
     tree key= tuple (lan, t);
     if (!spell_cache->contains (key)) {
-      range_set r= spell (lan, t, path (), limit);
-      spell_cache (key)= r;
+      if (spell_cache_dup->contains (key))
+        spell_cache (key)= spell_cache_dup [key];
+      else {
+        range_set r= spell (lan, t, path (), limit);
+        spell_cache (key)= r;
+      }
     }
     range_set cached= spell_cache[key];
     range_set ret (N(cached));
@@ -233,6 +252,12 @@ spell_with_cache (string lan, tree t, path p, int limit) {
       ret[i]= p * cached[i];
     return ret;
   }
+}
+
+void
+spell_clear_cache () {
+  spell_cache    = hashmap<tree,range_set> ();
+  spell_cache_dup= hashmap<tree,range_set> ();
 }
 
 /******************************************************************************

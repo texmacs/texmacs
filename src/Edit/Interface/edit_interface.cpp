@@ -820,7 +820,7 @@ edit_interface_rep::apply_changes () {
         invalidate (spell_error_rects[i] & visible);
       range_set errs= get_alt_selection ("spell_errors");
       if (is_empty (errs))
-        alt_selection_rects= array<rectangles> ();
+        spell_error_rects= array<rectangles> ();
     }
   }
 

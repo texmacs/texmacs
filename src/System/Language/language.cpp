@@ -539,6 +539,8 @@ check_word (string lan, string s) {
     else val= -1;
     spell_cache (key)= val;
   }
+  else if (val == -1 && spell_cache[lan * ":" * s] == 1)
+    spell_cache (key)= 1;
   return val == 1;
 }
 
@@ -553,6 +555,8 @@ spell_accept (string lan, string s, bool permanent) {
   ispell_accept (lan, s);
 }
 
+void spell_clear_cache ();
+
 void
 spell_insert (string lan, string s) {
   string f= uni_Locase_all (s);
@@ -561,6 +565,7 @@ spell_insert (string lan, string s) {
   string key= lan * ":" * s;
   spell_cache (key) = 1;
   ispell_insert (lan, s);
+  spell_clear_cache ();
 }
 
 void
@@ -568,4 +573,6 @@ spell_notify_insert (string lan, string s) {
   spell_initialize (lan);
   string key= lan * ":" * s;
   spell_cache (key)= 1;
+  spell_temp->reset (key);
+  spell_clear_cache ();
 }
