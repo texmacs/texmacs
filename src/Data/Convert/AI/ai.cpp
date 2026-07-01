@@ -576,8 +576,7 @@ ai_latex_output (string s, string model, string chat) {
 
 string
 ai_chat (string s, string model, string agent, string chat) {
-  string engine= ai_engine (model), cmd;
-  cmd= ai_command (s, model, agent, chat);
+  string cmd= ai_command (s, model, agent, chat);
   string val= eval_system (cmd);
   //if (DEBUG_IO) {
   //  debug_io << "input, " << cmd << LF;
@@ -591,17 +590,23 @@ ai_chat (string s, string model, string agent, string chat) {
   return r;
 }
 
+array<string>
+ai_get_body (string r) {
+  int start= search_forwards ("<body>", r);
+  if (start < 0) { return array<string> (r, "", ""); }
+  int end= search_forwards ("</body>", start, r);
+  if (end < 0) { return array<string> (r, "", ""); }
+  return array<string> (r (start, end), r (0, start), r (end+7, N(r)));
+}
+
 string
 ai_chat (string s, string model, string agent, string chat,
 	 string& pre, string& post) {
   string r= ai_chat (s, model, agent, chat);
-  int start= search_forwards ("<body>", r);
-  if (start < 0) { pre= ""; post= ""; return r; }
-  int end= search_forwards ("</body>", start, r);
-  if (end < 0) { pre= ""; post= ""; return r; }
-  pre= r (0, start);
-  post= r (end+7, N(r));
-  return r (start, end);
+  array<string> body= ai_get_body (r);
+  pre = body[1];
+  post= body[2];
+  return body[0];
 }
 
 /******************************************************************************
