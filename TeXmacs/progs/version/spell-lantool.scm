@@ -86,20 +86,6 @@
 ;; LanguageTool processes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define-macro (tree-replace! old-t new-t)
-  `(begin
-     ;;(display* "Old] " (tm->stree ,old-t) "\n")
-     ;;(display* "New] " (tm->stree ,new-t) "\n")
-     (if (or (tm-func? ,old-t 'document)
-           (tm-func? ,new-t 'document)
-           (and (and-with p (tm-ref ,old-t :up) (tm-func? p 'concat))
-                (tm-func? ,new-t 'concat)))
-       (begin
-         (tree-select ,old-t)
-         (clipboard-cut "dummy")
-         (insert ,new-t))
-       (tree-set! ,old-t ,new-t))))
-
 (tm-define ((lantool-processed-one serial tp st next) html out)
   (cond ((not (process-active? serial)) (noop))
         ((tm-equal? html out) (noop))
@@ -110,7 +96,8 @@
                 (new-t (decompress-html html* 1)))
            (when (and (== st st*)
                       (nnull? (tm-search new-t spell-context?)))
-             (tree-replace! t new-t)
+             (tree-set! t new-t)
+             (tree-correct-upwards t)
              (when (not (tree-innermost spell-context?))
                (with l (tree-search t spell-context?)
                  (when (nnull? l)
