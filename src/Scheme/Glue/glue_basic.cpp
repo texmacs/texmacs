@@ -5856,6 +5856,21 @@ tmg_spell_insert (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_spell_notify_insert (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "spell-notify-insert");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "spell-notify-insert");
+
+  string in1= tmscm_to_string (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  spell_notify_insert (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_packrat_define (tmscm arg1, tmscm arg2, tmscm arg3) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "packrat-define");
   TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "packrat-define");
@@ -11310,6 +11325,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("spell-accept",  tmg_spell_accept, 2, 0, 0);
   tmscm_install_procedure ("spell-var-accept",  tmg_spell_var_accept, 3, 0, 0);
   tmscm_install_procedure ("spell-insert",  tmg_spell_insert, 2, 0, 0);
+  tmscm_install_procedure ("spell-notify-insert",  tmg_spell_notify_insert, 2, 0, 0);
   tmscm_install_procedure ("packrat-define",  tmg_packrat_define, 3, 0, 0);
   tmscm_install_procedure ("packrat-property",  tmg_packrat_property, 4, 0, 0);
   tmscm_install_procedure ("packrat-inherit",  tmg_packrat_inherit, 2, 0, 0);
