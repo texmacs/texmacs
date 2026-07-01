@@ -1,4 +1,4 @@
-<TeXmacs|2.1.4>
+<TeXmacs|2.1.5>
 
 <style|<tuple|tmdoc|english|old-spacing|old-dots|old-lengths>>
 
@@ -8,6 +8,10 @@
   <section|Changes from version 2.1 to 2.1.5>
 
   <\itemize>
+    <item>Experimental grammar checking via <name|LanguageTool> (2.1.6).
+
+    <item>Experimental continuous spell checking (2.1.6).
+
     <item>Qt6 based version on all supported platforms (GNU Linux, MacOS,
     Windows) (2.1.5).
 
