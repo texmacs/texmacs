@@ -11,7 +11,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (various poster-drd)
+(texmacs-module (tools poster-drd)
   (:use (utils edit variants)))
 
 (define-group variant-tag
