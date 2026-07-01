@@ -596,7 +596,7 @@ ai_get_body (string r) {
   if (start < 0) { return array<string> (r, "", ""); }
   int end= search_forwards ("</body>", start, r);
   if (end < 0) { return array<string> (r, "", ""); }
-  return array<string> (r (start, end), r (0, start), r (end+7, N(r)));
+  return array<string> (r (start, end+7), r (0, start), r (end+7, N(r)));
 }
 
 string
