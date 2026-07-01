@@ -45,6 +45,8 @@
          (substring s pos (string-length s)))))
 
 (define ((lantool-return lan html tmp return) output)
+  ;;(display* "---------------------------------------\n")
+  ;;(display* output "\n")
   (with r (lantool-reply output)
     (system-remove tmp)
     (ahash-set! lantool-cache (list lan html) r)
