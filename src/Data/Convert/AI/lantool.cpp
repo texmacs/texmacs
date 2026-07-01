@@ -82,7 +82,8 @@ lantool_correct (string s, string out) {
       if (occurs ("<", old) || occurs (">", old) ||
           starts (old, "&") || ends (old, ";") ||
           (starts (old, "x") && is_int (old (1, N(old)))) ||
-          old == "DIV" || old == "id" || old == "DIV id" ||
+          old == "body" ||
+          old == "div" || old == "id" || old == "div id" ||
           old == "amp" || old == "lt" || old == "gt" ||
           old == "cont" || starts (old, "cont-") ||
           (N(old) >= 2 && old[0] == 'x' && old[1] >= '0' && old[1] <= '9') ||
