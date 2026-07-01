@@ -22,7 +22,7 @@
 
   <use-package|std-shadow>
 
-  <use-module|(tools comment-menu)>
+  <use-module|(tools comment comment-menu)>
 
   <\active*>
     <\src-comment>
