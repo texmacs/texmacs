@@ -1,8 +1,8 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;
-;; MODULE      : version-ia.scm
-;; DESCRIPTION : asynchroneous AI functionality
+;; MODULE      : ai-translate.scm
+;; DESCRIPTION : asynchroneous AI-based language translation
 ;; COPYRIGHT   : (C) 2026  Joris van der Hoeven
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
@@ -11,7 +11,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (version version-ia)
+(texmacs-module (tools ai ai-translate)
   (:use (utils library process)
         (version version-edit)))
 

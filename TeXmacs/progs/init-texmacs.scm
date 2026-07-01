@@ -496,9 +496,6 @@
 (lazy-keyboard (version version-kbd) with-versioning-tool?)
 (lazy-keyboard (tools spell spell-kbd) always?)
 (lazy-define (version version-tmfs) update-buffer commit-buffer)
-(lazy-define (tools spell spell-edit) spell-user-words continuous-spell-check)
-(lazy-define (tools spell spell-lantool) supports-lantool? lantool-check)
-(lazy-define (version version-ia) ia-translate* ia-abort-translate)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 
@@ -516,6 +513,9 @@
 (lazy-menu (tools theme theme-menu) basic-theme-menu)
 (lazy-define (tools theme theme-edit) current-basic-theme)
 (lazy-define (tools theme theme-menu) basic-theme-name)
+(lazy-define (tools spell spell-edit) spell-user-words continuous-spell-check)
+(lazy-define (tools spell spell-lantool) supports-lantool? lantool-check)
+(lazy-define (tools ai ai-translate) ia-translate* ia-abort-translate)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 
