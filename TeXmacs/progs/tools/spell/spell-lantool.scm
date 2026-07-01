@@ -11,9 +11,9 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (version spell-lantool)
+(texmacs-module (tools spell spell-lantool)
   (version version-compare)
-  (version spell-edit))
+  (tools spell spell-edit))
 
 (tm-define lantool-server "http://localhost:8081/v2/check")
 
