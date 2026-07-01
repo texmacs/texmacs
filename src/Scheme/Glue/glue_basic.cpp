@@ -6631,6 +6631,19 @@ tmg_cpp_ai_output (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_cpp_ai_get_body (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "cpp-ai-get-body");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  array_string out= ai_get_body (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return array_string_to_tmscm (out);
+}
+
+tmscm
 tmg_cpp_ai_latex_command (tmscm arg1, tmscm arg2, tmscm arg3) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "cpp-ai-latex-command");
   TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "cpp-ai-latex-command");
@@ -11378,6 +11391,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("decompress-html",  tmg_decompress_html, 2, 0, 0);
   tmscm_install_procedure ("cpp-ai-command",  tmg_cpp_ai_command, 3, 0, 0);
   tmscm_install_procedure ("cpp-ai-output",  tmg_cpp_ai_output, 2, 0, 0);
+  tmscm_install_procedure ("cpp-ai-get-body",  tmg_cpp_ai_get_body, 1, 0, 0);
   tmscm_install_procedure ("cpp-ai-latex-command",  tmg_cpp_ai_latex_command, 3, 0, 0);
   tmscm_install_procedure ("cpp-ai-latex-output",  tmg_cpp_ai_latex_output, 3, 0, 0);
   tmscm_install_procedure ("cpp-ai-chat",  tmg_cpp_ai_chat, 3, 0, 0);

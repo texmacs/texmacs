@@ -498,6 +498,7 @@
 (lazy-define (version version-tmfs) update-buffer commit-buffer)
 (lazy-define (version spell-edit) spell-user-words continuous-spell-check)
 (lazy-define (version spell-lantool) supports-lantool? lantool-check)
+(lazy-define (version version-ia) ia-translate* ia-abort-translate)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 

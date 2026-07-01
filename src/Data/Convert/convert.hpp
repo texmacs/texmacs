@@ -141,6 +141,7 @@ tree json_get (tree t, tree key, int mode= 0);
 string lantool_correct (string s, string out);
 string ai_command (string s, string model, string agent, string chat= "");
 string ai_output (string s, string model, string chat= "");
+array<string> ai_get_body (string r);
 string ai_latex_command (string s, string model, string chat= "");
 tree   ai_latex_output (string s, string model, string chat= "");
 string ai_chat (string s, string model, string agent, string chat= "");
