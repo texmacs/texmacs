@@ -170,5 +170,6 @@ tree spell_check (string lan, string s);
 bool check_word (string lan, string s);
 void spell_accept (string lan, string s, bool permanent= false);
 void spell_insert (string lan, string s);
+void spell_notify_insert (string lan, string s);
 
 #endif // defined LANGUAGE_H

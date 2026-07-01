@@ -3507,6 +3507,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(spell-notify-insert <scm-arg|string> <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|spell_notify_insert> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
     <scm|(packrat-define <scm-arg|string> <scm-arg|string> <scm-arg|tree>)>
 <explain-synopsis|no synopsis>
   <|explain>

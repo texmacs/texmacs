@@ -456,7 +456,7 @@ spell_done () {
 }
 
 string
-spell_start (string lan) {
+spell_initialize (string lan) {
   if (!spell_init->contains (lan)) {
     array<string> a= as_array_string (call ("spell-user-words", lan));
     for (int i=0; i<N(a); i++) {
@@ -465,6 +465,11 @@ spell_start (string lan) {
     }
     spell_init (lan)= true;
   }
+}
+
+string
+spell_start (string lan) {
+  spell_initialize (lan);
   if (spell_busy->contains (lan)) return "ok";
   spell_busy (lan)= true;
   return ispell_start (lan);
@@ -556,4 +561,11 @@ spell_insert (string lan, string s) {
   string key= lan * ":" * s;
   spell_cache (key) = 1;
   ispell_insert (lan, s);
+}
+
+void
+spell_notify_insert (string lan, string s) {
+  spell_initialize (lan);
+  string key= lan * ":" * s;
+  spell_cache (key)= 1;
 }

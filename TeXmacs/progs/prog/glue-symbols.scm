@@ -463,6 +463,7 @@
 "spell-accept"
 "spell-var-accept"
 "spell-insert"
+"spell-notify-insert"
 "packrat-define"
 "packrat-property"
 "packrat-inherit"
