@@ -127,7 +127,7 @@ compressed_as_html (string& s, tree t, int mode) {
       compressed_as_html (s, t[i], mode);
   }
   else if (is_compound (t, "compressed", 1) && is_atomic (t[0]))
-    s << "<A id=\"" << t[0]->label << "\">";
+    s << "<a id=\"" << t[0]->label << "\">";
   else if (is_compound (t, "compressed") && N(t) > 1 && is_atomic (t[0])) {
     for (i=1; i<n; i++) {
       s << "<div id=\"";
@@ -240,7 +240,7 @@ html_as_compressed (string s, int& pos, int mode) {
     }
     return doc;
   }
-  else if (tag == "A") {
+  else if (tag == "a") {
     if (var != "id") return "";
     return compound ("compressed", val);
   }

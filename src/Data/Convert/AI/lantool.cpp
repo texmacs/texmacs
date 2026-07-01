@@ -83,11 +83,12 @@ lantool_correct (string s, string out) {
           starts (old, "&") || ends (old, ";") ||
           (starts (old, "x") && is_int (old (1, N(old)))) ||
           old == "body" ||
-          old == "div" || old == "id" || old == "div id" ||
+          old == "div" || old == "id" || starts (old, "div id") ||
           old == "amp" || old == "lt" || old == "gt" ||
           old == "cont" || starts (old, "cont-") ||
           (N(old) >= 2 && old[0] == 'x' && old[1] >= '0' && old[1] <= '9') ||
-          old == "\"" || starts (old, "\"x")) {
+          old == "\"" || starts (old, "\"x") ||
+          old == "a" || starts (old, "a id") || old == "p") {
         r << old;
         continue;
       }
