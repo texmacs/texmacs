@@ -11,8 +11,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (various poster-menu)
-  (:use (various poster-edit)
+(texmacs-module (tools poster-menu)
+  (:use (tools poster-edit)
         (generic document-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

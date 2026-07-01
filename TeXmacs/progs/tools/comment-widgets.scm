@@ -11,8 +11,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (various comment-widgets)
-  (:use (various comment-edit)
+(texmacs-module (tools comment-widgets)
+  (:use (tools comment-edit)
         (utils library cursor)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

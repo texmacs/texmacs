@@ -11,8 +11,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (various theme-menu)
-  (:use (various theme-edit)
+(texmacs-module (tools theme-menu)
+  (:use (tools theme-edit)
         (generic document-menu)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
