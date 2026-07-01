@@ -455,7 +455,7 @@ spell_done () {
     spell_done (it->next ());
 }
 
-string
+void
 spell_initialize (string lan) {
   if (!spell_init->contains (lan)) {
     array<string> a= as_array_string (call ("spell-user-words", lan));
