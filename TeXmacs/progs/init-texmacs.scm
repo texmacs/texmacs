@@ -515,7 +515,7 @@
 (lazy-define (tools spell spell-edit) spell-user-words continuous-spell-check)
 (lazy-define (tools spell spell-lantool) supports-lantool? lantool-check)
 (use-modules (tools ai ai-batch))
-(lazy-define (tools ai ai-translate) ia-translate* ia-abort-translate)
+(lazy-define (tools ai ai-translate) ai-translate* ai-abort-translate)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 

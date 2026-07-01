@@ -57,8 +57,8 @@
 (define (make-translate-process lan)
   (make-process (translate-process-one lan) 'translate))
 
-(tm-define (ia-translate* lan)
+(tm-define (ai-translate* lan)
   ((make-translate-process lan)))
 
-(tm-define (ia-abort-translate)
+(tm-define (ai-abort-translate)
   (process-deactivate 'translate))
