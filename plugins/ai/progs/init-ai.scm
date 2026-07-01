@@ -105,7 +105,7 @@
   (:cmdline ,ai-cmdline ,ai-result)
   (:preferences #t)
   (:session "ChatGPT")
-  (:serializer ,ia-serialize))
+  (:serializer ,ai-serialize))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Gemini
@@ -120,7 +120,7 @@
   (:cmdline ,ai-cmdline ,ai-result)
   (:preferences #t)
   (:session "Gemini")
-  (:serializer ,ia-serialize))
+  (:serializer ,ai-serialize))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Ollama
@@ -134,7 +134,7 @@
   (:cmdline ,ai-cmdline ,ai-result)
   (:preferences #t)
   (:session "Ollama")
-  (:serializer ,ia-serialize))
+  (:serializer ,ai-serialize))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Mistral
@@ -149,7 +149,7 @@
   (:cmdline ,ai-cmdline ,ai-result)
   (:preferences #t)
   (:session "Mistral 7B")
-  (:serializer ,ia-serialize))
+  (:serializer ,ai-serialize))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Albert
@@ -164,5 +164,4 @@
   (:cmdline ,ai-cmdline ,ai-result)
   (:preferences #t)
   (:session "Albert")
-  (:serializer ,ia-serialize))
-
+  (:serializer ,ai-serialize))

@@ -18,7 +18,7 @@
 ;; Pre- and post-processing
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (ia-serialize lan t)
+(tm-define (ai-serialize lan t)
   (when (tm-func? t 'document 1)
     (set! t (tm-ref t 0)))
   (if (tm-atomic? t)
