@@ -11,7 +11,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (version spell-edit)
+(texmacs-module (tools spell spell-edit)
   (:use (utils library process)
         (version version-edit)))
 

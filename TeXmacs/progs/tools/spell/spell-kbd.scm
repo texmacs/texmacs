@@ -11,10 +11,10 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (version spell-kbd)
+(texmacs-module (tools spell spell-kbd)
   (:use (generic generic-kbd)
-        (version spell-edit)
-        (version spell-lantool)))
+        (tools spell spell-edit)
+        (tools spell spell-lantool)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Basic shortcuts
