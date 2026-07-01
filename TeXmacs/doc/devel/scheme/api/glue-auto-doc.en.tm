@@ -3931,6 +3931,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(cpp-ai-get-body <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|ai_get_body> which returns
+    <scm|array_string>.
+  </explain>
+
+  <\explain>
     <scm|(cpp-ai-latex-command <scm-arg|string> <scm-arg|string> <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>
