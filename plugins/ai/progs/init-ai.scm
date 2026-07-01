@@ -53,14 +53,14 @@
   ("albert-text-input" "on" noop)
   ("albert model" "openweight-large" noop))
 
-(tm-define (ia-models)
+(tm-define (ai-models)
   (list "chatgpt" "gemini" "open-mistral-7b" "albert" "ollama"))
 
 (tm-define (albert-variants)
   (list "openweight-large" "openweight-medium" "openweight-small" ""))
 
 (tm-widget (plugin-preferences-widget name)
-  (:require (in? name (ia-models)))
+  (:require (in? name (ai-models)))
   (assuming (== name "ollama")
     (aligned
       (item (text "Ollama server")
