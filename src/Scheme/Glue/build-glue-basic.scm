@@ -491,6 +491,7 @@
   (spell-accept spell_accept (void string string))
   (spell-var-accept spell_accept (void string string bool))
   (spell-insert spell_insert (void string string))
+  (spell-notify-insert spell_notify_insert (void string string))
 
   ;; Packrat grammar and parsing tools
   (packrat-define packrat_define (void string string tree))
