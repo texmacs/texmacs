@@ -72,7 +72,7 @@
     (and (pair? t) (== (car t) 'tuple) (null? (cdr t)))))
 
 (tm-define (buffer-set-default-style)
-  (with mod? buffer-modified? (current-buffer)
+  (with mod? (buffer-modified? (current-buffer))
     (init-style "generic")
     (with lan (get-preference "language")
       (if (!= lan "english") (set-document-language lan)))
