@@ -11,12 +11,12 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (tools comment-edit)
+(texmacs-module (tools comment comment-edit)
   (:use (utils library tree)
         (utils library cursor)
         (generic document-edit)
         (link ref-edit)
-        (tools comment-drd)
+        (tools comment comment-drd)
         (part part-shared)
         (database db-users)))
 

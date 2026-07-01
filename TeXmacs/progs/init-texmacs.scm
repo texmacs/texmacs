@@ -512,10 +512,10 @@
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 
 ;(display "Booting editing modes for various special styles\n")
-(lazy-menu (tools poster-menu) poster-block-menu)
-(lazy-menu (tools theme-menu) basic-theme-menu)
-(lazy-define (tools theme-edit) current-basic-theme)
-(lazy-define (tools theme-menu) basic-theme-name)
+(lazy-menu (tools poster poster-menu) poster-block-menu)
+(lazy-menu (tools theme theme-menu) basic-theme-menu)
+(lazy-define (tools theme theme-edit) current-basic-theme)
+(lazy-define (tools theme theme-menu) basic-theme-name)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 

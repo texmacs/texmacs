@@ -11,7 +11,7 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (tools comment-drd)
+(texmacs-module (tools comment comment-drd)
   (:use (utils edit variants)))
 
 ;; General groups

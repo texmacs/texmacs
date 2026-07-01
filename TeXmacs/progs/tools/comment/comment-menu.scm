@@ -11,9 +11,9 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (tools comment-menu)
-  (:use (tools comment-edit)
-        (tools comment-widgets)))
+(texmacs-module (tools comment comment-menu)
+  (:use (tools comment comment-edit)
+        (tools comment comment-widgets)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Main 'Comment' menu
