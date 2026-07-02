@@ -512,6 +512,8 @@
 "compute-index-url"
 "compress-tree"
 "decompress-tree"
+"compressed-contains-text?"
+"compressed->html"
 "compress-html"
 "decompress-html"
 "cpp-ai-command"

@@ -6569,6 +6569,34 @@ tmg_decompress_tree (tmscm arg1) {
 }
 
 tmscm
+tmg_compressed_contains_textP (tmscm arg1) {
+  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "compressed-contains-text?");
+
+  content in1= tmscm_to_content (arg1);
+
+  // TMSCM_DEFER_INTS;
+  bool out= compressed_contains_text (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
+tmg_compressed_2html (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "compressed->html");
+  TMSCM_ASSERT_INT (arg2, TMSCM_ARG2, "compressed->html");
+
+  content in1= tmscm_to_content (arg1);
+  int in2= tmscm_to_int (arg2);
+
+  // TMSCM_DEFER_INTS;
+  string out= compressed_to_html (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
 tmg_compress_html (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_CONTENT (arg1, TMSCM_ARG1, "compress-html");
   TMSCM_ASSERT_INT (arg2, TMSCM_ARG2, "compress-html");
@@ -11387,6 +11415,8 @@ initialize_glue_basic () {
   tmscm_install_procedure ("compute-index-url",  tmg_compute_index_url, 1, 0, 0);
   tmscm_install_procedure ("compress-tree",  tmg_compress_tree, 1, 0, 0);
   tmscm_install_procedure ("decompress-tree",  tmg_decompress_tree, 1, 0, 0);
+  tmscm_install_procedure ("compressed-contains-text?",  tmg_compressed_contains_textP, 1, 0, 0);
+  tmscm_install_procedure ("compressed->html",  tmg_compressed_2html, 2, 0, 0);
   tmscm_install_procedure ("compress-html",  tmg_compress_html, 2, 0, 0);
   tmscm_install_procedure ("decompress-html",  tmg_decompress_html, 2, 0, 0);
   tmscm_install_procedure ("cpp-ai-command",  tmg_cpp_ai_command, 3, 0, 0);
