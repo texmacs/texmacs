@@ -133,6 +133,8 @@ tree vernac_document_to_tree (string s);
 /*** AI tools ***/
 tree compress_tree (tree t);
 tree decompress_tree (tree t);
+bool compressed_contains_text (tree t);
+string compressed_to_html (tree t, int mode= 0);
 string compress_html (tree t, int mode= 0);
 tree decompress_html (string s, int mode= 0);
 tree json_to_tree (string s, int mode= 0);

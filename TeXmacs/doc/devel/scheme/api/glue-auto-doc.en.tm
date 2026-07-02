@@ -3899,6 +3899,22 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(compressed-contains-text? <scm-arg|content>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|compressed_contains_text> which returns
+    <scm|bool>.
+  </explain>
+
+  <\explain>
+    <scm|(compressed-\<gtr\>html <scm-arg|content> <scm-arg|int>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|compressed_to_html> which returns
+    <scm|string>.
+  </explain>
+
+  <\explain>
     <scm|(compress-html <scm-arg|content> <scm-arg|int>)>
 <explain-synopsis|no synopsis>
   <|explain>

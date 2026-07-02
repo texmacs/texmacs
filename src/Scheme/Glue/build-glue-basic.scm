@@ -547,6 +547,8 @@
   (compute-index-url compute_index (scheme_tree url))
   (compress-tree compress_tree (tree content))
   (decompress-tree decompress_tree (tree content))
+  (compressed-contains-text? compressed_contains_text (bool content))
+  (compressed->html compressed_to_html (string content int))
   (compress-html compress_html (string content int))
   (decompress-html decompress_html (tree string int))
   (cpp-ai-command ai_command (string string string string))

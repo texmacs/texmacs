@@ -593,9 +593,11 @@ ai_chat (string s, string model, string agent, string chat) {
 array<string>
 ai_get_body (string r) {
   int start= search_forwards ("<body>", r);
-  if (start < 0) { return array<string> (r, "", ""); }
+  if (start < 0)
+    return array<string> (r, "", "");
   int end= search_forwards ("</body>", start, r);
-  if (end < 0) { return array<string> (r, "", ""); }
+  if (end < 0)
+    return array<string> (r (start, N(r)) * "</body>", r (0, start), "");
   return array<string> (r (start, end+7), r (0, start), r (end+7, N(r)));
 }
 
