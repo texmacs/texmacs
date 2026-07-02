@@ -381,7 +381,13 @@ edit_select_rep::selection_active_enlarging () {
 
 void
 edit_select_rep::selection_correct (path i1, path i2, path& o1, path& o2) {
-  ASSERT (rp <= i1 && rp <= i2, "paths not inside document");
+  if (!(rp <= i1 && rp <= i2)) {
+    cout << LF;
+    cout << "rp= " << rp << LF;
+    cout << "i1= " << i1 << LF;
+    cout << "i2= " << i2 << LF;
+    ASSERT (rp <= i1 && rp <= i2, "paths not inside document");
+  }
   int old_mode= get_access_mode ();
   if (in_source ()) set_access_mode (DRD_ACCESS_SOURCE);
   ::selection_correct (subtree (et, rp), i1 / rp, i2 / rp, o1, o2);

@@ -79,9 +79,10 @@
   (when (tree->path t)
     (cond ((tm-func? t 'with)
            (make-process-document serial fun (tm-ref t :last) next))
-          ((and (tm-func? t 'document) (> (tm-arity t) 1))
+          ((tm-func? t 'document)
            (let* ((tp1 (tree->tree-pointer (tm-ref t 0)))
-                  (tp2 (tree->tree-pointer (tm-ref t :last))))
+                  (tp2 (if (== (tm-arity t) 1) tp1
+                           (tree->tree-pointer (tm-ref t :last)))))
              (make-process-docrange serial fun tp1 tp2 next)))
           (else
             (with tp (tree->tree-pointer t)

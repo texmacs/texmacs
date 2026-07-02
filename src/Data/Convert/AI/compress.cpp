@@ -16,11 +16,12 @@
 #include "vars.hpp"
 #include "drd_std.hpp"
 #include "analyze.hpp"
+#include "path.hpp"
 
 static hashmap<string,tree> compressed;
 static hashmap<tree,string> compressed_code;
 
-tree html_as_compressed (string s, int& pos, string close, int mode);
+tree html_as_compressed (string s, int& pos, string close, int mode, path p);
 
 #define COMPRESS_LINE_FEEDS  1
 #define COMPRESS_SNIPPET     2
@@ -45,13 +46,13 @@ get_spc_mode (tree t, int i) {
 }
 
 tree
-compress_tree (tree t, int spc_mode) {
+compress_tree (tree t, int spc_mode, path p) {
   if (is_atomic (t)) return t;
   int i, n= N(t);
   if (is_format (t)) {
     tree r (t, n);
     for (i=0; i<n; i++)
-      r[i]= compress_tree (t[i], get_spc_mode (t, i));
+      r[i]= compress_tree (t[i], get_spc_mode (t, i), p * i);
     return r;
   }
   tree r= compound ("compressed", "");
@@ -62,11 +63,12 @@ compress_tree (tree t, int spc_mode) {
         the_drd->get_env_child (t, i, LANGUAGE, "current") == "current" &&
         !is_compound (t, "bib-list")) {
       val << compound ("decompressed");
-      r << compress_tree (t[i], get_spc_mode (t, i));
+      r << compress_tree (t[i], get_spc_mode (t, i), p * i);
     }
     else val << t[i];
 
   tree key= tuple (val, as_string (spc_mode));
+  if (N(p) == 0 || p->item >= 0) key << as_string (p);
   if (compressed_code->contains (key)) {
     //cout << key << " <- " << compressed_code[key] << "\n";
     r[0]= compressed_code[key];
@@ -87,11 +89,11 @@ tree
 compress_tree (tree t) {
   //cout << "[decoded] " << t << LF;
   //cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << LF;
-  //tree r= compress_tree (t, 0);
+  //tree r= compress_tree (t, 0, path ());
   //cout << "[encoded] " << r << LF;
   //cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << LF;
   //return r;
-  return compress_tree (t, 0);
+  return compress_tree (t, 0, path ());
 }
 
 /******************************************************************************
@@ -328,7 +330,7 @@ skip_html_space (string s, int& pos) {
 }
 
 tree
-html_as_compressed (string s, int& pos, int mode) {
+html_as_compressed (string s, int& pos, int mode, path p) {
   //cout << "convert " << pos << "\n";
   int n= N(s);
   if (pos >= n) return "";
@@ -347,6 +349,8 @@ html_as_compressed (string s, int& pos, int mode) {
     //cout << "New = " << r << "\n";
     return r;
   }
+  
+  int prev_pos= pos;
   string var, val;
   string tag= parse_html_tag (s, pos, var, val);
   //cout << "tag = " << tag << ", " << var << ", " << val << "\n";
@@ -356,18 +360,18 @@ html_as_compressed (string s, int& pos, int mode) {
     if (test (s, old_pos, " "))
       if (!test (s, pos, "<p>"))
         pos= old_pos;
-    tree r= html_as_compressed (s, pos, "</body>", mode | INSIDE_BODY);
+    tree r= html_as_compressed (s, pos, "</body>", mode | INSIDE_BODY, p);
     skip_html_space (s, pos);
     return r;
   }    
   if (tag == "p") {
     tree doc (DOCUMENT);
-    doc << html_as_compressed (s, pos, "</p>", mode | INSIDE_P);
+    doc << html_as_compressed (s, pos, "</p>", mode | INSIDE_P, p);
     skip_html_space (s, pos);
     while (test (s, pos, "<p>")) {
       pos += 3;
       if (test (s, pos, "\\n")) skip_html_space (s, pos);
-      doc << html_as_compressed (s, pos, "</p>", mode | INSIDE_P);
+      doc << html_as_compressed (s, pos, "</p>", mode | INSIDE_P, p);
       skip_html_space (s, pos);
     }
     return doc;
@@ -378,6 +382,14 @@ html_as_compressed (string s, int& pos, int mode) {
     if (test (s, pos, "</a>")) pos += 4;
     else pos= old_pos;
     if (var != "id") return "";
+    tree key= compressed[val];
+    path new_p= p;
+    if (N(key) >= 2) new_p= as_path (key[2]->label);
+    if (!(p <= new_p)) {
+      //cout << "Badly nested " << "<a " << val << "> at " << p << LF;
+      pos= prev_pos;
+      return tree (_ERROR);
+    }
     return compound ("compressed", val);
   }
   else if (tag == "div") {
@@ -385,13 +397,21 @@ html_as_compressed (string s, int& pos, int mode) {
     if (var != "id") return "";
     string cont= "<div id=\"cont-" * val * "\">";
     tree r= compound ("compressed", val);
-    r << html_as_compressed (s, pos, "</div>", mode | INSIDE_DIV);
+    tree key= compressed[val];
+    path new_p= p;
+    if (N(key) >= 2) new_p= as_path (key[2]->label);
+    if (!(p <= new_p)) {
+      //cout << "Badly nested " << "<div " << val << "> at " << p << LF;
+      pos= prev_pos;
+      return tree (_ERROR);
+    }
+    r << html_as_compressed (s, pos, "</div>", mode | INSIDE_DIV, new_p);
     //cout << r[N(r)-1] << LF;
     int old_pos= pos;
     skip_html_space (s, pos);
     while (test (s, pos, cont)) {
       pos += N(cont);
-      r << html_as_compressed (s, pos, "</div>", mode | INSIDE_DIV);
+      r << html_as_compressed (s, pos, "</div>", mode | INSIDE_DIV, new_p);
       //cout << r[N(r)-1] << LF;
       old_pos= pos;
       skip_html_space (s, pos);
@@ -404,14 +424,16 @@ html_as_compressed (string s, int& pos, int mode) {
 }
 
 tree
-html_as_compressed (string s, int& pos, string close, int mode) {
+html_as_compressed (string s, int& pos, string close, int mode, path p) {
   //cout << "convert " << pos << ", " << close << "\n";
   tree r (CONCAT);
   while (pos < N(s) && !test (s, pos, close)) {
     if (test (s, pos, "</body>") && (mode & INSIDE_BODY) != 0) break;
     if (test (s, pos, "</p>") && (mode & INSIDE_P) != 0) break;
     if (test (s, pos, "</div>") && (mode & INSIDE_DIV) != 0) break;
-    r << html_as_compressed (s, pos, mode);
+    tree c= html_as_compressed (s, pos, mode, p);
+    if (is_func (c, _ERROR, 0)) break;
+    r << c;
   }
   if (pos < N(s) && test (s, pos, close)) pos += N(close);
   if (N(r) == 0) return "";
@@ -422,7 +444,7 @@ html_as_compressed (string s, int& pos, string close, int mode) {
 tree
 decompress_html (string s, int mode) {
   int pos= 0;
-  tree t= html_as_compressed (s, pos, mode);
+  tree t= html_as_compressed (s, pos, mode, path ());
   //cout << "t= " << t << "\n";
   return decompress_tree (t);
 }
