@@ -119,34 +119,40 @@ decompress_tree (tree t, int& spc_mode) {
   if (is_concat (t)) {
     tree d (DOCUMENT);
     tree c (CONCAT);
-    int prev_mode= 0;
+    int prev_mode= 4;
     for (i=0; i<n; i++) {
-      int next_mode= 0;
+      int next_mode= 4;
       tree u= decompress_tree (t[i], next_mode);
-      if ((next_mode & 1) == 0 && N(c) > 0 && is_atomic (c[N(c)-1])) {
-        string s= trim_spaces_right (c[N(c)-1]->label);
-        if (s == "") c= c (0, N(c) - 1);
-        else c[N(c)-1]= s;
-      }
-      if ((next_mode & 1) != 0) {
-        if (N(c) > 0 && is_atomic (c[N(c)-1])) {
-          string s= c[N(c)-1]->label;
-          int n= N(s);
-          if (n == 0 || !is_whitespace (s (n-1, n)))
-            c[N(c)-1]= s * " ";
+      if ((next_mode & 4) == 0) {
+        if ((next_mode & 1) == 0 && N(c) > 0 && is_atomic (c[N(c)-1])) {
+          string s= trim_spaces_right (c[N(c)-1]->label);
+          if (s == "") c= c (0, N(c) - 1);
+          else c[N(c)-1]= s;
         }
-        else c << " ";
+        if ((next_mode & 1) != 0) {
+          if (N(c) > 0 && is_atomic (c[N(c)-1])) {
+            string s= c[N(c)-1]->label;
+            int n= N(s);
+            if (n == 0 || !is_whitespace (s (n-1, n)))
+              c[N(c)-1]= s * " ";
+          }
+          else c << " ";
+        }
       }
       if (is_atomic (u)) {
         string s= u->label;
-        if ((prev_mode & 2) == 0 && N(s) != 0)
-          s= trim_spaces_left (s);
-        if ((prev_mode & 2) != 0 && (N(s) == 0 || !is_whitespace (s (0, 1))))
-          s= " " * s;
+        if ((prev_mode & 4) == 0) {
+          if ((prev_mode & 2) == 0 && N(s) != 0)
+            s= trim_spaces_left (s);
+          if ((prev_mode & 2) != 0 && (N(s) == 0 || !is_whitespace (s (0, 1))))
+            s= " " * s;
+        }
         if (s != "") c << s;
       }
       else {
-        if ((prev_mode & 2) != 0) c << " ";
+        if ((prev_mode & 4) == 0)
+          if ((prev_mode & 2) != 0)
+            c << " ";
         if (is_multi_paragraph (u)) {
           if (N(c) == 0) {}
           else if (N(c) == 1) d << c[0];
@@ -173,7 +179,8 @@ decompress_tree (tree t, int& spc_mode) {
     if (compressed->contains (code)) {
       tree key= copy (compressed[code]);
       tree val= key[0];
-      spc_mode= as_int (key[1]);
+      if (!is_compound (val, "spell-error"))
+        spc_mode= as_int (key[1]);
       //cout << "Decompress " << code << " -> " << key << "\n";
       int j=0, k=N(val);
       for (i=1; i<n; i++) {
@@ -385,7 +392,7 @@ html_as_compressed (string s, int& pos, int mode, path p) {
     tree key= compressed[val];
     path new_p= p;
     if (N(key) >= 2) new_p= as_path (key[2]->label);
-    if (!(p <= new_p)) {
+    if (!(p <= new_p) && !is_compound (key[0], "spell-error")) {
       //cout << "Badly nested " << "<a " << val << "> at " << p << LF;
       pos= prev_pos;
       return tree (_ERROR);
@@ -400,7 +407,7 @@ html_as_compressed (string s, int& pos, int mode, path p) {
     tree key= compressed[val];
     path new_p= p;
     if (N(key) >= 2) new_p= as_path (key[2]->label);
-    if (!(p <= new_p)) {
+    if (!(p <= new_p) && !is_compound (key[0], "spell-error")) {
       //cout << "Badly nested " << "<div " << val << "> at " << p << LF;
       pos= prev_pos;
       return tree (_ERROR);
