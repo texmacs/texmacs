@@ -64,6 +64,12 @@
              (rname  (string-append "localhost/~" pseudo "/" filename))
              (result (server-file-create uid rname "(document \"\")" "fixture"))
              (rid    (and (pair? result) (== (car result) :created) (cadr result))))
+        (when (not rid)
+          (server-log-write 'warning
+            (string-append "fixture-create-file: could not create " rname ": "
+                           (if (and (pair? result) (== (car result) :error))
+                               (cadr result)
+                               (object->string result)))))
         (when (and rid (pair? perms))
           (fixture-apply-permissions rid perms))
         rid))))
@@ -154,25 +160,32 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (fixture-resource-tmfs-url rid server-name)
-  (let* ((rtype (db-get-field-first rid "type" #f))
-         (name  (db-get-field-first rid "name" #f)))
-    (cond ((== rtype "live")
-           (string-append "tmfs://live/" server-name "/" name))
-          ((== rtype "chat-room")
-           (string-append "tmfs://chat/" server-name "/" name))
-          ((== rtype "file")
-           (string-append "tmfs://remote-file/" server-name "/" (resource->file-name rid)))
-          ((== rtype "dir")
-           (string-append "tmfs://remote-dir/" server-name "/" (resource->file-name rid)))
-          (else #f))))
+  (and rid
+       (let* ((rtype (db-get-field-first rid "type" #f))
+              (name  (db-get-field-first rid "name" #f)))
+         (cond ((== rtype "live")
+                (string-append "tmfs://live/" server-name "/" name))
+               ((== rtype "chat-room")
+                (string-append "tmfs://chat/" server-name "/" name))
+               ((== rtype "file")
+                (string-append "tmfs://remote-file/" server-name "/" (resource->file-name rid)))
+               ((== rtype "dir")
+                (string-append "tmfs://remote-dir/" server-name "/" (resource->file-name rid)))
+               (else #f)))))
 
 (tm-define (generate-share-message uid to rid server-name)
   "Create a share chat-message linking to a resource"
-  (with-database (server-database)
-    (with-time-stamp #t
-      (with-user #t
-        (remote-send uid (string-append "mail-" to) "share"
-                     (fixture-resource-tmfs-url rid server-name))))))
+  ;; rid may be #f when the resource already exists (e.g. re-seeding on
+  ;; server restart with a persistent database): skip instead of crashing.
+  (if (not rid)
+      (server-log-write 'warning
+        (string-append "generate-share-message: skipping share from " uid
+                       " to " to " (resource likely already exists)"))
+      (with-database (server-database)
+        (with-time-stamp #t
+          (with-user #t
+            (remote-send uid (string-append "mail-" to) "share"
+                         (fixture-resource-tmfs-url rid server-name)))))))
 
 (tm-define (fixture-share from-pseudo to-pseudo rid server-name)
  (generate-share-message from-pseudo to-pseudo rid server-name))
