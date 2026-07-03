@@ -395,6 +395,7 @@ edit_select_rep::selection_correct (path i1, path i2, path& o1, path& o2) {
   o1= rp * o1; o2= rp * o2;
 
   path cp= common (o1, o2);
+    if (o1 == o2 && rp < cp) cp= path_up (cp);
   if (is_document (subtree (et, cp)) &&
       N(o1) > N(cp) && o1[N(cp)] == 0 &&
       is_compound (subtree (et, cp * 0), "hide-preamble"))
