@@ -11,6 +11,8 @@
 #ifndef PLUGINS_ANDROID_HPP
 #define PLUGINS_ANDROID_HPP
 
+#include "string.hpp"
+
 /*
  * @brief Initialize the android plugin. Must be called after the QApplication
  * object has been created.
