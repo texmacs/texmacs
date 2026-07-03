@@ -598,6 +598,14 @@ TeXmacs_main (int argc, char** argv) {
 
     // allow docker stop to work
     signal (SIGTERM, clean_exit_on_sigterm);
+
+    // Ignore SIGPIPE: writing to a socket or pipe whose peer has
+    // disconnected must not terminate the process (this was killing the
+    // server with exit code 141 when a client aborted its TLS connection).
+#ifdef SIGPIPE
+    signal (SIGPIPE, SIG_IGN);
+#endif
+
     if (is_server () && server_can_start ()) {
       server_start ();
     }
