@@ -33,3 +33,5 @@
 
 (tm-define (server-tree-cache-set-enabled val)
   (set-preference "server service tree-cache" val))
+
+(on-entry (delayed (:on-cpu-idle (* 12 3600 1000)) (tree-cache-janitor-all)))
