@@ -65,6 +65,7 @@ extern bool texmacs_started;
 bool disable_error_recovery= false;
 bool start_server_flag= false;
 bool headless_mode= false;
+bool tls_no_verify= false;
 string extra_init_cmd;
 bool exec_exit= true;
 void server_start ();
@@ -78,6 +79,11 @@ static QTMCoreApplication* qtmcoreapp= NULL;
 bool
 is_headless () {
   return headless_mode;
+}
+
+bool
+is_tls_no_verify () {
+  return tls_no_verify;
 }
 
 /******************************************************************************
@@ -429,6 +435,7 @@ set_global_options  (int argc, char** argv)  {
                (s == "-delete-doc-cache") || (s == "-delete-plugin-cache") ||
                (s == "-delete-server-data") || (s == "-delete-databases") ||
 	       (s == "-headless") || (s == "-H"));
+      else if (s == "-tls-no-verify") tls_no_verify= true;
       else if (s == "-build-manual") {
         if ((++i)<argc)
           extra_init_cmd << "(build-manual "
@@ -465,6 +472,7 @@ set_global_options  (int argc, char** argv)  {
         cout << "  -V         Show some informative messages\n";
         cout << "  -W [i] [o] Recursively convert directory into website\n";
         cout << "  -x [cmd]   Execute scheme command\n";
+        cout << "  --tls-no-verify  Skip TLS certificate verification\n";
         cout << "  -Oc        TeX characters bitmap clipping off\n";
         cout << "  +Oc        TeX characters bitmap clipping on (default)\n";
         cout << "\nPlease report bugs to <bugs@texmacs.org>\n";

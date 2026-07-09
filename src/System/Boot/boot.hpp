@@ -20,6 +20,7 @@ extern bool use_locate;
 extern bool headless_mode;
 
 bool   is_headless ();
+bool   is_tls_no_verify ();
 string get_setting (string var, string def= "");
 void   set_setting (string var, string val);
 void   get_old_settings (string s);

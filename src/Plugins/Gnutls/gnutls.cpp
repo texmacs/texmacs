@@ -27,6 +27,7 @@
 #include <gnutls/abstract.h>
 #include <gnutls/crypto.h>
 #include "client_server.hpp"
+#include "boot.hpp"
 
 
 /******************************************************************************
@@ -968,9 +969,10 @@ struct tls_client_contact_rep: tm_contact_rep {
   int error_number;
   unsigned int cert_verif_status;
   bool handshake_in_progress;
+  bool skip_cert_verify;
   char* host;
   tls_client_contact_rep (string host, array<array<string> > args=
-      array<array<string> > ());
+      array<array<string> > (), bool skip_verify= false);
   ~tls_client_contact_rep ();
   void start (int io);
   void stop ();
@@ -991,9 +993,11 @@ private:
   void reset () { io=-1; ptr=(pointer) NULL; handshake_in_progress= false; }
 };
 
-tls_client_contact_rep::tls_client_contact_rep (string host, array<array<string> > creds):
-  tm_contact_rep (creds), io (-1), ptr (NULL),
-  error_number (GNUTLS_E_SUCCESS), handshake_in_progress (false), host (as_charp (host))
+tls_client_contact_rep::tls_client_contact_rep (string host,
+    array<array<string> > args, bool skip_verify):
+  tm_contact_rep (args), io (-1), ptr (NULL),
+  error_number (GNUTLS_E_SUCCESS), handshake_in_progress (false),
+  skip_cert_verify (skip_verify), host (as_charp (host))
 {
   tls_ensure_initialization ();
   type= SOCKET_CLIENT;
@@ -1060,7 +1064,10 @@ tls_client_contact_rep::handshake (gnutls_session_t s) {
 
     GNUTLS_LOGW (msg);
 
-    if (cert_verif_status & GNUTLS_CERT_SIGNER_NOT_FOUND ||
+    if (is_headless ()) {
+      GNUTLS_LOGE ("certificate verification failed in headless mode, "
+          "use --tls-no-verify to skip");
+    } else if (cert_verif_status & GNUTLS_CERT_SIGNER_NOT_FOUND ||
         cert_verif_status & GNUTLS_CERT_SIGNER_NOT_CA) {
       call ("trust-certificate-interactive",
           object (msg),
@@ -1117,7 +1124,8 @@ tls_client_contact_rep::start (int io2) {
      * gnutls_session_set_verify_cert (s, host, cert_verify_flags);
      */
 
-    gnutls_session_set_verify_cert (s, NULL, cert_verify_flags);
+    if (!skip_cert_verify)
+      gnutls_session_set_verify_cert (s, NULL, cert_verify_flags);
     gnutls_session_set_verify_output_function (s, cert_out_callback);
 
     ret = gnutls_credentials_set (s, GNUTLS_CRD_CERTIFICATE,
@@ -1226,9 +1234,11 @@ tls_client_contact_rep::active () {
   return alive () && !handshake_in_progress;
 }
 
-tm_contact 
-make_tls_client_contact (string host, array<array<string> > args) {
-  return (tm_contact_rep*) tm_new<tls_client_contact_rep> (host, args);
+tm_contact
+make_tls_client_contact (string host, array<array<string> > args,
+    bool skip_verify) {
+  return (tm_contact_rep*) tm_new<tls_client_contact_rep> (host, args,
+      skip_verify);
 }
 
 /******************************************************************************
@@ -1311,9 +1321,11 @@ make_tls_server_contact (array<array<string> > args) {
 }
 
 tm_contact
-make_tls_client_contact (string host, array<array<string> > args) {
+make_tls_client_contact (string host, array<array<string> > args,
+    bool skip_verify) {
   (void) host;
   (void) args;
+  (void) skip_verify;
   return tm_contact ();
 }
 
