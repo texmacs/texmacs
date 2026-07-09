@@ -93,6 +93,25 @@ string texmacs_get_last_error_str() {
   return result;
 }
 
+void texmacs_lock_file(FILE *&file, bool nonblock) {
+  int fd = _fileno(file);
+  HANDLE hFile = (HANDLE)_get_osfhandle(fd);
+  DWORD flags = LOCKFILE_EXCLUSIVE_LOCK;
+  if (nonblock) flags |= LOCKFILE_FAIL_IMMEDIATELY;
+  OVERLAPPED overlapped = { 0 };
+  if (!LockFileEx(hFile, flags, 0, MAXDWORD, MAXDWORD, &overlapped)) {
+    fclose(file);
+    file = nullptr;
+  }
+}
+
+void texmacs_unlock_file(FILE *&file) {
+    int fd = _fileno(file);
+    HANDLE hFile = (HANDLE)_get_osfhandle(fd);
+    OVERLAPPED overlapped = { 0 };
+    UnlockFileEx(hFile, 0, MAXDWORD, MAXDWORD, &overlapped);
+}
+
 bool is_running_in_msix() {
     UINT32 length = 0;
     LONG result = GetCurrentPackageFullName(&length, NULL);
@@ -106,13 +125,7 @@ FILE* texmacs_fopen(string filename, string mode, bool lock) {
   FILE* result = _wfopen(wide_filename.c_str(), wide_mode.c_str());
   // lock the file with LockFileEx if requested
   if (result && lock) {
-    int fd = _fileno(result);
-    HANDLE hFile = (HANDLE)_get_osfhandle(fd);
-    OVERLAPPED overlapped = { 0 };
-    if (!LockFileEx(hFile, LOCKFILE_EXCLUSIVE_LOCK, 0, MAXDWORD, MAXDWORD, &overlapped)) {
-      fclose(result);
-      return nullptr;
-    }
+    texmacs_lock_file(result);
   }
   return result;
 }
@@ -142,10 +155,7 @@ ssize_t texmacs_fwrite(const char *str, size_t size, FILE *stream) {
 
 void texmacs_fclose(FILE *&file, bool unlock) {
   if (unlock && file) {
-    int fd = _fileno(file);
-    HANDLE hFile = (HANDLE)_get_osfhandle(fd);
-    OVERLAPPED overlapped = { 0 };
-    UnlockFileEx(hFile, 0, MAXDWORD, MAXDWORD, &overlapped);
+    texmacs_unlock_file(file);
   }
   if (file) {
     fclose(file);

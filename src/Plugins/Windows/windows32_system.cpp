@@ -31,6 +31,25 @@ string texmacs_get_last_error_str() {
   return strerror(errno);
 }
 
+void texmacs_lock_file(FILE *&file, bool nonblock) {
+  int fd = _fileno(file);
+  HANDLE hFile = (HANDLE)_get_osfhandle(fd);
+  DWORD flags = LOCKFILE_EXCLUSIVE_LOCK;
+  if (nonblock) flags |= LOCKFILE_FAIL_IMMEDIATELY;
+  OVERLAPPED overlapped = { 0 };
+  if (!LockFileEx(hFile, flags, 0, MAXDWORD, MAXDWORD, &overlapped)) {
+    fclose(file);
+    file = nullptr;
+  }
+}
+
+void texmacs_unlock_file(FILE *&file) {
+    int fd = _fileno(file);
+    HANDLE hFile = (HANDLE)_get_osfhandle(fd);
+    OVERLAPPED overlapped = { 0 };
+    UnlockFileEx(hFile, 0, MAXDWORD, MAXDWORD, &overlapped);
+}
+
 FILE* texmacs_fopen(string filename, string mode, bool lock) {
   cout << "texmacs_fopen " << filename << " " << mode << "\r\n";
   mode = mode * "b";
