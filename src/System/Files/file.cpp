@@ -50,7 +50,7 @@
 ******************************************************************************/
 
 bool
-load_string (url u, string& s, bool fatal) {
+load_string (url u, string& s, bool fatal, bool lock) {
   // cout << "Load " << u << LF;
   url r= u;
   if (!is_rooted_name (r)) r= resolve (r);
@@ -74,7 +74,7 @@ load_string (url u, string& s, bool fatal) {
     bench_start ("load file");
 
     texmacs_reset_last_error();
-    FILE* fin= texmacs_fopen (name, "r");
+    FILE* fin= texmacs_fopen (name, "r", lock);
 
     if (fin == NULL) {
       err= true;
