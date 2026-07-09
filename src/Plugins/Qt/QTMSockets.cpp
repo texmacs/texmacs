@@ -753,7 +753,7 @@ socket_server_rep::start () {
     SLOGE ("cannot start server at " * host * " via " * as_string (port));
     return "cannot create server socket";
   }
-  if (LISTEN(socket_id, 10) != 0) {
+  if (LISTEN(socket_id, 1024) != 0) {
     SERRNO_LOGE ("listen on " * host * ":" * as_string (port));
     return "'listen' failed";
   }
