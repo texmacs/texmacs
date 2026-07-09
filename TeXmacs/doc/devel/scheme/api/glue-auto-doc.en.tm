@@ -4627,6 +4627,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(system-rmdir-recursive <scm-arg|url>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|rmdir_recursive> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
     <scm|(system-setenv <scm-arg|string> <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>

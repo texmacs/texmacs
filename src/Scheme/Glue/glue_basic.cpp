@@ -7804,6 +7804,19 @@ tmg_system_rmdir (tmscm arg1) {
 }
 
 tmscm
+tmg_system_rmdir_recursive (tmscm arg1) {
+  TMSCM_ASSERT_URL (arg1, TMSCM_ARG1, "system-rmdir-recursive");
+
+  url in1= tmscm_to_url (arg1);
+
+  // TMSCM_DEFER_INTS;
+  rmdir_recursive (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_system_setenv (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "system-setenv");
   TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "system-setenv");
@@ -11519,6 +11532,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("system-remove",  tmg_system_remove, 1, 0, 0);
   tmscm_install_procedure ("system-mkdir",  tmg_system_mkdir, 1, 0, 0);
   tmscm_install_procedure ("system-rmdir",  tmg_system_rmdir, 1, 0, 0);
+  tmscm_install_procedure ("system-rmdir-recursive",  tmg_system_rmdir_recursive, 1, 0, 0);
   tmscm_install_procedure ("system-setenv",  tmg_system_setenv, 2, 0, 0);
   tmscm_install_procedure ("system-search-score",  tmg_system_search_score, 2, 0, 0);
   tmscm_install_procedure ("system-1",  tmg_system_1, 2, 0, 0);
