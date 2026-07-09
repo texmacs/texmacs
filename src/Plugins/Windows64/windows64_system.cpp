@@ -245,10 +245,11 @@ bool texmacs_rmdir(string dirname) {
 }
 
 bool texmacs_rename(string oldname, string newname) {
-  texmacs_remove(newname);
-  return MoveFileW(
-    texmacs_utf8_to_wide(oldname).c_str(), 
-    texmacs_utf8_to_wide(newname).c_str()
+  // Mimic Linux rename: atomic + overwrite existing destination.
+  return MoveFileExW(
+    texmacs_utf8_to_wide(oldname).c_str(),
+    texmacs_utf8_to_wide(newname).c_str(),
+    MOVEFILE_REPLACE_EXISTING|MOVEFILE_WRITE_THROUGH
   ) != 0;
 }
 

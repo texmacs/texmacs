@@ -17,6 +17,7 @@
 
 #include "windows32_system.hpp"
 #include "nowide/iostream.hpp"
+#include "nowide/convert.hpp"
 #include "win-utf8-compat.hpp"
 
 void texmacs_reset_last_error() {
@@ -148,8 +149,12 @@ bool texmacs_rmdir(string dirname) {
 bool texmacs_rename(string oldname, string newname) {
   c_string c_oldname = oldname;
   c_string c_newname = newname;
-  texmacs_remove(newname);
-  return rename(c_oldname, c_newname) == 0;
+  // Mimic Linux rename: atomic + overwrite existing destination.
+  return MoveFileExW(
+    nowide::widen((char*) c_oldname).c_str(),
+    nowide::widen((char*) c_newname).c_str(),
+    MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH
+  ) != 0;
 }
 
 bool texmacs_chmod(string filename, int mode) {
