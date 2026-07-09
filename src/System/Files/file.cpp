@@ -574,6 +574,28 @@ rmdir (url u) {
 }
 
 void
+rmdir_recursive (url u) {
+  string path= concretize (u);
+  TEXMACS_DIR dir= texmacs_opendir (path);
+  if (dir == NULL) return;
+  texmacs_dirent entry;
+  while (true) {
+    entry= texmacs_readdir (dir);
+    if (!entry.is_valid) break;
+    if (entry.d_name == "." || entry.d_name == "..") continue;
+    string child= path * "/" * entry.d_name;
+    struct_stat buf;
+    if (texmacs_stat (child, &buf) != 0) continue;
+    if (S_ISDIR (buf.st_mode))
+      rmdir_recursive (url_system (child));
+    else
+      texmacs_remove (child);
+  }
+  texmacs_closedir (dir);
+  texmacs_rmdir (path);
+}
+
+void
 mkdir (url u) {
   // if the directory already exists, we do nothing
   if (exists (u)) {
