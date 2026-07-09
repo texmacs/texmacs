@@ -8538,6 +8538,19 @@ tmg_disable_certificate_time_checks () {
 }
 
 tmscm
+tmg_quit_TeXmacs_code (tmscm arg1) {
+  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "quit-TeXmacs-code");
+
+  int in1= tmscm_to_int (arg1);
+
+  // TMSCM_DEFER_INTS;
+  quit_TeXmacs_code (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_connection_start (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "connection-start");
   TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "connection-start");
@@ -11558,6 +11571,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("generate-self-signed-certificate",  tmg_generate_self_signed_certificate, 3, 0, 0);
   tmscm_install_procedure ("trust-certificate",  tmg_trust_certificate, 1, 0, 0);
   tmscm_install_procedure ("disable-certificate-time-checks",  tmg_disable_certificate_time_checks, 0, 0, 0);
+  tmscm_install_procedure ("quit-TeXmacs-code",  tmg_quit_TeXmacs_code, 1, 0, 0);
   tmscm_install_procedure ("connection-start",  tmg_connection_start, 2, 0, 0);
   tmscm_install_procedure ("connection-status",  tmg_connection_status, 2, 0, 0);
   tmscm_install_procedure ("connection-write-string",  tmg_connection_write_string, 3, 0, 0);

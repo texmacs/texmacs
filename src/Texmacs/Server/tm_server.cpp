@@ -291,8 +291,8 @@ tm_server_rep::is_yes (string s) {
   return tm_forward_access (s, 0) == tm_forward_access (st, 0) || s == st;
 }
 
-void
-tm_server_rep::quit () {
+static void
+quit_texmacs_internal (int code) {
   close_all_pipes ();
   call ("quit-TeXmacs-scheme");
   clear_pending_commands ();
@@ -306,10 +306,20 @@ tm_server_rep::quit () {
   // An example where it crashes with macOS SDK 14 and qt-6.8.2:
   //   open texmacs, write something in the buffer, close texmacs,
   //   and confirm exit in the lower status bar.
-  exit (0);
+  exit (code);
 #else
-  _exit (0);
+  _exit (code);
 #endif
+}
+
+void
+tm_server_rep::quit () {
+  quit_texmacs_internal (0);
+}
+
+void
+quit_TeXmacs_code (int code) {
+  quit_texmacs_internal (code);
 }
 
 /******************************************************************************

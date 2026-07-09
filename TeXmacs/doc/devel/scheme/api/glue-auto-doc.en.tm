@@ -5043,6 +5043,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(quit-TeXmacs-code <scm-arg|int>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|quit_TeXmacs_code> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
     <scm|(connection-start <scm-arg|string> <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>
