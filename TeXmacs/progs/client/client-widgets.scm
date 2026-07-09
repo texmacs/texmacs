@@ -365,36 +365,54 @@
 ;; Login widgets
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(tm-define (client-login-home server-name port pseudo credential cb-done)
+(define (client-fetch-account-info server server-name port
+                                   pseudo credential cb-done)
   (with authentication (car credential)
-    (client-login-then server-name port pseudo credential
-      (lambda (server ret)
-        (cond ((== ret "ready")
-               (begin
-                 (add-active-connection server server-name port pseudo)
-                 (set! remote-client-list (client-active-servers))
-                 (client-get-account-then
-                   server #f
-                   (lambda (ret)
-                     (client-notify-account
-                       server-name port pseudo `(,authentication)
-                       (car (ahash-ref (list->ahash-table ret) "admin")))
-                     (with-wallet
-                       (wallet-set (list "remote" server-name port
-                                         pseudo authentication)
-                                   credential))
-                     (load-buffer (remote-home-directory server))
-                     (client-sync-remote-notifications server)
-                     (cb-done)))))
-              ((== ret "pending")
-               (add-active-connection server server-name port pseudo)
-               (set! remote-client-list (client-active-servers))
-               (open-remote-pending-login
-                 server server-name port pseudo credential))
+    (client-get-account-then
+      server #f
+      (lambda (ret)
+        (cond ((list? ret)
+               (client-notify-account
+                 server-name port pseudo `(,authentication)
+                 (car (ahash-ref (list->ahash-table ret) "admin")))
+               (with-wallet
+                 (wallet-set (list "remote" server-name port
+                                   pseudo authentication)
+                             credential))
+               (load-buffer (remote-home-directory server))
+               (client-sync-remote-notifications server)
+               (cb-done))
               (else
-                (when server (client-logout server))
                 (client-open-error
-                  (string-append "Remote login error, " ret))))))))
+                  (string-append "Cannot fetch account info: " ret))))))))
+
+(define (client-send-version server server-name port pseudo credential cb-done)
+  (client-protocol-version-then
+    server
+    (lambda (ret)
+      (when (!= ret "done")
+        (client-open-error
+          (string-append "Cannot send protocol version: " ret " ")))
+      (client-fetch-account-info server server-name port
+                                 pseudo credential cb-done))))
+
+(tm-define (client-login-home server-name port pseudo credential cb-done)
+  (client-login-then server-name port pseudo credential
+    (lambda (server ret)
+      (cond ((== ret "ready")
+             (add-active-connection server server-name port pseudo)
+             (set! remote-client-list (client-active-servers))
+             (client-send-version server server-name port
+                                  pseudo credential cb-done))
+            ((== ret "pending")
+             (add-active-connection server server-name port pseudo)
+             (set! remote-client-list (client-active-servers))
+             (open-remote-pending-login
+               server server-name port pseudo credential))
+            (else
+              (when server (client-logout server))
+              (client-open-error
+                (string-append "Remote login error, " ret)))))))
 
 (tm-widget ((remote-login-widget server-name port pseudo authentication)
 	    quit)
@@ -825,9 +843,15 @@
        (cond ((== ret "ready")
                 (add-active-connection server server-name port pseudo)
                 (set! remote-client-list (client-active-servers))
-                (load-buffer (remote-home-directory server))
-                (open-account-editor server)
-                (client-sync-remote-notifications server))
+                (client-protocol-version-then
+                  server
+                  (lambda (ret)
+                    (when (!= ret "done")
+                      (client-open-error
+                        (string-append "Cannot send protocol version: " ret)))
+                    (load-buffer (remote-home-directory server))
+                    (open-account-editor server)
+                    (client-sync-remote-notifications server))))
              (else
                (when server (client-logout server))
                (client-open-error
