@@ -271,6 +271,22 @@
   (tree-insert-node tree_insert_node (tree tree int content))
   (tree-remove-node tree_remove_node (tree tree int))
 
+  ;; tree caching for server/client communication
+  (tree-hash tree_hash (string tree))
+  (tree-cache-clear tree_cache_clear (void string))
+  (tree-cache-clear-all tree_cache_clear_all (void))
+  (tree-cache-contains? tree_cache_contains (bool string string))
+  (tree-cache-put tree_cache_put (void string string tree))
+  (tree-cache-get tree_cache_get (tree string string))
+  (tree-cache-get-any tree_cache_get_any (tree string))
+  (tree-cache-update tree_cache_update (tree string tree))
+  (tree-cache-janitor tree_cache_janitor (void string))
+  (tree-cache-janitor-all tree_cache_janitor_all (void))
+  (tree-cache-set-max-size tree_cache_set_max_size (void string int))
+  (tree-cache-size tree_cache_size (int string))
+
+  (tree-hash-set-limit tree_hash_set_limit (void int))
+
   (cpp-tree-correct-node correct_node (void tree))
   (cpp-tree-correct-downwards correct_downwards (void tree))
   (cpp-tree-correct-upwards correct_upwards (void tree))

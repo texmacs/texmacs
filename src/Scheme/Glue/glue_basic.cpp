@@ -3110,6 +3110,179 @@ tmg_tree_remove_node (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_tree_hash (tmscm arg1) {
+  TMSCM_ASSERT_TREE (arg1, TMSCM_ARG1, "tree-hash");
+
+  tree in1= tmscm_to_tree (arg1);
+
+  // TMSCM_DEFER_INTS;
+  string out= tree_hash (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
+tmg_tree_cache_clear (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "tree-cache-clear");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  tree_cache_clear (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_tree_cache_clear_all () {
+  // TMSCM_DEFER_INTS;
+  tree_cache_clear_all ();
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_tree_cache_containsP (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "tree-cache-contains?");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "tree-cache-contains?");
+
+  string in1= tmscm_to_string (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  bool out= tree_cache_contains (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
+tmg_tree_cache_put (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "tree-cache-put");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "tree-cache-put");
+  TMSCM_ASSERT_TREE (arg3, TMSCM_ARG3, "tree-cache-put");
+
+  string in1= tmscm_to_string (arg1);
+  string in2= tmscm_to_string (arg2);
+  tree in3= tmscm_to_tree (arg3);
+
+  // TMSCM_DEFER_INTS;
+  tree_cache_put (in1, in2, in3);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_tree_cache_get (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "tree-cache-get");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "tree-cache-get");
+
+  string in1= tmscm_to_string (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  tree out= tree_cache_get (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
+tmg_tree_cache_get_any (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "tree-cache-get-any");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  tree out= tree_cache_get_any (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
+tmg_tree_cache_update (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "tree-cache-update");
+  TMSCM_ASSERT_TREE (arg2, TMSCM_ARG2, "tree-cache-update");
+
+  string in1= tmscm_to_string (arg1);
+  tree in2= tmscm_to_tree (arg2);
+
+  // TMSCM_DEFER_INTS;
+  tree out= tree_cache_update (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
+tmg_tree_cache_janitor (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "tree-cache-janitor");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  tree_cache_janitor (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_tree_cache_janitor_all () {
+  // TMSCM_DEFER_INTS;
+  tree_cache_janitor_all ();
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_tree_cache_set_max_size (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "tree-cache-set-max-size");
+  TMSCM_ASSERT_INT (arg2, TMSCM_ARG2, "tree-cache-set-max-size");
+
+  string in1= tmscm_to_string (arg1);
+  int in2= tmscm_to_int (arg2);
+
+  // TMSCM_DEFER_INTS;
+  tree_cache_set_max_size (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_tree_cache_size (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "tree-cache-size");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  int out= tree_cache_size (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
+tmg_tree_hash_set_limit (tmscm arg1) {
+  TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "tree-hash-set-limit");
+
+  int in1= tmscm_to_int (arg1);
+
+  // TMSCM_DEFER_INTS;
+  tree_hash_set_limit (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_cpp_tree_correct_node (tmscm arg1) {
   TMSCM_ASSERT_TREE (arg1, TMSCM_ARG1, "cpp-tree-correct-node");
 
@@ -11205,6 +11378,19 @@ initialize_glue_basic () {
   tmscm_install_procedure ("tree-assign-node",  tmg_tree_assign_node, 2, 0, 0);
   tmscm_install_procedure ("tree-insert-node",  tmg_tree_insert_node, 3, 0, 0);
   tmscm_install_procedure ("tree-remove-node",  tmg_tree_remove_node, 2, 0, 0);
+  tmscm_install_procedure ("tree-hash",  tmg_tree_hash, 1, 0, 0);
+  tmscm_install_procedure ("tree-cache-clear",  tmg_tree_cache_clear, 1, 0, 0);
+  tmscm_install_procedure ("tree-cache-clear-all",  tmg_tree_cache_clear_all, 0, 0, 0);
+  tmscm_install_procedure ("tree-cache-contains?",  tmg_tree_cache_containsP, 2, 0, 0);
+  tmscm_install_procedure ("tree-cache-put",  tmg_tree_cache_put, 3, 0, 0);
+  tmscm_install_procedure ("tree-cache-get",  tmg_tree_cache_get, 2, 0, 0);
+  tmscm_install_procedure ("tree-cache-get-any",  tmg_tree_cache_get_any, 1, 0, 0);
+  tmscm_install_procedure ("tree-cache-update",  tmg_tree_cache_update, 2, 0, 0);
+  tmscm_install_procedure ("tree-cache-janitor",  tmg_tree_cache_janitor, 1, 0, 0);
+  tmscm_install_procedure ("tree-cache-janitor-all",  tmg_tree_cache_janitor_all, 0, 0, 0);
+  tmscm_install_procedure ("tree-cache-set-max-size",  tmg_tree_cache_set_max_size, 2, 0, 0);
+  tmscm_install_procedure ("tree-cache-size",  tmg_tree_cache_size, 1, 0, 0);
+  tmscm_install_procedure ("tree-hash-set-limit",  tmg_tree_hash_set_limit, 1, 0, 0);
   tmscm_install_procedure ("cpp-tree-correct-node",  tmg_cpp_tree_correct_node, 1, 0, 0);
   tmscm_install_procedure ("cpp-tree-correct-downwards",  tmg_cpp_tree_correct_downwards, 1, 0, 0);
   tmscm_install_procedure ("cpp-tree-correct-upwards",  tmg_cpp_tree_correct_upwards, 1, 0, 0);

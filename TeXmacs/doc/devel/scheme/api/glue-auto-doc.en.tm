@@ -1939,6 +1939,110 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(tree-hash <scm-arg|tree>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|tree_hash> which returns
+    <scm|string>.
+  </explain>
+
+  <\explain>
+    <scm|(tree-cache-clear <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|tree_cache_clear> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
+    <scm|(tree-cache-clear-all)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|tree_cache_clear_all> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
+    <scm|(tree-cache-contains? <scm-arg|string> <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|tree_cache_contains> which returns
+    <scm|bool>.
+  </explain>
+
+  <\explain>
+    <scm|(tree-cache-put <scm-arg|string> <scm-arg|string> <scm-arg|tree>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|tree_cache_put> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
+    <scm|(tree-cache-get <scm-arg|string> <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|tree_cache_get> which returns
+    <scm|tree>.
+  </explain>
+
+  <\explain>
+    <scm|(tree-cache-get-any <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|tree_cache_get_any> which returns
+    <scm|tree>.
+  </explain>
+
+  <\explain>
+    <scm|(tree-cache-update <scm-arg|string> <scm-arg|tree>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|tree_cache_update> which returns
+    <scm|tree>.
+  </explain>
+
+  <\explain>
+    <scm|(tree-cache-janitor <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|tree_cache_janitor> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
+    <scm|(tree-cache-janitor-all)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|tree_cache_janitor_all> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
+    <scm|(tree-cache-set-max-size <scm-arg|string> <scm-arg|int>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|tree_cache_set_max_size> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
+    <scm|(tree-cache-size <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|tree_cache_size> which returns
+    <scm|int>.
+  </explain>
+
+  <\explain>
+    <scm|(tree-hash-set-limit <scm-arg|int>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|tree_hash_set_limit> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
     <scm|(cpp-tree-correct-node <scm-arg|tree>)>
 <explain-synopsis|no synopsis>
   <|explain>
