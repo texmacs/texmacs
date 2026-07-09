@@ -48,6 +48,7 @@ string client_read (int fd);
 int    client_write (int fd, string s);
 string server_client_address (int fd);
 void   client_listen_connections (int msecs);
+int    client_protocol_version ();
 
 void   enter_secure_mode (int fd);
 
