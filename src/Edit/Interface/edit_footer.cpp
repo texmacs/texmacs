@@ -244,6 +244,8 @@ edit_interface_rep::compute_operation_footer (tree st) {
       r= concat ("write to ", verbatim (as_string (st[0]))); break;
     case TOC_NOTIFY:
       r= concat ("toc notify: ", verbatim (as_string (st[1]))); break;
+    case CACHE_REF:
+      r= concat ("cache-ref: ", verbatim (as_string (st[0]))); break;
     case SPECIFIC:
       r= concat ("specific ", as_string (st[0])); break;
     case HYPHENATE_AS:
