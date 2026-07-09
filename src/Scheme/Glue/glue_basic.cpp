@@ -8408,6 +8408,15 @@ tmg_client_write (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_client_protocol_version () {
+  // TMSCM_DEFER_INTS;
+  int out= client_protocol_version ();
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
 tmg_enter_secure_mode (tmscm arg1) {
   TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "enter-secure-mode");
 
@@ -11574,6 +11583,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("client-stop",  tmg_client_stop, 1, 0, 0);
   tmscm_install_procedure ("client-read",  tmg_client_read, 1, 0, 0);
   tmscm_install_procedure ("client-write",  tmg_client_write, 2, 0, 0);
+  tmscm_install_procedure ("client-protocol-version",  tmg_client_protocol_version, 0, 0, 0);
   tmscm_install_procedure ("enter-secure-mode",  tmg_enter_secure_mode, 1, 0, 0);
   tmscm_install_procedure ("server-client-address",  tmg_server_client_address, 1, 0, 0);
   tmscm_install_procedure ("server-log-write-int",  tmg_server_log_write_int, 2, 0, 0);

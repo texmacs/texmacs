@@ -783,6 +783,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define server-logged-table (make-ahash-table))
+(define server-client-version (make-ahash-table))
+
+(tm-define (client-version>=? uid min-version)
+  (>= (or (ahash-ref server-client-version uid) 0) min-version))
 
 (tm-define (server-get-user envelope)
   (with client (car envelope)
@@ -812,13 +816,16 @@
 
 (tm-define (server-login-uid uid client pseudo)
   (and (server-can-login-uid? uid)
-      (server-set-user-last-login-time-uid uid (current-time))
-      (server-set-user-last-login-address-uid uid (server-client-address client))
-      (server-set-user-failed-login-counter-uid uid 0)
-      (ahash-set! server-logged-table client uid)
-      (ahash-set! server-logged-table uid client)
-      (server-log-write `notice (string-append "user " pseudo
-	" logged in client " (number->string client)))))
+       (server-set-user-last-login-time-uid uid (current-time))
+       (server-set-user-last-login-address-uid uid (server-client-address
+                                                     client))
+       (server-set-user-failed-login-counter-uid uid 0)
+       (ahash-set! server-logged-table client uid)
+       (ahash-set! server-logged-table uid client)
+       (ahash-set! server-client-version uid 0)
+       (server-log-write `notice
+                         (string-append "user " pseudo " logged in client "
+                                        (number->string client)))))
 
 (tm-define (server-failed-login-uid uid client pseudo)
   (ahash-remove! server-logged-table client)
@@ -885,32 +892,39 @@
 
 (tm-service (remote-login pseudo passwd)
   (if (!= (get-preference "server service login") "on")
-      (server-return envelope "not allowed")
-      (with uid (server-find-user pseudo)
-        (if (not uid)
-	    (if (server-pending-pseudo-exists? pseudo)
-		(with l (server-find-pending-user pseudo)
-		  (server-return envelope "pending"))
-		(server-return envelope "user not found"))
-            (with (pseudo2 name2 credentials2 email2 admin2)
-                (ahash-ref server-users uid)
-              ; (display* "remote-login user " pseudo ", with passwd: " passwd "\n")
-              (server-log-write `debug
-                (format #f "remote-login info: ~A\n" (ahash-ref server-users uid)))
-              (when (string? credentials2) ;; Backward compatibility
-                (set! credentials2 `((password "clear" ,credentials2))))
-              (if (server-password-authentified? pseudo passwd credentials2)
-                  (with client (car envelope)
-                    (server-password-update pseudo passwd)
-                    (server-login-uid uid client pseudo)
-                    (server-return envelope "ready"))
-                  (with client (car envelope)
-		    (if (server-can-login-uid? uid)
-			(server-return envelope
-			  "invalid password or suspended account")
-			(server-return envelope
-			  "two many invalid passwords, the account is suspended"))
-		    (server-failed-login-uid uid client pseudo))))))))
+    (server-return envelope "not allowed")
+    (with uid (server-find-user pseudo)
+      (if (not uid)
+        (if (server-pending-pseudo-exists? pseudo)
+          (with l (server-find-pending-user pseudo)
+            (server-return envelope "pending"))
+          (server-return envelope "user not found"))
+        (with (pseudo2 name2 credentials2 email2 admin2)
+          (ahash-ref server-users uid)
+          ; (display* "remote-login user " pseudo ", with passwd: " passwd "\n")
+          (server-log-write `debug
+                            (format #f "remote-login info: ~A\n" (ahash-ref server-users uid)))
+          (when (string? credentials2) ;; Backward compatibility
+            (set! credentials2 `((password "clear" ,credentials2))))
+          (if (server-password-authentified? pseudo passwd credentials2)
+            (with client (car envelope)
+              (server-password-update pseudo passwd)
+              (server-login-uid uid client pseudo)
+              (server-return envelope "ready"))
+            (with client (car envelope)
+              (if (server-can-login-uid? uid)
+                (server-return envelope
+                               "invalid password or suspended account")
+                (server-return envelope
+                               "two many invalid passwords, the account is suspended"))
+              (server-failed-login-uid uid client pseudo))))))))
+
+(tm-service (remote-protocol-version version)
+  (with uid (server-get-user envelope)
+    (cond (uid
+            (ahash-set! server-client-version uid version)
+            (server-return envelope "done"))
+          (else (server-error envelope "not logged in")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Confirm pending new account
@@ -950,7 +964,8 @@
     (client-stop client)
     (and-with uid (ahash-ref server-logged-table client)
       (ahash-remove! server-logged-table client)
-      (ahash-remove! server-logged-table uid))
+      (ahash-remove! server-logged-table uid)
+      (ahash-remove! server-client-version uid))
     (server-log-write `info (string-append "user " pseudo
       " logged out client " (number->string client)))))
 

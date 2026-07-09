@@ -327,7 +327,7 @@
       (let* ((date (db-get-field-first rid "date" #f))
              (name (resource->file-name rid))
              (msg  (db-get-field-first rid "version-msg" #f))
-             (by   (with-encoding :pseudos 
+             (by   (with-encoding :pseudos
                      (db-get-field-first rid "version-by" #f))))
         (list rid date name by msg)))))
 
@@ -432,6 +432,10 @@
           (else
             (with doc (string-load fname)
               (list :loaded doc))))))
+
+(tm-define (server-handle-cache uid t)
+  (if (client-version>=? uid 1) (tree-cache-update t) t))
+
 
 (tm-service (remote-file-load rname)
   ;;(display* "remote-file-load " rname "\n")

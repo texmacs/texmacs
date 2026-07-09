@@ -4963,6 +4963,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(client-protocol-version)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|client_protocol_version> which returns
+    <scm|int>.
+  </explain>
+
+  <\explain>
     <scm|(enter-secure-mode <scm-arg|int>)>
 <explain-synopsis|no synopsis>
   <|explain>

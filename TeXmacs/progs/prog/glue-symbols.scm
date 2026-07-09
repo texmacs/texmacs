@@ -645,6 +645,7 @@
 "client-stop"
 "client-read"
 "client-write"
+"client-protocol-version"
 "enter-secure-mode"
 "server-client-address"
 "server-log-write-int"
