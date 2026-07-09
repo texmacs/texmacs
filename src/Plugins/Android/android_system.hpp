@@ -48,6 +48,16 @@ typedef struct texmacs_dirent {
 } texmacs_dirent;
 
 /*
+ * @brief Acquire advisory lock on file
+ */
+void texmacs_lock_file(FILE *&file, bool nonblock=false);
+
+/*
+ * @brief Release advisory lock on file
+ */
+void texmacs_unlock_file(FILE *&file);
+
+/*
  * @brief Proxy function to call the fopen function.
  * @param lock: if true, the file will be locked.
  */

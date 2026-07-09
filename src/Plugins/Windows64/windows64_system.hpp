@@ -57,6 +57,16 @@ string texmacs_get_last_error_str();
 bool is_running_in_msix();
 
 /*
+ * @brief Acquire advisory lock on file
+ */
+void texmacs_lock_file(FILE *&file, bool nonblock=false);
+
+/*
+ * @brief Release advisory lock on file
+ */
+void texmacs_unlock_file(FILE *&file);
+
+/*
  * @brief Proxy function to call the fopen function with UTF-8 encoded strings
  * The lock parameter is used to lock the file when it is opened.
  */

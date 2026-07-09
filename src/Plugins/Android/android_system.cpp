@@ -59,7 +59,7 @@ inline string texmacs_qbytearray_to_string(const QByteArray &local_string) {
   );
 }
 
-void texmacs_lock_file(FILE *&file) {
+void texmacs_lock_file(FILE *&file, bool nonblock) {
   // do nothing
 }
 
