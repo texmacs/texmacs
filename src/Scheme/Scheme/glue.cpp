@@ -1229,6 +1229,7 @@ tmscm_to_list_tree (tmscm p) {
 #include "tree_traverse.hpp"
 #include "tree_analyze.hpp"
 #include "tree_correct.hpp"
+#include "tree_cache.hpp"
 #include "tree_modify.hpp"
 #include "tree_math_stats.hpp"
 #include "tm_frame.hpp"
