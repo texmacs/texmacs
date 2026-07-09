@@ -142,8 +142,8 @@
 ;; Server Certificate
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define cert-url (string->url "$TEXMACS_HOME_PATH/server/cert.pem"))
-(define key-url  (string->url "$TEXMACS_HOME_PATH/server/key.pem"))
+(define cert-url (string->url "$TEXMACS_SERVER_CERT_DIR/cert.pem"))
+(define key-url  (string->url "$TEXMACS_SERVER_CERT_DIR/key.pem"))
 
 (tm-define (server-certificate-exists?) (url-exists? cert-url))
 

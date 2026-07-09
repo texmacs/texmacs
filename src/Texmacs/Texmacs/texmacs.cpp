@@ -666,6 +666,9 @@ immediate_options (int argc, char** argv) {
     set_env ("TEXMACS_HOME_PATH", get_env ("HOME") * "/.TeXmacs");
 #endif
   if (get_env ("TEXMACS_HOME_PATH") == "") return;
+  if (get_env ("TEXMACS_SERVER_CERT_DIR") == "")
+    set_env ("TEXMACS_SERVER_CERT_DIR",
+             get_env ("TEXMACS_HOME_PATH") * "/server");
   for (int i=1; i<argc; i++) {
     string s= argv[i];
     if ((N(s)>=2) && (s(0,2)=="--")) s= s (1, N(s));

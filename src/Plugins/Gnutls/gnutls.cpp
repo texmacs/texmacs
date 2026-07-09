@@ -60,8 +60,9 @@ static gnutls_certificate_credentials_t tm_x509_client_credentials;
 static gnutls_certificate_credentials_t tm_x509_server_credentials;
 static const int tm_dh_bitsize= 2048;
 static gnutls_dh_params_t tm_dh_parameters;
-static const string tm_x509_cert_path= "$TEXMACS_HOME_PATH/server/cert.pem";
-static const string tm_x509_key_path= "$TEXMACS_HOME_PATH/server/key.pem";
+
+static const string tm_x509_cert_path= "$TEXMACS_SERVER_CERT_DIR/cert.pem";
+static const string tm_x509_key_path= "$TEXMACS_SERVER_CERT_DIR/key.pem";
 static const string tm_x509_trusted_cas_path=
   "$TEXMACS_HOME_PATH/system/certificates/trusted-certificates.crt";
 
