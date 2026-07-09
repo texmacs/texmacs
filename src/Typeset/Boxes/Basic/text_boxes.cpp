@@ -222,6 +222,7 @@ text_box_rep::find_box_path (SI x, SI y, SI delta, bool force, bool& found) {
     if (str[i]=='<')
       while ((i<N(str)) && (str[i]!='>')) i++;
     i++;
+    if (i > N(str)) i= N(str);
 
     int m= (prev_x + xpos[i]) >> 1;
     if ((x<m) || ((x==m) && (delta<0))) {

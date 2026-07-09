@@ -110,9 +110,8 @@ std_ostream_rep::write (const char* s, size_t n) {
     is_w = false;
     return;
   }
-  const char* c= s;
-  while (*c != 0 && *c != '\n') ++c;
-  if (*c == '\n') flush ();
+  for (size_t i= 0; i < n; ++i)
+    if (s[i] == '\n') { flush (); break; }
 }
 
 void

@@ -20,7 +20,8 @@
         (convert tools environment-test)
         (convert mathml mathtm-test)
         (convert tmml tmmltm-test)
-        (prog prog-format-test))
+        (prog prog-format-test)
+        (server server-cache-test))
         (utils cite cite-sort-test))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -98,4 +99,5 @@
 
 (tm-define (run-integration-tests)
   (regtest-server-backup)
+  (regtest-server-cache)
 )

@@ -67,7 +67,8 @@
 
 (tm-define (server-return envelope ret-val)
   (with (client msg-id) envelope
-    (server-send client `(client-remote-result ,msg-id ,ret-val))))
+    (with ret (if (unspecified? ret-val) #t ret-val)
+      (server-send client `(client-remote-result ,msg-id ,ret)))))
 
 (tm-define (server-error envelope error-msg)
   (with (client msg-id) envelope
@@ -109,7 +110,7 @@
 
 (define server-continuations (make-ahash-table))
 (define server-error-handlers (make-ahash-table))
- 
+
 (define (std-server-error msg)
   ;;(texmacs-error "server-remote-error" "remote error ~S" msg)
   (server-log-write 'error msg)
