@@ -151,7 +151,7 @@
         (set! saved-informative-flags (get-init "info-flag"))
         (init-env "info-flag" "none")
         (full-screen-mode #t #f)
-        (fit-to-screen))))
+        (delayed (:idle 100) (fit-to-screen)))))
 
 (tm-define (toggle-full-screen-edit-mode)
   (:synopsis "Toggle full screen edit mode")
