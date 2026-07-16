@@ -51,6 +51,36 @@ texmacs_time () {
 }
 
 /******************************************************************************
+* CPU time measurement (user + sys) for idle detection
+******************************************************************************/
+
+#if defined(OS_MINGW) || defined(OS_MINGW64) || defined(OS_WIN32)
+#include <windows.h>
+long
+cpu_time_ms () {
+  FILETIME creation, exit, kernel, user;
+  if (!GetProcessTimes (GetCurrentProcess (), &creation, &exit, &kernel, &user))
+    return 0;
+  ULARGE_INTEGER k, u;
+  k.LowPart = kernel.dwLowDateTime;
+  k.HighPart = kernel.dwHighDateTime;
+  u.LowPart = user.dwLowDateTime;
+  u.HighPart = user.dwHighDateTime;
+  // FILETIME units are 100 ns; convert to milliseconds
+  return (long) ((k.QuadPart + u.QuadPart) / 10000);
+}
+#else
+#include <sys/resource.h>
+long
+cpu_time_ms () {
+  struct rusage ru;
+  if (getrusage (RUSAGE_SELF, &ru) != 0) return 0;
+  return (long) (ru.ru_utime.tv_sec  * 1000L + ru.ru_utime.tv_usec / 1000 +
+                 ru.ru_stime.tv_sec  * 1000L + ru.ru_stime.tv_usec / 1000);
+}
+#endif
+
+/******************************************************************************
 * Routines for benchmarking
 ******************************************************************************/
 

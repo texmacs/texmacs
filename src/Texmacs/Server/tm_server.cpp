@@ -127,7 +127,9 @@ server::server (server_rep* rep2): rep (rep2) {
   INC_COUNT (this->rep);
 }
 
-tm_server_rep::tm_server_rep (): def_zoomf (1.0) {
+tm_server_rep::tm_server_rep ()
+  : def_zoomf (1.0),
+    idle_last_cpu_ms (0), idle_last_check_ms (0), idle_acc (0) {
   the_server= tm_new<server> (this);
   initialize_scheme ();
   gui_interpose (texmacs_interpose_handler);
@@ -178,6 +180,28 @@ tm_server_rep::refresh () {
   }
 }
 
+static const long   IDLE_CPU_THRESHOLD_MS   = 500;
+static const time_t IDLE_CHECK_INTERVAL_MS  = 1000;
+
+void
+tm_server_rep::idle_monitor_tick () {
+  time_t now_wall = texmacs_time ();
+  if ((now_wall - idle_last_check_ms) < IDLE_CHECK_INTERVAL_MS) return;
+  long   now_cpu  = cpu_time_ms ();
+  time_t dt_wall  = now_wall - idle_last_check_ms;
+  long   dt_cpu   = now_cpu  - idle_last_cpu_ms;
+  long   cpu_rate = (dt_wall > 0) ? (dt_cpu * 1000L / dt_wall) : dt_cpu;
+
+  idle_last_cpu_ms   = now_cpu;
+  idle_last_check_ms = now_wall;
+  idle_acc = cpu_rate < IDLE_CPU_THRESHOLD_MS ? idle_acc+1 : 0;
+}
+
+int
+tm_server_rep::cpu_idle_time () {
+  return idle_acc * IDLE_CHECK_INTERVAL_MS;
+}
+
 void
 tm_server_rep::interpose_handler () {
 #ifdef QTTEXMACS
@@ -199,12 +223,12 @@ tm_server_rep::interpose_handler () {
     int i, j;
     for (i=0; i<N(bufs); i++) {
       tm_buffer buf= (tm_buffer) bufs[i];
-      
+
       for (j=0; j<N(buf->vws); j++) {
 	tm_view vw= (tm_view) buf->vws[j];
 	if (vw->win != NULL) vw->ed->apply_changes ();
       }
-      
+
       for (j=0; j<N(buf->vws); j++) {
 	tm_view vw= (tm_view) buf->vws[j];
 	if (vw->win != NULL) vw->ed->animate ();
@@ -213,6 +237,7 @@ tm_server_rep::interpose_handler () {
     windows_refresh ();
   }
   sync_databases ();
+  idle_monitor_tick ();
 }
 
 void
@@ -316,6 +341,12 @@ void
 tm_server_rep::quit () {
   quit_texmacs_internal (0);
 }
+
+int
+cpu_idle_time () {
+  return get_server () -> cpu_idle_time ();
+}
+
 
 void
 quit_TeXmacs_code (int code) {

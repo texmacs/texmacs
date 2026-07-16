@@ -108,6 +108,7 @@ public:
   virtual bool   is_yes (string s) = 0;
   virtual void   quit () = 0;
   virtual void   shell (string s) = 0;
+  virtual int    cpu_idle_time () = 0;
 };
 
 class server {
@@ -121,6 +122,7 @@ public:
   server ();
 };
 
+int cpu_idle_time ();
 extern bool rescue_mode;
 scheme_tree menu_merge (scheme_tree m1, scheme_tree m2);
 server get_server ();

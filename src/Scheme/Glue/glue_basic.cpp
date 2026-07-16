@@ -597,6 +597,15 @@ tmg_pretty_time (tmscm arg1) {
 }
 
 tmscm
+tmg_cpu_idle_time () {
+  // TMSCM_DEFER_INTS;
+  int out= cpu_idle_time ();
+  // TMSCM_ALLOW_INTS;
+
+  return int_to_tmscm (out);
+}
+
+tmscm
 tmg_pretty_date (tmscm arg1, tmscm arg2) {
   TMSCM_ASSERT_INT (arg1, TMSCM_ARG1, "pretty-date");
   TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "pretty-date");
@@ -11193,6 +11202,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("language-to-locale",  tmg_language_to_locale, 1, 0, 0);
   tmscm_install_procedure ("texmacs-time",  tmg_texmacs_time, 0, 0, 0);
   tmscm_install_procedure ("pretty-time",  tmg_pretty_time, 1, 0, 0);
+  tmscm_install_procedure ("cpu-idle-time",  tmg_cpu_idle_time, 0, 0, 0);
   tmscm_install_procedure ("pretty-date",  tmg_pretty_date, 2, 0, 0);
   tmscm_install_procedure ("texmacs-memory",  tmg_texmacs_memory, 0, 0, 0);
   tmscm_install_procedure ("bench-print",  tmg_bench_print, 1, 0, 0);

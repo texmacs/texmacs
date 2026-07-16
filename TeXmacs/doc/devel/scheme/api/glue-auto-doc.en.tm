@@ -459,6 +459,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(cpu-idle-time)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|cpu_idle_time> which returns
+    <scm|int>.
+  </explain>
+
+  <\explain>
     <scm|(pretty-date <scm-arg|int> <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>

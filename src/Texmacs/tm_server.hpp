@@ -16,7 +16,6 @@
 #include "tm_buffer.hpp"
 #include "tm_frame.hpp"
 #include "tm_data.hpp"
-
 bool is_server_started ();
 
 class tm_server_rep:
@@ -24,7 +23,10 @@ class tm_server_rep:
   public tm_frame_rep
 {
 protected:
-  double def_zoomf; // default zoom factor
+  double def_zoomf;          // default zoom factor
+  long   idle_last_cpu_ms;   // cumulative CPU time at last idle check (ms)
+  time_t idle_last_check_ms; // time of last idle check (ms since start)
+  int    idle_acc;           // consecutive idle checks
 
 public:
   tm_server_rep ();
@@ -35,6 +37,8 @@ public:
   void   style_clear_cache ();
   void   refresh ();
   void   interpose_handler ();
+  void   idle_monitor_tick ();
+  int    cpu_idle_time ();
   void   wait_handler (string message, string arg);
   void   set_script_status (int i);
   void   set_printing_command (string s);
@@ -50,5 +54,7 @@ public:
   void   quit ();
   void   shell    (string s);
 };
+
+int  cpu_idle_time ();
 
 #endif // defined TM_SERVER_H
