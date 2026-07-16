@@ -243,11 +243,20 @@
 (tm-define (client-find-server-by-pseudo server-name-port pseudo)
   (with (server-name port) (split-server-name-and-port server-name-port)
     (or (list-find (client-active-servers)
-          (lambda (s)
-            (and-with con (ahash-ref client-active-connections s)
-              (and (== (first con) server-name)
-                   (== (second con) port)
-                   (== (third con) pseudo)))))
+                   (lambda (s)
+                     (and-with con (ahash-ref client-active-connections s)
+                       (and (== (first con) server-name)
+                            (== (second con) port)
+                            (== (third con) pseudo)))))
+        ;; in the case we are getting host from tmfs links, which do not have the port
+        ;; and the server is not bound to the default 6561 port
+        ;; TODO: we should modify tmfs urls to support ports,
+        ;; eg tmfs::/remote-file/localhost:6562/...
+        (list-find (client-active-servers)
+                   (lambda (s)
+                     (and-with con (ahash-ref client-active-connections s)
+                       (and (== (first con) server-name)
+                            (== (third con) pseudo)))))
         (client-find-server-by-name-and-port server-name port))))
 
 (tm-define (client-find-server-name server)
