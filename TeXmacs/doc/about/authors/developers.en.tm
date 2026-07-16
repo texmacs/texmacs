@@ -125,6 +125,8 @@
 
     <item>Bruno Haible helped coining the name <TeXmacs>, thereby
     acknowledging some initial inspiration from both <TeX> and <name|Emacs>.
+
+    <item>Robin Wils for the collaborative version and socket improvements
   </itemize>
 
   <tmdoc-copyright|1998\U2019|Joris van der Hoeven>

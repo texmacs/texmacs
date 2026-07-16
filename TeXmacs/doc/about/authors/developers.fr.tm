@@ -45,6 +45,9 @@
 
     <item>Rob Clark a fait un patch qui a amélioré la gestion de la date
     système.
+
+    <item>Robin Wils a aidé sur l'implémentation de la version collaborative
+    et l'amélioration des sockets
   </itemize>
 
   <apply|tmdoc-copyright|1998--2003|Joris van der Hoeven|Michèle Garoche>
