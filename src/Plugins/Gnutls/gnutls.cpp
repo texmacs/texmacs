@@ -876,7 +876,7 @@ tls_server_contact_rep::start (int io2) {
     GNUTLS_LOGI (tm_session_info (s));
     handshake_in_progress= false;
   } else if (e == GNUTLS_E_AGAIN || e == GNUTLS_E_INTERRUPTED) {
-    GNUTLS_LOG ("GnuTLS handshake in progress for client " * as_string (io));
+    //GNUTLS_LOG ("GnuTLS handshake in progress for client " * as_string (io));
     handshake_in_progress= true;
   } else if (e < 0) {
     GNUTLS_ERR_LOGE (e, "session handshake for client " * as_string (io));
@@ -1016,7 +1016,7 @@ tls_client_contact_rep::handshake (gnutls_session_t s) {
     handshake_in_progress= false;
     return ret;
   } else if (ret == GNUTLS_E_AGAIN || ret == GNUTLS_E_INTERRUPTED) {
-    GNUTLS_LOG ("GnuTLS handshake in progress for " * as_string (io));
+    //GNUTLS_LOG ("GnuTLS handshake in progress for " * as_string (io));
     handshake_in_progress = true;
     error_number= ret;
     return ret;
