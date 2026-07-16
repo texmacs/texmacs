@@ -191,10 +191,10 @@ disk_lru::recount_dir (url u, int depth) {
 }
 
 
-tree_cache::tree_cache (string dir, int dd, int me, size_t ms, int pc)
+tree_cache::tree_cache (string dir, int dd, int me, size_t ms)
   : base_dir (concretize (url (dir))),
     index_file (concretize (url (dir) * "index.scm")),
-    dir_depth (dd), protected_cap (pc),
+    dir_depth (dd),
     cache (cache_entry{.t=UNINIT}), size (0),
     policy (new disk_lru (this, me, ms)) {}
 
