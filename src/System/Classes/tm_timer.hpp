@@ -40,6 +40,7 @@ extern "C" {
 
 time_t raw_time ();
 time_t texmacs_time ();
+long   cpu_time_ms ();
 
 void   bench_start (string task);
 void   bench_cumul (string task);

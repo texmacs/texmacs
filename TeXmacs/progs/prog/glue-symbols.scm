@@ -82,6 +82,7 @@
 "language-to-locale"
 "texmacs-time"
 "pretty-time"
+"cpu-idle-time"
 "pretty-date"
 "texmacs-memory"
 "bench-print"
