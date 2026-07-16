@@ -159,6 +159,7 @@ concrete_window () {
 
 url
 get_current_window () {
+  if (!has_current_window ()) return url ("");
   tm_window win= concrete_window ();
   return abstract_window (win);
 }
