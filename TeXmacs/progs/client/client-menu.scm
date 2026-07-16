@@ -184,6 +184,9 @@
   (link client-menu)
   ---
   ("Client Preferences" (open-client-preferences))
+  ("Clear cache"
+   (tree-cache-clear-all)
+   (server-open-success "Tree cache has been cleared."))
   ---
   (assuming (not (server-started?))
     (link server-start-menu))
