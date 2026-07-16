@@ -131,7 +131,7 @@ get_preferred_size (string name, SI& ww, SI& hh) {
 * Meta editor constructor and destructor
 ******************************************************************************/
 
-static int tm_window_serial= 0;
+static int tm_window_serial= 1;
 
 tm_window_rep::tm_window_rep (widget wid2, tree geom):
   win (texmacs_window_widget (wid2, geom)),
