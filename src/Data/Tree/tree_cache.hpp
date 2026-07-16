@@ -76,8 +76,8 @@ public:
   tree_cache (string dir,
               int    dir_depth     = 2,
               int    max_entries   = 1024,
-              size_t max_size      = 500 * 1024 * 1024, // 500 MB
-              int    protected_cap = 819);              // 80% of max_entries
+              size_t max_size      = 500 * 1024 * 1024); // 500 MB
+
   ~tree_cache ();
   void   clear ();
   bool   contains (string key);
@@ -109,7 +109,6 @@ private:
   string base_dir;
   string index_file;
   int    dir_depth;
-  int    protected_cap;
   hashmap<string,cache_entry> cache;
   size_t size;
   cache_eviction_policy* policy;
