@@ -50,8 +50,16 @@
   (cond ((and (pair? cmd) (ahash-ref service-dispatch-table (car cmd)))
          (with (name . args) cmd
            (with fun (ahash-ref service-dispatch-table name)
-             (apply fun (cons envelope args))))) ;; todo << catch errors
-        ((symbol? (car cmd))
+             (catch #t
+                    (lambda () (apply fun (cons envelope args)))
+                    (lambda (key . err-args)
+                      (with msg (apply format-err key err-args)
+                        (server-log-write 'error
+                          (string-append "Server error in service "
+                                         (symbol->string name)
+                                         " evaluation: " msg))
+                        (server-error envelope msg)))))))
+        ((and (pair? cmd) (symbol? (car cmd)))
          (with s (symbol->string (car cmd))
            (server-error envelope (string-append "invalid command '" s "'"))))
         (else (server-error envelope "invalid command"))))
