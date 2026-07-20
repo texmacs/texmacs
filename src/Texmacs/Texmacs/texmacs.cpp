@@ -586,7 +586,7 @@ TeXmacs_main (int argc, char** argv) {
       if (DEBUG_STD) debug_boot << "Creating 'no name' buffer...\n";
       open_window ();
     }
-  
+    extra_init_cmd << "(delayed (:idle 500) (keyboard-focus-on \"canvas\"))"; 
     bench_print ();
     bench_reset ("initialize texmacs");
     bench_reset ("initialize plugins");
