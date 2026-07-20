@@ -403,7 +403,7 @@ switch_to_buffer (url name) {
   //cout << "Switching to buffer " << name << "\n";
   url u= get_passive_view (name);
   tm_view vw= concrete_view (u);
-  if (vw == NULL) return;
+  if (vw == NULL || !has_current_window ()) return;
   window_set_view (get_current_window (), u, true);
   tm_window nwin= vw->win;
   if (nwin != NULL)
