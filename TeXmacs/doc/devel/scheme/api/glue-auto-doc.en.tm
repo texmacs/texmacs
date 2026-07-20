@@ -2059,6 +2059,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(cache-reset-tmfs <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|cache_reset_tmfs> which returns
+    <scm|void>.
+  </explain>
+
+  <\explain>
     <scm|(cpp-tree-correct-node <scm-arg|tree>)>
 <explain-synopsis|no synopsis>
   <|explain>

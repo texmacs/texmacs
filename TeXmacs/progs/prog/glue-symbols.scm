@@ -282,6 +282,7 @@
 "tree-cache-set-max-size"
 "tree-cache-size"
 "tree-hash-set-limit"
+"cache-reset-tmfs"
 "cpp-tree-correct-node"
 "cpp-tree-correct-downwards"
 "cpp-tree-correct-upwards"

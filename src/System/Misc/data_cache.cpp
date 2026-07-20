@@ -13,6 +13,7 @@
 #include "file.hpp"
 #include "convert.hpp"
 #include "iterator.hpp"
+#include "tree.hpp"
 
 /******************************************************************************
 * Caching routines
@@ -37,6 +38,28 @@ cache_reset (string buffer, tree key) {
   tree ckey= tuple (buffer, key);
   cache_data->reset (ckey);
   cache_changed->insert (buffer);
+}
+
+void
+cache_reset_tmfs (string buffer) {
+  list<string> tmfs_in_cache;
+
+  for (iterator<tree> it = iterate (cache_data); it->busy (); ) {
+    tree t= it->next();
+
+    if (is_func (t, TUPLE, 2) && t[0] == buffer) {
+      string name= t[1]->label;
+
+      if (is_rooted_tmfs (as_url (name))) {
+        tmfs_in_cache << name;
+      }
+    }
+  }
+
+  while (!is_nil(tmfs_in_cache)) {
+    cache_reset(buffer, tmfs_in_cache->item);
+    tmfs_in_cache=tmfs_in_cache->next;
+  }
 }
 
 bool
@@ -253,12 +276,12 @@ cache_initialize () {
   if (get_env ("TEXMACS_DOC_PATH") == "")
     texmacs_doc_path= url_system ("$TEXMACS_PATH/doc");
   else texmacs_doc_path= url_system ("$TEXMACS_DOC_PATH");
-  
+
   texmacs_path_string = concretize (texmacs_path);
   texmacs_home_path_string = concretize (texmacs_home_path);
   texmacs_doc_path_string = concretize (texmacs_doc_path);
   texmacs_font_path_string = concretize (texmacs_home_path * "fonts/");
-   
+
   cache_refresh ();
   if (is_recursively_up_to_date (texmacs_path * "fonts/type1") &&
       is_recursively_up_to_date (texmacs_path * "fonts/truetype") &&

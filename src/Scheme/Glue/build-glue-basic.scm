@@ -289,6 +289,8 @@
 
   (tree-hash-set-limit tree_hash_set_limit (void int))
 
+  (cache-reset-tmfs cache_reset_tmfs  (void string))
+
   (cpp-tree-correct-node correct_node (void tree))
   (cpp-tree-correct-downwards correct_downwards (void tree))
   (cpp-tree-correct-upwards correct_upwards (void tree))

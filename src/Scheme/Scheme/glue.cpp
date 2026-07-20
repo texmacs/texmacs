@@ -1219,6 +1219,7 @@ tmscm_to_list_tree (tmscm p) {
 #include "connect.hpp"
 #include "convert.hpp"
 #include "file.hpp"
+#include "data_cache.hpp"
 #include "image_files.hpp"
 #include "web_files.hpp"
 #include "sys_utils.hpp"

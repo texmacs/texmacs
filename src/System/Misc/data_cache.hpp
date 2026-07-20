@@ -15,6 +15,7 @@
 
 void cache_set (string buffer, tree key, tree im);
 void cache_reset (string buffer, tree key);
+void cache_reset_tmfs (string buffer);
 bool is_cached (string buffer, tree key);
 tree cache_get (string buffer, tree key);
 bool is_up_to_date (url dir);

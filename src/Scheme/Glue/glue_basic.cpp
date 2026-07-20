@@ -3301,6 +3301,19 @@ tmg_tree_hash_set_limit (tmscm arg1) {
 }
 
 tmscm
+tmg_cache_reset_tmfs (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "cache-reset-tmfs");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  cache_reset_tmfs (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
 tmg_cpp_tree_correct_node (tmscm arg1) {
   TMSCM_ASSERT_TREE (arg1, TMSCM_ARG1, "cpp-tree-correct-node");
 
@@ -11435,6 +11448,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("tree-cache-set-max-size",  tmg_tree_cache_set_max_size, 2, 0, 0);
   tmscm_install_procedure ("tree-cache-size",  tmg_tree_cache_size, 1, 0, 0);
   tmscm_install_procedure ("tree-hash-set-limit",  tmg_tree_hash_set_limit, 1, 0, 0);
+  tmscm_install_procedure ("cache-reset-tmfs",  tmg_cache_reset_tmfs, 1, 0, 0);
   tmscm_install_procedure ("cpp-tree-correct-node",  tmg_cpp_tree_correct_node, 1, 0, 0);
   tmscm_install_procedure ("cpp-tree-correct-downwards",  tmg_cpp_tree_correct_downwards, 1, 0, 0);
   tmscm_install_procedure ("cpp-tree-correct-upwards",  tmg_cpp_tree_correct_upwards, 1, 0, 0);

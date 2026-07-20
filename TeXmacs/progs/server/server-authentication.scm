@@ -143,7 +143,9 @@
 (define (notify-server-service-tree-cache var val)
   (when (server-started?)
     (server-log-write `info
-                      (string-append "Allowing remote tree caching turned " val))))
+                      (string-append "Allowing remote tree caching turned " val)))
+  (when (== val "off")
+    (cache-reset-tmfs "file_cache")))
 
 (define-preferences
   ("server port" "6561"
