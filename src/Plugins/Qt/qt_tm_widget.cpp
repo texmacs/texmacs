@@ -546,12 +546,11 @@ qt_tm_widget_rep::update_visibility () {
     extraTools->setVisible (new_extraVisibility);
   if (mainwindow() && mainwindow()->statusBar() && XOR(old_statusVisibility,  new_statusVisibility) )
     mainwindow()->statusBar()->setVisible (new_statusVisibility);
-
-#if !defined(Q_OS_MAC)
-  if (!tmapp()->useNewToolbar()  && mainwindow() && mainwindow()->menuBar()) {
+#if !defined(Q_OS_MAC) || QT_VERSION >= 0x060000
+  if (!tmapp()->useNewToolbar() && mainwindow()
+      && !use_native_menubar && mainwindow()->menuBar()) {
     bool old_menuVisibility = mainwindow()->menuBar()->isVisible();
     bool new_menuVisibility = visibility[0];
-
     if ( XOR(old_menuVisibility,  new_menuVisibility) )
       mainwindow()->menuBar()->setVisible (new_menuVisibility);
   }
