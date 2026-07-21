@@ -158,10 +158,12 @@ QLineEdit, QStatusBar QWidget QLineEdit, #focusToolBar QWidget QLineEdit, #userT
     min-height: 16px;
     padding-left: 2px;
     padding-right: 2px;
+    border-radius: 5px;
 }
 
 QLineEdit:focus, QStatusBar QWidget QLineEdit:focus, #focusToolBar QWidget QLineEdit:focus, #userToolBar QWidget QLineEdit:focus {
     border: 1px solid #A0C0E0;
+    border-radius: 5px;
 }
 
 /****************************************************************************
