@@ -14,13 +14,23 @@
 (texmacs-module (server server-cache))
 
 (tm-define (server-handle-cache sname uid t)
-  (if (client-version>=? uid 1) (tree-cache-update sname t) t))
+  (if (and (server-tree-cache-enabled?) (client-version>=? uid 1))
+      (tree-cache-update sname t) t))
+
 
 (tm-service (remote-get-cache-ref host ref)
-  ;;(display* "remote-file-load " rname "\n")
+  ;; not checking client protocol version because client is calling this service
   (with uid (server-get-user envelope)
     (cond ((not uid)
            (server-error envelope "Error: not logged in"))
+          ((not (server-tree-cache-enabled?))
+           (server-error envelope "Error: tree cache disabled"))
           (else
             (server-return envelope (tree->stree (tree-cache-get host ref)))))))
+
+(tm-define (server-tree-cache-enabled?)
+  (== (get-preference "server service tree-cache") "on"))
+
+(tm-define (server-tree-cache-set-enabled val)
+  (set-preference "server service tree-cache" val))
 
