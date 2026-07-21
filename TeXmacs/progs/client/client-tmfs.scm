@@ -332,6 +332,31 @@
       title
       (string-append title " - " (pretty-time t))))
 
+(define (update-cache-refs refs hash)
+  (for-each
+    update-tree
+    (list-filter refs (lambda (r) (== (tm->string (tm-ref r 0)) hash)))))
+
+(tm-define (fetch-missing-cache-refs server t)
+  (let* ((refs (select t '(:* cache-ref)))
+         (hashes (map (lambda (r) (tm->string (tm-ref r 0))) refs))
+         (sname (client-find-server-name server))
+         (missing
+           (list-remove-duplicates
+             (list-filter
+               hashes (lambda (h) (not (tree-cache-contains? sname h)))))))
+    (for-each
+      (lambda (h)
+        (client-remote-eval server
+          `(remote-get-cache-ref ,sname ,h)
+          (lambda (tm)
+            (tree-cache-put sname h (stree->tree tm))
+            (update-cache-refs refs h)
+            (set-message (string-append "retrieved " h) "load remote cache ref"))
+          (lambda (err)
+            (set-message err "load remote cache ref"))))
+      missing)))
+
 (tmfs-title-handler (remote-file name doc)
   (let* ((sname (tmfs-car name))
          (server (find-server-for-name name))
@@ -365,7 +390,8 @@
             (lambda (tm)
               (with doc (convert tm "texmacs-document" "texmacs-stree")
                 ;;(display* "LOAD ") (write doc) (display* "\n")
-                (remote-file-set name doc))
+                (remote-file-set name doc)
+                (fetch-missing-cache-refs server (buffer->tree fname)))
               (set-message "retrieved contents" "load remote file"))
             (lambda (err)
               (set-message err "load remote file")))
