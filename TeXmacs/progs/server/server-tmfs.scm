@@ -12,7 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (server server-tmfs)
-  (:use (server server-base)))
+  (:use (server server-base)
+        (server server-cache)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Repository
@@ -433,18 +434,18 @@
             (with doc (string-load fname)
               (list :loaded doc))))))
 
-(tm-define (server-handle-cache uid t)
-  (if (client-version>=? uid 1) (tree-cache-update t) t))
-
-
 (tm-service (remote-file-load rname)
   ;;(display* "remote-file-load " rname "\n")
   (with-remote-context rname
     (let* ((uid (server-get-user envelope))
+           (sname (tmfs-car rname))
            (r (server-file-load uid rname)))
       (if (== (car r) :error)
-          (server-error envelope (cadr r))
-          (server-return envelope (cadr r))))))
+        (server-error envelope (cadr r))
+        (let* ((t (convert (cadr r) "texmacs-document" "texmacs-tree"))
+               (cached (convert (server-handle-cache sname uid t)
+                                "texmacs-tree" "texmacs-document")))
+          (server-return envelope cached))))))
 
 (tm-define (server-file-save uid rname doc msg)
   (let* ((fid (file-name->resource (tmfs-cdr rname)))

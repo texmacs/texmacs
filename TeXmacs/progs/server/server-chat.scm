@@ -129,8 +129,12 @@
             (else
              (ensure-chat-room client crid)
              (let* ((ms (ahash-ref chat-room-messages crid))
+                    (cached
+                      (map (lambda (t)
+                             (tree->stree
+                               (server-handle-cache (tmfs-car name) uid (stree->tree t)))) ms))
                     (w? (db-allow? crid uid "writable")))
-               (server-return envelope (list w? ms))))))))
+               (server-return envelope (list w? cached))))))))
 
 (tm-service (remote-mail-open)
   ;; Open mail while creating mail box (a chat room) if necessary
