@@ -47,7 +47,10 @@
   credentials resetting>>>|<form-checkbox|server service
   delete-account|false|(lset-preference name
   answer)>|<hlist|<glue|false|false|5px|0px>|<inflate|<text-opaque|Remote
-  account deletion>>>>
+  account deletion>>>|<form-checkbox|server service
+  tree-cache|true|(lset-preference name
+  answer)>|<hlist|<glue|false|false|5px|0px>|<inflate|<text-opaque|Server
+  tree cache>>>>
 
   <subsection*|Passwords>
 

@@ -138,7 +138,12 @@
 (define (notify-server-service-delete-account var val)
   (when (server-started?)
     (server-log-write `info
-      (string-append "Allowing remote account deletion turned " val))))
+                      (string-append "Allowing remote account deletion turned " val))))
+
+(define (notify-server-service-tree-cache var val)
+  (when (server-started?)
+    (server-log-write `info
+                      (string-append "Allowing remote tree caching turned " val))))
 
 (define-preferences
   ("server port" "6561"
@@ -178,7 +183,9 @@
   ("server service notifications" "on"
    notify-server-service-notifications)
   ("server service delete-account" "off"
-   notify-server-service-delete-account))
+   notify-server-service-delete-account)
+  ("server service tree-cache" "on"
+   notify-server-service-tree-cache))
 
 (tm-define (server-get-port)
   (:synopsis "Port to run the server")
