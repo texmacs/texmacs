@@ -25,7 +25,7 @@
 #include <cerrno>
 #include <unistd.h>
 
-static const char* tree_cache_root= "$TEXMACS_HOME_PATH/system/tmp/treecache";
+static const char* tree_cache_root= "$TEXMACS_HOME_PATH/system/tmp/tree_cache";
 
 static tree_cache&
 get_tree_cache (string host) {
@@ -59,6 +59,10 @@ cache_eviction_policy::cache_map () {
 
 disk_lru::disk_lru (tree_cache* o, int me, int ms)
 : cache_eviction_policy (o, me, ms) {}
+
+/******************************************************************************
+* Disk LRU policy
+******************************************************************************/
 
 bool
 disk_lru::should_evict () {
@@ -190,6 +194,9 @@ disk_lru::recount_dir (url u, int depth) {
   }
 }
 
+/******************************************************************************
+* Tree cache
+******************************************************************************/
 
 tree_cache::tree_cache (string dir, int dd, int me, size_t ms)
   : base_dir (concretize (url (dir))),

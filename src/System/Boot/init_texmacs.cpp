@@ -222,7 +222,7 @@ init_user_dirs () {
   make_dir ("$TEXMACS_HOME_PATH/system/database/bib");
   make_dir ("$TEXMACS_HOME_PATH/system/make");
   make_dir ("$TEXMACS_HOME_PATH/system/tmp");
-  make_dir ("$TEXMACS_HOME_PATH/system/tmp/treecache");
+  make_dir ("$TEXMACS_HOME_PATH/system/tmp/tree_cache");
   make_dir ("$TEXMACS_HOME_PATH/texts");
   make_dir ("$TEXMACS_HOME_PATH/texts/backup");
   make_dir ("$TEXMACS_HOME_PATH/texts/scratch");

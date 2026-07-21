@@ -49,6 +49,10 @@ public:
   int    get_max_size () const { return max_size; }
 };
 
+/******************************************************************************
+* Disk LRU policy
+******************************************************************************/
+
 class disk_lru : public cache_eviction_policy {
 public:
   disk_lru (tree_cache* o, int me, int ms);
@@ -68,6 +72,10 @@ private:
   void scan_oldest (url u, int depth, string prefix,
                     string& best, time_t& best_at, bool& found);
 };
+
+/******************************************************************************
+* Tree cache
+******************************************************************************/
 
 class tree_cache {
   friend class cache_eviction_policy;
