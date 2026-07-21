@@ -153,17 +153,17 @@ MingwQMenu::right-arrow {
 
 QLineEdit, QStatusBar QWidget QLineEdit, #focusToolBar QWidget QLineEdit, #userToolBar QWidget QLineEdit {
     background: #FFFFFF;
-
-
     min-height: 16px;
     padding-left: 2px;
     padding-right: 2px;
+    border-radius: 5px;
 }
 
 QLineEdit:focus, QStatusBar QWidget QLineEdit:focus, #focusToolBar QWidget QLineEdit:focus, #userToolBar QWidget QLineEdit:focus {
     border: 2px solid #80C0C0;
+    border-radius: 5px;
 }
-
+ 
 /****************************************************************************
 * Line edits
 ****************************************************************************/
