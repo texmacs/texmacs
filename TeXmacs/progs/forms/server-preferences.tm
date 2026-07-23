@@ -1,4 +1,4 @@
-<TeXmacs|2.1.4>
+<TeXmacs|2.1.5>
 
 <style|<tuple|exam|gui-bright|compact-list>>
 
@@ -49,16 +49,22 @@
   answer)>|<hlist|<glue|false|false|5px|0px>|<inflate|<text-opaque|Remote
   account deletion>>>|<form-checkbox|server service
   tree-cache|true|(lset-preference name
+  answer)>|<hlist|<glue|false|false|5px|0px>|<inflate|<text-opaque|Server tree
+  cache>>>|<form-checkbox|server service backup|false|(lset-preference name
   answer)>|<hlist|<glue|false|false|5px|0px>|<inflate|<text-opaque|Server
-  tree cache>>>>
+  backup>>>>
 
   <subsection*|Backup>
 
+  <freeze|<if|<extern|has-rsync-ext?>|rsync detected|No rsync detected,
+  please install it> >
+
   <align-tiled|2|<inflate|<text-opaque|Rsync destination
   directory:>>|<hlist|<glue|false|false|5px|0px>|<form-input-text|server
-  backup destination|string|(lset-preference name answer)|1par|>>|<inflate|<text-opaque|Backup
-  interval in hours:>>|<hlist|<glue|false|false|5px|0px>|<form-input-text|server
-  backup interval|string|(lset-preference name answer)|5em|24>>>
+  backup destination|string|(lset-preference name
+  answer)|1par|>>|<inflate|<text-opaque|Backup interval in
+  hours:>>|<hlist|<glue|false|false|5px|0px>|<form-input-text|server backup
+  interval|string|(lset-preference name answer)|5em|24>>>
 
   <subsubsection*|Retention (number of snapshots to keep)>
 
