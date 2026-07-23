@@ -57,7 +57,7 @@ cache_eviction_policy::cache_map () {
   return owner->cache;
 }
 
-disk_lru::disk_lru (tree_cache* o, int me, int ms)
+disk_lru::disk_lru (tree_cache* o, int me, int64_t ms)
 : cache_eviction_policy (o, me, ms) {}
 
 /******************************************************************************
@@ -69,12 +69,12 @@ disk_lru::should_evict () {
   return dir_size (owner->get_base_dir (), owner->get_depth ()) >= max_size;
 }
 
-int
+int64_t
 disk_lru::current_size () {
   return dir_size (owner->get_base_dir (), owner->get_depth ());
 }
 
-int
+int64_t
 disk_lru::dir_size (url u, int depth) {
   if (depth == 0) {
     return read_dir_size (u * "stats");
@@ -87,22 +87,22 @@ disk_lru::dir_size (url u, int depth) {
     return 0;
   }
 
-  int tot= 0;
+  int64_t tot= 0;
   for (int idx=0; idx < N(entries); ++idx)
     tot += dir_size (u * entries[idx], depth - 1);
   return tot;
 }
 
-int
+int64_t
 disk_lru::read_dir_size (url stats_u) {
   string s;
   if (load_string (stats_u, s, false, false)) return 0;
-  return as_int (s);
+  return (int64_t) as_long_int (s);
 }
 
 void
-disk_lru::set_dir_size (url stats_u, int total) {
-  string s= as_string (total < 0 ? 0 : total);
+disk_lru::set_dir_size (url stats_u, int64_t total) {
+  string s= as_string ((long long int) (total < 0 ? 0 : total));
   owner->persist (concretize (stats_u), s);
 }
 
@@ -120,8 +120,9 @@ void
 disk_lru::on_evict (string key) {
   url stats_u= url (owner->entry_dir (key)) * "stats";
   struct_stat buf;
-  int sz= 0;
-  if (texmacs_stat (owner->entry_path (key), &buf) == 0) sz= (int) buf.st_size;
+  int64_t sz= 0;
+  if (texmacs_stat (owner->entry_path (key), &buf) == 0)
+    sz= (int64_t) buf.st_size;
   set_dir_size (stats_u, read_dir_size (stats_u) - sz);
 }
 
@@ -172,7 +173,7 @@ disk_lru::recount_dir (url u, int depth) {
   array<string> entries= read_directory (u, error);
   if (error) return;
   if (depth == 0) {
-    int tot= 0;
+    int64_t tot= 0;
     for (int i= 0; i < N (entries); i++) {
       string e= entries[i];
       if (e == "stats") continue;
@@ -182,7 +183,7 @@ disk_lru::recount_dir (url u, int depth) {
       if (dotted) continue;
       struct_stat buf;
       if (texmacs_stat (concretize (u * e), &buf) == 0)
-        tot += (int) buf.st_size;
+        tot += (int64_t) buf.st_size;
     }
     set_dir_size (u * "stats", tot);
     return;
@@ -198,7 +199,7 @@ disk_lru::recount_dir (url u, int depth) {
 * Tree cache
 ******************************************************************************/
 
-tree_cache::tree_cache (string dir, int dd, int me, size_t ms)
+tree_cache::tree_cache (string dir, int dd, int me, int64_t ms)
   : base_dir (concretize (url (dir))),
     index_file (concretize (url (dir) * "index.scm")),
     dir_depth (dd),
@@ -595,11 +596,11 @@ tree_cache_janitor_all () {
 }
 
 void
-tree_cache_set_max_size (string host, int ms) {
+tree_cache_set_max_size (string host, int64_t ms) {
   get_tree_cache (host).set_max_size (ms);
 }
 
-int
+int64_t
 tree_cache_size (string host) {
   return get_tree_cache (host).disk_size ();
 }

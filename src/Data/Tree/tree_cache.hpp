@@ -16,6 +16,7 @@
 #include "string.hpp"
 #include "url.hpp"
 #include "hashmap.hpp"
+#include <cstdint>
 
 struct cache_entry {
   tree t;
@@ -33,20 +34,20 @@ protected:
   tree_cache* owner;
   hashmap<string,cache_entry>& cache_map ();
   int max_entries;
-  int max_size;
+  int64_t max_size;
 public:
-  cache_eviction_policy (tree_cache* o, int me, int ms)
+  cache_eviction_policy (tree_cache* o, int me, int64_t ms)
   : owner (o), max_entries (me), max_size (ms) {}
   virtual ~cache_eviction_policy () {}
-  virtual bool   should_evict () = 0;
-  virtual void   on_insert (string key, cache_entry& e) { (void) key; (void) e; }
-  virtual void   on_hit    (string key, cache_entry& e) { (void) key; (void) e; }
-  virtual void   on_evict  (string key) { (void) key; }
-  virtual void   recount   () {}
-  virtual string pick_victim () = 0;
-  virtual int    current_size () { return 0; }
-  void   set_max_size (int ms) { max_size= ms; }
-  int    get_max_size () const { return max_size; }
+  virtual bool    should_evict () = 0;
+  virtual void    on_insert (string key, cache_entry& e) { (void) key; (void) e; }
+  virtual void    on_hit    (string key, cache_entry& e) { (void) key; (void) e; }
+  virtual void    on_evict  (string key) { (void) key; }
+  virtual void    recount   () {}
+  virtual string  pick_victim () = 0;
+  virtual int64_t current_size () { return 0; }
+  void    set_max_size (int64_t ms) { max_size= ms; }
+  int64_t get_max_size () const { return max_size; }
 };
 
 /******************************************************************************
@@ -55,20 +56,20 @@ public:
 
 class disk_lru : public cache_eviction_policy {
 public:
-  disk_lru (tree_cache* o, int me, int ms);
-  bool   should_evict () override;
-  void   on_insert (string key, cache_entry& e) override;
-  void   on_hit    (string key, cache_entry& e) override;
-  void   on_evict  (string key) override;
-  void   recount   () override;
-  string pick_victim () override;
-  int    current_size () override;
+  disk_lru (tree_cache* o, int me, int64_t ms);
+  bool    should_evict () override;
+  void    on_insert (string key, cache_entry& e) override;
+  void    on_hit    (string key, cache_entry& e) override;
+  void    on_evict  (string key) override;
+  void    recount   () override;
+  string  pick_victim () override;
+  int64_t current_size () override;
 
 private:
-  void recount_dir (url u, int depth);
-  int  dir_size (url u, int depth);
-  int  read_dir_size (url stats_u);
-  void set_dir_size (url stats_u, int total);
+  void    recount_dir (url u, int depth);
+  int64_t dir_size (url u, int depth);
+  int64_t read_dir_size (url stats_u);
+  void    set_dir_size (url stats_u, int64_t total);
   void scan_oldest (url u, int depth, string prefix,
                     string& best, time_t& best_at, bool& found);
 };
@@ -81,10 +82,10 @@ class tree_cache {
   friend class cache_eviction_policy;
   friend class disk_lru;   // uses persist() for atomic stats writes
 public:
-  tree_cache (string dir,
-              int    dir_depth     = 2,
-              int    max_entries   = 1024,
-              size_t max_size      = 500 * 1024 * 1024); // 500 MB
+  tree_cache (string  dir,
+              int     dir_depth   = 2,
+              int     max_entries = 1024,
+              int64_t max_size    = 500 * 1024 * 1024); // 500 MB
 
   ~tree_cache ();
   void   clear ();
@@ -93,10 +94,10 @@ public:
   tree   get (string key);
   tree   update (tree t);
   void   run_janitor ();
-  void   set_max_size (int ms) { policy->set_max_size (ms); }
-  int    disk_size () { return policy->current_size (); }
-  int    entries () const { return N(cache); }
-  int    get_size () const { return size; }
+  void    set_max_size (int64_t ms) { policy->set_max_size (ms); }
+  int64_t disk_size () { return policy->current_size (); }
+  int     entries () const { return N(cache); }
+  int64_t get_size () const { return size; }
   int    get_depth () const { return dir_depth; }
   string get_base_dir () const { return base_dir; }
   string get_base_dir (string host, string port) const {
@@ -118,7 +119,7 @@ private:
   string index_file;
   int    dir_depth;
   hashmap<string,cache_entry> cache;
-  size_t size;
+  int64_t size;
   cache_eviction_policy* policy;
 };
 
@@ -134,7 +135,7 @@ tree   tree_cache_get_any (string key); // search every host
 tree   tree_cache_update (string host, tree t);
 void   tree_cache_janitor (string host);
 void   tree_cache_janitor_all ();
-void   tree_cache_set_max_size (string host, int ms);
-int    tree_cache_size (string host);
+void    tree_cache_set_max_size (string host, int64_t ms);
+int64_t tree_cache_size (string host);
 
 #endif // defined TREE_CACHE_H
