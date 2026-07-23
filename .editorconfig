@@ -1,0 +1,37 @@
+# top-most EditorConfig file
+root = true
+
+# Unix-style newlines with a newline ending every file
+[*]
+end_of_line = lf
+insert_final_newline = true
+indent_style = space
+indent_size = 4
+
+[*.scm]
+indent_style = space
+indent_size = 2
+tab_width = 8
+trim_trailing_whitespace = true
+
+[*.{cpp,hpp}]
+indent_style = space
+indent_size = 2
+trim_trailing_whitespace = true
+
+[*.{sh,ts}]
+indent_style = space
+indent_size = 2
+
+[src/Plugins/Windows/*.{cpp,hpp}]
+end_of_line = crlf
+trim_trailing_whitespace = true
+
+[src/Plugins/Windows64/*.{cpp,hpp}]
+end_of_line = crlf
+trim_trailing_whitespace = true
+
+#[Makefile{.in|.am}|makefile{.in|.am}]
+#indent_style = tab
+[{Makefile,makefile,makefile.in,makefile.am,Makefile.in,Makefile.am}]
+indent_style = tab
