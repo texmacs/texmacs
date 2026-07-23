@@ -33,7 +33,14 @@
 
 (define (notify-server-backup-keep var val) #f)
 
+(define (notify-server-service-backup var val)
+  (when (server-started?)
+    (server-log-write `info
+                      (string-append "Allowing server periodic backup turned " val))))
+
 (define-preferences
+  ("server service backup" "off"
+   notify-server-service-backup)
   ("server backup destination" ""
    notify-server-backup-destination)
   ("server backup interval" "24"
@@ -42,6 +49,12 @@
   ("server backup keep daily"   "30" notify-server-backup-keep)
   ("server backup keep monthly" "12" notify-server-backup-keep)
   ("server backup keep yearly"  "5"  notify-server-backup-keep))
+
+(tm-define (server-backup-enabled?)
+  (== (get-preference "server service backup") "on"))
+
+(tm-define (server-backup-set-enabled val)
+  (set-preference "server service backup" val))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Snapshot operations
@@ -172,6 +185,13 @@
 ;; so no `latest` symlink is needed.
 ;; Retention pruning runs at the end of each backup (server-backup-prune).
 
+(define (has-rsync?) (== (system "rsync --version") 0))
+
+(tm-define (has-rsync-ext?)
+  (:secure #t)
+  (if (has-rsync?) "true" "false"))
+
+
 (tm-define (server-backup-run)
   (let* ((dest  (url-concretize (string->url (get-preference "server backup destination"))))
          (src   (url-concretize "$TEXMACS_HOME_PATH/server"))
@@ -186,33 +206,41 @@
                   " '" src "/'"
                   " '" new "/'")))
     (cond
-      ((string-null? dest)
-       (server-log-write `notice "No backup destination configuration"))
-      (else
-        (begin
-          (system-mkdir new)
-          (server-log-write `info (string-append "Launching backup: " cmd))
-          (eval-system cmd)
-          (server-log-write `info
-                            (string-append "Backup snapshot created: " new))
-          (server-backup-prune dest))))))
+	  ((not (server-backup-enabled?))
+	   (server-log-write `info "Server backup disabled"))
+	  ((string-null? dest)
+	   (server-log-write `notice "No backup destination configuration"))
+	  ((not (has-rsync?))
+	   (server-log-write `notice "rsync binary not found"))
+	  (else
+		(begin
+		  (system-mkdir new)
+		  (server-log-write `info (string-append "Launching backup: " cmd))
+		  (eval-system cmd)
+		  (server-log-write `info
+							(string-append "Backup snapshot created: " new))
+		  (server-backup-prune dest))))))
 
 (tm-define (server-backup-register)
   (let* ((dest       (get-preference "server backup destination"))
          (interval-h (string->number (get-preference "server backup interval"))))
     (cond
-      ((not (server-mode?))
-       (server-log-write `info "Server backup not registered: not in server mode"))
-      ((string-null? dest)
-       (server-log-write `info "Server backup not registered: no destination"))
-      ((or (not interval-h) (<= interval-h 0))
-       (server-log-write `warning "Server backup not registered: invalid interval"))
-      (else
-       (with interval (inexact->exact (round (* interval-h 3600 1000)))
-         (server-log-write
-           `notice
-           (string-append "Server backup registered: every "
-                          (number->string interval-h) "h → " dest))
-         (delayed (:on-cpu-idle interval) (server-backup-run)))))))
+	  ((not (server-mode?))
+	   (server-log-write `info "Server backup not registered: not in server mode"))
+	  ((not (server-backup-enabled?))
+	   (server-log-write `info "Server backup disabled"))
+	  ((string-null? dest)
+	   (server-log-write `info "Server backup not registered: no destination"))
+	  ((not (has-rsync?))
+	   (server-log-write `notice "rsync binary not found"))
+	  ((or (not interval-h) (<= interval-h 0))
+	   (server-log-write `warning "Server backup not registered: invalid interval"))
+	  (else
+		(with interval (* interval-h 3600 1000)
+			  (server-log-write
+				`notice
+				(string-append "Server backup registered: every "
+							   (number->string interval-h) "h → " dest))
+			  (delayed (:on-cpu-idle interval) (server-backup-run)))))))
 
 (on-entry (server-backup-register))
