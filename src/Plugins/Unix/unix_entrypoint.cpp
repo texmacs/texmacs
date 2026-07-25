@@ -44,9 +44,12 @@ void setup_texmacs_path () {
       }
   }
   url exedir = texmacs_get_application_directory ();
+#ifdef OS_MACOS
+  if (basename (exedir) == "MacOS" &&
+      test_texmacs_path (exedir * "../Resources/share/TeXmacs")) return;
+#endif
   if (test_texmacs_path (exedir * "TeXmacs")) return;
-  if (test_texmacs_path (exedir * "..")) return;
-  
+  if (test_texmacs_path (exedir * "..")) return;  
   if (test_texmacs_path (exedir * "usr/share/TeXmacs")) return;
   if (test_texmacs_path (exedir * "usr/local/share/TeXmacs")) return;
   if (test_texmacs_path (exedir * "../usr/share/TeXmacs")) return;
