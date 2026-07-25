@@ -27,6 +27,18 @@
         <true/>
       </dict>
     </array>
+    <array>
+      <dict>
+        <key>CFBundleTypeRole</key>
+        <string>Editor</string>
+        <key>CFBundleURLName</key>
+        <string>org.texmacs.CustomURLScheme</string>
+        <key>CFBundleURLSchemes</key>
+        <array>
+          <string>tmfs</string>
+        </array>
+      </dict>
+    </array>
     <key>CFBundleExecutable</key>
     <string>TeXmacs</string>
     <key>CFBundleIconFile</key>
