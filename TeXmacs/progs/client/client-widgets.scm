@@ -379,9 +379,9 @@
                  (wallet-set (list "remote" server-name port
                                    pseudo authentication)
                              credential))
-               (load-buffer (remote-home-directory server))
-               (client-sync-remote-notifications server)
-               (cb-done))
+	       (load-buffer (remote-home-directory server))
+	       (cb-done)
+	       (client-sync-remote-notifications server))
               (else
                 (client-open-error
                   (string-append "Cannot fetch account info: " ret))))))))
@@ -391,8 +391,8 @@
     server
     (lambda (ret)
       (when (!= ret "done")
-        (client-open-error
-          (string-append "Cannot send protocol version: " ret " ")))
+        (debug-message "remote-warning" 
+          (string-append "Cannot send protocol version: " ret "\n")))
       (client-fetch-account-info server server-name port
                                  pseudo credential cb-done))))
 
@@ -414,7 +414,7 @@
               (client-open-error
                 (string-append "Remote login error, " ret)))))))
 
-(tm-widget ((remote-login-widget server-name port pseudo authentication)
+(tm-widget ((remote-login-widget server-name port pseudo authentication cb)
 	    quit)
   (let* ((auth authentication))
   (padded
@@ -458,22 +458,23 @@
 		      (second (form-values))
 		      (third (form-values))
 		      `(,auth ,(fourth (form-values)))
-                      (lambda () (quit))))
+                      (lambda () (cb) (quit))))
 		    (else (client-open-error "Unexpected authentication type")))))))))
-;; toto << add (quit)
 
-(tm-define (open-remote-login server-name port pseudo authentications)
+(tm-define (open-remote-login server-name port pseudo authentications . cb)
+  (set! cb (if (null? cb) noop cb))
   (if (or (nlist? authentications) (null? authentications))
-      (dialogue-window (remote-login-widget server-name port pseudo `tls-password)
+      (dialogue-window (remote-login-widget server-name port pseudo
+					    `tls-password cb)
 		       noop "Remote login")
       (with authentication (car authentications)
 	(with-wallet
 	  (with credential (wallet-get (list "remote" server-name port
 					     pseudo authentication))
 	    (if credential
-		(client-login-home server-name port pseudo credential noop)
+		(client-login-home server-name port pseudo credential cb)
 		(dialogue-window (remote-login-widget server-name port pseudo
-						      authentication)
+						      authentication cb)
 				 noop "Remote login")))))))
 
 (define (line-feed-universal s)
@@ -847,8 +848,8 @@
                   server
                   (lambda (ret)
                     (when (!= ret "done")
-                      (client-open-error
-                        (string-append "Cannot send protocol version: " ret)))
+                      (debug-message "remote-warning"
+                        (string-append "Cannot send protocol version: " ret "\n")))
                     (load-buffer (remote-home-directory server))
                     (open-account-editor server)
                     (client-sync-remote-notifications server))))
