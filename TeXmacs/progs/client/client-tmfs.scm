@@ -182,6 +182,26 @@
         (client-find-server-by-pseudo sname pseudo)
         (client-find-server sname))))
 
+(tm-define (remote-file-get-server-name name)
+  (let* ((parts (tmfs->list name))
+         (name-and-port (if (null? parts) "" (car parts)))
+         (name-and-port-list (string-split name-and-port #\:)))
+      (car name-and-port-list)))
+
+(tm-define (remote-file-get-port name)
+  (let* ((parts (tmfs->list name))
+         (name-and-port (if (null? parts) "" (car parts)))
+         (port-list (cdr (string-split name-and-port #\:))))
+      (if (or (null? port-list) (not (string->number (car port-list))))
+          "6561" (car port-list))))
+
+(tm-define (remote-file-get-pseudo name)
+  (let* ((parts (tmfs->list name))
+         (pseudo-part (and (>= (length parts) 2) (cadr parts))))
+     (and pseudo-part (string-starts? pseudo-part "~")
+                      (substring pseudo-part 1
+                                 (string-length pseudo-part)))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Useful subroutines
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -380,11 +400,29 @@
 (tmfs-load-handler (remote-file name)
   (let* ((sname (tmfs-car name))
          (server (find-server-for-name name))
-         (fname (string-append "tmfs://remote-file/" name)))
+	 (server-name (remote-file-get-server-name name))
+         (fname (string-append "tmfs://remote-file/" name))
+	 (cb (lambda () (load-buffer fname))))
     (if (not server)
-        ;; FIXME: better error handling
-	(std-client-error (string-append "remote file " name
-					 " is not accessible"))
+	(with accounts
+	    (list-filter (client-accounts)
+			 (lambda (x) (== (car x) server-name)))
+	  (if (null? accounts)
+	      (dialogue-window
+	       (remote-login-widget server-name "6561" "" `tls-password cb)
+				    noop "Remote login")
+	      (with (server-name port pseudo authentications) (car accounts)
+		(with-wallet
+		  (with credential
+		      (wallet-get (list "remote" server-name port
+					pseudo (car authentications)))
+		    (if credential
+			(client-login-home server-name port
+					   pseudo credential cb)
+			(dialogue-window
+			 (remote-login-widget server-name port pseudo
+					      (car authentications) cb)
+					 noop "Remote login")))))))
         (begin
           (client-remote-eval server `(remote-file-load ,name)
             (lambda (tm)
