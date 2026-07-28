@@ -277,6 +277,7 @@
 "tree-cache-get"
 "tree-cache-get-any"
 "tree-cache-update"
+"tree-cache-update-tmdoc"
 "tree-cache-janitor"
 "tree-cache-janitor-all"
 "tree-cache-set-max-size"
