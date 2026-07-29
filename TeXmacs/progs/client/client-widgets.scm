@@ -391,8 +391,7 @@
     server
     (lambda (ret)
       (when (!= ret "done")
-        (client-open-error
-          (string-append "Cannot send protocol version: " ret " ")))
+        (server-log-write `warning (string-append "Cannot send protocol version: " ret " ")))
       (client-fetch-account-info server server-name port
                                  pseudo credential cb-done))))
 
