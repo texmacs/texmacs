@@ -355,7 +355,12 @@
 (define (update-cache-refs refs hash)
   (for-each
     update-tree
-    (list-filter refs (lambda (r) (== (tm->string (tm-ref r 0)) hash)))))
+    (list-filter
+      refs
+      (lambda (r)
+        (and (tree->path r)
+             (tree-is? r 'cache-ref)
+             (== (tm->string (tm-ref r 0)) hash))))))
 
 (tm-define (fetch-missing-cache-refs server t)
   (let* ((refs (select t '(:* cache-ref)))
