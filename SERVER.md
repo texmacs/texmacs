@@ -96,7 +96,7 @@ Type=none
 Options=bind,uid=111,gid=116
 
 [Install]
-WantedBy=default.targetini
+WantedBy=default.target
 ```
 
 `/etc/systemd/system/usr-local-share-TeXmacs.mount`
@@ -172,7 +172,7 @@ The `texmacs-server` user does not have the right to restart services, so the fo
 1. Stop the server `sudo systemctl stop texmacs-server@6562.service`
 2. Change the current symlink to point to the new uploaded artifacts (as texmacs-server or prefixed by `sudo -u texmacs-server`):
 ```bash
-$ ln -sfn $NEW_DIRECTORY /srv/texmacs-server/releases/current
+$ ln -sfn $NEW_DIRECTORY /srv/texmacs-server/current
 ```
 3. Restart mount binds (you can enable the services at boot now if you did not already)
 ```bash
