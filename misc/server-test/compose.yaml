@@ -1,0 +1,39 @@
+services:
+  mailpit:
+    image: axllent/mailpit
+    container_name: mailpit
+    restart: unless-stopped
+    volumes:
+      - $HOME/mailpit_data:/data
+      - ./mail.rc:/etc/mail.rc
+    ports:
+      - 8025:8025
+    environment:
+      MP_MAX_MESSAGES: 5000
+      MP_DATABASE: /data/mailpit.db
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+  texmacs-server:
+    build:
+      context: ../..
+      # args:
+      #   TM_UID: ${TM_UID:-999}
+      #   TM_GID: ${TM_GID:-999}
+      additional_contexts:
+        guile-src: ../../../guile-texmacs
+    image: texmacs-server-test
+    #container_name: texmacs-server-test
+    volumes:
+      - ./certs:/srv/texmacs-server/certs
+      - ./my-init-texmacs.scm:/srv/texmacs-server/.TeXmacs/progs/my-init-texmacs.scm
+      - tm-data:/srv/texmacs-server/.TeXmacs
+    environment:
+      TEXMACS_SERVER_CERT_DIR: /srv/texmacs-server/certs
+    ports:
+      - 6561-6563:6561
+    command: --debug-io --debug-sockets --debug-remote
+    tty: true
+    stdin_open: true
+
+volumes:
+  tm-data:
