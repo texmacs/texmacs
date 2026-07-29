@@ -96,8 +96,8 @@
   ("Synchronize" (simple-interactive-synchronize server)))
 
 (tm-menu (remote-dir-menu server sep?)
-  ("New remote file" (remote-create-file-interactive server))
-  ("New remote directory" (remote-create-dir-interactive server))
+  ("New remote file" (with-post-reload (remote-create-file-interactive server)))
+  ("New remote directory" (with-post-reload (remote-create-dir-interactive server)))
   ("Remove" (remote-remove-interactive server (current-buffer)))
   ("Permissions" (open-permissions-editor server (current-buffer)))
   ("Share" (open-share-document-widget server (current-buffer)))
