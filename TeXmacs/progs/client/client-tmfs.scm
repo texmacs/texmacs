@@ -540,6 +540,11 @@
              '<vartriangleright>)))
     `(concat ,label " " ,indicator)))
 
+;; A clickable header cell, ready to be dropped into a column of `dir-header'
+(tm-define (sort-header-cell field label)
+  `(dir-header-cell ,(sort-header-label field label)
+                    ,(sort-header-action field)))
+
 ;; Build clickable sort action
 (tm-define (sort-header-action field)
   (let ((current-field (get-sort-field)))
@@ -566,20 +571,20 @@
       (list-intersperse (path-breadcrumbs p) sep))
     '()))
 
-(tm-define (build-dir-table title date-label content action-hpart)
+;; actions is the same actions bar the entries carry. The header renders it
+;; as a phantom so that the columns line up with the entries below
+(tm-define (build-dir-table title date-label content actions)
   (let* ((breadcrumbs (build-dir-breadcrumbs (buffer-get-title (current-buffer))))
-         (type-label (sort-header-label "type" ""))
-         (type-action (sort-header-action "type"))
-         (name-label (sort-header-label "name" "Name"))
-         (name-action (sort-header-action "name"))
-         (date-hdr-label (sort-header-label "date" date-label))
-         (date-action (sort-header-action "date"))
-         (table-name (if (null? breadcrumbs) title `(concat ,@breadcrumbs)))
+         ;; breadcrumbs already emphasize their last element
+         ;; put title as strong otherwise
+         (table-name (if (null? breadcrumbs)
+                         `(strong ,title)
+                         `(concat ,@breadcrumbs)))
          (hdr `(dir-header ,table-name
-                           ,type-label ,type-action
-                           ,name-label ,name-action
-                           ,date-hdr-label ,date-action
-                           ,action-hpart)))
+                           ,(sort-header-cell "type" "")
+                           ,(sort-header-cell "name" "Name")
+                           ,(sort-header-cell "date" date-label)
+                           ,actions)))
     `(compact (document ,hdr
                         ,@(if (null? content)
                               '((dir-entry-empty))
@@ -587,7 +592,9 @@
 
 (define (directory-table sname server entries)
   (let ((sorted (sort-directory-entries entries "")))
-    (build-dir-table "My Files" "Date" (map (cut directory-entry sname server <>) sorted) "3.5")))
+    (build-dir-table "My Files" "Date"
+                     (map (cut directory-entry sname server <>) sorted)
+                     (build-actions-bar server ""))))
 
 (define (dir-page sname server entries)
   (remote-file-browser-document
