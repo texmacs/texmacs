@@ -93,8 +93,8 @@
             (begin
               (add-active-connection srv host port pseudo)
               ;; Announce the client protocol version so the server enables
-              ;; the tree cache (server-handle-cache gates tree-cache-update
-              ;; on client-version>=? uid 1).
+              ;; the tree cache (server-can-handle-cache? checks
+              ;; client-version>=? uid 1).
               (client-protocol-version-then srv
                 (lambda (vret)
                   (let ((files (step-create-files pseudo 10 15)))

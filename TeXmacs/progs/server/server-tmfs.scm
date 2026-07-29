@@ -442,9 +442,10 @@
            (r (server-file-load uid rname)))
       (if (== (car r) :error)
         (server-error envelope (cadr r))
-        (let* ((t (convert (cadr r) "texmacs-document" "texmacs-tree"))
-               (cached (convert (server-handle-cache sname uid t)
-                                "texmacs-tree" "texmacs-document")))
+        (with cached
+          (if (server-can-handle-cache? uid)
+            (tree-cache-update-tmdoc sname (cadr r))
+            (cadr r))
           (server-return envelope cached))))))
 
 (tm-define (server-file-save uid rname doc msg)

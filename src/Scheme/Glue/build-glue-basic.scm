@@ -281,6 +281,7 @@
   (tree-cache-get tree_cache_get (tree string string))
   (tree-cache-get-any tree_cache_get_any (tree string))
   (tree-cache-update tree_cache_update (tree string tree))
+  (tree-cache-update-tmdoc tree_cache_update_tmdoc (string string string))
   (tree-cache-janitor tree_cache_janitor (void string))
   (tree-cache-janitor-all tree_cache_janitor_all (void))
   (tree-cache-set-max-size tree_cache_set_max_size (void string int))

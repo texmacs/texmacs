@@ -130,9 +130,13 @@
              (ensure-chat-room client crid)
              (let* ((ms (ahash-ref chat-room-messages crid))
                     (cached
-                      (map (lambda (t)
-                             (tree->stree
-                               (server-handle-cache (tmfs-car name) uid (stree->tree t)))) ms))
+                      (map
+                        (lambda (t)
+                          (tree->stree
+                            (if (server-can-handle-cache? uid)
+                              (tree-cache-update (tmfs-car name) (stree->tree t))
+                              (stree->tree t))))
+                        ms))
                     (w? (db-allow? crid uid "writable")))
                (server-return envelope (list w? cached))))))))
 

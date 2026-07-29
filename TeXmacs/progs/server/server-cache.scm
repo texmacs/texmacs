@@ -13,10 +13,7 @@
 
 (texmacs-module (server server-cache))
 
-(tm-define (server-handle-cache sname uid t)
-  (if (and (server-tree-cache-enabled?) (client-version>=? uid 1))
-      (tree-cache-update sname t) t))
-
+(tm-define (server-can-handle-cache? uid) (and (server-tree-cache-enabled?) (client-version>=? uid 1)))
 
 (tm-service (remote-get-cache-ref host ref)
   ;; not checking client protocol version because client is calling this service

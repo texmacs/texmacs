@@ -582,6 +582,12 @@ tree_cache_update (string host, tree t) {
   return get_tree_cache (host).update (t);
 }
 
+string
+tree_cache_update_tmdoc (string host, string doc) {
+  tree t= get_tree_cache (host).update (texmacs_document_to_tree (doc));
+  return tree_to_texmacs (t);
+}
+
 void
 tree_cache_janitor (string host) {
   get_tree_cache (host).run_janitor ();

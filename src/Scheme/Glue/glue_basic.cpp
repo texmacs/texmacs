@@ -3229,6 +3229,21 @@ tmg_tree_cache_update (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_tree_cache_update_tmdoc (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "tree-cache-update-tmdoc");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "tree-cache-update-tmdoc");
+
+  string in1= tmscm_to_string (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  string out= tree_cache_update_tmdoc (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
 tmg_tree_cache_janitor (tmscm arg1) {
   TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "tree-cache-janitor");
 
@@ -11396,6 +11411,7 @@ initialize_glue_basic () {
   tmscm_install_procedure ("tree-cache-get",  tmg_tree_cache_get, 2, 0, 0);
   tmscm_install_procedure ("tree-cache-get-any",  tmg_tree_cache_get_any, 1, 0, 0);
   tmscm_install_procedure ("tree-cache-update",  tmg_tree_cache_update, 2, 0, 0);
+  tmscm_install_procedure ("tree-cache-update-tmdoc",  tmg_tree_cache_update_tmdoc, 2, 0, 0);
   tmscm_install_procedure ("tree-cache-janitor",  tmg_tree_cache_janitor, 1, 0, 0);
   tmscm_install_procedure ("tree-cache-janitor-all",  tmg_tree_cache_janitor_all, 0, 0, 0);
   tmscm_install_procedure ("tree-cache-set-max-size",  tmg_tree_cache_set_max_size, 2, 0, 0);
