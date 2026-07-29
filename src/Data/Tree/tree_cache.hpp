@@ -133,6 +133,7 @@ void   tree_cache_put (string host, string key, tree t);
 tree   tree_cache_get (string host, string key);
 tree   tree_cache_get_any (string key); // search every host
 tree   tree_cache_update (string host, tree t);
+string tree_cache_update_tmdoc (string host, string doc);
 void   tree_cache_janitor (string host);
 void   tree_cache_janitor_all ();
 void   tree_cache_set_max_size (string host, int ms);

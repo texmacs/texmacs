@@ -2011,6 +2011,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(tree-cache-update-tmdoc <scm-arg|string> <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|tree_cache_update_tmdoc> which returns
+    <scm|string>.
+  </explain>
+
+  <\explain>
     <scm|(tree-cache-janitor <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>
