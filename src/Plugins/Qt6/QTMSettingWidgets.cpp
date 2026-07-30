@@ -3,11 +3,11 @@
 #include <QMouseEvent>
 #include <QResizeEvent>
 
-#define RESPONSIVE_WIDTH_THRESHOLD 600
+#define RESPONSIVE_WIDTH_THRESHOLD 10
 
 QTMSwitchControl::QTMSwitchControl(QWidget* parent) : QAbstractButton(parent) {
   setCheckable(true);
-  setFixedSize(50, 28);
+  setFixedSize(44, 24);
   setCursor(Qt::PointingHandCursor);
   setProperty("isSettingWidget", true);
 }
@@ -41,21 +41,32 @@ QTMSettingCheckbox::QTMSettingCheckbox(QWidget* parent) : QWidget(parent) {
   setProperty("isSettingWidget", true);
 
   mLayout = new QBoxLayout(QBoxLayout::LeftToRight, this);
+  mLayout->setSpacing(8);
+  mLayout->setContentsMargins(4, 2, 4, 2);
 
-  mLabel = new QLabel(this);  
+  mLabel = new QLabel(this);
+  // align text to the right and vertically centered
+  mLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   mSwitch = new QTMSwitchControl(this);
+  mSwitchLayout = new QVBoxLayout();
+  mSwitchLayout->setContentsMargins(0, 0, 0, 0);
+  mSwitchLayout->addWidget(mSwitch);
+  mSwitchLayout->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding));
+  mSwitchWrapper = new QWidget(this);
+  mSwitchWrapper->setLayout(mSwitchLayout);
 
   mLayout->addWidget(mLabel);
-  mLayout->addWidget(mSwitch);
+  mLayout->addWidget(mSwitchWrapper);
+  mLayout->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Minimum, QSizePolicy::Expanding));
 
   connect(mSwitch, &QTMSwitchControl::toggled, this, &QTMSettingCheckbox::toggled);
-  updateResponsiveLayout();
+  setVerticalLayout(needVerticalLayout());
 }
 
 void QTMSettingCheckbox::setDescriptionText(const QString& text) {
   if (!mLabel) return;
   mLabel->setText(text);
-  updateResponsiveLayout();
+  setVerticalLayout(needVerticalLayout());
 }
 
 bool QTMSettingCheckbox::isChecked() const {
@@ -74,11 +85,11 @@ void QTMSettingCheckbox::mouseReleaseEvent(QMouseEvent*) {
 
 void QTMSettingCheckbox::resizeEvent(QResizeEvent* event) {
   QWidget::resizeEvent(event);
-  updateResponsiveLayout();
+  setVerticalLayout(needVerticalLayout());
 }
 
-void QTMSettingCheckbox::updateResponsiveLayout() {
-  if (mLayout == nullptr || mLabel == nullptr || mSwitch == nullptr) return;
+bool QTMSettingCheckbox::needVerticalLayout() const {
+  if (mLayout == nullptr || mLabel == nullptr || mSwitch == nullptr) return false;
 
   int margins = mLayout->contentsMargins().left() + mLayout->contentsMargins().right();
   int spacing = mLayout->spacing();
@@ -86,17 +97,21 @@ void QTMSettingCheckbox::updateResponsiveLayout() {
   int switchWidth = mSwitch->sizeHint().width();
   int requiredWidth = labelWidth + switchWidth + spacing + margins + 24;
   if (requiredWidth < RESPONSIVE_WIDTH_THRESHOLD) requiredWidth = RESPONSIVE_WIDTH_THRESHOLD;
-  bool vertical = width() > 0 && width() < requiredWidth;
+  return width() > 0 && width() < requiredWidth;
+}
+
+void QTMSettingCheckbox::setVerticalLayout(bool vertical) {
+  if (mLayout == nullptr || mLabel == nullptr || mSwitch == nullptr || mSwitchWrapper == nullptr) return;
 
   if (vertical) {
     mLayout->setDirection(QBoxLayout::TopToBottom);
     mLayout->setAlignment(mLabel, Qt::AlignLeft);
-    mLayout->setAlignment(mSwitch, Qt::AlignLeft);
+    mLayout->setAlignment(mSwitchWrapper, Qt::AlignLeft);
     mSwitch->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
   } else {
     mLayout->setDirection(QBoxLayout::LeftToRight);
     mLayout->setAlignment(mLabel, Qt::AlignLeft | Qt::AlignVCenter);
-    mLayout->setAlignment(mSwitch, Qt::AlignRight | Qt::AlignVCenter);
+    mLayout->setAlignment(mSwitchWrapper, Qt::AlignLeft | Qt::AlignVCenter);
     mSwitch->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
   }
 }
@@ -107,7 +122,7 @@ public:
   using QComboBox::QComboBox;
   QSize sizeHint() const override {
     QSize size = QComboBox::sizeHint();
-    size.setWidth(size.width() + 32);
+    size.setWidth(qMax(size.width() + 32, 180));
     return size;
   }
 };
@@ -116,6 +131,8 @@ QTMSettingSelect::QTMSettingSelect(QWidget* parent) : QWidget(parent) {
   setAttribute(Qt::WA_StyledBackground, true); 
   setProperty("isSettingWidget", true);
   mLayout = new QBoxLayout(QBoxLayout::LeftToRight, this);
+  mLayout->setSpacing(8);
+  mLayout->setContentsMargins(4, 2, 4, 2);
 
   mLabel = new QLabel(this);
 
@@ -123,18 +140,20 @@ QTMSettingSelect::QTMSettingSelect(QWidget* parent) : QWidget(parent) {
   if (mCombo) mCombo->setCursor(Qt::PointingHandCursor);
   if (mCombo) mCombo->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 
+  // mLayout->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum));
   mLayout->addWidget(mLabel);
   mLayout->addWidget(mCombo);
+  mLayout->addSpacerItem(new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Minimum));
 
   connect(mCombo, QOverload<int>::of(&QComboBox::currentIndexChanged), 
           this, &QTMSettingSelect::currentIndexChanged);
-  updateResponsiveLayout();
+  setVerticalLayout(needVerticalLayout());
 }
 
 void QTMSettingSelect::setDescriptionText(const QString& text) {
   if (!mLabel) return;
   mLabel->setText(text);
-  updateResponsiveLayout();
+  setVerticalLayout(needVerticalLayout());
 }
 
 QString QTMSettingSelect::currentText() const {
@@ -153,7 +172,7 @@ void QTMSettingSelect::setEditable(bool editable) {
 void QTMSettingSelect::addItems(const QStringList& texts) {
   if (!mCombo) return;
   mCombo->addItems(texts);
-  updateResponsiveLayout();
+  setVerticalLayout(needVerticalLayout());
 }
 
 int QTMSettingSelect::currentIndex() const {
@@ -167,29 +186,35 @@ void QTMSettingSelect::setCurrentIndex(int index) {
 
 void QTMSettingSelect::resizeEvent(QResizeEvent* event) {
   QWidget::resizeEvent(event);
-  updateResponsiveLayout();
+  setVerticalLayout(needVerticalLayout());
 }
 
-void QTMSettingSelect::updateResponsiveLayout() {
-  if (mLayout == nullptr || mLabel == nullptr || mCombo == nullptr) return;
+bool QTMSettingSelect::needVerticalLayout() const {
+  if (mLayout == nullptr || mLabel == nullptr || mCombo == nullptr) return false;
 
   int margins = mLayout->contentsMargins().left() + mLayout->contentsMargins().right();
   int spacing = mLayout->spacing();
   int labelWidth = mLabel->sizeHint().width();
-  int comboWidth = qMax(mCombo->sizeHint().width(), 140);
+  int comboWidth = qMax(mCombo->width(), 180);
   int requiredWidth = labelWidth + comboWidth + spacing + margins + 24;
   if (requiredWidth < RESPONSIVE_WIDTH_THRESHOLD) requiredWidth = RESPONSIVE_WIDTH_THRESHOLD;
-  bool vertical = width() > 0 && width() < requiredWidth;
+  return width() > 0 && width() < requiredWidth;
+}
+
+void QTMSettingSelect::setVerticalLayout(bool vertical) {
+  if (mLayout == nullptr || mLabel == nullptr || mCombo == nullptr) return;
 
   if (vertical) {
     mLayout->setDirection(QBoxLayout::TopToBottom);
     mLayout->setAlignment(mLabel, Qt::AlignLeft);
+    mLabel->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     mLayout->setAlignment(mCombo, Qt::AlignLeft);
     mCombo->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
   } else {
     mLayout->setDirection(QBoxLayout::LeftToRight);
     mLayout->setAlignment(mLabel, Qt::AlignLeft | Qt::AlignVCenter);
-    mLayout->setAlignment(mCombo, Qt::AlignRight | Qt::AlignVCenter);
+    mLabel->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
+    mLayout->setAlignment(mCombo, Qt::AlignLeft | Qt::AlignVCenter);
     mCombo->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
   }
 }
@@ -202,6 +227,7 @@ QTMSettingTitle::QTMSettingTitle(QWidget* parent) : QWidget(parent) {
   mLabel = new QLabel(this);
   mLabel->setObjectName("setting-title-label");
   mLayout->addWidget(mLabel);
+  mLayout->setAlignment(mLabel, Qt::AlignLeft);
 }
 
 void QTMSettingTitle::setTitleText(const QString& text) {
@@ -222,7 +248,7 @@ QTMSettingWrapper::QTMSettingWrapper(QWidget *wrapped, QWidget* parent) : QWidge
 }
 
 QTMSettingGroup::QTMSettingGroup(QWidget* parent)
-  : QWidget(parent), mOuterMargin(10), mContentItems(0) {
+  : QWidget(parent), mOuterMargin(5), mContentItems(0) {
   setAttribute(Qt::WA_StyledBackground, true);
   setObjectName("setting-group");
 
@@ -241,8 +267,8 @@ QTMSettingGroup::QTMSettingGroup(QWidget* parent)
   mTitle->setObjectName("setting-group-title");
 
 
-  mLayout->setSpacing(0);
-  mLayout->setContentsMargins(0, 0, 0, 0);
+  mLayout->setSpacing(4);
+  mLayout->setContentsMargins(8, 8, 8, 8);
   mLayout->addWidget(mTitle);
 
   setVisible(false);
@@ -257,6 +283,7 @@ void QTMSettingGroup::setOuterMargin(int margin) {
   mOuterMargin = margin;
   if (mOuterLayout)
     mOuterLayout->setContentsMargins(margin, margin, margin, margin);
+  updateResponsiveLayout();
 }
 
 void QTMSettingGroup::setTitleText(const QString& text) {
@@ -264,6 +291,43 @@ void QTMSettingGroup::setTitleText(const QString& text) {
   QString formattedText = text;
   formattedText.replace(" -> ", " → ");
   mTitle->setTitleText(formattedText);
+}
+
+void QTMSettingGroup::resizeEvent(QResizeEvent* event) {
+  QWidget::resizeEvent(event);
+  updateResponsiveLayout();
+}
+
+void QTMSettingGroup::updateResponsiveLayout() {
+  QWidget *parentWidget = this->parentWidget();
+  if (!parentWidget) return;
+
+  const QList<QTMSettingCheckbox*> checkboxes = parentWidget->findChildren<QTMSettingCheckbox*>();
+  const QList<QTMSettingSelect*> selects = parentWidget->findChildren<QTMSettingSelect*>();
+
+  bool forceVertical = false;
+  for (QTMSettingCheckbox* checkbox : checkboxes) {
+    if (checkbox && checkbox->needVerticalLayout()) {
+      forceVertical = true;
+      break;
+    }
+  }
+
+  if (!forceVertical) {
+    for (QTMSettingSelect* select : selects) {
+      if (select && select->needVerticalLayout()) {
+        forceVertical = true;
+        break;
+      }
+    }
+  }
+
+  for (QTMSettingCheckbox* checkbox : checkboxes) {
+    if (checkbox) checkbox->setVerticalLayout(forceVertical);
+  }
+  for (QTMSettingSelect* select : selects) {
+    if (select) select->setVerticalLayout(forceVertical);
+  }
 }
 
 void QTMSettingGroup::addItem(QLayoutItem* item) {
@@ -293,4 +357,60 @@ void QTMSettingGroup::addItem(QLayoutItem* item) {
     mContentItems++;
 
   setVisible(mContentItems > 0);
+  updateResponsiveLayout();
+  //QTMSettingSelect::synchronizeLabelWidths(this->parentWidget());
+  //QTMSettingSelect::synchronizeComboBoxWidths(this->parentWidget());
+  synchronizeSizes();
+}
+
+void QTMSettingGroup::synchronizeSizes() {
+  // list all left and right widgets and synchronize their sizes
+  QWidget* parentWidget = this;
+  if (!parentWidget) return;
+
+  // list all QTMSettingWidget
+  QList<QWidget*> allWidgets = parentWidget->findChildren<QWidget*>();
+  QList<QTMSettingWidget*> settingWidgets;
+  for (QWidget* widget : allWidgets) {
+    if (QTMSettingWidget* settingWidget = dynamic_cast<QTMSettingWidget*>(widget)) {
+      settingWidgets.append(settingWidget);
+    }
+  }
+
+  QList<QWidget*> leftWidgets, rightWidgets;
+  for (QTMSettingWidget* settingWidget : settingWidgets) {
+    if (!settingWidget) continue;
+    if (QWidget* left = settingWidget->leftWidget()) {
+      leftWidgets.append(left);
+    }
+    if (QWidget* right = settingWidget->rightWidget()) {
+      rightWidgets.append(right);
+    }
+  }
+
+  // synchronize left widgets
+  int maxLeftWidth = 0;
+  for (QWidget* left : leftWidgets) {
+    if (!left) continue;
+    maxLeftWidth = qMax(maxLeftWidth, left->sizeHint().width());
+  }
+
+  for (QWidget* left : leftWidgets) {
+    if (!left) continue;
+    left->setMinimumWidth(maxLeftWidth);
+  }
+
+  // synchronize right widgets
+  int maxRightWidth = 0;
+  for (QWidget* right : rightWidgets) {
+    if (!right) continue;
+    maxRightWidth = qMax(maxRightWidth, right->sizeHint().width());
+  }
+
+  for (QWidget* right : rightWidgets) {
+    if (!right) continue;
+    right->setMinimumWidth(maxRightWidth);
+  }
+
+  
 }

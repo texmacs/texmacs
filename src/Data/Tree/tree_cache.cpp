@@ -435,7 +435,7 @@ bool
 tree_cache::persist (string name, string s) {
   texmacs_reset_last_error();
 
-  int rnd= (int) (((unsigned int) random ()) & 0xffffff);
+  int rnd= (int) (((unsigned int) rand ()) & 0xffffff);
   url tmp_url= glue (name,
                      ".tmp-" * as_string (getpid ()) * "-" * as_string (rnd));
   string tmp_fname= concretize (tmp_url);

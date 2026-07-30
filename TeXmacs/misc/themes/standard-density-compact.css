@@ -37,3 +37,8 @@ QMainWindow::separator {
 QTMSettingGroup {
     qproperty-outerMargin: 1;
 }
+
+QTMSettingSelect QComboBox {
+    padding: 1px 3px;
+    min-height: 16px;
+}

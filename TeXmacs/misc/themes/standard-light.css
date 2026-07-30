@@ -732,10 +732,10 @@ QTMSettingSelect QComboBox {
     color: #000000;
     selection-background-color: #C0D0E0;
     selection-color: #000000;
-    padding: 4px 10px;
+    padding: 3px 5px;
     border: 0px;
     border-radius: 5px;
-    min-height: 24px;
+    min-height: 18px;
 }
 
 QTMSettingSelect QComboBox:focus { 
@@ -769,7 +769,6 @@ QTMSettingGroup {
 }
 
 QTMSettingGroup QWidget#setting-group-wrap {
-    background: #F4F4F4;
     border: 1px solid #D0D0D0;
     border-radius: 10px;
     padding: 8px;
@@ -799,7 +798,6 @@ QTMSettingGroup QTMSettingSelect,
 QTMSettingGroup QTMSettingWrapper
 {
     background: transparent;
-    border-top: 1px solid #E0E0E0;
     margin: 0px;
 }
 
