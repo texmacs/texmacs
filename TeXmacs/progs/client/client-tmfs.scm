@@ -373,7 +373,7 @@
     (for-each
       (lambda (h)
         (client-remote-eval server
-          `(remote-get-cache-ref ,sname ,h)
+          `(remote-get-cache-ref ,h)
           (lambda (tm)
             (tree-cache-put sname h (stree->tree tm))
             (update-cache-refs refs h)

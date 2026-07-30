@@ -118,6 +118,14 @@
   (chat-room-messages-reset)
   (server-return envelope "ok"))
 
+(define (chat-messages-cached uid ms)
+  (map (lambda (t)
+         (tree->stree
+           (if (server-can-handle-cache? uid)
+             (tree-cache-update server-tree-cache-host (stree->tree t))
+             (stree->tree t))))
+       ms))
+
 (tm-service (remote-chat-room-open name)
   ;; Connect client to a chat room and return list of past messages
   ;;(display* "remote-chat-room-open " name "\n")
@@ -133,14 +141,7 @@
             (else
              (ensure-chat-room client crid)
              (let* ((ms (ahash-ref chat-room-messages crid))
-                    (cached
-                      (map
-                        (lambda (t)
-                          (tree->stree
-                            (if (server-can-handle-cache? uid)
-                              (tree-cache-update (tmfs-car name) (stree->tree t))
-                              (stree->tree t))))
-                        ms))
+                    (cached (chat-messages-cached uid ms))
                     (w? (db-allow? crid uid "writable")))
                (server-return envelope (list w? cached))))))))
 
@@ -153,7 +154,8 @@
            (name (string-append "mail-" pseudo))
            (crid (or (chat-room-id name) (server-chat-room-create uid name))))
       (ensure-chat-room client crid)
-      (server-return envelope (ahash-ref chat-room-messages crid)))))
+      (server-return envelope
+        (chat-messages-cached uid (ahash-ref chat-room-messages crid))))))
 
 (tm-service (remote-shared)
   (with (client msg-id) envelope
