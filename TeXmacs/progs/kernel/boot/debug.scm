@@ -224,6 +224,85 @@
        ,@tests)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Integration testing (side-effecting tests with setup/teardown)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Run a single integration test with setup/teardown.
+;; Teardown runs even if the test body signals an error.
+;; Returns #t on pass, #f on fail (never throws).
+(define-public (integration-test-run group test-desc setup-thunk teardown-thunk
+                                     result-thunk expected)
+  (let ((ok? (catch #t
+               (lambda ()
+                 (setup-thunk)
+                 (let ((result (result-thunk)))
+                   (teardown-thunk)
+                   (if (equal? result expected)
+                       #t
+                       (begin
+                         (display* "    FAIL  Expected: "
+                                   (object->string expected) "\n")
+                         (display* "    FAIL  Got:      "
+                                   (object->string result) "\n")
+                         #f))))
+               (lambda args
+                 (catch #t (lambda () (teardown-thunk)) (lambda _ #f))
+                 (display* "    FAIL  Error: "
+                           (object->string args) "\n")
+                 #f))))
+    (display* (if ok? "    PASS" "    FAIL") "  "
+              "[" group "] " test-desc "\n")
+    ok?))
+
+;; (integration-test-group "description" "id"
+;;   setup-expr teardown-expr
+;;   (test "name" result-expr expected)
+;;   ...)
+;;
+;; Like regression-test-group but for side-effecting code:
+;;   - setup-expr runs before each test
+;;   - teardown-expr runs after each test (even on failure)
+;;   - all tests run regardless of earlier failures
+;;   - returns the number of tests run
+;;   - signals error at the end if any test failed
+;;
+;; Use (begin ...) for multiple setup/teardown expressions.
+(define-public-macro (integration-test-group group-desc group-id
+                                             setup-expr teardown-expr . body)
+  (let ((tests
+         (let rec ((n 1) (l body))
+           (cond
+             ((null? l) '())
+             ((not (pair? l)) (list l))
+             ((not (pair? (car l)))
+              (cons (car l) (rec n (cdr l))))
+             ((equal? 'test (caar l))
+              (let* ((t (car l))
+                     (test-desc (cadr t))
+                     (result-expr (caddr t))
+                     (expected (cadddr t)))
+                `((set! integration-results
+                    (cons (integration-test-run
+                           ,group-id ,test-desc
+                           (lambda () ,setup-expr)
+                           (lambda () ,teardown-expr)
+                           (lambda () ,result-expr)
+                           ,expected)
+                      integration-results))
+                  ,@(rec (1+ n) (cdr l)))))
+             (else (cons (car l) (rec n (cdr l))))))))
+    `(let ((integration-results '()))
+       (display ,(string-append "Test group: " group-desc
+                                " [" group-id "]\n"))
+       ,@tests
+       (let* ((total  (length integration-results))
+              (passed (length (filter identity integration-results)))
+              (failed (- total passed)))
+         (display* "  " (number->string passed) "/" (number->string total)
+                   " passed\n")
+         total))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; Test suite library
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

@@ -540,7 +540,8 @@
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 
 ;(display "Booting regression testing\n")
-(lazy-define (check check-master) check-all run-checks run-all-tests)
+(lazy-define (check check-master) check-all run-checks run-all-tests
+             run-integration-tests)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 
