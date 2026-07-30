@@ -46,8 +46,15 @@
             <uap:Logo>misc/images/windows/Square150x150Logo.png</uap:Logo>
             <uap:SupportedFileTypes>
               <uap:FileType>.tm</uap:FileType>
+              <uap:FileType>.tmfs</uap:FileType>
             </uap:SupportedFileTypes>
           </uap:FileTypeAssociation>
+        </uap:Extension>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="tmfs">
+            <uap:DisplayName>TeXmacs tmfs protocol</uap:DisplayName>
+            <uap:Logo>misc/images/windows/Square150x150Logo.png</uap:Logo>
+          </uap:Protocol>
         </uap:Extension>
       </Extensions>
 
