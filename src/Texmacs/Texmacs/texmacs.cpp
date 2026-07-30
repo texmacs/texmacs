@@ -691,7 +691,6 @@ immediate_options (int argc, char** argv) {
     set_env ("TEXMACS_SERVER_CERT_DIR",
              get_env ("TEXMACS_HOME_PATH") * "/server");
   for (int i=1; i<argc; i++) {
-    string raw= argv[i];
     string s= argv[i];
     if ((N(s)>=2) && (s(0,2)=="--")) s= s (1, N(s));
     if ((s == "-S") || (s == "-setup")) {
@@ -757,17 +756,6 @@ immediate_options (int argc, char** argv) {
         cerr << "TeXmacs] Error: could not open " << log_file << "\n";
       cout.redirect (logf);
       cerr.redirect (logf);
-    }
-
-    bool looks_like_tmfs= starts (raw, "tmfs://") || ends (raw, ".tmfs");
-    bool is_option_arg= (N(raw) > 0) && (raw[0] == '-' || raw[0] == '+');
-    if (!open_mode && !is_option_arg && looks_like_tmfs) {
-#if !defined(OS_MACOS)
-      headless_mode= true;
-      open_mode= true;
-      open_mode_url= raw;
-      cout << "TeXmacs] Opening tmfs " << raw << LF;
-#endif
     }
   }
 }

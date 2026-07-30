@@ -97,13 +97,4 @@
 	  <icon name="text-x-texmacs"/>
   	<generic-icon name="text-x-texmacs"/>
 	</mime-type>
-	<mime-type type="text/x-texmacs.tmfs">
-		<comment>TeXmacs tmfs document</comment>
-		<magic priority="90">
-			<match type="string" value="TeXmacs" offset="1:7"/>
-		</magic>
-		<glob weight="90" pattern="*.tmfs"/>
-	  <icon name="text-x-texmacs"/>
-	  <generic-icon name="text-x-texmacs"/>
-	</mime-type>
 </mime-info>
