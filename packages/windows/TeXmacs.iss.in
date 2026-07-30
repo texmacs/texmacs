@@ -34,17 +34,9 @@ Name: "japanese"; MessagesFile: "compiler:Languages\Japanese.isl"
 
 [Registry]
 Root: HKA; Subkey: "Software\Classes\.tm"; ValueType: string; ValueName: ""; ValueData: "tmfile"; Flags: uninsdeletevalue
-Root: HKA; Subkey: "Software\Classes\.tmfs"; ValueType: string; ValueName: ""; ValueData: "tmfsfile"; Flags: uninsdeletevalue
 Root: HKA; Subkey: "Software\Classes\tmfile"; ValueType: string; ValueName: ""; ValueData: "text/tm"; Flags: uninsdeletekey
-Root: HKA; Subkey: "Software\Classes\tmfsfile"; ValueType: string; ValueName: ""; ValueData: "text/tmfs"; Flags: uninsdeletekey
 Root: HKA; Subkey: "Software\Classes\tmfile\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\TeXmacs.ico"
 Root: HKA; Subkey: "Software\Classes\tmfile\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\bin\texmacs.exe"" ""%1""" 
-Root: HKA; Subkey: "Software\Classes\tmfsfile\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\TeXmacs.ico"
-Root: HKA; Subkey: "Software\Classes\tmfsfile\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\bin\texmacs.exe"" ""%1""" 
-Root: HKA; Subkey: "Software\Classes\tmfs"; ValueType: string; ValueName: ""; ValueData: "URL:TeXmacs tmfs Protocol"; Flags: uninsdeletekey
-Root: HKA; Subkey: "Software\Classes\tmfs"; ValueType: string; ValueName: "URL Protocol"; ValueData: ""
-Root: HKA; Subkey: "Software\Classes\tmfs\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\TeXmacs.ico"
-Root: HKA; Subkey: "Software\Classes\tmfs\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\bin\texmacs.exe"" ""%1""" 
 Root: HKA; Subkey: "{code:GetEnvironmentKey}"; ValueType: string; ValueName: "TEXMACS_PATH"; ValueData: "{app}"
 
 [Files]

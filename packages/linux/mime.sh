@@ -26,8 +26,7 @@ install)
   test -n "$1" && cd $1 || exit 11
   #test if packaging mode
   if test ! -w /usr/share -a "$XDG_UTILS_INSTALL_MODE" == "system"
-  then
-    cp texmacs.desktop $DESTDIR/usr/share/applications/
+  then cp texmacs.desktop $DESTDIR/usr/share/applications/
   else 
     xdg-desktop-menu install --novendor texmacs.desktop
     xdg-mime install --novendor texmacs.xml

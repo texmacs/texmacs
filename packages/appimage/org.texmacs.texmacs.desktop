@@ -7,8 +7,8 @@ Comment=A structured wysiwyg scientific text editor
 Categories=Science;Math;
 
 Icon=texmacs
-Exec=texmacs %u
+Exec=texmacs %f
 Terminal=false
 
-MimeType=text/x-texmacs;text/x-texmacs.tmfs;text/plain;text/x-tex;x-scheme-handler/tmfs;
+MimeType=text/x-texmacs;text/plain;text/x-tex;
 
