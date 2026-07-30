@@ -91,3 +91,11 @@
   (regtest-prog-format)
   (regtest-cite-sort)
 )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Integration tests (side-effecting, with setup/teardown)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (run-integration-tests)
+  (regtest-server-cache)
+)
