@@ -11,7 +11,8 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(texmacs-module (server server-cache))
+(texmacs-module (server server-cache)
+  (:use (server server-base)))
 
 (tm-define (server-can-handle-cache? uid) (and (server-tree-cache-enabled?) (client-version>=? uid 1)))
 
