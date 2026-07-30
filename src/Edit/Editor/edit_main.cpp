@@ -186,9 +186,15 @@ edit_main_rep::get_metadata (string kind) {
   if (kind == "title") return utf8_to_cork (as_string (tail (get_name ())));
 #ifndef OS_MINGW
   if (kind == "author" &&
+      !is_none (resolve_in_path ("whoami")) &&
       !is_none (resolve_in_path ("finger")) &&
       !is_none (resolve_in_path ("sed"))) {
     string val= var_eval_system ("finger `whoami` | sed -e '/Name/!d' -e 's/.*Name: //'");
+    if (N(val) > 1) return utf8_to_cork (val);
+  }
+  if (kind == "pseudo" &&
+      !is_none (resolve_in_path ("whoami"))) {
+    string val= var_eval_system ("whoami");
     if (N(val) > 1) return utf8_to_cork (val);
   }
 #endif
