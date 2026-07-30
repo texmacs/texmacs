@@ -18,6 +18,8 @@ extern int  install_status;
 extern bool use_which;
 extern bool use_locate;
 extern bool headless_mode;
+extern bool open_mode; // handle url opening via a single texmacs instance
+extern string open_mode_url; // url to be opened by the single instance
 
 bool   is_headless ();
 bool   is_tls_no_verify ();
