@@ -96,10 +96,14 @@
                        (:order "date" #t)))
     (map chat-message-retrieve l)))
 
+;; return #t if the chat room was actually initialized,
+;; #f if it was already there.
 (define (chat-room-initialize crid)
-  (when (not (ahash-ref chat-room-messages crid))
-    (ahash-set! chat-room-messages crid (chat-room-retrieve crid))
-    (ahash-set! chat-room-present  crid (list))))
+  (and (not (ahash-ref chat-room-messages crid))
+       (begin
+         (ahash-set! chat-room-messages crid (chat-room-retrieve crid))
+         (ahash-set! chat-room-present  crid (list))
+         #t)))
 
 (define (ensure-chat-room client crid)
   (chat-room-initialize crid)
@@ -173,10 +177,10 @@
   (let* ((crid (db-get-field-first mid "to" "unknown"))
          (name (db-get-field-first crid "name" "unknown"))
          (owner (db-get-field-first crid "owner" "unknown"))
-         (dummy (chat-room-initialize crid))
+         (init? (chat-room-initialize crid))
          (old-l (ahash-ref chat-room-messages crid))
          (new-m (chat-message-retrieve mid))
-         (new-l (rcons old-l new-m))
+         (new-l (if init? old-l (rcons old-l new-m)))
          (users (make-ahash-table))
          (shared-with (resource-shared-with name owner)))
     (ahash-set! chat-room-messages crid new-l)
