@@ -20,8 +20,12 @@
         (convert tools environment-test)
         (convert mathml mathtm-test)
         (convert tmml tmmltm-test)
-        (prog prog-format-test))
-        (utils cite cite-sort-test))
+        (prog prog-format-test)
+        (server server-cache-test)
+        (server server-backup-test)
+        (server server-notifications-test)
+        (server server-tmfs-test)
+        (utils cite cite-sort-test)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Test LaTeX export
@@ -97,6 +101,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (run-integration-tests)
+  (regtest-deletion-plan)
   (regtest-server-notifications)
   (regtest-server-backup)
   (regtest-server-cache)
