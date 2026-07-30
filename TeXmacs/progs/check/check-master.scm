@@ -97,6 +97,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-define (run-integration-tests)
+  (regtest-server-notifications)
   (regtest-server-backup)
   (regtest-server-cache)
 )
