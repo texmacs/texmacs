@@ -12,6 +12,19 @@
 
 #include "string.hpp"
 
+class QTMSettingWidget {
+
+public:
+  virtual inline QPointer<QWidget> leftWidget() const {
+    return nullptr;
+  }
+
+  virtual inline QPointer<QWidget> rightWidget() const {
+    return nullptr;
+  }
+
+};
+
 class QTMSwitchControl : public QAbstractButton {
   Q_OBJECT
 public:
@@ -20,7 +33,7 @@ protected:
   void paintEvent(QPaintEvent*) override;
 };
 
-class QTMSettingCheckbox : public QWidget {
+class QTMSettingCheckbox : public QWidget, public QTMSettingWidget {
   Q_OBJECT
 public:
   explicit QTMSettingCheckbox(QWidget* parent = nullptr);
@@ -29,7 +42,18 @@ public:
   bool isChecked() const;
   void setChecked(bool checked);
   inline bool setCheckState(bool checked) { setChecked(checked); return checked; }
+  bool needVerticalLayout() const;
+  void setVerticalLayout(bool vertical);
+  QLabel* descriptionLabel() const { return mLabel ? mLabel.data() : nullptr; }
 
+  inline QPointer<QWidget> leftWidget() const override {
+    return mLabel ? mLabel.data() : nullptr;
+  }
+
+  inline QPointer<QWidget> rightWidget() const override {
+    return mSwitchWrapper ? mSwitchWrapper.data() : nullptr;
+  }
+  
 signals:
   void toggled(bool checked);
 
@@ -38,15 +62,14 @@ protected:
   void resizeEvent(QResizeEvent* event) override;
 
 private:
-  void updateResponsiveLayout();
-
-private:
   QPointer<QBoxLayout> mLayout;
   QPointer<QLabel> mLabel;
+  QPointer<QVBoxLayout> mSwitchLayout;
+  QPointer<QWidget> mSwitchWrapper;
   QPointer<QTMSwitchControl> mSwitch;
 };
 
-class QTMSettingSelect : public QWidget {
+class QTMSettingSelect : public QWidget, public QTMSettingWidget {
   Q_OBJECT
 public:
   explicit QTMSettingSelect(QWidget* parent = nullptr);
@@ -62,8 +85,19 @@ public:
 
   int currentIndex() const;
   void setCurrentIndex(int index);
+  bool needVerticalLayout() const;
+  void setVerticalLayout(bool vertical);
+  QLabel* descriptionLabel() const { return mLabel ? mLabel.data() : nullptr; }
   
   QComboBox* comboBox() const { return mCombo ? mCombo.data() : nullptr; }
+  
+  inline QPointer<QWidget> leftWidget() const override {
+    return mLabel ? mLabel.data() : nullptr;
+  }
+
+  inline QPointer<QWidget> rightWidget() const override {
+    return mCombo ? mCombo.data() : nullptr;
+  }
 
 signals:
   void currentIndexChanged(int index);
@@ -72,15 +106,12 @@ protected:
   void resizeEvent(QResizeEvent* event) override;
 
 private:
-  void updateResponsiveLayout();
-
-private:
   QPointer<QBoxLayout> mLayout;
   QPointer<QLabel> mLabel;
   QPointer<QComboBox> mCombo;
 };
 
-class QTMSettingTitle : public QWidget {
+class QTMSettingTitle : public QWidget, public QTMSettingWidget {
   Q_OBJECT
 
 public:
@@ -115,6 +146,14 @@ public:
   QWidget* contentWidget() const { return mWrap ? mWrap.data() : const_cast<QTMSettingGroup*>(this); }
   int outerMargin() const;
   void setOuterMargin(int margin);
+
+  void synchronizeSizes();
+
+protected:
+  void resizeEvent(QResizeEvent* event) override;
+
+private:
+  void updateResponsiveLayout();
 
 private:
   QPointer<QTMSettingTitle> mTitle;

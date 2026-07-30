@@ -514,6 +514,7 @@ qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
   } else {
     waitLabel->setText ("");
     waitWindow->close ();
+    QTMWidget::setFocusToLast();
   }
   need_update ();
 }
