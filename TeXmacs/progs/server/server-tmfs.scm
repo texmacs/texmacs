@@ -438,13 +438,12 @@
   ;;(display* "remote-file-load " rname "\n")
   (with-remote-context rname
     (let* ((uid (server-get-user envelope))
-           (sname (tmfs-car rname))
            (r (server-file-load uid rname)))
       (if (== (car r) :error)
         (server-error envelope (cadr r))
         (with cached
           (if (server-can-handle-cache? uid)
-            (tree-cache-update-tmdoc sname (cadr r))
+            (tree-cache-update-tmdoc server-tree-cache-host (cadr r))
             (cadr r))
           (server-return envelope cached))))))
 

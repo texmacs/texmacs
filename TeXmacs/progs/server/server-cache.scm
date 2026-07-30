@@ -15,7 +15,9 @@
 
 (tm-define (server-can-handle-cache? uid) (and (server-tree-cache-enabled?) (client-version>=? uid 1)))
 
-(tm-service (remote-get-cache-ref host ref)
+(tm-define server-tree-cache-host "localhost")
+
+(tm-service (remote-get-cache-ref ref)
   ;; not checking client protocol version because client is calling this service
   (with uid (server-get-user envelope)
     (cond ((not uid)
@@ -23,7 +25,9 @@
           ((not (server-tree-cache-enabled?))
            (server-error envelope "Error: tree cache disabled"))
           (else
-            (server-return envelope (tree->stree (tree-cache-get host ref)))))))
+            (server-return
+              envelope
+              (tree->stree (tree-cache-get server-tree-cache-host ref)))))))
 
 (tm-define (server-tree-cache-enabled?)
   (== (get-preference "server service tree-cache") "on"))
