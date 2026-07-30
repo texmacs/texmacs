@@ -37,7 +37,7 @@ void QTMApplication::load() {
 }
 
 void QTMApplication::init_theme () {
-#if defined(OS_MINGW64) && QT_VERSION >= 0x060000
+#if !defined(OS_MACOS) && QT_VERSION >= 0x060000
   setStyle(QStyleFactory::create("Windows"));
 #endif    
   string theme= get_user_preference ("gui theme", "default");
