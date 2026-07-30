@@ -76,7 +76,10 @@
       (let* ((remote-prefs (ahash-ref remote-server-preferences
                                       current-server))
              (wcb (lambda (ret)
-                    (display* "Preference submit result: " ret "\n"))))
+                    (display* "Preference submit result: " ret "\n")
+                    (when (list? ret)
+                      (show-message "Preferences submitted OK"
+                                    "Preferences Results")))))
         (if remote-prefs
           (client-remote-eval* current-server
                                `(remote-set-preferences
