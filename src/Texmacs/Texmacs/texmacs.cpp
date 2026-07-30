@@ -65,6 +65,8 @@ extern bool texmacs_started;
 bool disable_error_recovery= false;
 bool start_server_flag= false;
 bool headless_mode= false;
+bool open_mode= false;
+string open_mode_url;
 bool tls_no_verify= false;
 string extra_init_cmd;
 bool exec_exit= true;
@@ -74,6 +76,9 @@ void server_start ();
 // Qt application infrastructure
 static QTMApplication* qtmapp= NULL;
 static QTMCoreApplication* qtmcoreapp= NULL;
+#if !defined(Q_OS_MAC)
+bool send_to_single_instance (string);
+#endif
 #endif
 
 bool
@@ -434,7 +439,7 @@ set_global_options  (int argc, char** argv)  {
                (s == "-delete-style-cache") || (s == "-delete-file-cache") ||
                (s == "-delete-doc-cache") || (s == "-delete-plugin-cache") ||
                (s == "-delete-server-data") || (s == "-delete-databases") ||
-	       (s == "-headless") || (s == "-H"));
+	       (s == "-headless") || (s == "-H") || s == "-open");
       else if (s == "-tls-no-verify") tls_no_verify= true;
       else if (s == "-build-manual") {
         if ((++i)<argc)
@@ -727,6 +732,16 @@ immediate_options (int argc, char** argv) {
       system ("rm -rf", url ("$TEXMACS_HOME_PATH/system/database"));
       system ("rm -rf", url ("$TEXMACS_HOME_PATH/users"));
     }
+
+    else if (s == "-open" && i + 1 < argc) {
+      i++;
+#if !defined(OS_MACOS)
+      headless_mode= true;
+      open_mode= true;
+      open_mode_url= string (argv[i]);
+#endif
+    }
+
 #ifdef QTTEXMACS
     else if (s == "-headless" || s == "-H" || s == "-C" ||
 	     s == "-build-website" || s == "-W" ||
@@ -809,6 +824,29 @@ texmacs_entrypoint (int argc, char** argv) {
     qtmcoreapp= new QTMCoreApplication (argc, argv);
   else
     ((QTMApplication*)qtmapp)->load();
+#endif
+
+  // Open urls via a single TeXmacs instance
+#if !defined(OS_MACOS)  
+  if (open_mode) {
+    ASSERT (headless_mode, "headless_mode is necessary");
+#  ifdef OS_MINGW
+    url exe= "$TEXMACS_PATH/bin/texmacs.exe";
+#  else
+    url exe= "$TEXMACS_PATH/bin/texmacs";
+#  endif
+    c_string _exe (concretize (exe));
+#  if defined(QTTEXMACS)
+    string cmd= string ("(load-buffer \"") * open_mode_url
+                * string ("\")");
+    if (!send_to_single_instance (cmd))
+#  endif
+    {
+      c_string tmp (open_mode_url);
+      execl (_exe, _exe, (const char*) tmp, NULL);
+    }
+    exit (0);
+  }
 #endif
 
   TeXmacs_init_font  ();
