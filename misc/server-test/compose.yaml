@@ -24,11 +24,9 @@ services:
     image: texmacs-server-test
     #container_name: texmacs-server-test
     volumes:
-      - ./certs:/srv/texmacs-server/certs
       - ./my-init-texmacs.scm:/srv/texmacs-server/.TeXmacs/progs/my-init-texmacs.scm
       - tm-data:/srv/texmacs-server/.TeXmacs
-    environment:
-      TEXMACS_SERVER_CERT_DIR: /srv/texmacs-server/certs
+      - tm-tree-cache:/srv/texmacs-server/.TeXmacs/system/tmp/tree_cache
     ports:
       - 6561-6563:6561
     command: --debug-io --debug-sockets --debug-remote
@@ -37,3 +35,9 @@ services:
 
 volumes:
   tm-data:
+  tm-tree-cache:
+    driver: local
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
+      o: strictatime
