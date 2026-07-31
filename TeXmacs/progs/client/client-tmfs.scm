@@ -352,32 +352,35 @@
       title
       (string-append title " - " (pretty-time t))))
 
-(define (update-cache-refs refs hash)
-  (for-each
-    update-tree
-    (list-filter
-      refs
-      (lambda (r)
-        (and (tree->path r)
-             (tree-is? r 'cache-ref)
-             (== (tm->string (tm-ref r 0)) hash))))))
+(define (expand-cache-refs sname fname refs)
+  (for (ref refs)
+    (when (and (tree->path ref) (tree-is? ref 'cache-ref))
+      (and-with tm (tree-cache-get sname (tm->string (tm-ref ref 0)))
+        (with modified? (and fname (buffer-modified? fname))
+          (tree-set ref tm)
+          (when (and fname (not modified?))
+            (buffer-pretend-saved fname)))))))
 
-(tm-define (fetch-missing-cache-refs server t)
-  (let* ((refs (select t '(:* cache-ref)))
+(tm-define (fetch-missing-cache-refs server arg)
+  (let* ((fname (if (tree? arg) #f arg))
+         (t (if (tree? arg) arg (buffer->tree fname)))
+         (refs (select t '(:* cache-ref)))
          (hashes (map (lambda (r) (tm->string (tm-ref r 0))) refs))
          (sname (client-find-server-name server))
          (missing
            (list-remove-duplicates
              (list-filter
                hashes (lambda (h) (not (tree-cache-contains? sname h)))))))
+    (expand-cache-refs sname fname refs)
     (for-each
       (lambda (h)
         (client-remote-eval server
           `(remote-get-cache-ref ,h)
           (lambda (tm)
             (tree-cache-put sname h (stree->tree tm))
-            (update-cache-refs refs h)
-            (set-message (string-append "retrieved " h) "load remote cache ref"))
+            (expand-cache-refs sname fname refs)
+            (set-message (string-append "retrieved " h)
+                         "load remote cache ref"))
           (lambda (err)
             (set-message err "load remote cache ref"))))
       missing)))
@@ -434,7 +437,7 @@
               (with doc (convert tm "texmacs-document" "texmacs-stree")
                 ;;(display* "LOAD ") (write doc) (display* "\n")
                 (remote-file-set name doc)
-                (fetch-missing-cache-refs server (buffer->tree fname)))
+                (fetch-missing-cache-refs server fname))
               (set-message "retrieved contents" "load remote file"))
             (lambda (err)
               (set-message err "load remote file")))
