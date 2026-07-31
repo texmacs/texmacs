@@ -291,6 +291,7 @@ qt_obj 	     := $(filter-out $(moc_obj), $(call makeobj,$(qt_src)))
 gs_obj       := $(call makeobj,$(gs_src))
 plugins_obj  := $(call makeobj,$(plugins_src))
 texmacs_obj  := $(call makeobj,$(texmacs_src))
+texmacs_open_obj := Objects/texmacs_open_main.o
 typeset_obj  := $(call makeobj,$(typeset_src))
 style_obj    := $(call makeobj,$(style_src))
 pdf_obj      := $(call makeobj,$(pdf_src))
@@ -357,6 +358,8 @@ $(cocoa_m_obj): Objects/%.o: %.m
 $(cocoa_mm_obj): Objects/%.o: %.mm
 	$(call objcxx_incl,$(cocoa_incl) $(CXXCOCOA) $(CXXSPARKLE) $(CXXGUI))
 $(texmacs_obj): Objects/%.o: %.cpp
+	$(call cxx_incl,$(texmacs_incl) $(CXXGUI))
+$(texmacs_open_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(texmacs_incl) $(CXXGUI))
 $(typeset_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(typeset_incl))
@@ -437,6 +440,9 @@ TEXMACS_objects := $(strip $(call uses,system kernel data graphics\
  plugins x11 os qt gs cocoa style typeset edit scheme texmacs pdf\
  freetype gnutls windowsres)) $(texmacs_c_deps)
 
+TEXMACS_OPEN_objects := $(texmacs_open_obj) Objects/tm_ostream.o Objects/fast_alloc.o Objects/tree.o \
+	$(filter-out Objects/windows64_entrypoint.o Objects/Plugins/Windows64/windows64_entrypoint.o,$(TEXMACS_objects))
+
 link_options:=-L$(tmsrc)/lib -lm $(LDPATH) $(LDGUI) $(LDICONV) $(CXXFLAGS)\
    $(LDAXEL) $(LDCAIRO) $(LDSQLITE3) $(LDGNUTLS) @SPARKLE_LDFLAGS@
 
@@ -444,7 +450,13 @@ link_options:=-L$(tmsrc)/lib -lm $(LDPATH) $(LDGUI) $(LDICONV) $(CXXFLAGS)\
 $(tmsrc)/bin/texmacs.bin: Objects/texmacs.bin
 	$(CP) $^ $@
 
+$(tmsrc)/bin/texmacs-open.bin: Objects/texmacs-open.bin
+	$(CP) $^ $@
+
 Objects/texmacs.bin: Objects/texmacs.o Objects/tm_ostream.o Objects/fast_alloc.o Objects/tree.o $(TEXMACS_objects)
+	$(call link_bin,$(link_options))
+
+Objects/texmacs-open.bin: $(TEXMACS_OPEN_objects)
 	$(call link_bin,$(link_options))
 
 all: $(tmsrc)/bin/texmacs.bin
@@ -455,7 +467,7 @@ Objects/libtexmacs.$(SO_SUFFIX): Objects/texmacs.o Objects/tm_ostream.o Objects/
 Objects/libtexmacs.a: Objects/texmacs.o Objects/tm_ostream.o Objects/fast_alloc.o Objects/tree.o $(TEXMACS_objects)
 	$(AR) $(ARFLAGS) $@ $^
 
-.PHONY: all liball $(tmsrc)/bin/texmacs.bin
+.PHONY: all liball $(tmsrc)/bin/texmacs.bin $(tmsrc)/bin/texmacs-open.bin
 
 ###############################################################################
 # Interface for Guile
