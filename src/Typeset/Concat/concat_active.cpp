@@ -328,47 +328,21 @@ concater_rep::typeset_toc_notify (tree t, path ip) {
 
 void
 concater_rep::typeset_cache_ref (tree t, path ip) {
-  if (N(t) < 2) { typeset_error (t, ip); return; }
-  string hash = t[0]->label;
+  if (N(t) < 2 || !is_atomic (t[1])) { typeset_error (t, ip); return; }
   string kind = t[1]->label;
-
-  tree resolved (UNINIT);
-  if (is_rooted_tmfs (env->base_file_name)) {
-    string buffer = as_string (env->base_file_name);
-
-    array<string> p = tokenize (buffer, "/");
-
-    if (N(p) >= 4) {
-      resolved= tree_cache_get (p[3], hash);
-    } else {
-      resolved= tree_cache_get_any (hash);
-    }
-  }
-  else {
-    resolved= tree_cache_get_any (hash);
-  }
-
-  if (resolved != tree (UNINIT)) {
-    typeset_dynamic (resolved, ip);
-    return;
-  }
-
-  // cache miss: render placeholder shaped by kind + size hints
-  tree width_hint = (N(t) >= 3) ? t[2] : tree ("");
-  tree height_hint= (N(t) >= 4) ? t[3] : tree ("");
-
   if (kind == "image") {
+    tree width_hint = (N(t) >= 3) ? t[2] : tree ("");
+    tree height_hint= (N(t) >= 4) ? t[3] : tree ("");
     tree ww= (width_hint == "")? tree ("3cm") : width_hint;
     tree hh= (height_hint == "")? tree ("3cm") : height_hint;
     tree t (IMAGE, "$TEXMACS_PATH/misc/pixmaps/unknown.png", ww, hh, "", "");
 
     typeset_dynamic (t , ip);
-  } else if (kind == "graphics") {
+  }
+  else if (kind == "graphics")
     typeset_dynamic (tree (GRAPHICS, ""), ip);
-  } else {
-    // generic fallback
+  else {
     tree t (WITH, "color", "dark grey", "[loading...]");
-
     typeset_dynamic (t, ip);
   }
 }
