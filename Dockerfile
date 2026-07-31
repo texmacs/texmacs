@@ -84,6 +84,7 @@ RUN autoreconf -fi \
 
 FROM scratch AS export
 
+COPY --from=builder /opt/texmacs/src/TeXmacs/SVNREV /SVNREV
 COPY --from=builder /opt/texmacs/src/TeXmacs/progs /progs
 COPY --from=builder /opt/texmacs/src/TeXmacs/fonts /fonts
 COPY --from=builder /opt/texmacs/src/TeXmacs/plugins /plugins
