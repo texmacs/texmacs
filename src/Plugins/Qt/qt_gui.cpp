@@ -518,6 +518,9 @@ qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
     waitWindow->close ();
     QTMWidget::setFocusToLast();
   }
+  qt_window_widget_rep* wid= static_cast<qt_window_widget_rep*> (w.rep);
+  wid->qwid->activateWindow ();
+  send_keyboard_focus (wid);
   need_update ();
 }
 #else
