@@ -29,16 +29,22 @@
 
 (define (set-remote-info kind info ref)
   (with now (texmacs-time)
-    (ahash-set remote-info-table kind (list info now))
+    (ahash-set! remote-info-table kind (list info now))
     (update-current-buffer)))
 
+(define (server-from-file u)
+  (and (url-rooted-protocol? u "tmfs")
+       (with u* (url->string (url-unroot u))
+         (and (tmfs-cdr u*)
+              (tmfs-car (tmfs-cdr u*))))))
+
 (define (retrieve-remote-user-info ref)
-  (and-with server (and (string-starts? (url->string ref) "tmfs://")
-                        (find-server-for-name ref))
-    (client-get-account-then server uid
-      (lambda (info)
-        (set-remote-info 'user-info info ref)))
-    (list)))
+  (and-with server* (server-from-file ref)
+    (and-with server (client-find-server server*)
+      (client-get-account-then server (get-default-user)
+        (lambda (info)
+          (set-remote-info 'user-info info ref)))
+      (list))))
 
 (define (get-remote-user-info ref)
   (or (get-remote-info 'user-info)
@@ -47,7 +53,7 @@
 (define (get-remote-user-info-about var ref)
   (and-with info (get-remote-user-info ref)
     (and-with vals (ahash-ref (list->ahash-table info) var)
-      (if (nnull? vals) :loading (car vals)))))
+      (if (null? vals) :loading (car vals)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Personal information
