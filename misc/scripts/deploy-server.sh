@@ -198,6 +198,7 @@ check_build_output() {
   check_dir_or_fail "$OUTDIR/langs"
   check_dir_or_fail "$OUTDIR/packages"
   check_file_or_fail "$OUTDIR/LICENSE"
+  check_file_or_fail "$OUTDIR/SVNREV"
 }
 
 REMOTE_DIR="releases/TeXmacs-upload-$(get_local_revision)"
