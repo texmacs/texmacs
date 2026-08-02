@@ -68,7 +68,7 @@
   (with (class name) (tmfs-decompose-name u)
     (lazy-tmfs-force class)
     (cond ((ahash-ref tmfs-handler-table (cons class 'save)) =>
-           (lambda (handler) (handler name (tmstring->object what))))
+           (lambda (handler) (handler name (convert what "stm-document" "texmacs-stree"))))
           (else ((ahash-ref tmfs-handler-table (cons #t 'save)) u what)))))
 
 (define-public (tmfs-autosave u suf)
