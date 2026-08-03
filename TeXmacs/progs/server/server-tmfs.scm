@@ -447,6 +447,21 @@
             (cadr r))
           (server-return envelope cached))))))
 
+(define (server-expand-cache-refs* t)
+  (cond ((tm-atomic? t) t)
+        ((tm-func? t 'cache-ref)
+         (let* ((h (tm->string (tm-ref t 0)))
+                (t* (tree-cache-get server-tree-cache-host h)))
+           (if (tm-func? t* 'uninit) t t*)))
+        (else `(,(tm-label t)
+                ,@(map server-expand-cache-refs* (tm-children t))))))
+
+(define (server-expand-cache-refs doc)
+  (if (not (string-occurs? "cache-ref" doc)) doc
+      (let* ((tm (convert doc "texmacs-document" "texmacs-stree"))
+             (tm* (server-expand-cache-refs* tm)))
+        (convert tm* "texmacs-stree" "texmacs-document"))))
+
 (tm-define (server-file-save uid rname doc msg)
   (let* ((fid (file-name->resource (tmfs-cdr rname)))
          (vid (version-get-list fid))
@@ -463,6 +478,7 @@
              (list :unchanged fid))
             (else
               (let* ((nr (version-next vid))
+                     (doc* (server-expand-cache-refs doc))
                      (rid (remote-create uid rname vid nr doc msg)))
                 (copy-properties fid rid inherit-property?)
                 (db-remove-entry fid)
