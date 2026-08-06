@@ -118,6 +118,7 @@ server_start () {
   (void) eval ("(use-modules (server server-tmfs))");
   (void) eval ("(use-modules (server server-menu))");
   (void) eval ("(use-modules (server server-live))");
+  (void) eval ("(use-modules (server server-backup))");
 
   if (should_reset_preferences ()) {
     call ("server-reset-preferences");
