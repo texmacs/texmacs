@@ -1607,7 +1607,12 @@ upgrade_mod_symbols (tree t) {
     if (is_atomic (r)) return r;
     if (is_with (r, "mode", "math") && is_atomic (r[2])) return r;
   }
+
   if (is_var_with (t, "math font series", "bold") && is_bold (t[2]))
+    return upgrade_mod_symbol ("b-", t[2]->label);
+  else if (is_var_with (t, "math font family", "bf") && is_alpha (t[2]))
+    return upgrade_mod_symbol ("b-up-", t[2]->label);
+  else if (is_var_with (t, "math font family", "bf") && is_bold (t[2]))
     return upgrade_mod_symbol ("b-", t[2]->label);
   else if (is_var_with (t, "math font", "cal") && is_upper (t[2]))
     return upgrade_mod_symbol ("cal-", t[2]->label);
@@ -1617,12 +1622,20 @@ upgrade_mod_symbols (tree t) {
     return upgrade_mod_symbol ("bbb-", t[2]->label);
   else if (is_var_with (t, "math font", "Bbb*") && is_alpha (t[2]))
     return upgrade_mod_symbol ("bbb-", t[2]->label);
-  else if (is_var_with (t, "math font series", "bold") &&
-           is_var_with (t[2], "math font", "cal") && is_upper (t[2][2]))
-    return upgrade_mod_symbol ("b-cal-", t[2][2]->label);
+
   else if (is_var_with (t, "math font", "cal") &&
            is_var_with (t[2], "math font series", "bold") && is_upper (t[2][2]))
     return upgrade_mod_symbol ("b-cal-", t[2][2]->label);
+  else if (is_var_with (t, "math font", "cal") &&
+           is_var_with (t[2], "math font family", "bf") && is_upper (t[2][2]))
+    return upgrade_mod_symbol ("b-cal-", t[2][2]->label);
+  else if (is_var_with (t, "math font series", "bold") &&
+           is_var_with (t[2], "math font", "cal") && is_upper (t[2][2]))
+    return upgrade_mod_symbol ("b-cal-", t[2][2]->label);
+  else if (is_var_with (t, "math font family", "bf") &&
+           is_var_with (t[2], "math font", "cal"))
+    return upgrade_mod_symbol ("b-cal-", t[2][2]->label);
+
   //else if ((is_func (t, VALUE, 1) || is_func (t, EXPAND, 1) ||
   //         is_func (t, APPLY, 1)) && (is_atomic (t[0]))) {
   //  string s= t[0]->label;
@@ -1632,6 +1645,7 @@ upgrade_mod_symbols (tree t) {
   //    return upgrade_mod_symbol ("frak-", s(1,2));
   //  return t;
   //}
+
   else {
     int i, n= N(t);
     tree r (t, n);
