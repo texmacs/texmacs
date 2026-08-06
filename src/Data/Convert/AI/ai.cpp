@@ -512,7 +512,8 @@ un_escape_cr (string s) {
   int i, n= N(s);
   string r;
   for (i=0; i<n; )
-    if (test (s, i, "\\nearrow")) r << s[i++];
+    if (test (s, i, "\\nabla")) r << s[i++];
+    else if (test (s, i, "\\nearrow")) r << s[i++];
     else if (test (s, i, "\\neq")) r << s[i++];
     else if (test (s, i, "\\noindent")) r << s[i++];
     else if (test (s, i, "\\n")) { r << '\n'; i += 2; }
