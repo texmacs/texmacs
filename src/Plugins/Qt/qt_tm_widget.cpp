@@ -254,7 +254,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   sideTools     = new QDockWidget ("side tools", mw);
   leftTools     = new QDockWidget ("left tools", mw);
 
-#if QT_VERSION >= 0x060000
+#if QT_VERSION >= 0x050000
   {
     // scrollable side tools
     QScrollArea *sa = new QScrollArea(mw);
@@ -1069,7 +1069,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
     case SLOT_SIDE_TOOLS:
       check_type_void (index, s);
     {
-#if QT_VERSION >= 0x060000
+#if QT_VERSION >= 0x050000
       side_tools_widget = concrete (w);
       QWidget* new_qwidget = side_tools_widget->as_qwidget(mainwindow());
       if (sideTools) {
