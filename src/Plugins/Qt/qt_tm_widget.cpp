@@ -726,6 +726,10 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
         if (rightLabel) rightLabel->show();
         if (prompt) prompt->deleteLater();
         prompt = NULL;
+#if (QT_VERSION >= 0x060000)
+	if (canvas() && !canvas()->hasFocus())
+	  canvas()->setFocus (Qt::OtherFocusReason);
+#endif
       }
     }
       break;
