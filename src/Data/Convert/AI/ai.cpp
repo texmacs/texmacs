@@ -391,6 +391,8 @@ albert_command (string s, string model, string agent,
 		string chat, bool history) {
   (void) chat;
   string key= get_env ("ALBERT_API_KEY");
+  if (key == "")
+    key= get_preference ("albert api key");
   string model_= get_preference (model * " model", model);
   array<tree> v;
   v << json_object ("role", "system", "content", agent);
