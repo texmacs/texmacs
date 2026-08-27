@@ -19,6 +19,7 @@
 #include "analyze.hpp"
 #include "file.hpp"
 #include "scheme.hpp"
+#include "web_files.hpp"
 
 /******************************************************************************
 * Various engines
@@ -252,20 +253,87 @@ ai_get_last_answers (string model, string chat) {
 }
 
 /******************************************************************************
+* Command helpers
+******************************************************************************/
+
+static void
+get_post_data (string& url, array<string>& headers, tree& data,
+	       tree t) {
+  url= t[0]->label;
+  data= t[2];
+  headers= array<string> ();
+  for (int i= 0; i < N(t[1]); i++)
+    if (is_atomic (t[1][i])) headers << t[1][i]->label;
+}
+
+static inline string
+shell_quote (string s) {
+  return "'" * replace (s, "'", "'\\''") * "'";
+}
+
+static string
+to_shell_command (tree t) {
+  if (is_compound (t, "eval_system", 1) && is_atomic (t[0]))
+    return t[0]->label;
+  if (is_compound (t, "http_post", 3) && is_atomic (t[0])
+      && is_tuple (t[1])) {    
+    string url; tree data; array<string> headers;
+    get_post_data (url, headers, data, t);
+    string cmd= "curl --silent -X POST " * shell_quote (url) * " \\\n";
+    for (int i= 0; i+1 < N(headers); i += 2)
+      cmd << "  -H " << shell_quote (headers[i])
+	  << ":"  << shell_quote (headers[i+1]) << " \\\n";
+    cmd << "  --data-binary " << shell_quote (tree_to_json (data));
+    return cmd;
+  }
+  io_error << "as_shell_command, unknown command type: " << t << LF;
+  return "";
+}
+
+string
+ai_eval_command (tree t) {
+  // cout << "ai_eval_command, " << t << LF;
+  if (is_compound (t, "eval_system", 1) && is_atomic (t[0]))
+    return eval_system (t[0]->label);
+  if (is_compound (t, "http_post", 3) && is_atomic (t[0])
+      && is_tuple (t[1])) {
+    string url; tree data; array<string> headers;
+    get_post_data (url, headers, data, t);
+    return http_post_json (url, headers, data);
+  }
+  io_error << "ai_eval_command, wrong command: " << t << LF;
+  return "";
+}
+
+bool
+ai_async_eval_command (tree t, object callback) {
+  if (is_compound (t, "eval_system", 1) && is_atomic (t[0]))
+    return async_eval_system (t[0]->label, callback);
+  if (is_compound (t, "http_post", 3) && is_atomic (t[0])
+      && is_tuple (t[1]) && is_atomic (t[2])) {
+    string url; tree data; array<string> headers; 
+    get_post_data (url, headers, data, t);
+    return async_http_post_json (url, headers, data, callback);
+  }
+  io_error << "ai_eval_command, wrong command: " << t << LF;
+  return "";
+}
+
+/******************************************************************************
 * Producing the query command for various engines
 ******************************************************************************/
 
-string
+tree
 chatgpt_command (string s, string model, string chat) {
   (void) model;
   (void) chat;
   url u ("$TEXMACS_HOME_PATH/system/tmp/chatgpt.txt");
   if (save_string (u, s)) return "";
   string cmd= "openai -k 5000 complete " * as_string (u);
-  return cmd;
+  return compound ("eval_system", cmd);
 }
 
-string
+tree
 gemini_command (string s, string model, string chat) {
   (void) model;
   (void) chat;
@@ -282,10 +350,10 @@ gemini_command (string s, string model, string chat) {
       << "      } ]\n"
       << "    } ]\n"
       << "  }'";
-  return cmd;
+  return compound ("eval_system", cmd);
 }
 
-string
+tree
 ollama_command (string s, string model, string chat) {
   (void) chat;
   string server= get_preference ("ollama server", "localhost");
@@ -297,10 +365,10 @@ ollama_command (string s, string model, string chat) {
       << "\"prompt\": \"" << ai_quote (s) << "\",\n"
       << "\"stream\": false\n"
       << "}'";
-  return cmd;
+  return compound ("eval_system", cmd);
 }
 
-string
+tree
 mistral_command (string s, string model, string chat) {
   (void) chat;
   string key= get_env ("MISTRAL_API_KEY");
@@ -315,52 +383,39 @@ mistral_command (string s, string model, string chat) {
       << "    } ]\n"
       << "  }' \\\n"
       << "  https://api.mistral.ai/v1/chat/completions";
-  return cmd;
+  return compound ("eval_system", cmd);
 }
 
-string
-albert_command (string s, string model, string agent, string chat) {
+tree
+albert_command (string s, string model, string agent,
+		string chat, bool history) {
   (void) chat;
   string key= get_env ("ALBERT_API_KEY");
   string model_= get_preference (model * " model", model);
-  ai_set_current_prompt (s, model, chat);
-  list<string> last_prompts= reverse (ai_get_last_prompts (model, chat));
-  list<string> last_answers= reverse (ai_get_last_answers (model, chat));
-  string cmd= "curl -X POST \\\n";
-  cmd << "  -H \"Authorization: Bearer " << key << "\" \\\n"
-      << "  -H \"Content-Type: application/json\" \\\n"
-      << "  -d '{\n"
-      << "    \"model\": \"" << model_ << "\",\n"
-      << "    \"messages\": [\n"
-      << "      {\n"
-      << "       \"role\": \"system\",\n"
-      << "       \"content\": \"" << ai_quote (agent) << "\"\n"
-      << "      },\n";
-  while (!is_nil (last_prompts) && !is_nil (last_answers)) { cmd
-      << "      {\n"
-      << "       \"role\": \"user\",\n"
-      << "       \"content\": \"" << ai_quote (last_prompts->item) << "\"\n"
-      << "      },\n"
-      << "      {\n"
-      << "       \"role\": \"assistant\",\n"
-      << "       \"content\": \"" << ai_quote (last_answers->item) << "\"\n"
-      << "      },\n";
-    last_prompts= last_prompts->next;
-    last_answers= last_answers->next;
+  array<tree> v;
+  v << json_object ("role", "system", "content", agent);
+  if (history) {
+    ai_set_current_prompt (s, model, chat);
+    list<string> last_prompts= reverse (ai_get_last_prompts (model, chat));
+    list<string> last_answers= reverse (ai_get_last_answers (model, chat));
+    while (!is_nil (last_prompts) && !is_nil (last_answers)) {
+      v << json_object ("role", "user", "content", last_prompts->item);
+      v << json_object ("role", "assistant", "content", last_answers->item);
+      last_prompts= last_prompts->next;
+      last_answers= last_answers->next;
+    }
   }
-  cmd << "      {\n"
-      << "       \"role\": \"user\",\n"
-      << "       \"content\": \"" << ai_quote (s) << "\"\n"
-      << "      }\n"
-      << "    ]\n"
-      << "  }' \\\n"
-      << "  https://albert.api.etalab.gouv.fr/v1/chat/completions";
-    //cout << cmd << LF;
-  return cmd;
+  v << json_object ("role", "user", "content", s);
+  tree msg= json_array (v);
+  tree data= json_object (array<tree> ("model", model_, "messages", msg));
+  return compound ("http_post",
+		   "https://albert.api.etalab.gouv.fr/v1/chat/completions",
+		   tuple ("Authorization", "Bearer " * key,
+			  "Content-Type", "application/json"), data);
 }
 
-string
-ai_command (string s, string model, string agent, string chat) {
+tree
+ai_command (string s, string model, string agent, string chat, bool history) {
   ai_get_continuation (s, model, chat);
   string engine= ai_engine (model);
   string s_= agent * " " * s;
@@ -368,7 +423,8 @@ ai_command (string s, string model, string agent, string chat) {
   if (engine == "gemini") return gemini_command (s_, model, chat);
   if (engine == "ollama") return ollama_command (s_, model, chat);
   if (engine == "mistral") return mistral_command (s_, model, chat);
-  if (engine == "albert") return albert_command (s, model, agent, chat);
+  if (engine == "albert")
+    return albert_command (s, model, agent, chat, history);
   return "";
 }
 
@@ -384,8 +440,8 @@ ai_latex_agent_description (string model) {
 string
 ai_latex_command (string s, string model, string chat) {
   string agent= ai_latex_agent_description (model);
-  string r= ai_command (s, model, agent, chat);
-  return r;
+  tree t= ai_command (s, model, agent, chat, true);
+  return to_shell_command (t);
 }
 
 /******************************************************************************
@@ -465,12 +521,23 @@ string
 albert_output (string val, string model, string chat) {
   (void) chat;
   (void) model;
-  int pos= search_forwards ("\"content\":\"", val);
-  if (pos < 0) return "";
-  pos += 11;
-  int end= search_forwards (",\"refusal\"", pos, val);
-  if (end < 0) return "";
-  string r= ai_unquote (val (pos, end));
+  tree t= http_from_json (val);
+  t= json_get (t, "choices");
+  if (t == tree () || !is_func (t, TUPLE) || N(t) == 0) {
+    //io_error << "albert_output, unexpected json object: " << val << LF;
+    return "";
+  }
+  t= json_get (t[0], "message");
+  if (t == tree () || !is_func (t, ATTR)) {
+    //io_error << "albert_output, unexpected json object: " << val << LF;
+    return "";
+  }
+  t= json_get (t, "content");
+  if (t == tree () || !is_string (t)) {
+    //io_error << "albert_output, unexpected json object: " << val << LF;
+    return "";
+  }
+  string r= as_string (t);
   if (N(ai_get_current_prompt (model, chat)) > 0) {
     ai_set_last_prompt (ai_get_current_prompt (model, chat), model, chat);
     ai_set_last_answer (r, model, chat);
@@ -559,7 +626,6 @@ tree
 ai_latex_output (string s, string model, string chat) {
   string r= ai_output (s, model, chat);
   if (DEBUG_IO) {
-    cout << r << "\n";
     string x= un_escape_cr (r);
     x= "] " * replace (x, "\n", "\n] ");
     debug_io << x << "\n";
@@ -588,8 +654,8 @@ ai_latex_output (string s, string model, string chat) {
 
 string
 ai_chat (string s, string model, string agent, string chat) {
-  string cmd= ai_command (s, model, agent, chat);
-  string val= eval_system (cmd);
+  tree cmd= ai_command (s, model, agent, chat);
+  string val= ai_eval_command (cmd);
   //if (DEBUG_IO) {
   //  debug_io << "input, " << cmd << LF;
   //  debug_io << "output, " << val << LF;

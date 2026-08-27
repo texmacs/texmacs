@@ -185,3 +185,103 @@ get_from_ramdisc (url u) {
   save_string (tmp, u[1][2]->t->label);
   return set_cache (u, tmp);
 }
+
+/******************************************************************************
+* HTTP requests
+******************************************************************************/
+
+#if !defined(QTTEXMACS) || AC_QT_MAJOR_VERSION < 6
+
+static inline string
+shell_quote (string s) {
+  return "'" * replace (s, "'", "'\\''") * "'";
+}
+
+static string
+to_shell_command (string url, array<string> headers_attr, string data) {
+  string cmd= "curl --silent -X POST " * shell_quote (url) * "\\\n";
+  for (int i= 0; i+1 < N(headers_attr); i += 2)
+    cmd << "  -H "
+	<< shell_quote (headers_attr[i] * ":" * headers_attr[i+1]) << "\\\n";
+  cmd << "  --data-binary " << shell_quote (data) << "\\\n";
+  if (DEBUG_IO)
+    debug_io << "http_post, launching" << LF
+	     << cmd << LF;
+  return cmd;
+}
+
+static inline string
+to_shell_command (string url, array<string> headers_attr, tree data) {
+  return to_shell_command (url, headers_attr, tree_to_json (data));
+}
+
+static string
+to_shell_command (string url, array<string> headers_attr, array<string> attr) {
+  string cmd= "curl --silent -X POST " * shell_quote (url) * " \\\n";
+  for (int i= 0; i+1 < N(headers_attr); i += 2)
+    cmd << "  -H "
+	<< shell_quote (headers_attr[i] * ":" * headers_attr[i+1]) << "\\\n";
+  for (int i= 0; i+1 < N(attr); i += 2) {
+    cmd << "  --data-urlencode " << shell_quote (attr[i]);
+    if (!ends (attr[i], "@")) cmd << "=";
+    cmd << shell_quote (attr[i+1]) << "\\\n";
+  }
+  if (DEBUG_IO)
+    debug_io << "http_post, launching" << LF
+	     << cmd << LF;
+  return cmd;
+}
+
+int
+http_post (string& ret, string url,
+	   array<string> headers_attr, string data) {
+  string cmd= to_shell_command (url, headers_attr, data);
+  int st= system (cmd, ret);
+  if (st != 0)
+    io_error << "http_post, cannot evaluate shell command: " << cmd << LF;
+  return st;
+}
+
+int
+http_post_json (string& ret, string url,
+		array<string> headers_attr, tree data) {
+  string cmd= to_shell_command (url, headers_attr, data);
+  int st= system (cmd, ret);
+  if (st != 0)
+    io_error << "http_post, cannot evaluate shell command: " << cmd << LF;
+  return st;
+}
+
+int
+http_post_query (string& ret, string url,
+		 array<string> headers_attr, array<string> attr) {
+  string cmd= to_shell_command (url, headers_attr, attr);
+  int st= system (cmd, ret);
+  if (st != 0)
+    io_error << "http_post, cannot evaluate shell command: " << cmd << LF;
+  return st;
+}
+
+bool
+async_http_post (string url, array<string> headers_attr,
+		 string data, object callback) {
+  string cmd= to_shell_command (url, headers_attr, data);
+  return async_eval_system (cmd, callback);
+}
+
+bool
+async_http_post_json (string url, array<string> headers_attr,
+		      tree data, object callback) {
+  string cmd= to_shell_command (url, headers_attr, data);
+  return async_eval_system (cmd, callback);
+}
+
+bool
+async_http_post_query (string url, array<string> headers_attr,
+		       array<string> attr, object callback) {
+  string cmd= to_shell_command (url, headers_attr, attr);
+  return async_eval_system (cmd, callback);
+}
+
+#endif
+

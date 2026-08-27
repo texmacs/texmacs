@@ -141,13 +141,43 @@ tree json_to_tree (string s, int mode= 0);
 string tree_to_json (tree t, int mode= 0);
 tree json_get (tree t, tree key, int mode= 0);
 string lantool_correct (string s, string out);
-string ai_command (string s, string model, string agent, string chat= "");
+tree ai_command (string s, string model, string agent,
+		 string chat= "", bool history= false);
+string ai_eval_command (tree cmd);
+bool ai_async_eval_command (tree cmd, object callback);
 string ai_output (string s, string model, string chat= "");
 array<string> ai_get_body (string r);
 string ai_latex_command (string s, string model, string chat= "");
-tree   ai_latex_output (string s, string model, string chat= "");
+tree ai_latex_output (string s, string model, string chat= "");
 string ai_chat (string s, string model, string agent, string chat= "");
 tree ai_translate (tree t, string from, string into, string m, string c= "");
 tree ai_correct (tree t, string lan, string model, string chat= "");
+
+#define JSON_NULL           1
+#define JSON_BOOLEAN        2
+#define JSON_NUMBER         4
+tree json_null (int mode);
+tree json_boolean (string s, int mode);
+tree json_number (string s, int mode);
+inline tree json_string (string s) { return tree (s); }
+tree json_array (array<tree> v);
+inline tree json_array () {
+  return json_array (array<tree> ()); }
+inline tree json_array (tree x0) {
+  array<tree> v; v << x0;
+  return json_array (v); }
+inline tree json_array (tree x0, tree x1) {
+  return json_array (array<tree> (x0, x1)); }
+inline tree json_array (tree x0, tree x1, tree x2) {
+  return json_array (array<tree> (x0, x1, x2)); }
+inline tree json_array (tree x0, tree x1, tree x2, tree x3) {
+  return json_array (array<tree> (x0, x1, x2, x3)); }
+tree json_object (array<tree> v);
+inline tree json_object () {
+  return json_object (array<tree> ()); }
+inline tree json_object (tree x0, tree x1) {
+  return json_object (array<tree> (x0, x1)); }
+inline tree json_object (tree x0, tree x1, tree x2, tree x3) {
+  return json_object (array<tree> (x0, x1, x2, x3)); }
 
 #endif // defined CONVERT_H

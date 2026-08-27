@@ -26,10 +26,11 @@
 (tm-define (supports-lantool?)
   (and (get-boolean-preference "grammar checking")  
        (if (!= lantool-support :uninit) lantool-support
-           (let* ((cmd (string-append "curl -X POST " lantool-server
-                                      " -d \"language=en-US\""
-                                      " -d \"text=Some text with a error.\""))
-                  (val (eval-system cmd)))
+           (with val
+	       (http-post-query lantool-server
+		'("Content-Type" "application/x-www-form-urlencoded")
+		'("language" "en-US"
+		  "text" "Some text with a error."))
              (set! lantool-support (string-occurs? "{\"software\":{" val))
              lantool-support))))
 
@@ -44,11 +45,10 @@
     (and (>= pos 0)
          (substring s pos (string-length s)))))
 
-(define ((lantool-return lan html tmp return) output)
+(define ((lantool-return lan html return) output)
   ;;(display* "---------------------------------------\n")
   ;;(display* output "\n")
   (with r (lantool-reply output)
-    (system-remove tmp)
     (ahash-set! lantool-cache (list lan html) r)
     (return html r)))
 
@@ -60,25 +60,16 @@
     (when (not (process-running? 'spell)) (set! r html))
     (if r (return html r)
         (let* ((html (compress-html t 1))
-               (tmp (url-glue (url-temp) ".html"))
-               (dummy (string-save html tmp))
                (loc (language-to-locale lan))
                (loc* (string-replace loc "_" "-"))
-               (disable "UPPERCASE_SENTENCE_START")
-               ;;(cmd (string-append "languagetool"
-               ;;                    " --json "
-               ;;                    " -d WHITESPACE_RULE"
-               ;;                    " " (url->string tmp)))
-               (cmd (string-append "curl -X POST " lantool-server
-                                   " -d \"language=" loc* "\""
-                                   " -d \"contentType=text/html\""
-                                   " -d \"disabledRules=" disable "\""
-                                   " --data-urlencode \"text=$(cat "
-                                   (url->string tmp)
-                                   ")\" 2> /dev/null"))
-               )
-          ;;(display* "cmd] " cmd "\n")
-          (async-eval-system cmd (lantool-return lan html tmp return))))))
+               (disable "UPPERCASE_SENTENCE_START"))
+          (async-http-post-query lantool-server
+	    '("Content-Type" "application/x-www-form-urlencoded")
+	    (list "language" loc*
+		  "contentType" "text/html"
+		  "disabledRules" disable
+		  "text" html)
+	    (lantool-return lan html return))))))
 
 (tm-define (lantool-process-old t return)
   (spell-initiate)

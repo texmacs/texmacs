@@ -302,7 +302,11 @@ async_read_output (void* arg) {
 }
 
 bool
-async_eval_system (string cmd, object call_back) {
+async_eval_system (string c, object call_back) {
+  string cmd = c;
+#if !defined (OS_MINGW)
+  cmd = cmd * " 2> /dev/null";
+#endif
   int i, n= N(cmd);
   char* cmd_= (char*) malloc (n+1);
   for (i=0; i<n; i++) cmd_[i]= cmd[i];
