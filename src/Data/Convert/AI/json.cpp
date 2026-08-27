@@ -12,14 +12,31 @@
 #include "convert.hpp"
 #include "analyze.hpp"
 
-#define JSON_NULL           1
-#define JSON_BOOLEAN        2
-#define JSON_NUMBER         4
 #define JSON_SHORT_ARRAY    8
 #define JSON_SHORT_OBJECT  16
 
 tree json_parse (string s, int& pos, int mode);
 void json_print (string& s, tree t, int mode, int indent);
+
+/******************************************************************************
+* JSON trees
+******************************************************************************/
+
+tree
+json_object (array<tree> v) {
+  tree t (ATTR);
+  for (int i= 0; i+1 < N(v); i += 2)
+    t << v[i] << v[i+1];
+  return t;
+}
+
+tree
+json_array (array<tree> v) {
+  tree t (TUPLE);
+  for (int i= 0; i < N(v); i++)
+    t << v[i];
+  return t;
+}
 
 /******************************************************************************
 * JSON parser

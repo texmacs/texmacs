@@ -531,6 +531,78 @@ tmg_async_eval_system (tmscm arg1, tmscm arg2) {
 }
 
 tmscm
+tmg_http_post (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "http-post");
+  TMSCM_ASSERT_ARRAY_STRING (arg2, TMSCM_ARG2, "http-post");
+  TMSCM_ASSERT_STRING (arg3, TMSCM_ARG3, "http-post");
+
+  string in1= tmscm_to_string (arg1);
+  array_string in2= tmscm_to_array_string (arg2);
+  string in3= tmscm_to_string (arg3);
+
+  // TMSCM_DEFER_INTS;
+  string out= http_post (in1, in2, in3);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
+tmg_http_post_query (tmscm arg1, tmscm arg2, tmscm arg3) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "http-post-query");
+  TMSCM_ASSERT_ARRAY_STRING (arg2, TMSCM_ARG2, "http-post-query");
+  TMSCM_ASSERT_ARRAY_STRING (arg3, TMSCM_ARG3, "http-post-query");
+
+  string in1= tmscm_to_string (arg1);
+  array_string in2= tmscm_to_array_string (arg2);
+  array_string in3= tmscm_to_array_string (arg3);
+
+  // TMSCM_DEFER_INTS;
+  string out= http_post_query (in1, in2, in3);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
+tmg_async_http_post (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "async-http-post");
+  TMSCM_ASSERT_ARRAY_STRING (arg2, TMSCM_ARG2, "async-http-post");
+  TMSCM_ASSERT_STRING (arg3, TMSCM_ARG3, "async-http-post");
+  TMSCM_ASSERT_OBJECT (arg4, TMSCM_ARG4, "async-http-post");
+
+  string in1= tmscm_to_string (arg1);
+  array_string in2= tmscm_to_array_string (arg2);
+  string in3= tmscm_to_string (arg3);
+  object in4= tmscm_to_object (arg4);
+
+  // TMSCM_DEFER_INTS;
+  bool out= async_http_post (in1, in2, in3, in4);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
+tmg_async_http_post_query (tmscm arg1, tmscm arg2, tmscm arg3, tmscm arg4) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "async-http-post-query");
+  TMSCM_ASSERT_ARRAY_STRING (arg2, TMSCM_ARG2, "async-http-post-query");
+  TMSCM_ASSERT_ARRAY_STRING (arg3, TMSCM_ARG3, "async-http-post-query");
+  TMSCM_ASSERT_OBJECT (arg4, TMSCM_ARG4, "async-http-post-query");
+
+  string in1= tmscm_to_string (arg1);
+  array_string in2= tmscm_to_array_string (arg2);
+  array_string in3= tmscm_to_array_string (arg3);
+  object in4= tmscm_to_object (arg4);
+
+  // TMSCM_DEFER_INTS;
+  bool out= async_http_post_query (in1, in2, in3, in4);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
+}
+
+tmscm
 tmg_get_locale_language () {
   // TMSCM_DEFER_INTS;
   string out= get_locale_language ();
@@ -6834,10 +6906,38 @@ tmg_cpp_ai_command (tmscm arg1, tmscm arg2, tmscm arg3) {
   string in3= tmscm_to_string (arg3);
 
   // TMSCM_DEFER_INTS;
-  string out= ai_command (in1, in2, in3);
+  tree out= ai_command (in1, in2, in3);
+  // TMSCM_ALLOW_INTS;
+
+  return tree_to_tmscm (out);
+}
+
+tmscm
+tmg_cpp_ai_eval_command (tmscm arg1) {
+  TMSCM_ASSERT_TREE (arg1, TMSCM_ARG1, "cpp-ai-eval-command");
+
+  tree in1= tmscm_to_tree (arg1);
+
+  // TMSCM_DEFER_INTS;
+  string out= ai_eval_command (in1);
   // TMSCM_ALLOW_INTS;
 
   return string_to_tmscm (out);
+}
+
+tmscm
+tmg_cpp_ai_async_eval_command (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_TREE (arg1, TMSCM_ARG1, "cpp-ai-async-eval-command");
+  TMSCM_ASSERT_OBJECT (arg2, TMSCM_ARG2, "cpp-ai-async-eval-command");
+
+  tree in1= tmscm_to_tree (arg1);
+  object in2= tmscm_to_object (arg2);
+
+  // TMSCM_DEFER_INTS;
+  bool out= ai_async_eval_command (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return bool_to_tmscm (out);
 }
 
 tmscm
@@ -11211,6 +11311,10 @@ initialize_glue_basic () {
   tmscm_install_procedure ("var-eval-system",  tmg_var_eval_system, 1, 0, 0);
   tmscm_install_procedure ("evaluate-system",  tmg_evaluate_system, 4, 0, 0);
   tmscm_install_procedure ("async-eval-system",  tmg_async_eval_system, 2, 0, 0);
+  tmscm_install_procedure ("http-post",  tmg_http_post, 3, 0, 0);
+  tmscm_install_procedure ("http-post-query",  tmg_http_post_query, 3, 0, 0);
+  tmscm_install_procedure ("async-http-post",  tmg_async_http_post, 4, 0, 0);
+  tmscm_install_procedure ("async-http-post-query",  tmg_async_http_post_query, 4, 0, 0);
   tmscm_install_procedure ("get-locale-language",  tmg_get_locale_language, 0, 0, 0);
   tmscm_install_procedure ("get-locale-charset",  tmg_get_locale_charset, 0, 0, 0);
   tmscm_install_procedure ("locale-to-language",  tmg_locale_to_language, 1, 0, 0);
@@ -11667,6 +11771,8 @@ initialize_glue_basic () {
   tmscm_install_procedure ("compress-html",  tmg_compress_html, 2, 0, 0);
   tmscm_install_procedure ("decompress-html",  tmg_decompress_html, 2, 0, 0);
   tmscm_install_procedure ("cpp-ai-command",  tmg_cpp_ai_command, 3, 0, 0);
+  tmscm_install_procedure ("cpp-ai-eval-command",  tmg_cpp_ai_eval_command, 1, 0, 0);
+  tmscm_install_procedure ("cpp-ai-async-eval-command",  tmg_cpp_ai_async_eval_command, 2, 0, 0);
   tmscm_install_procedure ("cpp-ai-output",  tmg_cpp_ai_output, 2, 0, 0);
   tmscm_install_procedure ("cpp-ai-get-body",  tmg_cpp_ai_get_body, 1, 0, 0);
   tmscm_install_procedure ("cpp-ai-latex-command",  tmg_cpp_ai_latex_command, 3, 0, 0);

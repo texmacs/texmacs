@@ -411,6 +411,38 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(http-post <scm-arg|string> <scm-arg|array_string> <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|http_post> which returns
+    <scm|string>.
+  </explain>
+
+  <\explain>
+    <scm|(http-post-query <scm-arg|string> <scm-arg|array_string> <scm-arg|array_string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|http_post_query> which returns
+    <scm|string>.
+  </explain>
+
+  <\explain>
+    <scm|(async-http-post <scm-arg|string> <scm-arg|array_string> <scm-arg|string> <scm-arg|object>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|async_http_post> which returns
+    <scm|bool>.
+  </explain>
+
+  <\explain>
+    <scm|(async-http-post-query <scm-arg|string> <scm-arg|array_string> <scm-arg|array_string> <scm-arg|object>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|async_http_post_query> which returns
+    <scm|bool>.
+  </explain>
+
+  <\explain>
     <scm|(get-locale-language)>
 <explain-synopsis|no synopsis>
   <|explain>
@@ -4055,7 +4087,23 @@ source code.
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|ai_command> which returns
+    <scm|tree>.
+  </explain>
+
+  <\explain>
+    <scm|(cpp-ai-eval-command <scm-arg|tree>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|ai_eval_command> which returns
     <scm|string>.
+  </explain>
+
+  <\explain>
+    <scm|(cpp-ai-async-eval-command <scm-arg|tree> <scm-arg|object>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|ai_async_eval_command> which returns
+    <scm|bool>.
   </explain>
 
   <\explain>

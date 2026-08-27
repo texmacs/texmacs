@@ -67,6 +67,11 @@
   (evaluate-system evaluate_system
     (array_string array_string array_int array_string array_int))
   (async-eval-system async_eval_system (bool string object))
+  (http-post http_post (string string array_string string))
+  (http-post-query http_post_query (string string array_string array_string))
+  (async-http-post async_http_post (bool string array_string string object))
+  (async-http-post-query async_http_post_query (bool string array_string
+    array_string object))
   (get-locale-language get_locale_language (string))
   (get-locale-charset get_locale_charset (string))
   (locale-to-language locale_to_language (string string))
@@ -569,7 +574,9 @@
   (compressed->html compressed_to_html (string content int))
   (compress-html compress_html (string content int))
   (decompress-html decompress_html (tree string int))
-  (cpp-ai-command ai_command (string string string string))
+  (cpp-ai-command ai_command (tree string string string))
+  (cpp-ai-eval-command ai_eval_command (string tree))
+  (cpp-ai-async-eval-command ai_async_eval_command (bool tree object))
   (cpp-ai-output ai_output (string string string))
   (cpp-ai-get-body ai_get_body (array_string string))
   (cpp-ai-latex-command ai_latex_command (string string string string))
