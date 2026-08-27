@@ -120,6 +120,7 @@
       ("Preferences" (open-plugins-preferences)))
     (assuming (or (os-mingw?) (os-win32?) (os-macos?))
       ("Manual path" (interactive set-manual-path)))
+    ("Manual key" (interactive set-manual-key))
     ("Redetect" (reinit-plugin-cache))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
