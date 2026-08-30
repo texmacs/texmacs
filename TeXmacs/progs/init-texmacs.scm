@@ -437,6 +437,11 @@
 (lazy-define (database bib-manage)
              bib-import-bibtex bib-compile bib-attach open-bib-chooser)
 (lazy-define (database bib-local) open-biblio)
+(lazy-define (database ai-agents-db) ai-agents-get-corrector
+	     ai-agents-get-interlocutor ai-agents-get-translator
+	     ai-agents-correctors ai-agents-interlocutors
+	     ai-agents-translators)
+(lazy-define (database ai-agents-menu) open-ai-agents in-ai-agents?)
 (lazy-menu (database db-menu) db-menu db-toolbar)
 (lazy-tmfs-handler (database db-tmfs) db)
 (lazy-keyboard (database bib-kbd) in-bib?)

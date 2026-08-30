@@ -433,8 +433,11 @@ ai_command (string s, string model, string agent, string chat, bool history) {
 static string
 ai_latex_agent_description (string model) {
   string engine= ai_engine (model);
-  if (engine == "albert") return string ("Provide your answer in ")
-    * "the form of an untitled utf-8 LaTeX document without any comments.";
+  if (engine == "albert") {
+    return string ("Provide your answer in ")
+    * "the form of an untitled utf-8 LaTeX document without any comments. "
+    *  as_string (call ("ai-agents-get-interlocutor", object (engine)));
+  }
   return string ("Please provide your answer in the form of an ")
     * "untitled LaTeX document.";
 }
@@ -702,12 +705,13 @@ ai_correct_agent_description (string lan, string model) {
     * string ("and grammar of the following ") * lan
     * string (" text, and show me just the result, ")
     * string ("without further explanations or justifications:");
-  if (engine == "albert")
-    q = string ("You are a native " * lan * " speaker. ")
-      * string ("Correct spelling, grammar, and improve the writing ")
-      * string ("style of scientific documents. Show any explanations ")
-      * string ("and justifications in comment tags at the end. ")
-      * string ("Preserve HTML tags. Do not add new lines");
+  if (engine == "albert") {
+    q = string ("You are a native " * lan * " speaker. ");
+    q << "You correct HTML documents. ";
+    q << "Preserve HTML tags. Do not add new lines. ";
+    q << as_string (call ("ai-agents-get-corrector", object (engine)));
+    q << " Show explanations and justifications in comment tags at the end. ";
+  }
   return q;
 }
 
@@ -761,8 +765,11 @@ ai_correct (tree t, string lan, string model, string chat) {
 static string
 ai_translate_agent_description (string from, string into, string model) {
   string engine= ai_engine (model);
-  string q= "Please translate the following HTML snippet from ";
-  q << from << " into " << into << ", without explanations: ";
+  string q= "Translate HTML documents from ";
+  q << from << " into " << into << ", without explanations.";
+  if (engine == "albert") {
+    q << " " << as_string (call ("ai-agents-get-translator", object (engine)));
+  }
   return q;
 }
 
