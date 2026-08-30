@@ -247,6 +247,7 @@
 (menu-bind db-menu
   ("Open identities" (open-identities))
   ("Open bibliography" (load-db-buffer "tmfs://db/bib/global"))
+  ("Open AI agents" (open-ai-agents))
   (if (supports-gpg?) ("Open key manager" (open-gpg-key-manager)))
   ---
   (when (in-database?)
