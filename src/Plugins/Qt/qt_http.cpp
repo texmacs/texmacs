@@ -15,7 +15,6 @@
 
 #if QT_VERSION >= 0x060000
 
-#include <QHttpHeaders>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
@@ -33,7 +32,9 @@ get_manager () {
   static QNetworkAccessManager* manager= new QNetworkAccessManager ();
   static bool first= true;
   if (first) {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
     manager->setTransferTimeout (60000); // 60s
+#endif
     first= false;
   }
   return manager;
@@ -123,6 +124,14 @@ tree_to_qjson (tree t) {
   return QJsonValue ();
 }
 
+static QByteArray
+qjson_to_bytes (const QJsonValue& v) {
+  QJsonDocument d;
+  if (v.isArray ()) d= QJsonDocument (v.toArray ());
+  else if (v.isObject ()) d= QJsonDocument (v.toObject ());
+  return d.toJson ();
+}
+
 // conversion from TeXmacs Json
 static tree
 qjson_to_tree (const QJsonValue& j, int mode) {
@@ -150,7 +159,7 @@ qjson_to_tree (const QJsonValue& j, int mode) {
     }
     return t;
   }
-  QByteArray a= j.toJson ();
+  QByteArray a= qjson_to_bytes (j);
   io_error << "qjson_to_tree, invalid QJsonValue: "
 	   << string (a.constData (), a.size ()) << LF;
   return tree ();
@@ -160,7 +169,7 @@ qjson_to_tree (const QJsonValue& j, int mode) {
 int
 qt_http_post (string& ret, string url, array<string> headers_attr, tree t) {
   QJsonValue v= tree_to_qjson (t);
-  QByteArray a= v.toJson ();
+  QByteArray a= qjson_to_bytes (v);
   return qt_http_post (ret, url, headers_attr, a.constData (), a.size ());
 }
 
@@ -266,7 +275,7 @@ bool
 qt_async_http_post (string url, array<string> headers_attr,
 		    tree data, object callback) {
   QJsonValue v= tree_to_qjson (data);
-  QByteArray a= v.toJson ();
+  QByteArray a= qjson_to_bytes (v);
   return qt_async_http_post (url, headers_attr, a.constData (), a.size (),
 			     callback);
 }
@@ -300,4 +309,50 @@ qt_async_http_post (string url, array<string> headers_attr,
 			     data.constData (), data.size (), callback);
 }
 
-#endif
+#else // QT_VERSION < 0x060000
+tree
+qt_http_from_json (string s, int mode) {
+  (void) s; (void) mode;
+  return tree (); }
+
+int
+qt_http_post (string& ret, string url, array<string> headers_attr,
+	      string data) {
+  (void) url; (void) headers_attr; (void) data;
+  ret= "";
+  return -1; }
+
+int
+qt_http_post (string& ret, string url, array<string> headers_attr, tree t) {
+  (void) url; (void) headers_attr; (void) t;
+  ret= "";
+  return -1; }
+
+int
+qt_http_post (string& ret, string url, array<string> headers_attr,
+	      array<string> attr) {
+  (void) url; (void) headers_attr; (void) attr;
+  ret= "";
+  return -1; }
+
+bool
+qt_async_http_post (string url, array<string> headers_attr,
+		    string data, object callback) {
+  (void) url; (void) headers_attr; (void) data; (void) callback;
+  return true; }
+
+bool
+qt_async_http_post (string url, array<string> headers_attr,
+		    tree data, object callback) {
+  (void) url; (void) headers_attr; (void) data; (void) callback;
+  return true; }
+
+bool
+qt_async_http_post (string url, array<string> headers_attr,
+		    array<string> attr, object callback) {
+  (void) url; (void) headers_attr; (void) attr; (void) callback;
+  return true; }
+
+void
+QTMHTTPHandler::onFinished () {}
+#endif // QT_VERSION >= 0x060000

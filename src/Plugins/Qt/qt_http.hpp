@@ -17,7 +17,6 @@
 #include "scheme.hpp"
 #include "qt_utilities.hpp"
 
-#if QT_VERSION >= 0x060000
 #include <QNetworkReply>
 
 tree qt_http_from_json (string s, int mode= 0);
@@ -54,7 +53,5 @@ public:
 public slots:
   void onFinished ();
 };
-
-#endif
 
 #endif  // QT_HTTP_HPP
