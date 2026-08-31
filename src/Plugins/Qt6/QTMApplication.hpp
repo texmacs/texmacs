@@ -35,6 +35,41 @@ void set_standard_style_sheet (QWidget *w);
 #include "QTMMacPasteboardMimePDF.hpp"
 #endif
 
+/******************************************************************************
+* Local server to receive basic commands (e.g. open files and urls)
+******************************************************************************/
+
+#include <QObject>
+#include <QLocalServer>
+#include <QLocalSocket>
+
+class QTMLocalServer: public QObject {
+  Q_OBJECT
+  QLocalServer* server;
+  bool alive;
+  QHash<QLocalSocket*,QString> received;
+  FILE* lock_file;
+public:
+  QTMLocalServer ();
+  ~QTMLocalServer ();
+  bool is_alive ();
+
+private slots:
+  void onNewConnection ();
+  void readClientData ();
+  void onClientDisconnected ();
+};
+
+bool send_to_single_instance (string s);
+
+/******************************************************************************
+* QApplication
+******************************************************************************/
+
+#if defined(Q_OS_MAC) && QT_VERSION < 0x060000 
+#include "QTMMacPasteboardMimePDF.hpp"
+#endif
+
 class QTMApplication: public QApplication {
   Q_OBJECT
 
@@ -98,6 +133,7 @@ private:
   bool mUseTabWindow;
   QFileSystemWatcher* mCssWatcher = nullptr;
   QString mCurrentCssPath;
+  QTMLocalServer mLocalServer;
 };
 
 inline QTMApplication *tmapp() {
