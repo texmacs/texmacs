@@ -9359,7 +9359,7 @@ source code.
 <explain-synopsis|no synopsis>
   <|explain>
     Calls the <c++> function <cpp|change_time> which returns
-    <scm|int>.
+    <scm|time_t>.
   </explain>
 
   <\explain>
