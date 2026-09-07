@@ -32,6 +32,9 @@ int qt_http_post (string& ret, string url, array<string> headers_attr,
 		  tree t);
 bool qt_async_http_post (string url, array<string> headers_attr,
 			 tree t, object callback);
+bool qt_async_http_post (string url, array<string> headers_attr,
+			 tree t, int& status, string& outbuf,
+			 string& errbuf, bool& kill);
 
 // post query
 int qt_http_post (string& ret, string url, array<string> headers_attr,
@@ -43,11 +46,32 @@ bool qt_async_http_post (string url, array<string> headers_attr,
 class QTMHTTPHandler: public QObject {
   Q_OBJECT
   QNetworkReply* reply;
+  int* status;
+  string* outbuf;
+  string* errbuf;
+  bool* kill;
+public:
+  QTMHTTPHandler (QNetworkReply* nr, int* st, string* o, string* e, bool* k,
+		  QObject* parent= NULL) :
+    QObject (parent), reply (nr), status (st),
+    outbuf (o), errbuf (e), kill (k) {}
+  ~QTMHTTPHandler () {
+    reply->deleteLater ();
+    reply= NULL; }
+public slots:
+  void onFinished ();
+};
+
+// async handler for scheme callback
+class QTMHTTPHandler_callback: public QObject {
+  Q_OBJECT
+  QNetworkReply* reply;
   object callback;
 public:
-  QTMHTTPHandler (QNetworkReply* nr, object cb, QObject* parent= NULL) :
+  QTMHTTPHandler_callback (QNetworkReply* nr, object cb,
+			   QObject* parent= NULL) :
     QObject (parent), reply (nr), callback (cb) {}
-  ~QTMHTTPHandler () {
+  ~QTMHTTPHandler_callback () {
     reply->deleteLater ();
     reply= NULL; }
 public slots:

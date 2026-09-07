@@ -716,6 +716,14 @@
 
 (tm-widget (ai-preferences-widget)
   ======
+  (bold (text "AI connexions"))
+  ===
+  (aligned
+    (item (hlist // (text "Network timeout in seconds"))
+      (enum (set-preference "http request timeout" answer)
+                '("60" "30" "10" "5" "2" "1" "")
+                (get-preference "http request timeout") "6em")))
+  ======
   (bold (text "AI corrections"))
   ===
   (aligned

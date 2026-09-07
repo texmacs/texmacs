@@ -128,7 +128,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (menu-bind session-input-menu
-  (when (connection-cmdline? (get-env "prog-language"))
+  (when (or (connection-cmdline? (get-env "prog-language"))
+	    (connection-request? (get-env "prog-language")))
     ("Textual input" (toggle-session-text-input)))
   (when (in-plugin-with-converters?)
     ("Mathematical input" (toggle-session-math-input)))

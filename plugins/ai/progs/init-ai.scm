@@ -187,7 +187,7 @@
 
 (plugin-configure albert
   (:require (has-albert?))
-  (:cmdline ,ai-cmdline ,ai-result)
+  (:request ,ai-request ,ai-result)
   (:preferences #t)
   (:session "Albert")
   (:serializer ,ai-serialize))

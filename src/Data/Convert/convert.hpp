@@ -148,6 +148,7 @@ bool ai_async_eval_command (tree cmd, object callback);
 string ai_output (string s, string model, string chat= "");
 array<string> ai_get_body (string r);
 string ai_latex_command (string s, string model, string chat= "");
+string ai_latex_request (string s, string model, string chat= "");
 tree ai_latex_output (string s, string model, string chat= "");
 string ai_chat (string s, string model, string agent, string chat= "");
 tree ai_translate (tree t, string from, string into, string m, string c= "");

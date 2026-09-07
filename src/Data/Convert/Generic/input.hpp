@@ -53,6 +53,7 @@ struct texmacs_input_rep: concrete_struct {
                    double width, double height);
   void file_flush (bool force= false);
   void cmdline_flush (bool force= false);
+  void request_flush (bool force= false);
 };
 
 class texmacs_input {

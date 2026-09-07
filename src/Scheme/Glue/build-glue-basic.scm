@@ -580,6 +580,7 @@
   (cpp-ai-output ai_output (string string string))
   (cpp-ai-get-body ai_get_body (array_string string))
   (cpp-ai-latex-command ai_latex_command (string string string string))
+  (cpp-ai-latex-request ai_latex_request (string string string string))
   (cpp-ai-latex-output ai_latex_output (tree string string string))
   (cpp-ai-chat ai_chat (string string string string))
   (cpp-ai-correct ai_correct (tree content string string))

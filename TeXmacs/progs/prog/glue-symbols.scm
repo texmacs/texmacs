@@ -541,6 +541,7 @@
 "cpp-ai-output"
 "cpp-ai-get-body"
 "cpp-ai-latex-command"
+"cpp-ai-latex-request"
 "cpp-ai-latex-output"
 "cpp-ai-chat"
 "cpp-ai-correct"

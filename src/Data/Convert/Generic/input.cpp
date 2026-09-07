@@ -35,6 +35,7 @@
 #define MODE_XFORMAT   9
 #define MODE_FILE     10
 #define MODE_CMDLINE  11
+#define MODE_REQUEST  12
 
 /******************************************************************************
 * Universal data input
@@ -71,6 +72,7 @@ texmacs_input_rep::get_mode (string s) {
   if (s == "command")  return MODE_COMMAND;
   if (s == "file") return MODE_FILE;
   if (starts (s, "cmdline-")) return MODE_CMDLINE;
+  if (starts (s, "request-")) return MODE_REQUEST;
   if (format_exists (s)) return MODE_XFORMAT;
   return MODE_VERBATIM;
 }
@@ -159,7 +161,8 @@ texmacs_input_rep::put (char c) { // returns true when expecting input
 
 void
 texmacs_input_rep::bof () {
-  if (!starts (format, "cmdline-")) format = "verbatim";
+  if (!(starts (format, "cmdline-") || starts (format, "request-")))
+      format = "verbatim";
   channel= type;
   docs (channel)= tree (DOCUMENT, "");
 }
@@ -238,6 +241,9 @@ texmacs_input_rep::flush (bool force) {
     break;
   case MODE_CMDLINE:
     cmdline_flush (force);
+    break;
+  case MODE_REQUEST:
+    request_flush (force);
     break;
   default:
     FAILED ("invalid mode");
@@ -473,4 +479,9 @@ texmacs_input_rep::cmdline_flush (bool force) {
     write (r);
     buf= "";
   }
+}
+
+void
+texmacs_input_rep::request_flush (bool force) {
+  cmdline_flush (force);
 }

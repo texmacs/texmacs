@@ -28,7 +28,9 @@
 #include <errno.h>
 
 void close_all_cmdlines ();
+void close_all_requests ();
 void process_all_cmdlines ();
+void process_all_requests ();
 
 hashset<pointer> pipe_link_set;
 
@@ -199,6 +201,7 @@ close_all_pipes () {
     if (con->alive) con->stop ();
   }
   close_all_cmdlines ();
+  close_all_requests ();
 }
 
 void
@@ -209,6 +212,7 @@ process_all_pipes () {
     if (con->alive) con->apply_command ();
   }
   process_all_cmdlines ();
+  process_all_requests ();
 }
 
 #endif // defined (QTTEXMACS) && defined (OS_MINGW)

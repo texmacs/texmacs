@@ -120,6 +120,8 @@
                    (plugin-next lan ses)))
               ((connection-cmdline? lan)
                ((first (caar l)) lan ses))
+              ((connection-request? lan)
+               ((first (caar l)) lan ses))
               ((== status 0)
                (with author 0
                  (when (!= lan "scheme")
@@ -200,7 +202,8 @@
 (tm-define (connection-notify-status lan ses st)
   ;;(display* "Notify status " lan ", " ses ", " st "\n")
   (with-author (ahash-ref plugin-author (list lan ses))
-    (cond ((and (connection-cmdline? lan) (== st 0))
+    (cond ((and (or (connection-cmdline? lan) (connection-request? lan))
+		(== st 0))
            (plugin-next lan ses))
           ((== st 0)
            (ahash-remove! plugin-started (list lan ses))

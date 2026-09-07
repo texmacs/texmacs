@@ -32,6 +32,9 @@
 (tm-define (ai-cmdline name chat cmd)
   (cpp-ai-latex-command cmd name chat))
 
+(tm-define (ai-request name chat cmd)
+  (cpp-ai-latex-request cmd name chat))
+
 (tm-define (ai-result name chat res)
   (cpp-ai-latex-output res name chat))
 
