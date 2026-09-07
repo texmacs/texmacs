@@ -30,13 +30,10 @@
 static QNetworkAccessManager*
 get_manager () {
   static QNetworkAccessManager* manager= new QNetworkAccessManager ();
-  static bool first= true;
-  if (first) {
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
-    manager->setTransferTimeout (60000); // 60s
-#endif
-    first= false;
-  }
+  string s= get_preference ("http request timeout");
+  long t= 10000; // default value is 10s
+  if (is_int (s) && as_int (s) >= 0) t= 1000 * as_int (s);
+  manager->setTransferTimeout (t);
   return manager;
 }
 
@@ -105,7 +102,7 @@ tree_to_qjson (tree t) {
   if (is_func (t, TUPLE)) {
     QJsonArray a;
     for (int i= 0; i < N(t); i++)
-      a.prepend (tree_to_qjson (t[i]));
+      a.append (tree_to_qjson (t[i]));
     return a;
   }
   else if (t == tree () || is_compound (t, "json-null")) {
@@ -217,20 +214,75 @@ qt_http_from_json (string s) {
 
 void
 QTMHTTPHandler::onFinished () {
-  if (reply == NULL) call (callback, string (""));
-  if (reply->error() != QNetworkReply::NoError)
-    io_error << "http_post from "
-	     << from_qstring_utf8 (reply->url ().host ()) << ": "
-	     << from_qstring_utf8 (reply->errorString ()) << LF;
+  if (reply == NULL)
+    *status= 0;
   else {
-    string buffer= from_qstring_utf8 (QString (reply->readAll ()));
-    call (callback, buffer);
+    if (reply->error() != QNetworkReply::NoError) {
+      *errbuf << from_qstring_utf8 (reply->errorString ());
+      *status= -1;
+    }
+    else {
+      *outbuf << from_qstring_utf8 (QString (reply->readAll ()));
+      *status= 0;
+    }
+    reply->close ();
   }
-  reply->close ();
+  this->deleteLater ();
+}
+
+void
+QTMHTTPHandler_callback::onFinished () {
+  if (reply == NULL)
+    call (callback, string (""));
+  else {
+    if (reply->error() != QNetworkReply::NoError)
+      io_error << "http_post from "
+	       << from_qstring_utf8 (reply->url ().host ()) << ": "
+	       << from_qstring_utf8 (reply->errorString ()) << LF;
+    else {
+      string buffer= from_qstring_utf8 (QString (reply->readAll ()));
+      call (callback, buffer);
+    }
+    reply->close ();
+  }
   this->deleteLater ();
 }
 
 // Asynchroneous post of raw data
+static bool
+qt_async_http_post (string url, array<string> headers_attr,
+		    const char* data, long long n,
+		    int& status, string& outbuf, string& errbuf, bool& kill) {
+  if (DEBUG_IO)
+    debug_io << "qt_async_http_post" << LF
+	     << headers_attr << LF
+	     << string (data, n) << LF;
+  QUrl qurl (utf8_to_qstring (url));
+  if (!qurl.isValid ()) {
+    errbuf << "invalid URL: " << url << LF;
+    return true;
+  }
+  QNetworkRequest request (qurl);
+  for (int i= 0; i+1 < N(headers_attr); i += 2) {
+    string name= headers_attr[i];
+    string value= headers_attr[i+1];
+    request.setRawHeader (QByteArray (&name[0], N(name)),
+			  QByteArray (&value[0], N(value)));
+  }
+  QNetworkReply* reply=
+    get_manager ()->post (request, QByteArray (data, n));
+  if (reply == NULL) {
+    errbuf << "cannot connect to " << url << LF;
+    return true;
+  }
+  QTMHTTPHandler* h=
+    new QTMHTTPHandler (reply, &status, &outbuf, &errbuf, &kill);
+  QObject::connect (reply, &QNetworkReply::finished,
+		    h, &QTMHTTPHandler::onFinished);
+  return h == NULL;
+}
+
+// Asynchroneous post of raw data for scheme
 static bool
 qt_async_http_post (string url, array<string> headers_attr,
 		    const char* data, long long n, object callback) {
@@ -256,9 +308,9 @@ qt_async_http_post (string url, array<string> headers_attr,
     io_error << "qt_async_http_post, cannot connect to " << url << LF;
     return true;
   }
-  QTMHTTPHandler* h= new QTMHTTPHandler (reply, callback);
+  QTMHTTPHandler_callback* h= new QTMHTTPHandler_callback (reply, callback);
   QObject::connect (reply, &QNetworkReply::finished,
-		    h, &QTMHTTPHandler::onFinished);
+		    h, &QTMHTTPHandler_callback::onFinished);
   return h == NULL;
 }
 
@@ -271,6 +323,16 @@ qt_async_http_post (string url, array<string> headers_attr,
 }
 
 // Asynchroneous post of json data
+bool
+qt_async_http_post (string url, array<string> headers_attr,
+		    tree data, int& status, string& outbuf,
+		    string& errbuf, bool& kill) {
+  QJsonValue v= tree_to_qjson (data);
+  QByteArray a= v.toJson ();
+  return qt_async_http_post (url, headers_attr, a.constData (), a.size (),
+			     status, outbuf, errbuf, kill);
+}
+
 bool
 qt_async_http_post (string url, array<string> headers_attr,
 		    tree data, object callback) {

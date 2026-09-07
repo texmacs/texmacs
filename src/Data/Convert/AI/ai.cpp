@@ -231,6 +231,9 @@ static list<string>
 ai_get_last_prompts (string model, string chat) {
   if (chat == "") return null_string_list;
   string key= model * "-" * chat;
+  const int max_size= ai_get_history_size ();
+  if (N(ai_last_prompts[key]) > max_size)
+    ai_last_prompts[key]= head (ai_last_prompts[key], max_size);
   return ai_last_prompts[key];
 }
 
@@ -249,6 +252,9 @@ static list<string>
 ai_get_last_answers (string model, string chat) {
   if (chat == "") return null_string_list;
   string key= model * "-" * chat;
+  const int max_size= ai_get_history_size ();
+  if (N(ai_last_answers[key]) > max_size)
+    ai_last_answers[key]= head (ai_last_answers[key], max_size);
   return ai_last_answers[key];
 }
 
@@ -447,6 +453,12 @@ ai_latex_command (string s, string model, string chat) {
   string agent= ai_latex_agent_description (model);
   tree t= ai_command (s, model, agent, chat, true);
   return to_shell_command (t);
+}
+
+string
+ai_latex_request (string s, string model, string chat) {
+  string agent= ai_latex_agent_description (model);
+  return tree_to_scheme (ai_command (s, model, agent, chat, true));
 }
 
 /******************************************************************************

@@ -4131,6 +4131,14 @@ source code.
   </explain>
 
   <\explain>
+    <scm|(cpp-ai-latex-request <scm-arg|string> <scm-arg|string> <scm-arg|string>)>
+<explain-synopsis|no synopsis>
+  <|explain>
+    Calls the <c++> function <cpp|ai_latex_request> which returns
+    <scm|string>.
+  </explain>
+
+  <\explain>
     <scm|(cpp-ai-latex-output <scm-arg|string> <scm-arg|string> <scm-arg|string>)>
 <explain-synopsis|no synopsis>
   <|explain>

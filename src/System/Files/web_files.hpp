@@ -41,6 +41,10 @@ bool qt_async_http_post (string url, array<string> headers_attr,
 bool qt_async_http_post (string url, array<string> headers_attr,
 			 array<string> attr, object callback);
 
+bool qt_async_http_post (string url, array<string> headers_attr, tree data,
+			 int& status, string& outbuf, string& errbuf,
+			 bool& kill);
+
 inline tree
 http_from_json (string s) {
   return qt_http_from_json (s); }
@@ -74,6 +78,13 @@ inline bool
 async_http_post_query (string url, array<string> headers_attr,
 		       array<string> attr, object callback) {
   return qt_async_http_post (url, headers_attr, attr, callback); }
+
+inline bool
+async_http_post_json (string url, array<string> headers_attr, tree data,
+		      int& status, string& outbuf, string& errbuf, bool& kill) {
+  return qt_async_http_post (url, headers_attr, data,
+			     status, outbuf, errbuf, kill);
+}
 
 #else
 

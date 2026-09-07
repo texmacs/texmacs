@@ -34,7 +34,9 @@ hashset<pointer> pipe_link_set;
 void pipe_callback (void *obj, void *info);
 extern char **environ;
 void close_all_cmdlines ();
+void close_all_requests ();
 void process_all_cmdlines ();
+void process_all_requests ();
 
 #define STDIN 0
 #define STDOUT 1
@@ -113,6 +115,7 @@ sleep(2);
   }
 #endif
   close_all_cmdlines ();
+  close_all_requests ();
 }
 
 void
@@ -123,6 +126,7 @@ process_all_pipes () {
     if (con->alive) con->apply_command ();
   }
   process_all_cmdlines ();
+  process_all_requests ();
 }
 
 /******************************************************************************
