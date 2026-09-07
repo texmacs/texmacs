@@ -258,10 +258,9 @@ tree_cache::run_janitor () {
     io_info << "tree_cache janitor: eviction needed, cleaning..." << LF;
     policy->recount ();
     evict_if_needed ();
-  } else {
-    io_info << "tree_cache janitor: no eviction needed" << LF;
+  } else if (DEBUG_IO) {
+    debug_io << "tree_cache janitor: no eviction needed" << LF;
   }
-
   texmacs_fclose (lk);            // unlock + close
 }
 
