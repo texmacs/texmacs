@@ -15,7 +15,26 @@
   (version version-compare)
   (tools spell spell-edit))
 
-(tm-define lantool-server "http://localhost:8081/v2/check")
+(tm-define lantool-server "")
+
+(define (notify-languagetool-server-preferences var val)
+  (set! lantool-server (string-append val "/v2/check")))
+
+(define-preferences
+  ("languagetool server" "http://localhost:8081"
+   notify-languagetool-server-preferences))
+
+(set! lantool-server
+      (string-append (get-preference "languagetool server") "/v2/check"))
+
+(tm-define lantool-api-key
+   (get-preference "languagetool API key"))
+
+(define (notify-languagetool-api-key-preferences var val)
+  (set! lantool-api-key val))
+
+(define-preferences
+  ("languagetool API key" "" notify-languagetool-server-preferences))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Check LanguageTool support
@@ -68,7 +87,7 @@
 	    (list "language" loc*
 		  "contentType" "text/html"
 		  "disabledRules" disable
-		  "text" html)
+		  "text" html) ;; TODO << add API key
 	    (lantool-return lan html return))))))
 
 (tm-define (lantool-process-old t return)

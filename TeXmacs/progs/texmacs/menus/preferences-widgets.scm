@@ -719,7 +719,7 @@
   (bold (text "AI connexions"))
   ===
   (aligned
-    (item (hlist // (text "Network timeout in seconds"))
+    (item (hlist // (text "Network timeout in seconds:"))
       (enum (set-preference "http request timeout" answer)
                 '("60" "30" "10" "5" "2" "1" "")
                 (get-preference "http request timeout") "6em")))
@@ -736,7 +736,21 @@
       (toggle (set-boolean-preference
 	       "ai-correct explain" answer)
 	      (get-boolean-preference
-	       "ai-correct explain")))))
+	       "ai-correct explain"))))
+  (if (get-boolean-preference "grammar checking")
+      ======
+      (bold (text "Languagetool settings"))
+      ===
+      (aligned
+	(item (hlist // (text "Server URL:"))
+      (enum (set-preference "languagetool server" answer)
+	    '("http://localhost:8081" "https://api.languagetool.org" "")
+	    (get-preference "languagetool server") "14em")))))
+;; TODO
+;;	(item (hlist // (text "Optional API key:"))
+;;	  (enum (set-preference "languagetool API key" answer)
+;;		'("")
+;;		(get-preference "languagetool API key") "14em")))))
 
 ;; All converters ----------
 
