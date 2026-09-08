@@ -328,7 +328,7 @@ qt_async_http_post (string url, array<string> headers_attr,
 		    tree data, int& status, string& outbuf,
 		    string& errbuf, bool& kill) {
   QJsonValue v= tree_to_qjson (data);
-  QByteArray a= v.toJson ();
+  QByteArray a= qjson_to_bytes (v);
   return qt_async_http_post (url, headers_attr, a.constData (), a.size (),
 			     status, outbuf, errbuf, kill);
 }
