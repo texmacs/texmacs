@@ -15,26 +15,12 @@
   (version version-compare)
   (tools spell spell-edit))
 
-(tm-define lantool-server "")
-
-(define (notify-languagetool-server-preferences var val)
-  (set! lantool-server (string-append val "/v2/check")))
-
 (define-preferences
   ("languagetool server" "http://localhost:8081"
-   notify-languagetool-server-preferences))
+   (lambda (var val) (noop))))
 
-(set! lantool-server
-      (string-append (get-preference "languagetool server") "/v2/check"))
-
-(tm-define lantool-api-key
-   (get-preference "languagetool API key"))
-
-(define (notify-languagetool-api-key-preferences var val)
-  (set! lantool-api-key val))
-
-(define-preferences
-  ("languagetool API key" "" notify-languagetool-server-preferences))
+(tm-define (lantool-server)
+  (string-append (get-preference "languagetool server") "/v2/check"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Check LanguageTool support
@@ -46,7 +32,7 @@
   (and (get-boolean-preference "grammar checking")  
        (if (!= lantool-support :uninit) lantool-support
            (with val
-	       (http-post-query lantool-server
+	       (http-post-query (lantool-server)
 		'("Content-Type" "application/x-www-form-urlencoded")
 		'("language" "en-US"
 		  "text" "Some text with a error."))
@@ -82,7 +68,7 @@
                (loc (language-to-locale lan))
                (loc* (string-replace loc "_" "-"))
                (disable "UPPERCASE_SENTENCE_START"))
-          (async-http-post-query lantool-server
+          (async-http-post-query (lantool-server)
 	    '("Content-Type" "application/x-www-form-urlencoded")
 	    (list "language" loc*
 		  "contentType" "text/html"
