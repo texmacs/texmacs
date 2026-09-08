@@ -152,6 +152,30 @@ replace_tikz_by_pdf (string s) {
   return replace_tikz_by_pdf (aux);
 }
 
+static string
+extract_svg (string s) {
+  //cout << s << LF;
+  const string beg_file_tag ("\\begin{filecontents*}");
+  const string end_file_tag ("\\end{filecontents*}");
+  int beg_file_pos= search_forwards (beg_file_tag, s);
+  int end_file_pos= search_forwards (end_file_tag, s);
+  if (beg_file_pos < 0 || end_file_pos < 0) return s;
+  int beg_name_pos= beg_file_pos + N(beg_file_tag) + 1;
+  int end_name_pos= search_forwards ("}", beg_name_pos, s);
+  if (beg_name_pos < 0 || end_name_pos < 0) return s;
+  string file= trim_spaces (s (end_name_pos+1, end_file_pos));
+  string name= trim_spaces (s (beg_name_pos, end_name_pos));
+  //cout << "name= " << name << LF;
+  url temp= url_temp_dir ();
+  url f= temp * name;
+  save_string (f, file);
+  string ret= s(0, beg_file_pos) * s (end_file_pos, N(s));
+  ret= replace (ret, "\\includesvg", "\\includegraphics");
+  ret= replace (ret, "{" * name * "}", "{" * concretize (f) * "}");
+  //cout << "---\n" << ret <<"\n---\n";
+  return extract_svg (ret);
+}
+
 /******************************************************************************
 * History management
 ******************************************************************************/
@@ -442,7 +466,8 @@ ai_latex_agent_description (string model) {
   if (engine == "albert") {
     return string ("Provide your answer in ")
     * "the form of an untitled utf-8 LaTeX document without any comments. "
-    *  as_string (call ("ai-agents-get-interlocutor", object (engine)));
+    * "Use svg format 1.0 for images. Embed images in filecontent* environments. "
+    * as_string (call ("ai-agents-get-interlocutor", object (engine)));
   }
   return string ("Please provide your answer in the form of an ")
     * "untitled LaTeX document.";
@@ -560,6 +585,7 @@ albert_output (string val, string model, string chat) {
     ai_set_last_answer (r, model, chat);
   }
   r= replace_tikz_by_pdf (r);
+  r= extract_svg (r);
   // replace uft8 e2 80 af by ' '
   char* aux= (char*) malloc (N(r)+1);
   int j= 0;
