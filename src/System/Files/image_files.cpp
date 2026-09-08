@@ -403,6 +403,12 @@ pdf_image_size (url image, int& w, int& h) {
 
 void
 svg_image_size (url image, int& w, int& h) {
+#if QTTEXMACS
+  if (qt_supports (image)) {
+    qt_image_size (image, w, h);
+    return;
+  }
+#endif
   string content;
   bool err= load_string (concretize (image), content, false);
   if (!err) {
