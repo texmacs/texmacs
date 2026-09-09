@@ -17,10 +17,25 @@
 
 (define-preferences
   ("languagetool server" "http://localhost:8081"
+   (lambda (var val) (noop)))
+  ("languagetool premium" "off"
+   (lambda (var val) (noop)))
+  ("languagetool username" ""
+   (lambda (var val) (noop)))
+  ("languagetool API key" ""
    (lambda (var val) (noop))))
 
 (tm-define (lantool-server)
   (string-append (get-preference "languagetool server") "/v2/check"))
+
+(tm-define (lantool-premium?)
+  (get-boolean-preference "languagetool premium"))
+
+(tm-define (lantool-api-key)
+  (get-preference "languagetool API key"))
+
+(tm-define (lantool-username)
+  (get-preference "languagetool username"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Check LanguageTool support
@@ -67,13 +82,17 @@
         (let* ((html (compress-html t 1))
                (loc (language-to-locale lan))
                (loc* (string-replace loc "_" "-"))
-               (disable "UPPERCASE_SENTENCE_START"))
+               (disable "UPPERCASE_SENTENCE_START")
+	       (args (list "language" loc*
+			   "contentType" "text/html"
+			   "disabledRules" disable
+			   "text" html)))
+	  (when (lantool-premium?)
+	    (set! args (append args
+			       (list "username" (lantool-username)
+				     "apiKey" (lantool-api-key)))))
           (async-http-post-query (lantool-server)
-	    '("Content-Type" "application/x-www-form-urlencoded")
-	    (list "language" loc*
-		  "contentType" "text/html"
-		  "disabledRules" disable
-		  "text" html) ;; TODO << add API key
+	    '("Content-Type" "application/x-www-form-urlencoded") args
 	    (lantool-return lan html return))))))
 
 (tm-define (lantool-process-old t return)
