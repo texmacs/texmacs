@@ -743,14 +743,26 @@
       ===
       (aligned
 	(item (hlist // (text "Server URL:"))
-      (enum (set-preference "languagetool server" answer)
-	    '("http://localhost:8081" "https://api.languagetool.org" "")
-	    (get-preference "languagetool server") "14em")))))
-;; TODO
-;;	(item (hlist // (text "Optional API key:"))
-;;	  (enum (set-preference "languagetool API key" answer)
-;;		'("")
-;;		(get-preference "languagetool API key") "14em")))))
+	  (enum (set-preference "languagetool server" answer)
+		'("http://localhost:8081" "https://api.languagetool.org" "")
+		(get-preference "languagetool server") "14em"))
+	(meti (hlist // (text "Use Premium access"))
+	  (toggle (begin (set-boolean-preference
+			  "languagetool premium" answer)
+			 (refresh-now "languagetool premium"))
+		  (get-boolean-preference
+		   "languagetool premium"))))
+      (refreshable "languagetool premium"
+	(when (get-boolean-preference "languagetool premium")
+	(aligned
+	  (item (hlist // (text "Username:"))
+	    (enum (set-preference "languagetool username" answer)
+		  '((get-preference "languagetool username") "")
+		  (get-preference "languagetool username") "14em"))
+	  (item (hlist // (text "API key:"))
+	    (enum (set-preference "languagetool API key" answer)
+		  '((get-preference "languagetool API key") "")
+		  (get-preference "languagetool API key") "14em")))))))
 
 ;; All converters ----------
 
