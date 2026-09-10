@@ -283,5 +283,13 @@ async_http_post_query (string url, array<string> headers_attr,
   return async_eval_system (cmd, callback);
 }
 
+bool
+async_http_post_json (string url, array<string> headers_attr, tree data,
+		      int& status, string& outbuf, string& errbuf,
+		      bool& kill) {
+  string cmd= to_shell_command (url, headers_attr, data);
+  return async_eval_system (cmd, status, outbuf, errbuf, kill);  
+}
+
 #endif
 

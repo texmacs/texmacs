@@ -255,14 +255,27 @@ tm_poll (struct tm_pollfd* fds, int nfds, int timeout_ms) {
 
 struct async_handle {
   FILE*  fp;
-  object call_back;
   bool   done;
   char*  buf;
   int    len;
   int    cap;
+  // either
+  object call_back;
+  // or
+  int*    status;
+  string* outbuf;
+  string* errbuf;
+  bool*   kill;
   async_handle (FILE* fp2, object call_back2):
-    fp (fp2), call_back (call_back2), done (false),
-    buf ((char*) malloc (4096)), len (0), cap (4096) {}
+    fp (fp2), done (false),
+    buf ((char*) malloc (4096)), len (0), cap (4096),
+    call_back (call_back2),
+    status (NULL), outbuf (NULL), errbuf (NULL), kill (NULL) {}
+  async_handle (FILE* fp2, int& st, string& out,
+		string& err, bool& k):
+    fp (fp2), done (false),
+    buf ((char*) malloc (4096)), len (0), cap (4096),
+    status (&st), outbuf (&out), errbuf (&err), kill (&k) {}
 };
 
 array<async_handle*> async_busy;
@@ -277,7 +290,12 @@ async_read_output (void* arg) {
   charp& buf = handle->buf;
   int&   len = handle->len;
   int&   cap = handle->cap;
-
+  if (handle->kill != NULL && *(handle->kill)) {
+    pclose (fp);
+    fp  = NULL;
+    done= true;
+    return NULL;
+  }
   while (true) {
     char buffer[4096];
     int bytes_read;
@@ -325,13 +343,45 @@ async_eval_system (string c, object call_back) {
   return false;
 }
 
+bool
+async_eval_system (string c, int& status, string& outbuf,
+		   string& errbuf, bool& kill) {
+  string cmd = c;
+#if !defined (OS_MINGW)
+  cmd = cmd * " 2> /dev/null";
+#endif
+  int i, n= N(cmd);
+  char* cmd_= (char*) malloc (n+1);
+  for (i=0; i<n; i++) cmd_[i]= cmd[i];
+  cmd_[n]= '\0';
+
+  FILE *fp = popen (cmd_, "r");
+  if (!fp) return true;
+  async_handle* handle=
+    tm_new<async_handle> (fp, status, outbuf, errbuf, kill);
+  async_busy << handle;
+
+  pthread_t thread;
+  pthread_create (&thread, NULL, async_read_output, handle);
+  pthread_detach (thread);
+
+  free ((void*) cmd_);
+  return false;
+}
+
 void
 async_eval_pending () {
   for (int i=0; i<N(async_busy); )
     if (async_busy[i]->done) {
       async_handle* handle= async_busy[i];
       string out (handle->buf, handle->len);
-      call (async_busy[i]->call_back, out);
+      if (handle->status == NULL)
+	call (async_busy[i]->call_back, out);
+      else {
+	*(handle->status)= 0;
+	*(handle->outbuf)= out;
+	*(handle->errbuf)= "";
+      }
       free (handle->buf);
       tm_delete<async_handle> (handle);
       async_busy= append (range (async_busy, 0, i),
