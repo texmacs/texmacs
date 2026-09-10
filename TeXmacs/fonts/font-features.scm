@@ -675,6 +675,7 @@
 (Open\ Sans Open SansSerif)
 (Open\ Sans\ Extrabold Open\ ExtraBold SansSerif Black)
 (Open\ Sans\ Semibold Open\ SemiBold SansSerif Bold)
+(OpenDyslexic OpenDyslexic SansSerif)
 (OpenSymbol OpenSymbol)
 (Optima Optima SansSerif)
 (Oriya\ MN Oriya\ MN)
