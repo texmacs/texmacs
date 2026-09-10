@@ -164,14 +164,17 @@ extract_svg (string s) {
   int end_name_pos= search_forwards ("}", beg_name_pos, s);
   if (beg_name_pos < 0 || end_name_pos < 0) return s;
   string file= trim_spaces (s (end_name_pos+1, end_file_pos));
+  //cout << "file=" << file << LF;
   string name= trim_spaces (s (beg_name_pos, end_name_pos));
   //cout << "name= " << name << LF;
   url temp= url_temp_dir ();
   url f= temp * name;
+  //cout << "f= " << as_string (f) << LF;
   save_string (f, file);
-  string ret= s(0, beg_file_pos) * s (end_file_pos, N(s));
+  string ret= s(0, beg_file_pos)
+    * s (end_file_pos + N(end_file_tag), N(s));
   ret= replace (ret, "\\includesvg", "\\includegraphics");
-  ret= replace (ret, "{" * name * "}", "{" * concretize (f) * "}");
+  ret= replace (ret, "{" * name * "}", "{" * as_string (f) * "}");
   //cout << "---\n" << ret <<"\n---\n";
   return extract_svg (ret);
 }
