@@ -417,4 +417,6 @@ qt_async_http_post (string url, array<string> headers_attr,
 
 void
 QTMHTTPHandler::onFinished () {}
+void
+QTMHTTPHandler_callback::onFinished () {}
 #endif // QT_VERSION >= 0x060000
