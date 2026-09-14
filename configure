@@ -708,6 +708,10 @@ CV2PDB
 XTRA_CMD
 MACOSX_TARGET
 OSXVERMIN
+HAS_RESVG
+RESVG_LIBS
+RESVG_LDFLAGS
+RESVG_CFLAGS
 APPCAST
 SPARKLE_LIBS
 SPARKLE_LDFLAGS
@@ -937,6 +941,7 @@ with_sqlite3
 with_gnutls
 with_sparkle
 with_appcast
+with_resvg
 enable_fastalloc
 enable_macosx_extensions
 with_sdk
@@ -1655,6 +1660,7 @@ Optional Packages:
                           winSparkle or yes for mac (framework should be in
                           the standard user frameworks location)]
   --with-appcast[=ARG]    path for the appcast updater file
+  --with-resvg[=DIR]      with resvg support [ARG=yes]
   --with-sdk[=none]       Apple SDK level (i.e 10.6)
   --with-osx[=none]       targeted configuration (i.e 10.6)
   --with-qt-find-method=METHOD
@@ -24964,6 +24970,112 @@ fi
 
 
 
+
+# Check whether --with-resvg was given.
+if test ${with_resvg+y}
+then :
+  withval=$with_resvg; with_resvg=$withval
+else case e in #(
+  e) with_resvg="yes" ;;
+esac
+fi
+
+
+  SAVE_CPPFLAGS="$CPPFLAGS"
+  SAVE_LDFLAGS="$LDFLAGS"
+  SAVE_LIBS="$LIBS"
+
+  RESVG_CFLAGS=""
+  RESVG_LDFLAGS=""
+  RESVG_LIBS=""
+  HAS_RESVG="no"
+
+  if test "$with_resvg" = "no"; then
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: disabling resvg support" >&5
+printf "%s\n" "disabling resvg support" >&6; }
+  else
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for resvg" >&5
+printf %s "checking for resvg... " >&6; }
+
+    PKG_CONFIG=`which pkg-config 2>/dev/null`
+    if test -n "$PKG_CONFIG" && $PKG_CONFIG --exists resvg 2>/dev/null; then
+      RESVG_CFLAGS=`$PKG_CONFIG --cflags resvg`
+      RESVG_LIBS=`$PKG_CONFIG --libs resvg`
+    else
+      if test "$with_resvg" != "yes" && test -d "$with_resvg"; then
+        RESVG_CFLAGS="-I$with_resvg/include"
+        RESVG_LDFLAGS="-L$with_resvg/lib"
+      fi
+      RESVG_EXTRA_LIBS=""
+      case "$CONFIG_OS" in
+        MINGW)
+          RESVG_EXTRA_LIBS="-lws2_32 -luserenv -lbcrypt -lntdll"
+          ;;
+        MACOS)
+          RESVG_EXTRA_LIBS="-framework Security -framework CoreFoundation"
+          ;;
+        *)
+          RESVG_EXTRA_LIBS="-lpthread -ldl -lm"
+          ;;
+      esac
+      RESVG_LIBS="-lresvg $RESVG_EXTRA_LIBS"
+    fi
+
+    CPPFLAGS="$SAVE_CPPFLAGS $RESVG_CFLAGS"
+    LDFLAGS="$SAVE_LDFLAGS $RESVG_LDFLAGS"
+    LIBS="$SAVE_LIBS $RESVG_LIBS"
+
+    cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+#include <resvg.h>
+
+int
+main (void)
+{
+
+  resvg_options *opt = resvg_options_create ();
+  resvg_options_destroy (opt);
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_link "$LINENO"
+then :
+
+      HAS_RESVG="yes"
+      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+printf "%s\n" "yes" >&6; }
+
+printf "%s\n" "#define USE_RESVG 1" >>confdefs.h
+
+
+else case e in #(
+  e)
+      { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+      if test "$with_resvg" != "yes" && test "$with_resvg" != ""; then
+        as_fn_error $? "Cannot find resvg library" "$LINENO" 5
+      fi
+     ;;
+esac
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.beam \
+    conftest$ac_exeext conftest.$ac_ext
+  fi
+
+  CPPFLAGS="$SAVE_CPPFLAGS"
+  LDFLAGS="$SAVE_LDFLAGS"
+  LIBS="$SAVE_LIBS"
+
+
+
+
+
+
+
+
 #--------------------------------------------------------------------
 # Further TeXmacs settings
 #--------------------------------------------------------------------
@@ -27438,6 +27550,19 @@ test -n "$QMAKE" || QMAKE="missing"
   if test "x$QMAKE" = "xmissing"; then
     as_fn_error $? "Cannot find qmake, qmake-qt4, qmake-qt5, qmake-qt6, or qmake6, for using a Qt library" "$LINENO" 5
   fi
+  if test "x$HAS_RESVG" = "xyes"
+then :
+
+    xtraSvg=""
+    xtraSvgPlug=""
+
+else case e in #(
+  e)
+    xtraSvg="+svg"
+    xtraSvgPlug="qsvg"
+   ;;
+esac
+fi
   case $qt_find_method.$($QMAKE -query QT_VERSION 2>/dev/null) in
   autotroll.4.* | autotrollstatic.4.*)
     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Qt4 found" >&5
@@ -28082,10 +28207,10 @@ $at_mod"
   echo "$qt_conf" | sed 1d >>"$pro_file"
 
 
- # Tweak the value of QT in the .pro file for $xtralibs +printsupport +svg.
+ # Tweak the value of QT in the .pro file for $xtralibs +printsupport $xtraSvg.
 
   qt_conf=''
-  for at_mod in $xtralibs +printsupport +svg; do
+  for at_mod in $xtralibs +printsupport $xtraSvg; do
     at_mod=`echo "$at_mod" | sed 's/^-//; tough
                                   s/^+//; beef
                                   :ough
@@ -29127,10 +29252,10 @@ $at_mod"
   echo "$qt_conf" | sed 1d >>"$pro_file"
 
 
- # Tweak the value of QT in the .pro file for $xtralibs +printsupport +svg +network $xtraPlug.
+ # Tweak the value of QT in the .pro file for $xtralibs +printsupport $xtraSvg +network $xtraPlug.
 
   qt_conf=''
-  for at_mod in $xtralibs +printsupport +svg +network $xtraPlug; do
+  for at_mod in $xtralibs +printsupport $xtraSvg +network $xtraPlug; do
     at_mod=`echo "$at_mod" | sed 's/^-//; tough
                                   s/^+//; beef
                                   :ough
@@ -29162,7 +29287,7 @@ $at_mod"
  # Add the extra-settings the user wants to set in the .pro
   echo "
       LIBS += $LDFLAGS
-      QTPLUGIN = qjpeg qgif qico qsvg
+      QTPLUGIN = qjpeg qgif qico $xtraSvgPlug
     " >>"$pro_file"
 
 
@@ -30175,10 +30300,10 @@ $at_mod"
   echo "$qt_conf" | sed 1d >>"$pro_file"
 
 
- # Tweak the value of QT in the .pro file for $xtralibs +core +gui +printsupport +svg +network $xtraPlug.
+ # Tweak the value of QT in the .pro file for $xtralibs +core +gui +printsupport $xtraSvg +network $xtraPlug.
 
   qt_conf=''
-  for at_mod in $xtralibs +core +gui +printsupport +svg +network $xtraPlug; do
+  for at_mod in $xtralibs +core +gui +printsupport $xtraSvg +network $xtraPlug; do
     at_mod=`echo "$at_mod" | sed 's/^-//; tough
                                   s/^+//; beef
                                   :ough
@@ -30210,7 +30335,7 @@ $at_mod"
  # Add the extra-settings the user wants to set in the .pro
   echo "
       LIBS += $LDFLAGS
-      QTPLUGIN += qjpeg qgif qico qsvg qxcb
+      QTPLUGIN += qjpeg qgif qico $xtraSvgPlug qxcb
       QTPLUGIN.platforms += qminimal qxcb
       CONFIG += import_plugins
       CONFIG += static
@@ -31234,10 +31359,10 @@ $at_mod"
   echo "$qt_conf" | sed 1d >>"$pro_file"
 
 
- # Tweak the value of QT in the .pro file for $xtralibs +printsupport +svg +concurrent +network $xtraPlug.
+ # Tweak the value of QT in the .pro file for $xtralibs +printsupport $xtraSvg +concurrent +network $xtraPlug.
 
   qt_conf=''
-  for at_mod in $xtralibs +printsupport +svg +concurrent +network $xtraPlug; do
+  for at_mod in $xtralibs +printsupport $xtraSvg +concurrent +network $xtraPlug; do
     at_mod=`echo "$at_mod" | sed 's/^-//; tough
                                   s/^+//; beef
                                   :ough
@@ -31269,7 +31394,7 @@ $at_mod"
  # Add the extra-settings the user wants to set in the .pro
   echo "
       LIBS += $LDFLAGS
-      QTPLUGIN = qjpeg qgif qico qsvg
+      QTPLUGIN = qjpeg qgif qico $xtraSvgPlug
     " >>"$pro_file"
 
 
@@ -32174,7 +32299,12 @@ fi
     QT_PACKAGES="Qt${QT_MAJOR}Core$QT_PKGCONFIG_SUFFIX "
     QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Gui$QT_PKGCONFIG_SUFFIX"
     QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Widgets$QT_PKGCONFIG_SUFFIX"
-    QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Svg$QT_PKGCONFIG_SUFFIX"
+    if test "x$HAS_RESVG" != "xyes"
+then :
+
+      QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Svg$QT_PKGCONFIG_SUFFIX"
+
+fi
     QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}PrintSupport$QT_PKGCONFIG_SUFFIX"
     QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Network$QT_PKGCONFIG_SUFFIX"
     # if CONFIG_OS is GNU_LINUX and QT_VERSION is higher than 6, use wayland
@@ -34012,7 +34142,10 @@ rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
 esac
 fi
 
-  if test "$cross_compiling" = yes
+  if test "x$HAS_RESVG" != "xyes"
+then :
+
+    if test "$cross_compiling" = yes
 then :
   { { printf "%s\n" "$as_me:${as_lineno-$LINENO}: error: in '$ac_pwd':" >&5
 printf "%s\n" "$as_me: error: in '$ac_pwd':" >&2;}
@@ -34051,6 +34184,8 @@ rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
 esac
 fi
 
+
+fi
   if test "$cross_compiling" = yes
 then :
   { { printf "%s\n" "$as_me:${as_lineno-$LINENO}: error: in '$ac_pwd':" >&5

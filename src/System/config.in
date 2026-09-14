@@ -287,6 +287,9 @@
 /* Use intl library */
 #undef USE_INTL
 
+/* Use resvg library for SVG rendering */
+#undef USE_RESVG
+
 /* Use Sparkle framework */
 #undef USE_SPARKLE
 

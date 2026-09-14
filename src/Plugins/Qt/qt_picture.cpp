@@ -26,7 +26,11 @@
 #include <QPainter>
 #include <QPaintDevice>
 #include <QPixmap>
+#ifdef USE_RESVG
+#include <resvg.h>
+#else
 #include <QSvgRenderer>
+#endif
 
 /******************************************************************************
 * Abstract Qt pictures
@@ -237,11 +241,33 @@ get_image_for_real (url u, int w, int h, tree eff, SI pixel) {
   QImage *pm = NULL;
 
   if (suffix (u) == "svg") {
+#ifdef USE_RESVG
+    resvg_render_tree *tree = NULL;
+    int err = tm_resvg_parse_tree (u, NULL, &tree);
+    if (err == RESVG_OK && tree != NULL) {
+      resvg_size img_size = resvg_get_image_size (tree);
+      if (w <= 0 && img_size.width > 0) w = (int) ceil (img_size.width);
+      if (h <= 0 && img_size.height > 0) h = (int) ceil (img_size.height);
+      if (w > 0 && h > 0) {
+        QImage tmp (w, h, QImage::Format_RGBA8888_Premultiplied);
+        tmp.fill (Qt::transparent);
+        resvg_transform tr = resvg_transform_identity ();
+        if (img_size.width > 0 && img_size.height > 0) {
+          tr.a = (float) w / img_size.width;
+          tr.d = (float) h / img_size.height;
+        }
+        resvg_render (tree, tr, w, h, (char*) tmp.bits ());
+        pm = new QImage (tmp.convertToFormat (QImage::Format_ARGB32));
+      }
+      resvg_tree_destroy (tree);
+    }
+#else
     QSvgRenderer renderer (utf8_to_qstring (concretize (u)));
     pm= new QImage (w, h, QImage::Format_ARGB32);
     pm->fill (Qt::transparent);
     QPainter painter (pm);
     renderer.render (&painter);
+#endif
   } else if (qt_supports (u)) {
     pm= new QImage (utf8_to_qstring (concretize (u)));
   } else {

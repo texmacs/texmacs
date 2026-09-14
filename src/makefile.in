@@ -48,6 +48,7 @@ CXXICONV = @ICONV_CXX@
 CXXGUILE = @GUILE_CFLAGS@
 CXXSPARKLE = @SPARKLE_CXX@ @SPARKLE_CPP@
 CXXPDF = @PDF_CFLAGS@
+CXXRESVG = @RESVG_CFLAGS@
 
 LD = @CXX@
 LDFLAGS = @LDFLAGS@ @CONFIG_BFLAGS@ @QT_LDFLAGS@ $(CXXPROFILE) $(CXXSANITIZERS)
@@ -60,6 +61,7 @@ LDCOCOA = @COCOA_LDFLAGS@
 LDQT = @QT_LIBS@
 LDGUI = $(LD@CONFIG_GUI@)
 LDGNUTLS= @GNUTLS_LDFLAGS@
+LDRESVG = @RESVG_LDFLAGS@ @RESVG_LIBS@
 
 AR = ar
 ARFLAGS = -r
@@ -239,7 +241,7 @@ deps_incl = $(call incl_flags,System System/Boot System/Classes System/Files \
 
 deps_flags = $(deps_incl) \
  $(CPPFLAGS) $(CXXAXEL) $(CXXCAIRO) $(CXXIMLIB2) $(CXXSQLITE3) $(CXXFREETYPE) \
- $(CXXICONV) $(CXXGUILE) $(CXXGNUTLS) -I$(tmsrc)/include $(CXXGUI)
+ $(CXXICONV) $(CXXGUILE) $(CXXGNUTLS) $(CXXRESVG) -I$(tmsrc)/include $(CXXGUI)
 # we should use -I- to separate local includes from system includes, but
 # headers of guile 1.6.0 use includes in quotes with names relative to the
 # current directory, and that feature is disable by -I-.
@@ -348,9 +350,9 @@ $(x11_obj): Objects/%.o: %.cpp
 $(os_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(os_incl) $(CXXQT) $(CXXGUILE))
 $(qt_obj): Objects/%.o: ./Plugins/$(QT_PLUGIN_DIR)/%.cpp
-	$(call cxx_incl,$(qt_incl) $(CXXQT) $(CXXGUILE))
+	$(call cxx_incl,$(qt_incl) $(CXXQT) $(CXXGUILE) $(CXXRESVG))
 $(moc_obj): Objects/%.o: ./Plugins/$(QT_PLUGIN_DIR)/%.cpp
-	$(call cxx_incl,$(qt_incl) $(CXXQT) $(CXXGUILE))
+	$(call cxx_incl,$(qt_incl) $(CXXQT) $(CXXGUILE) $(CXXRESVG))
 $(gs_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(gs_incl)  $(CXXX11))
 $(cocoa_m_obj): Objects/%.o: %.m
@@ -444,7 +446,7 @@ TEXMACS_OPEN_objects := $(texmacs_open_obj) Objects/tm_ostream.o Objects/fast_al
 	$(filter-out Objects/windows64_entrypoint.o Objects/Plugins/Windows64/windows64_entrypoint.o,$(TEXMACS_objects))
 
 link_options:=-L$(tmsrc)/lib -lm $(LDPATH) $(LDGUI) $(LDICONV) $(CXXFLAGS)\
-   $(LDAXEL) $(LDCAIRO) $(LDSQLITE3) $(LDGNUTLS) @SPARKLE_LDFLAGS@
+   $(LDAXEL) $(LDCAIRO) $(LDSQLITE3) $(LDGNUTLS) $(LDRESVG) @SPARKLE_LDFLAGS@
 
 
 $(tmsrc)/bin/texmacs.bin: Objects/texmacs.bin
