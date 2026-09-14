@@ -88,25 +88,32 @@ AC_DEFUN([LC_WITH_QT],[
   if test "x$QMAKE" = "xmissing"; then
     AC_MSG_ERROR([Cannot find qmake, qmake-qt4, qmake-qt5, qmake-qt6, or qmake6, for using a Qt library])
   fi
+  AS_IF([test "x$HAS_RESVG" = "xyes"],[
+    xtraSvg=""
+    xtraSvgPlug=""
+  ],[
+    xtraSvg="+svg"
+    xtraSvgPlug="qsvg"
+  ])
   case $qt_find_method.$($QMAKE -query QT_VERSION 2>/dev/null) in
   autotroll.4.* | autotrollstatic.4.*)
     AC_MSG_NOTICE([Qt4 found])
-    AT_WITH_QT([$xtralibs +printsupport +svg],[+exceptions],[LIBS += $LDFLAGS],AC_MSG_ERROR([Cannot find a working Qt library]))
+    AT_WITH_QT([$xtralibs +printsupport $xtraSvg],[+exceptions],[LIBS += $LDFLAGS],AC_MSG_ERROR([Cannot find a working Qt library]))
     ;;
   autotroll.5.*)
     AC_MSG_NOTICE([Qt5 found])
     AS_IF([test "x$CONFIG_OS" = "xMACOS"],[xtraPlug=+macextras],[unset xtraPlug])
-    AT_WITH_QT([$xtralibs +printsupport +svg +network $xtraPlug],[+exceptions],[
+    AT_WITH_QT([$xtralibs +printsupport $xtraSvg +network $xtraPlug],[+exceptions],[
       LIBS += $LDFLAGS
-      QTPLUGIN = qjpeg qgif qico qsvg
+      QTPLUGIN = qjpeg qgif qico $xtraSvgPlug
     ],AC_MSG_ERROR([Cannot find a working Qt library]))
     ;;
   autotrollstatic.5.*)
     AC_MSG_NOTICE([Qt5 found])
     AS_IF([test "x$CONFIG_OS" = "xMACOS"],[xtraPlug=+macextras],[unset xtraPlug])
-    AT_WITH_QT([$xtralibs +core +gui +printsupport +svg +network $xtraPlug],[+exceptions],[
+    AT_WITH_QT([$xtralibs +core +gui +printsupport $xtraSvg +network $xtraPlug],[+exceptions],[
       LIBS += $LDFLAGS
-      QTPLUGIN += qjpeg qgif qico qsvg qxcb
+      QTPLUGIN += qjpeg qgif qico $xtraSvgPlug qxcb
       QTPLUGIN.platforms += qminimal qxcb
       CONFIG += import_plugins
       CONFIG += static
@@ -119,9 +126,9 @@ AC_DEFUN([LC_WITH_QT],[
     QT_LIBEXECS=`$QMAKE -query QT_INSTALL_LIBEXECS`
     PATH="$QT_LIBEXECS:$PATH"
     AS_IF([test $CONFIG_OS == MACOS],[],[unset xtraPlug])
-    AT_WITH_QT([$xtralibs +printsupport +svg +concurrent +network $xtraPlug],[+exceptions],[
+    AT_WITH_QT([$xtralibs +printsupport $xtraSvg +concurrent +network $xtraPlug],[+exceptions],[
       LIBS += $LDFLAGS
-      QTPLUGIN = qjpeg qgif qico qsvg
+      QTPLUGIN = qjpeg qgif qico $xtraSvgPlug
     ],AC_MSG_ERROR([Cannot find a working Qt library]))
     ;;
   pkgconfig.*) 
@@ -203,7 +210,9 @@ AC_DEFUN([LC_WITH_QT],[
     QT_PACKAGES="Qt${QT_MAJOR}Core$QT_PKGCONFIG_SUFFIX "
     QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Gui$QT_PKGCONFIG_SUFFIX"
     QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Widgets$QT_PKGCONFIG_SUFFIX"
-    QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Svg$QT_PKGCONFIG_SUFFIX"
+    AS_IF([test "x$HAS_RESVG" != "xyes"],[
+      QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Svg$QT_PKGCONFIG_SUFFIX"
+    ])
     QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}PrintSupport$QT_PKGCONFIG_SUFFIX"
     QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Network$QT_PKGCONFIG_SUFFIX"
     # if CONFIG_OS is GNU_LINUX and QT_VERSION is higher than 6, use wayland
@@ -333,8 +342,10 @@ AC_DEFUN([LC_WITH_QT],[
     [AC_MSG_WARN([No static qgif plugin])])
   AC_RUN_IFELSE([LM_QT_ICO], [AC_DEFINE([qt_static_plugin_qico],[qt_static_plugin_QICOPlugin],[If there is a static plugin qico])],
     [AC_MSG_WARN([No static qico plugin])])
-  AC_RUN_IFELSE([LM_QT_SVG], [AC_DEFINE([qt_static_plugin_qsvg],[qt_static_plugin_QSvgPlugin],[If there is a static plugin qsvg])],
-    [AC_MSG_WARN([No static qsvg plugin])])
+  AS_IF([test "x$HAS_RESVG" != "xyes"],[
+    AC_RUN_IFELSE([LM_QT_SVG], [AC_DEFINE([qt_static_plugin_qsvg],[qt_static_plugin_QSvgPlugin],[If there is a static plugin qsvg])],
+      [AC_MSG_WARN([No static qsvg plugin])])
+  ])
   AC_RUN_IFELSE([LM_QT_COCOA], [AC_DEFINE([CocoaPlugin],[1],[If there is a static plugin Cocoa])],
     [AC_MSG_WARN([No static Cocoa plugin])])
       ;;

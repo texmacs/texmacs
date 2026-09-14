@@ -126,6 +126,8 @@ LC_GS
 LC_SQL
 LC_GNUTLS
 LC_SPARKLE
+LC_RESVG
+
 
 #--------------------------------------------------------------------
 # Further TeXmacs settings
