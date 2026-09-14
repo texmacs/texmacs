@@ -11,7 +11,7 @@
   </rdf:RDF>
  </metadata>
  <g id="layer1">
-  <path id="path5937" d="m14 8a6 6 0 1 1-12 0 6 6 0 1 1 12 0z" fill="#7f7f7f" filter="url(#filter5987)"/>
+  <path id="path5937" d="m14 8a6 6 0 1 1-12 0 6 6 0 1 1 12 0z" fill="#7f7f7f"/>
   <path id="path5939" d="m7 4.5h2v7h-2z" fill="#004100"/>
   <path id="path5941" d="m11.5 7.0008-2.22e-4 2-7-7.784e-4 2.224e-4 -2z" fill="#004100"/>
  </g>

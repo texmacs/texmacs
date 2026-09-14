@@ -11,8 +11,8 @@
   </rdf:RDF>
  </metadata>
  <g id="layer1" fill-rule="evenodd">
-  <path id="path4181" transform="matrix(-1,0,0,1,16,0)" d="m0 7h5v2h-5z" fill="#c0c0c0" filter="url(#filter4209)"/>
-  <path id="path4185" transform="matrix(-1,0,0,1,16,0)" d="m7 9h5v3l4-4-4-4v3h-5z" fill="#60a060" filter="url(#filter4205)"/>
-  <path id="path4187" transform="matrix(-1,0,0,1,16,0)" d="m7 5v6h-2v-6z" fill="#c0c0c0" filter="url(#filter4201)"/>
+  <path id="path4181" transform="matrix(-1,0,0,1,16,0)" d="m0 7h5v2h-5z" fill="#c0c0c0"/>
+  <path id="path4185" transform="matrix(-1,0,0,1,16,0)" d="m7 9h5v3l4-4-4-4v3h-5z" fill="#60a060"/>
+  <path id="path4187" transform="matrix(-1,0,0,1,16,0)" d="m7 5v6h-2v-6z" fill="#c0c0c0"/>
  </g>
 </svg>

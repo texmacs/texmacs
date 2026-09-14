@@ -287,6 +287,9 @@
 /* Use intl library */
 #undef USE_INTL
 
+/* Use Qt SVG library */
+#undef USE_QTSVG
+
 /* Use resvg library for SVG rendering */
 #undef USE_RESVG
 

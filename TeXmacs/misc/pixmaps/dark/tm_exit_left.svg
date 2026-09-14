@@ -11,7 +11,7 @@
   </rdf:RDF>
  </metadata>
  <g id="layer1">
-  <path id="path8903" d="m7 5v-2h8v10h-8v-2" fill="none" filter="url(#filter9054)" stroke="#7f7f7f" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
-  <path id="path8905" d="m12 9h-8v2l-4-3 4-3v2h8z" fill="#7f8281" filter="url(#filter9102)"/>
+  <path id="path8903" d="m7 5v-2h8v10h-8v-2" fill="none" stroke="#7f7f7f" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
+  <path id="path8905" d="m12 9h-8v2l-4-3 4-3v2h8z" fill="#7f8281"/>
  </g>
 </svg>

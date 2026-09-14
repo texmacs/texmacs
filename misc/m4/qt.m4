@@ -69,6 +69,12 @@ AC_DEFUN([LC_WITH_QT],[
                     [Use the new Qt implementation])],
     [qt_new=$enableval], [AS_IF([test "x$CONFIG_OS" = "xANDROID"],[qt_new=yes],[qt_new=no])])
   
+  AC_ARG_WITH([qtsvg],
+    [AS_HELP_STRING([--with-qtsvg],
+      [enable Qt SVG support (default: auto; optional if resvg is present)])],
+    [with_qtsvg=$withval],
+    [with_qtsvg=auto])
+
   case $qt_find_method in
     autotroll)
       AC_MSG_NOTICE([Searching for Qt using autotroll])
@@ -88,13 +94,27 @@ AC_DEFUN([LC_WITH_QT],[
   if test "x$QMAKE" = "xmissing"; then
     AC_MSG_ERROR([Cannot find qmake, qmake-qt4, qmake-qt5, qmake-qt6, or qmake6, for using a Qt library])
   fi
-  AS_IF([test "x$HAS_RESVG" = "xyes"],[
-    xtraSvg=""
-    xtraSvgPlug=""
-  ],[
-    xtraSvg="+svg"
-    xtraSvgPlug="qsvg"
-  ])
+  xtraSvg=""
+  xtraSvgPlug=""
+  use_qtsvg="no"
+  if test "$with_qtsvg" != "no"; then
+    if test "x$HAS_RESVG" != "xyes"; then
+      xtraSvg="+svg"
+      xtraSvgPlug="qsvg"
+      use_qtsvg="yes"
+    else
+      # Check if QtSvg is available
+      if test -d "$($QMAKE -query QT_INSTALL_HEADERS 2>/dev/null)/QtSvg" || \
+         test -f "$($QMAKE -query QT_INSTALL_LIBS 2>/dev/null)/libQtSvg.a" || \
+         test -f "$($QMAKE -query QT_INSTALL_LIBS 2>/dev/null)/QtSvg.lib"; then
+        xtraSvg="+svg"
+        xtraSvgPlug="qsvg"
+        use_qtsvg="yes"
+      elif test "$with_qtsvg" = "yes"; then
+        AC_MSG_ERROR([Qt SVG was requested with --with-qtsvg, but QtSvg was not found])
+      fi
+    fi
+  fi
   case $qt_find_method.$($QMAKE -query QT_VERSION 2>/dev/null) in
   autotroll.4.* | autotrollstatic.4.*)
     AC_MSG_NOTICE([Qt4 found])
@@ -210,9 +230,22 @@ AC_DEFUN([LC_WITH_QT],[
     QT_PACKAGES="Qt${QT_MAJOR}Core$QT_PKGCONFIG_SUFFIX "
     QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Gui$QT_PKGCONFIG_SUFFIX"
     QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Widgets$QT_PKGCONFIG_SUFFIX"
-    AS_IF([test "x$HAS_RESVG" != "xyes"],[
+    use_qtsvg="no"
+    if test "$with_qtsvg" != "no"; then
+      if $PKG_CONFIG --exists Qt${QT_MAJOR}Svg$QT_PKGCONFIG_SUFFIX 2>/dev/null; then
+        use_qtsvg="yes"
+      elif test "$with_qtsvg" = "yes"; then
+        AC_MSG_ERROR([Qt SVG was requested with --with-qtsvg, but Qt${QT_MAJOR}Svg was not found])
+      elif test "x$HAS_RESVG" != "xyes"; then
+        AC_MSG_ERROR([Qt SVG was not found, and resvg is not available. At least one SVG library is required.])
+      else
+        AC_MSG_NOTICE([Qt SVG not found, but resvg is available (Qt SVG is optional)])
+      fi
+    fi
+
+    if test "$use_qtsvg" = "yes"; then
       QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Svg$QT_PKGCONFIG_SUFFIX"
-    ])
+    fi
     QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}PrintSupport$QT_PKGCONFIG_SUFFIX"
     QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Network$QT_PKGCONFIG_SUFFIX"
     # if CONFIG_OS is GNU_LINUX and QT_VERSION is higher than 6, use wayland
@@ -342,7 +375,8 @@ AC_DEFUN([LC_WITH_QT],[
     [AC_MSG_WARN([No static qgif plugin])])
   AC_RUN_IFELSE([LM_QT_ICO], [AC_DEFINE([qt_static_plugin_qico],[qt_static_plugin_QICOPlugin],[If there is a static plugin qico])],
     [AC_MSG_WARN([No static qico plugin])])
-  AS_IF([test "x$HAS_RESVG" != "xyes"],[
+  AS_IF([test "x$use_qtsvg" = "xyes"],[
+    AC_DEFINE([USE_QTSVG],[1],[Use Qt SVG library])
     AC_RUN_IFELSE([LM_QT_SVG], [AC_DEFINE([qt_static_plugin_qsvg],[qt_static_plugin_QSvgPlugin],[If there is a static plugin qsvg])],
       [AC_MSG_WARN([No static qsvg plugin])])
   ])
@@ -350,6 +384,9 @@ AC_DEFUN([LC_WITH_QT],[
     [AC_MSG_WARN([No static Cocoa plugin])])
       ;;
     pkgconfig)
+  AS_IF([test "x$use_qtsvg" = "xyes"],[
+    AC_DEFINE([USE_QTSVG],[1],[Use Qt SVG library])
+  ])
       ;;
   esac
   AX_RESTORE_FLAGS
