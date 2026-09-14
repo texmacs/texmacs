@@ -1661,7 +1661,7 @@ Optional Packages:
                           winSparkle or yes for mac (framework should be in
                           the standard user frameworks location)]
   --with-appcast[=ARG]    path for the appcast updater file
-  --with-resvg[=DIR]      with resvg support [ARG=yes]
+  --with-resvg[=DIR]      with resvg support [ARG=auto]
   --with-sdk[=none]       Apple SDK level (i.e 10.6)
   --with-osx[=none]       targeted configuration (i.e 10.6)
   --with-qt-find-method=METHOD
@@ -24979,7 +24979,7 @@ if test ${with_resvg+y}
 then :
   withval=$with_resvg; with_resvg=$withval
 else case e in #(
-  e) with_resvg="yes" ;;
+  e) with_resvg="auto" ;;
 esac
 fi
 
@@ -24994,20 +24994,26 @@ fi
   HAS_RESVG="no"
 
   if test "$with_resvg" = "no"; then
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: disabling resvg support" >&5
-printf "%s\n" "disabling resvg support" >&6; }
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for resvg" >&5
+printf %s "checking for resvg... " >&6; }
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no (disabled)" >&5
+printf "%s\n" "no (disabled)" >&6; }
   else
     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for resvg" >&5
 printf %s "checking for resvg... " >&6; }
 
     PKG_CONFIG=`which pkg-config 2>/dev/null`
+    TRY_CFLAGS=""
+    TRY_LDFLAGS=""
+    TRY_LIBS=""
+
     if test -n "$PKG_CONFIG" && $PKG_CONFIG --exists resvg 2>/dev/null; then
-      RESVG_CFLAGS=`$PKG_CONFIG --cflags resvg`
-      RESVG_LIBS=`$PKG_CONFIG --libs resvg`
+      TRY_CFLAGS=`$PKG_CONFIG --cflags resvg`
+      TRY_LIBS=`$PKG_CONFIG --libs resvg`
     else
-      if test "$with_resvg" != "yes" && test -d "$with_resvg"; then
-        RESVG_CFLAGS="-I$with_resvg/include"
-        RESVG_LDFLAGS="-L$with_resvg/lib"
+      if test "$with_resvg" != "yes" && test "$with_resvg" != "auto" && test -d "$with_resvg"; then
+        TRY_CFLAGS="-I$with_resvg/include"
+        TRY_LDFLAGS="-L$with_resvg/lib"
       fi
       RESVG_EXTRA_LIBS=""
       case "$CONFIG_OS" in
@@ -25021,12 +25027,12 @@ printf %s "checking for resvg... " >&6; }
           RESVG_EXTRA_LIBS="-lpthread -ldl -lm"
           ;;
       esac
-      RESVG_LIBS="-lresvg $RESVG_EXTRA_LIBS"
+      TRY_LIBS="-lresvg $RESVG_EXTRA_LIBS"
     fi
 
-    CPPFLAGS="$SAVE_CPPFLAGS $RESVG_CFLAGS"
-    LDFLAGS="$SAVE_LDFLAGS $RESVG_LDFLAGS"
-    LIBS="$SAVE_LIBS $RESVG_LIBS"
+    CPPFLAGS="$SAVE_CPPFLAGS $TRY_CFLAGS"
+    LDFLAGS="$SAVE_LDFLAGS $TRY_LDFLAGS"
+    LIBS="$SAVE_LIBS $TRY_LIBS"
 
     cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
@@ -25048,6 +25054,9 @@ if ac_fn_cxx_try_link "$LINENO"
 then :
 
       HAS_RESVG="yes"
+      RESVG_CFLAGS="$TRY_CFLAGS"
+      RESVG_LDFLAGS="$TRY_LDFLAGS"
+      RESVG_LIBS="$TRY_LIBS"
       { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 printf "%s\n" "yes" >&6; }
 
@@ -25058,7 +25067,7 @@ else case e in #(
   e)
       { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
 printf "%s\n" "no" >&6; }
-      if test "$with_resvg" != "yes" && test "$with_resvg" != ""; then
+      if test "$with_resvg" = "yes" || (test "$with_resvg" != "auto" && test "$with_resvg" != "no"); then
         as_fn_error $? "Cannot find resvg library" "$LINENO" 5
       fi
      ;;
