@@ -42,8 +42,23 @@
 #include <QRegularExpression>
 #include <resvg.h>
 
+static const char*
+tm_resvg_error_string (int err) {
+  switch (err) {
+    case RESVG_OK: return "OK";
+    case RESVG_ERROR_NOT_AN_UTF8_STR: return "Not an UTF-8 string";
+    case RESVG_ERROR_SVGZ_UNSUPPORTED: return "SVGZ unsupported";
+    case RESVG_ERROR_FILE_OPEN_FAILED: return "File open failed";
+    case RESVG_ERROR_MALFORMED_GZIP: return "Malformed GZip";
+    case RESVG_ERROR_ELEMENTS_LIMIT_REACHED: return "Elements limit reached";
+    case RESVG_ERROR_INVALID_SIZE: return "Invalid SVG size";
+    case RESVG_ERROR_PARSING_FAILED: return "SVG parsing failed";
+    default: return "Unknown error";
+  }
+}
+
 static QByteArray
-tm_sanitize_svg (const QByteArray& input) {
+tm_sanitize_svg (url u, const QByteArray& input) {
   if (input.size () >= 2 &&
       (unsigned char) input[0] == 0x1f &&
       (unsigned char) input[1] == 0x8b) {
@@ -55,7 +70,7 @@ tm_sanitize_svg (const QByteArray& input) {
   static QRegularExpression re_attr ("filter\\s*=\\s*[\"']url\\(\\s*#([^\"'\\)\\s]+)\\s*\\)[\"']");
   static QRegularExpression re_css ("filter\\s*:\\s*url\\(\\s*#([^\"'\\);\\s]+)\\s*\\)\\s*;?");
 
-  auto clean_filter = [&s] (const QRegularExpression& re) {
+  auto clean_filter = [&s, u] (const QRegularExpression& re) {
     QRegularExpressionMatchIterator it = re.globalMatch (s);
     QStringList to_remove;
     while (it.hasNext ()) {
@@ -66,6 +81,9 @@ tm_sanitize_svg (const QByteArray& input) {
       QString id_pattern2 = "id=\'" + filter_id + "\'";
       if (!s.contains (id_pattern1) && !s.contains (id_pattern2)) {
         to_remove.append (full_match);
+        std_warning << "SVG warning: in '" << u
+                    << "', removing unresolved filter reference '"
+                    << from_qstring (filter_id) << "'" << LF;
       }
     }
     for (int i = 0; i < to_remove.size (); i++) {
@@ -103,11 +121,19 @@ tm_resvg_parse_tree (url u, const resvg_options* opt, resvg_render_tree** tree) 
   if (data.isEmpty ()) {
     return RESVG_ERROR_FILE_OPEN_FAILED;
   }
-  QByteArray clean_data = tm_sanitize_svg (data);
-  return resvg_parse_tree_from_data (clean_data.constData (),
-                                     (uintptr_t) clean_data.size (),
-                                     opt, tree);
+  QByteArray clean_data = tm_sanitize_svg (u, data);
+  int err = resvg_parse_tree_from_data (clean_data.constData (),
+                                        (uintptr_t) clean_data.size (),
+                                        opt, tree);
+  if (err != RESVG_OK) {
+    std_warning << "resvg warning: failed to parse SVG '" << u
+                << "' (" << tm_resvg_error_string (err) << ", code " << err << ")" << LF;
+  }
+  return err;
 }
+#endif
+#ifdef USE_QTSVG
+#include <QSvgRenderer>
 #endif
 
 #include "colors.hpp"
@@ -482,7 +508,7 @@ qt_supports (url u) {
 // see http://forum.texmacs.cn/t/how-are-graphics-supposed-to-look-like/963/12
   if (suf == "pdf" || suf == "ps" || suf == "eps")
     return false; 
-#ifdef USE_RESVG
+#if defined(USE_RESVG) || defined(USE_QTSVG)
   if (suf == "svg")
     return true;
 #endif
@@ -506,12 +532,30 @@ qt_image_size (url image, int& w, int& h) {// w, h in points
       if (DEBUG_CONVERT) debug_convert << "resvg image_size: " << w << " x " << h << LF;
       return true;
     }
+#ifdef USE_QTSVG
+    std_warning << "SVG fallback: resvg failed for image '" << image
+                << "' in qt_image_size, falling back to QtSvg" << LF;
+#endif
+  }
+#endif
+#ifdef USE_QTSVG
+  if (suffix (image) == "svg") {
+    QSvgRenderer r (utf8_to_qstring (concretize (image)));
+    if (r.isValid ()) {
+      QSize sz = r.defaultSize ();
+      w = (int) rint (sz.width () * 72.0 / 96.0);
+      h = (int) rint (sz.height () * 72.0 / 96.0);
+      if (DEBUG_CONVERT) debug_convert << "qtsvg image_size: " << w << " x " << h << LF;
+      return true;
+    }
+  }
+#endif
+  if (suffix (image) == "svg") {
     convert_error << "Cannot read SVG image file '" << image << "'"
                   << " in qt_image_size" << LF;
     w = 35; h = 35;
     return false;
   }
-#endif
   QImage im= QImage (utf8_to_qstring (concretize (image)));
   if (im.isNull ()) {
       convert_error << "Cannot read image file '" << image << "'"
@@ -542,9 +586,26 @@ qt_native_image_size (url image, int& w, int& h) {
       resvg_tree_destroy (tree);
       return true;
     }
-    return false;
+#ifdef USE_QTSVG
+    std_warning << "SVG fallback: resvg failed for image '" << image
+                << "' in qt_native_image_size, falling back to QtSvg" << LF;
+#endif
   }
 #endif
+#ifdef USE_QTSVG
+  if (suffix (image) == "svg") {
+    QSvgRenderer r (utf8_to_qstring (concretize (image)));
+    if (r.isValid ()) {
+      QSize sz = r.defaultSize ();
+      w = (int) ceil (sz.width ());
+      h = (int) ceil (sz.height ());
+      return true;
+    }
+  }
+#endif
+  if (suffix (image) == "svg") {
+    return false;
+  }
   QImage im= QImage (utf8_to_qstring (concretize (image)));
   if (im.isNull ()) return false;
   else {
@@ -606,6 +667,27 @@ qt_convert_image (url image, url dest, int w, int h) {// w, h in pixels
         tmp.save (utf8_to_qstring (concretize (dest)));
       }
       resvg_tree_destroy (tree);
+      return;
+    }
+#ifdef USE_QTSVG
+    std_warning << "SVG fallback: resvg failed for image '" << image
+                << "' in qt_convert_image, falling back to QtSvg" << LF;
+#endif
+  }
+#endif
+#ifdef USE_QTSVG
+  if (suffix (image) == "svg") {
+    QSvgRenderer renderer (utf8_to_qstring (concretize (image)));
+    if (renderer.isValid ()) {
+      if (w <= 0) w = (int) ceil (renderer.defaultSize ().width ());
+      if (h <= 0) h = (int) ceil (renderer.defaultSize ().height ());
+      if (w > 0 && h > 0) {
+        QImage tmp (w, h, QImage::Format_ARGB32);
+        tmp.fill (Qt::transparent);
+        QPainter painter (&tmp);
+        renderer.render (&painter, QRectF (0, 0, w, h));
+        tmp.save (utf8_to_qstring (concretize (dest)));
+      }
       return;
     }
   }

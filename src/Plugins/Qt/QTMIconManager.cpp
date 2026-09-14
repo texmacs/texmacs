@@ -38,35 +38,41 @@ load_svg (url file_name, QIcon& icon) {
 #ifdef USE_RESVG
   resvg_render_tree *tree = NULL;
   int err = tm_resvg_parse_tree (res, NULL, &tree);
-  if (err != RESVG_OK || tree == NULL) return false;
-  resvg_size img_size = resvg_get_image_size (tree);
-  int sizes[] = { 16, 24, 32, 48, 64, 128, 256, 512 };
-  bool dark_transform = QTMIconManager::is_dark_mode () &&
-                        tail (head (res)) != url (sub);
-  for (int i = 0; i < 8; i++) {
-    int s = sizes[i];
-    QImage tmp (s, s, QImage::Format_RGBA8888_Premultiplied);
-    tmp.fill (Qt::transparent);
-    resvg_transform tr = resvg_transform_identity ();
-    if (img_size.width > 0 && img_size.height > 0) {
-      double scale = std::min ((double) s / img_size.width,
-                               (double) s / img_size.height);
-      tr.a = scale;
-      tr.d = scale;
-      tr.e = (s - img_size.width * scale) / 2.0;
-      tr.f = (s - img_size.height * scale) / 2.0;
+  if (err == RESVG_OK && tree != NULL) {
+    resvg_size img_size = resvg_get_image_size (tree);
+    int sizes[] = { 16, 24, 32, 48, 64, 128, 256, 512 };
+    bool dark_transform = QTMIconManager::is_dark_mode () &&
+                          tail (head (res)) != url (sub);
+    for (int i = 0; i < 8; i++) {
+      int s = sizes[i];
+      QImage tmp (s, s, QImage::Format_RGBA8888_Premultiplied);
+      tmp.fill (Qt::transparent);
+      resvg_transform tr = resvg_transform_identity ();
+      if (img_size.width > 0 && img_size.height > 0) {
+        double scale = std::min ((double) s / img_size.width,
+                                 (double) s / img_size.height);
+        tr.a = scale;
+        tr.d = scale;
+        tr.e = (s - img_size.width * scale) / 2.0;
+        tr.f = (s - img_size.height * scale) / 2.0;
+      }
+      resvg_render (tree, tr, s, s, (char*) tmp.bits ());
+      QImage image = tmp.convertToFormat (QImage::Format_ARGB32);
+      if (dark_transform && may_transform (file_name, image)) {
+        invert_colors (image);
+        saturate (image);
+      }
+      icon.addPixmap (QPixmap::fromImage (image));
     }
-    resvg_render (tree, tr, s, s, (char*) tmp.bits ());
-    QImage image = tmp.convertToFormat (QImage::Format_ARGB32);
-    if (dark_transform && may_transform (file_name, image)) {
-      invert_colors (image);
-      saturate (image);
-    }
-    icon.addPixmap (QPixmap::fromImage (image));
+    resvg_tree_destroy (tree);
+    if (!icon.isNull ()) return true;
   }
-  resvg_tree_destroy (tree);
-  return !icon.isNull ();
-#else
+#ifdef USE_QTSVG
+  std_warning << "SVG fallback: resvg failed for icon '" << res
+              << "', falling back to QtSvg" << LF;
+#endif
+#endif
+#ifdef USE_QTSVG
   icon= QIcon (to_qstring (concretize (res)));
   if (QTMIconManager::is_dark_mode () &&
       tail (head (res)) != url (sub)) {
@@ -80,6 +86,7 @@ load_svg (url file_name, QIcon& icon) {
   }
   return !icon.isNull ();
 #endif
+  return false;
 }
 
 static bool

@@ -950,6 +950,7 @@ enable_windows_pbd
 enable_qt
 with_qt_find_method
 enable_qt_new
+with_qtsvg
 with_qt
 with_x
 enable_qtpipes
@@ -1666,6 +1667,8 @@ Optional Packages:
   --with-qt-find-method=METHOD
                           Method to find Qt (autotroll, autotrollstatic,
                           pkgconfig)
+  --with-qtsvg            enable Qt SVG support (default: auto; optional if
+                          resvg is present)
   --with-qt[=ARG]         Qt support. ARG can be `yes' (the default), `no', or
                           a path to Qt binaries; if `yes' or empty, use PATH
                           and some default directories to find Qt binaries
@@ -27477,6 +27480,17 @@ esac
 fi
 
 
+
+# Check whether --with-qtsvg was given.
+if test ${with_qtsvg+y}
+then :
+  withval=$with_qtsvg; with_qtsvg=$withval
+else case e in #(
+  e) with_qtsvg=auto ;;
+esac
+fi
+
+
   case $qt_find_method in
     autotroll)
       { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Searching for Qt using autotroll" >&5
@@ -27550,19 +27564,27 @@ test -n "$QMAKE" || QMAKE="missing"
   if test "x$QMAKE" = "xmissing"; then
     as_fn_error $? "Cannot find qmake, qmake-qt4, qmake-qt5, qmake-qt6, or qmake6, for using a Qt library" "$LINENO" 5
   fi
-  if test "x$HAS_RESVG" = "xyes"
-then :
-
-    xtraSvg=""
-    xtraSvgPlug=""
-
-else case e in #(
-  e)
-    xtraSvg="+svg"
-    xtraSvgPlug="qsvg"
-   ;;
-esac
-fi
+  xtraSvg=""
+  xtraSvgPlug=""
+  use_qtsvg="no"
+  if test "$with_qtsvg" != "no"; then
+    if test "x$HAS_RESVG" != "xyes"; then
+      xtraSvg="+svg"
+      xtraSvgPlug="qsvg"
+      use_qtsvg="yes"
+    else
+      # Check if QtSvg is available
+      if test -d "$($QMAKE -query QT_INSTALL_HEADERS 2>/dev/null)/QtSvg" || \
+         test -f "$($QMAKE -query QT_INSTALL_LIBS 2>/dev/null)/libQtSvg.a" || \
+         test -f "$($QMAKE -query QT_INSTALL_LIBS 2>/dev/null)/QtSvg.lib"; then
+        xtraSvg="+svg"
+        xtraSvgPlug="qsvg"
+        use_qtsvg="yes"
+      elif test "$with_qtsvg" = "yes"; then
+        as_fn_error $? "Qt SVG was requested with --with-qtsvg, but QtSvg was not found" "$LINENO" 5
+      fi
+    fi
+  fi
   case $qt_find_method.$($QMAKE -query QT_VERSION 2>/dev/null) in
   autotroll.4.* | autotrollstatic.4.*)
     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Qt4 found" >&5
@@ -32299,12 +32321,23 @@ fi
     QT_PACKAGES="Qt${QT_MAJOR}Core$QT_PKGCONFIG_SUFFIX "
     QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Gui$QT_PKGCONFIG_SUFFIX"
     QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Widgets$QT_PKGCONFIG_SUFFIX"
-    if test "x$HAS_RESVG" != "xyes"
-then :
+    use_qtsvg="no"
+    if test "$with_qtsvg" != "no"; then
+      if $PKG_CONFIG --exists Qt${QT_MAJOR}Svg$QT_PKGCONFIG_SUFFIX 2>/dev/null; then
+        use_qtsvg="yes"
+      elif test "$with_qtsvg" = "yes"; then
+        as_fn_error $? "Qt SVG was requested with --with-qtsvg, but Qt${QT_MAJOR}Svg was not found" "$LINENO" 5
+      elif test "x$HAS_RESVG" != "xyes"; then
+        as_fn_error $? "Qt SVG was not found, and resvg is not available. At least one SVG library is required." "$LINENO" 5
+      else
+        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Qt SVG not found, but resvg is available (Qt SVG is optional)" >&5
+printf "%s\n" "$as_me: Qt SVG not found, but resvg is available (Qt SVG is optional)" >&6;}
+      fi
+    fi
 
+    if test "$use_qtsvg" = "yes"; then
       QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Svg$QT_PKGCONFIG_SUFFIX"
-
-fi
+    fi
     QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}PrintSupport$QT_PKGCONFIG_SUFFIX"
     QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Network$QT_PKGCONFIG_SUFFIX"
     # if CONFIG_OS is GNU_LINUX and QT_VERSION is higher than 6, use wayland
@@ -34142,8 +34175,11 @@ rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
 esac
 fi
 
-  if test "x$HAS_RESVG" != "xyes"
+  if test "x$use_qtsvg" = "xyes"
 then :
+
+
+printf "%s\n" "#define USE_QTSVG 1" >>confdefs.h
 
     if test "$cross_compiling" = yes
 then :
@@ -34226,6 +34262,14 @@ fi
 
       ;;
     pkgconfig)
+  if test "x$use_qtsvg" = "xyes"
+then :
+
+
+printf "%s\n" "#define USE_QTSVG 1" >>confdefs.h
+
+
+fi
       ;;
   esac
 

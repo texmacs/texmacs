@@ -28,7 +28,8 @@
 #include <QPixmap>
 #ifdef USE_RESVG
 #include <resvg.h>
-#else
+#endif
+#ifdef USE_QTSVG
 #include <QSvgRenderer>
 #endif
 
@@ -261,12 +262,25 @@ get_image_for_real (url u, int w, int h, tree eff, SI pixel) {
       }
       resvg_tree_destroy (tree);
     }
-#else
-    QSvgRenderer renderer (utf8_to_qstring (concretize (u)));
-    pm= new QImage (w, h, QImage::Format_ARGB32);
-    pm->fill (Qt::transparent);
-    QPainter painter (pm);
-    renderer.render (&painter);
+#endif
+#ifdef USE_QTSVG
+    if (pm == NULL) {
+#ifdef USE_RESVG
+      std_warning << "SVG fallback: resvg failed for image '" << u
+                  << "', falling back to QtSvg" << LF;
+#endif
+      QSvgRenderer renderer (utf8_to_qstring (concretize (u)));
+      if (renderer.isValid ()) {
+        if (w <= 0) w = (int) ceil (renderer.defaultSize ().width ());
+        if (h <= 0) h = (int) ceil (renderer.defaultSize ().height ());
+        if (w > 0 && h > 0) {
+          pm= new QImage (w, h, QImage::Format_ARGB32);
+          pm->fill (Qt::transparent);
+          QPainter painter (pm);
+          renderer.render (&painter, QRectF (0, 0, w, h));
+        }
+      }
+    }
 #endif
   } else if (qt_supports (u)) {
     pm= new QImage (utf8_to_qstring (concretize (u)));

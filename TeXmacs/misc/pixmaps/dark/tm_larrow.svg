@@ -11,7 +11,7 @@
   </rdf:RDF>
  </metadata>
  <g id="layer1" stroke="#5c5c5c" stroke-width=".5">
-  <path id="path10074" transform="matrix(-1,0,0,1,24,0)" d="m1 12v-5c0-2.5 2-4 4-4h14c2 0 4 2 4 4v10c0 2.5-2 4-4 4h-7-7c-2 0-4-2-4-4v-5z" fill="#bababa" filter="url(#filter10190)"/>
-  <path id="path10076" transform="matrix(-1,0,0,1,24,0)" d="m8 12v5l10-5-10-5z" fill="#2d2d2d" filter="url(#filter10166)" stroke-linejoin="round"/>
+  <path id="path10074" transform="matrix(-1,0,0,1,24,0)" d="m1 12v-5c0-2.5 2-4 4-4h14c2 0 4 2 4 4v10c0 2.5-2 4-4 4h-7-7c-2 0-4-2-4-4v-5z" fill="#bababa"/>
+  <path id="path10076" transform="matrix(-1,0,0,1,24,0)" d="m8 12v5l10-5-10-5z" fill="#2d2d2d" stroke-linejoin="round"/>
  </g>
 </svg>

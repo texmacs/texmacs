@@ -12,9 +12,9 @@
  </metadata>
  <g id="layer1" transform="translate(0,4)">
   <path id="path6162" d="m1-3v12h18v-12z" fill="none" stroke="#606260" stroke-linejoin="round" stroke-width="2"/>
-  <path id="path6138" transform="translate(0,-4)" d="m1 1v12h18v-12z" fill="#404040" fill-opacity=".75294" filter="url(#filter6218)" stroke="#c4c4a0" stroke-linejoin="round" stroke-width="1.75"/>
-  <path id="path6156" transform="translate(0,-4)" d="m2 18 2-2h12l2 2z" fill="#a0a080" filter="url(#filter6178)" stroke="#606060" stroke-width=".125"/>
-  <path id="path6158" transform="translate(0,-4)" d="m2 18v2h16v-2z" fill="#c0c0a0" filter="url(#filter6226)" stroke="#606060" stroke-width=".125"/>
-  <path id="path6160" transform="translate(0,-4)" d="m7 17h6s-0.83779-1.3129-1-2 0-1 0-1h-4s0.16221 0.31288 0 1-1 2-1 2z" fill="#c0c0a0" filter="url(#filter6186)" stroke="#606060" stroke-width=".125"/>
+  <path id="path6138" transform="translate(0,-4)" d="m1 1v12h18v-12z" fill="#404040" fill-opacity=".75294" stroke="#c4c4a0" stroke-linejoin="round" stroke-width="1.75"/>
+  <path id="path6156" transform="translate(0,-4)" d="m2 18 2-2h12l2 2z" fill="#a0a080" stroke="#606060" stroke-width=".125"/>
+  <path id="path6158" transform="translate(0,-4)" d="m2 18v2h16v-2z" fill="#c0c0a0" stroke="#606060" stroke-width=".125"/>
+  <path id="path6160" transform="translate(0,-4)" d="m7 17h6s-0.83779-1.3129-1-2 0-1 0-1h-4s0.16221 0.31288 0 1-1 2-1 2z" fill="#c0c0a0" stroke="#606060" stroke-width=".125"/>
  </g>
 </svg>
