@@ -115,8 +115,9 @@ int
 QTMPipeLink::writeStdin (string s) {
   c_string _s (s);
   if (DEBUG_IO) debug_io << "[INPUT]" << debug_io_string ((char*)_s);
-  int err= QIODevice::write (_s, N(s));
-  return err;
+  int written= QIODevice::write (_s, N(s));
+  if (written == -1 || !waitForBytesWritten (-1)) return -1;
+  return written;
 }
 
 void
