@@ -49,7 +49,7 @@
 void setup_texmacs_path () {
   string environment_texmacs_path;
   if (texmacs_getenv ("TEXMACS_PATH", environment_texmacs_path)) {
-    if (test_texmacs_path (environment_texmacs_path, false)) {
+    if (test_texmacs_path (url_system (environment_texmacs_path), false)) {
        cout << "TEXMACS_PATH is set to: " 
             << environment_texmacs_path << LF;
        return;
