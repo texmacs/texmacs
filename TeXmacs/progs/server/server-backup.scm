@@ -225,7 +225,7 @@
   (let* ((dest       (get-preference "server backup destination"))
          (interval-h (string->number (get-preference "server backup interval"))))
     (cond
-	  ((not (server-mode?))
+	  ((not (server-started?))
 	   (server-log-write `info "Server backup not registered: not in server mode"))
 	  ((not (server-backup-enabled?))
 	   (server-log-write `info "Server backup disabled"))
