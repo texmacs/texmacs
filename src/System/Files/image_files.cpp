@@ -201,21 +201,17 @@ xpm_hotspot (tree t) {
 
 string
 ps_load (url image, bool conv) {
-  if (DEBUG_CONVERT) debug_convert << "ps_load " << image << LF;
+  if (DEBUG_CONVERT) debug_convert << "ps_load, file " << image << LF;
 
-  url name= resolve (image);
-  if (is_none (name))
+  url name= image;
+  if (is_none (resolve (name)))
     name= "$TEXMACS_PATH/misc/pixmaps/unknown.ps";
 
-#ifdef OS_WIN32
-  if (is_ramdisc (name)) name= get_from_ramdisc (name);
-#endif
-
   string s = "", suf= suffix (image);
-  if (suf == "ps" || suf == "eps") 
-    load_string (concretize (image), s, false);
+  if (suf == "ps" || suf == "eps")
+    load_string (name, s, false);
   else 
-    if (conv) s= image_to_psdoc (image); // call converters, then load resulting ps
+    if (conv) s= image_to_psdoc (name); // call converters, then load resulting ps
     
   if (s == "") load_string ("$TEXMACS_PATH/misc/pixmaps/unknown.ps", s, true);
   return s;
@@ -230,8 +226,10 @@ ps_bounding_box (url image, int& x1, int& y1, int& x2, int& y2, bool set_default
     imgbox box= img_box [lookup];
     x1= box.xmin; y1= box.ymin;
     x2= box.xmin + box.w; y2= box.ymin + box.h;
-    if (DEBUG_CONVERT) debug_convert<< "bbox in cache for " << image <<LF
-      <<" : "<< x1<<" , "<<y1<<" , "<<x2<<" , "<<y2<< LF;
+    if (DEBUG_CONVERT)
+      debug_convert<< "ps_bounding_box, bbox in cache for " << image <<LF
+		   << ": " << x1 << ", " << y1
+		   << ", "<< x2 << ", " << y2 << LF;
     return true;
   }
   else {
@@ -241,11 +239,13 @@ ps_bounding_box (url image, int& x1, int& y1, int& x2, int& y2, bool set_default
         x1= y1= 0; x2= 596; y2= 842;
       }
       else {
-        if (DEBUG_CONVERT) debug_convert << "cannot read bbox for " << image <<LF;
+        if (DEBUG_CONVERT)
+	  debug_convert << "ps_bounding_box, cannot read bbox for "
+			<< image <<LF;
         return false;
       }
     }
-    set_imgbox_cache(lookup, x2-x1, y2-y1, x1, y1);
+    set_imgbox_cache (lookup, x2-x1, y2-y1, x1, y1);
     return true;
   }
 }
@@ -270,25 +270,28 @@ ps_read_bbox (string buf, int& x1, int& y1, int& x2, int& y2 ) {
   skip_spaces (buf, pos);
   ok= read_double (buf, pos, Y2) && ok;
   y2= (int) ceil (Y2);
-  if (DEBUG_CONVERT) debug_convert<< "bbox found : " <<ok << " : "<< x1<<" , "<<y1<<" , "<<x2<<" , "<<y2<<LF;
+  if (DEBUG_CONVERT)
+    debug_convert << "ps_read_bbox, bbox found: "
+		  << x1 << ", " << y1 << ", " << x2 << ", " << y2 << LF;
   if (!ok) return false;
   return true;
 }
 
 void
 set_imgbox_cache(tree t, int w, int h, int xmin, int ymin){
-    img_box (t)= (imgbox) {w, h, xmin, ymin};
+  img_box (t)= (imgbox) {w, h, xmin, ymin};
 }
 
 void
 clear_imgbox_cache(tree t){
-    img_box->reset (t);
+  img_box->reset (t);
 }
 
 void
 clearall_imgbox_cache() {
   img_box = hashmap<tree,imgbox> ();
 }
+
 /******************************************************************************
 * Getting the original size of an image, using internal plug-ins if possible
 ******************************************************************************/
@@ -304,15 +307,16 @@ image_size (url image, int& w, int& h) {
     imgbox box= img_box [lookup];
     w= box.w;
     h= box.h;
-    if (DEBUG_CONVERT) debug_convert<< "image_size in cache for " << image <<LF
-      << w << " x " << h << LF;
+    if (DEBUG_CONVERT)
+      debug_convert<< "image_size in cache for " << image << ": "
+		   << w << " x " << h << LF;
   }
   else {
     w=h=0;
     image_size_sub (image, w, h);
     if ((w <= 0) || (h <= 0)) {
       convert_error << "bad image size for '" << image << "'"
-        << " setting 35x35 " << LF;
+        << " setting 35 x 35 " << LF;
       w= 35; h= 35;
     }
     // for ps and eps images the imgbox should have been cached
@@ -324,8 +328,9 @@ image_size (url image, int& w, int& h) {
 
 void
 image_size_sub (url image, int& w, int& h) { // returns w,h in units of pt (1/72 inch)
-  if (DEBUG_CONVERT) debug_convert<< "image_size not cached for :" << image <<LF;
-  string suf = suffix (image);	
+  if (DEBUG_CONVERT)
+    debug_convert << "image_size_sub, size not cached for " << image <<LF;
+  string suf = suffix (image); 
   if (suf=="pdf") {
     pdf_image_size (image, w, h);
     return;
@@ -339,7 +344,9 @@ image_size_sub (url image, int& w, int& h) { // returns w,h in units of pt (1/72
     if (ps_bounding_box (image, x1, y1, x2, y2, false)) {
       w= x2 - x1;
       h= y2 - y1;
-      if (DEBUG_CONVERT) debug_convert << "size from ps_bounding_box : " << w << " x " << h << "\n";
+      if (DEBUG_CONVERT) 
+	debug_convert << "image_size_sub, size found by ps_bounding_box: "
+		      << w << " x " << h << "\n";
       return;
     }
   }
@@ -347,7 +354,9 @@ image_size_sub (url image, int& w, int& h) { // returns w,h in units of pt (1/72
   (!defined(QTTEXMACS) || \
    !defined(AC_QT_MAJOR_VERSION) || AC_QT_MAJOR_VERSION < 6)
   if (mac_image_size (image, w, h) ) {
-    if (DEBUG_CONVERT) debug_convert << "image_size  mac  : " << w << " x " << h << "\n";
+    if (DEBUG_CONVERT)
+      debug_convert << "image_size_sub, size found by mac_image_siwze: "
+		    << w << " x " << h << "\n";
     return;
   }
 #endif
@@ -360,7 +369,9 @@ image_size_sub (url image, int& w, int& h) { // returns w,h in units of pt (1/72
 #ifdef USE_IMLIB2
   if (imlib2_supports (image)) {
     imlib2_image_size (image, w, h);
-    if (DEBUG_CONVERT) debug_convert << "image_size imlib2 : " << w << " x " << h << "\n";
+    if (DEBUG_CONVERT)
+      debug_convert << "image_size_sub, size found by imlib2_image_size: "
+		    << w << " x " << h << "\n";
     return;
   }
 #endif
@@ -371,16 +382,18 @@ image_size_sub (url image, int& w, int& h) { // returns w,h in units of pt (1/72
   }
 #endif
   if(imagemagick_image_size(image, w, h)) {
-	  if (DEBUG_CONVERT) debug_convert<< "image_size imagemagick : " << w << " x " << h << "\n";
-	  return;
+    if (DEBUG_CONVERT)
+      debug_convert<< "image_size_sub, size found by imagemagick_image_size: "
+		   << w << " x " << h << "\n";
+    return;
   }
-
-  convert_error << "could not determine size of '"<< concretize(image) <<"'\n"
-  << "you may consider:\n"
-  << " - checking the file is valid,\n"
-  << " - converting to a more standard format,\n"
-  << " - defining an appropriate converter (see documentation).\n";
-
+  convert_error
+    << "image_size_sub, could not determine size of "
+    << concretize(image) << "\n"
+    << "you may consider:\n"
+    << " - checking the file is valid,\n"
+    << " - converting to a more standard format,\n"
+    << " - defining an appropriate converter (see documentation).\n";
   inform_about_dependencies ();
 }
 
@@ -410,7 +423,7 @@ svg_image_size (url image, int& w, int& h) {
   }
 #endif
   string content;
-  bool err= load_string (concretize (image), content, false);
+  bool err= load_string (image, content, false);
   if (!err) {
     tree t= parse_xml (content);
     tree result= find_first_element_by_name (t, "svg");
@@ -439,7 +452,9 @@ wrap_qt_supports (url image) {
 
 void
 image_to_eps (url image, url eps, int w_pt, int h_pt, int dpi) {
-  if (DEBUG_CONVERT) debug_convert << "image_to_eps ...";
+  if (DEBUG_CONVERT)
+    debug_convert << "image_to_eps, converting " << image
+		  << " into " << eps << LF;
   /* if ((suffix (eps) != "eps") && (suffix (eps) != "ps")) {
      std_warning << concretize (eps) << " has no .eps or .ps suffix\n";
      }
@@ -455,7 +470,8 @@ image_to_eps (url image, url eps, int w_pt, int h_pt, int dpi) {
   
 #ifdef USE_GS
   if (gs_supports (image)) {
-    if (DEBUG_CONVERT) debug_convert << " using gs" << LF;
+    if (DEBUG_CONVERT)
+      debug_convert << "image_to_eps uses gs_to_eps" << LF;
     gs_to_eps (image, eps);
     return;
   }
@@ -463,7 +479,8 @@ image_to_eps (url image, url eps, int w_pt, int h_pt, int dpi) {
   //converters below will yield only raster images.
 #ifdef QTTEXMACS 
   if (qt_supports (image) && qt_supports (eps)) {
-    if (DEBUG_CONVERT) debug_convert << " using qt" << LF;
+    if (DEBUG_CONVERT)
+      debug_convert << "image_to_eps uses qt_image_to_eps" << LF;
     qt_image_to_eps (image, eps, w_pt, h_pt, dpi);
     return;
   }
@@ -472,10 +489,12 @@ image_to_eps (url image, url eps, int w_pt, int h_pt, int dpi) {
   // would return the call here (see init_images.scm) causing an infinite loop.
   // Except pnm,the others are treated by qt. NO LONGER TRUE with QT5 (depends on qt plugins) -- disabling this dangerous call
 #endif
+  if (DEBUG_CONVERT)
+      debug_convert << "image_to_eps uses call_imagemagick_convert" << LF;
   call_imagemagick_convert (image, eps, w_pt, h_pt, dpi);
-
   if (!exists (eps)) {
-    convert_error << image << " could not be converted to eps" << LF;
+    convert_error << "image_to_eps, failed converting " << image
+		  << " into " << eps << LF;
     copy ("$TEXMACS_PATH/misc/pixmaps/unknown.eps", eps);
     inform_about_dependencies ();
   }
@@ -483,8 +502,8 @@ image_to_eps (url image, url eps, int w_pt, int h_pt, int dpi) {
 
 string
 image_to_psdoc (url image) {
-  if (DEBUG_CONVERT) debug_convert << "image_to_psdoc " << image << LF;
-  
+  if (DEBUG_CONVERT)
+    debug_convert << "image_to_psdoc, handling " << image << LF;
   url psfile= url_temp (".eps");
   image_to_eps (image, psfile);
   string psdoc;
@@ -496,14 +515,17 @@ image_to_psdoc (url image) {
 //mostly the same code as image_to_eps 
 void 
 image_to_pdf (url image, url pdf, int w_pt, int h_pt, int dpi) {
-  if (DEBUG_CONVERT) debug_convert << "image_to_pdf ... ";
+  if (DEBUG_CONVERT)
+    debug_convert << "image_to_pdf, converting " << image
+		  << " into " << pdf << LF;
   string s= suffix (image);
   // First try to preserve "vectorialness"
   if ((s == "svg") && !wrap_qt_supports (image) &&
       call_scm_converter (image, pdf)) return;
 #ifdef USE_GS
   if (gs_supports (image)) {
-    if (DEBUG_CONVERT) debug_convert << " using gs "<<LF;
+    if (DEBUG_CONVERT)
+      debug_convert << "image_to_pdf, using gs_to_pdf"<< LF;
     gs_to_pdf (image, pdf, w_pt, h_pt);
     return;
   }
@@ -511,16 +533,21 @@ image_to_pdf (url image, url pdf, int w_pt, int h_pt, int dpi) {
   //converters below will yield only raster images.
 #ifdef QTTEXMACS
   if (qt_supports (image) && qt_supports (pdf)) {
-    if (DEBUG_CONVERT) debug_convert << " using qt "<<LF;
+    if (DEBUG_CONVERT)
+      debug_convert << "image_to_pdf, using qt_image_to_pdf"<< LF;
     qt_image_to_pdf (image, pdf, w_pt, h_pt, dpi);
     return;
   }
 #endif
+  if (DEBUG_CONVERT)
+    debug_convert << "image_to_pdf, using call_scm_converter"<< LF;
   if ((s != "svg") && call_scm_converter (image, pdf)) return;
+  if (DEBUG_CONVERT)
+    debug_convert << "image_to_pdf, using call_imagemagick_convert"<< LF;
   call_imagemagick_convert(image, pdf, w_pt, h_pt, dpi);
-
   if (!exists (pdf)) {
-    convert_error << image << " could not be converted to pdf" << LF;
+    convert_error << image << "image_to_pdf, failed converting " << image
+		  << " into " << pdf << LF;
     copy ("$TEXMACS_PATH/misc/pixmaps/unknown.pdf", pdf);
     inform_about_dependencies ();
   }
@@ -529,53 +556,61 @@ image_to_pdf (url image, url pdf, int w_pt, int h_pt, int dpi) {
 void
 image_to_png (url image, url png, int w, int h) {// IN PIXEL UNITS!
   string source_suffix= suffix (image);
-  if (DEBUG_CONVERT) debug_convert << "image_to_png ... ";
-  /* if (suffix (png) != "png") {
-     std_warning << concretize (png) << " has no .png suffix\n";
-     }
-  */
+  if (DEBUG_CONVERT)
+    debug_convert << "image_to_png, converting " << image
+		  << " into " << png << LF;
 #if defined(MACOSX_EXTENSIONS) && \
   (!defined(QTTEXMACS) || \
    !defined(AC_QT_MAJOR_VERSION) || AC_QT_MAJOR_VERSION < 6)
-  //cout << "mac convert " << image << ", " << png << "\n";
   if (mac_supports (image)) {
-    if (DEBUG_CONVERT) debug_convert << " using mac_os "<<LF;
+    if (DEBUG_CONVERT)
+      debug_convert << "image_to_png, using mac_image_png"<< LF;
     mac_image_to_png (image, png, w, h);
     return;
   }
 #endif
 #ifdef QTTEXMACS
   if (qt_supports (image)) {
-    if (DEBUG_CONVERT) debug_convert << " using qt "<<LF;
+    if (DEBUG_CONVERT)
+      debug_convert << "image_to_png, using qt_convert_image"<< LF;
     qt_convert_image (image, png, w, h);
     return;
   }
 #endif
 #ifdef USE_GS
   if (gs_supports (image)) {
-    if (DEBUG_CONVERT) debug_convert << " using gs "<<LF;
+    if (DEBUG_CONVERT)
+      debug_convert << "image_to_png, using gs_to_png"<< LF;
     if (gs_to_png (image, png, w, h)) return;
   }
 #endif
+  if (DEBUG_CONVERT)
+    debug_convert << "image_to_png, using call_scm_converter" << LF;
   if (call_scm_converter(image, png)) return;
+  if (DEBUG_CONVERT)
+    debug_convert << "image_to_png, using call_imagemagick_convert" << LF;
   call_imagemagick_convert (image, png, w, h);
   if (! exists(png)) {
-    convert_error << image << " could not be converted to png" <<LF;
+    convert_error << "image_to_png, failed converting "
+		  << image << " into " << png << LF;
     copy("$TEXMACS_PATH/misc/pixmaps/unknown.png",png);
   }
 }
 
 bool
 call_scm_converter(url image, url dest) {
-  if (DEBUG_CONVERT) debug_convert << " using scm" <<LF;
+  if (DEBUG_CONVERT)
+    debug_convert << "call_scm_converter, converting "
+		  << image << " into " << dest <<LF;
   if (as_bool (call ("file-converter-exists?",
                      "x." * suffix (image),
                      "x." * suffix (dest)))) {
     call ("file-convert", object (image), object (dest));
     bool success= exists (dest);
     if (success && DEBUG_CONVERT)
-      debug_convert << "scm file-convert " << concretize (image)
-                    << " -> " << concretize (dest) << LF;
+      debug_convert << "call_scm_converter, converted "
+		    << concretize (image) << " into "
+		    << concretize (dest) << LF;
     return success;
   }
   return false;
@@ -589,7 +624,7 @@ call_scm_converter(url image, url dest) {
 bool
 has_image_magick (){
 #ifdef OS_MINGW
-	// Qt is used for converion on Windows
+  // Qt is used for converion on Windows
   static bool has_imagemagick = false;
 #else
   static bool has_imagemagick= exists_in_path ("convert");

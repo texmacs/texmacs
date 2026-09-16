@@ -156,7 +156,7 @@ bool has_permission (url u, string filter); // check file permissions
 url  descendance (url u);                   // utility for style&package menus
 url  subdirectories (url u);                // similarly for patters
 url  concretize_url (url u);                // variant of concretize below
-string concretize (url u);                  // system name for resolved url
-string materialize (url u, string f= "fr"); // resolve + concretize
+string concretize (url u, bool quiet= false); // system name for resolved url
+string materialize (url u, string f= "fr", bool quiet= false); // resolve + concretize
 
 #endif // defined URL_H

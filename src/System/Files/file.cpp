@@ -51,14 +51,15 @@
 
 bool
 load_string (url u, string& s, bool fatal, bool lock) {
-  // cout << "Load " << u << LF;
+  if (is_none (u)) { s= ""; return false; }
+  //cout << "load_string from " << u << LF;
   url r= u;
   if (!is_rooted_name (r)) r= resolve (r);
-  // cout << "Resolved " << r << LF;
+  //cout << "load_string, resolved to " << r << LF;
   bool err= !is_rooted_name (r) || is_directory (r);
   if (!err) {
     string name= concretize (r);
-    // cout << "Concrete :" << name << LF;
+    //cout << "load_string, concretized to " << name << LF;
     // File contents in cache?
     bool file_flag= do_cache_file (name);
     bool doc_flag= do_cache_doc (name);
@@ -79,7 +80,7 @@ load_string (url u, string& s, bool fatal, bool lock) {
     if (fin == NULL) {
       err= true;
       if (!occurs ("system", name))
-        std_warning << "Load error for " << name << ", "
+        std_warning << "load_string, load error for " << name << ", "
                     << texmacs_get_last_error_str() << "\n";
     }
     ssize_t size= 0;
@@ -87,7 +88,7 @@ load_string (url u, string& s, bool fatal, bool lock) {
       size = texmacs_fsize (fin);
       if (size < 0) {
         err= true;
-        std_warning << "Can't get file size for " << name << "\n";
+        std_warning << "load_string, can't get file size for " << name << "\n";
       }
     }
     if (!err) {
@@ -96,7 +97,7 @@ load_string (url u, string& s, bool fatal, bool lock) {
       texmacs_fclose (fin);
       if (readed != size) {
         err= true;
-        std_warning << "Can't read " << name << "\n";
+        std_warning << "load_string, can't read " << name << "\n";
       }
     }
     bench_cumul ("load file");
@@ -108,12 +109,14 @@ load_string (url u, string& s, bool fatal, bool lock) {
     // End caching
   }
   if (err) {
-    string err_msg = string("Failed to load file: ") * as_string (u);
+    string err_msg = string("load_string, failed to load file ")
+      * as_string (u);
     if (fatal) {
       failed_error << err_msg << LF;
       FAILED ("file not readable");
     }
-    //else debug_io << err_msg << LF;
+    else if (DEBUG_STD)
+      std_warning << err_msg << " (non-fatal mode)" << LF;
   }
   return err;
 }
@@ -123,7 +126,7 @@ save_string (url u, string s, bool fatal) {
   if (is_rooted_tmfs (u)) {
     bool err= save_to_server (u, s);
     if (err && fatal) {
-      failed_error << "File name= " << as_string (u) << "\n";
+      failed_error << "save_string, failed for file " << as_string (u) << "\n";
       FAILED ("file not writeable");
     }
     return err;
@@ -139,7 +142,7 @@ save_string (url u, string s, bool fatal) {
       FILE* fout = texmacs_fopen (name, "w");
       if (fout == NULL) {
         err= true;
-        std_warning << "Save error for " << name << ", "
+        std_warning << "save_string, failed opening file " << name << ", "
                     << texmacs_get_last_error_str() << "\n";
       }
       if (!err) {
@@ -148,7 +151,7 @@ save_string (url u, string s, bool fatal) {
         texmacs_fclose (fout);
         if (written != n) {
           err= true;
-          std_warning << "Can't write to " << name << "\n";
+          std_warning << "save_string, failed writing to " << name << "\n";
         }
       }
     }
@@ -164,7 +167,7 @@ save_string (url u, string s, bool fatal) {
   }
 
   if (err && fatal) {
-    failed_error << "File name= " << as_string (u) << "\n";
+    failed_error << "save_string, failed for file " << as_string (u) << "\n";
     FAILED ("file not writeable");
   }
   return err;
@@ -173,8 +176,6 @@ save_string (url u, string s, bool fatal) {
 bool
 append_string (url u, string s, bool fatal) {
   if (is_rooted_tmfs (u)) FAILED ("file not appendable");
-
-  // cout << "Save " << u << LF;
   url r= u;
   if (!is_rooted_name (r)) r= resolve (r, "");
   bool err= !is_rooted_name (r);
@@ -185,7 +186,7 @@ append_string (url u, string s, bool fatal) {
       FILE* fout= texmacs_fopen (name, "a");
       if (fout == NULL) {
         err= true;
-        std_warning << "Append error for " << name << ", "
+        std_warning << "append_string, failed opening file " << name << ", "
                     << texmacs_get_last_error_str() << "\n";
       }
       if (!err) {
@@ -193,7 +194,7 @@ append_string (url u, string s, bool fatal) {
         ssize_t written = texmacs_fwrite (&s[0], n, fout);
         if (written != n) {
           err= true;
-          std_warning << "Can't append to " << name << "\n";
+          std_warning << "append_string, failed appending to file " << name << "\n";
         }
         texmacs_fclose (fout);
       }
@@ -204,7 +205,7 @@ append_string (url u, string s, bool fatal) {
   }
 
   if (err && fatal) {
-    failed_error << "File name= " << as_string (u) << "\n";
+    failed_error << "append_string, failed for file " << as_string (u) << "\n";
     FAILED ("file not appendable");
   }
   return err;
@@ -312,7 +313,7 @@ is_of_type (url name, string filter) {
 
   // Files from the ramdisk
   if (is_ramdisc (name))
-    return true;
+    return is_of_type (concretize_url (name), filter); 
 
   // Normal files
 #ifdef OS_MINGW
