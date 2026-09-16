@@ -27,6 +27,7 @@ bool may_transform (url file_name, const QImage& pm);
 
 static bool
 load_svg (url file_name, QIcon& icon) {
+  (void) icon;
   url sub= QTMIconManager::is_dark_mode () ?
     url ("dark") : url ("light");
   url res= file_name;
