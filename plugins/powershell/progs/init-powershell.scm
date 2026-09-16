@@ -8,7 +8,7 @@
 (define (powershell-serialize lan t)
   (with u (pre-serialize lan t)
     (with s (texmacs->code (stree->tree u) "SourceCode")
-      (string-append s "\n<EOF>\n"))))
+      (string-append (string-replace s "<varspace>" " ") "\n<EOF>\n"))))
 
 (define (powershell-entry)
   (if (url-exists? "$TEXMACS_HOME_PATH/plugins/powershell/bin/tm_powershell.ps1")
@@ -27,3 +27,7 @@
   (:launch ,(powershell-launcher))
   (:serializer ,powershell-serialize)
   (:session "PowerShell"))
+
+(kbd-map
+  (:require (== (get-env "prog-language") "powershell"))
+  ("varspace" " "))
