@@ -21,8 +21,12 @@
 (define (maxima-versions)
   (map (lambda (x)
          (string-replace (string-replace x ", lisp" "") "version " ""))
-   (filter (lambda (x) (string-starts? x "version "))
-     (string-split (var-eval-system "maxima --list-avail") #\newline))))
+       (filter (lambda (x) (string-starts? x "version "))
+	 (with u (url-resolve-in-path
+		  (string-append "maxima" (if (os-mingw?) ".bat" "")))
+	   (with bin (if (url-none? u) "" (url-concretize u))
+	     (string-split (var-eval-system
+			    (string-append bin " --list-avail")) #\newline))))))
 
 (define (maxima-launchers) ;; returns list of launchers for each version
   (if (os-mingw?)

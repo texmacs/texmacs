@@ -140,6 +140,10 @@
   (if (null? l) #f
       (car l)))
 
+(define (car-or-empty-string l)
+  (if (null? l) ""
+      (car l)))
+
 (define (maxima-dirs)
   (if (os-mingw?)
       (map (lambda (x) (string-drop-right x 1))
@@ -147,12 +151,12 @@
       (string-split (var-eval-system "maxima -d") #\newline)))
 
 (define (maxima-htmldir)
-  (map (lambda (x) (string-drop x (string-length "maxima-htmldir=")))
-   (filter (lambda (x) (string-starts? x "maxima-htmldir="))
+  (map (lambda (x) (string-drop x (string-length "maxima-htmldir:")))
+   (filter (lambda (x) (string-starts? x "maxima-htmldir"))
            (maxima-dirs))))
 
 (define (maxima-help) 
-  (with htmldir (car-or-false (maxima-htmldir))
+  (with htmldir (car-or-empty-string (maxima-htmldir))
    (define (concat-html-path html)
      (string-append (string-append htmldir "/")
                     html))
