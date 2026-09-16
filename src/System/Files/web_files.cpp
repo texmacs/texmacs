@@ -102,8 +102,10 @@ get_from_web (url name) {
   url tmp= url_temp ();
   string tmp_s= concretize (tmp);
   string name_s= as_string (name);
-  cout << "Downloading " << name_s << " to " << tmp_s << LF;
-  qt_download_file(name_s, tmp_s);
+  if (DEBUG_IO)
+    debug_io << "get_from_web, downloading remote file "
+	     << name_s << " into " << tmp_s << LF;
+  qt_download_file (name_s, tmp_s);
 #else
   string tool= fetch_tool ();
   if (tool == "") return url_none ();
