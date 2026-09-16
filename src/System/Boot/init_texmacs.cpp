@@ -124,7 +124,7 @@ make_dir (url which) {
 
 static url
 url_temp_dir_sub () {
-#ifdef OS_MINGW
+#if defined(OS_MINGW) && !defined(OS_MINGW64)
   static url tmp_dir=
     url_system (main_tmp_dir) * url_system (as_string (time (NULL)));
 #else
