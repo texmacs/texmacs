@@ -240,9 +240,8 @@ may_transform (url file_name, const QImage& pm) {
 QImage*
 get_image_for_real (url u, int w, int h, tree eff, SI pixel) {
   QImage *pm = NULL;
-
-  if (suffix (u) == "svg") {
 #ifdef USE_RESVG
+  if (suffix (u) == "svg") {
     resvg_render_tree *tree = NULL;
     int err = tm_resvg_parse_tree (u, NULL, &tree);
     if (err == RESVG_OK && tree != NULL) {
@@ -262,40 +261,24 @@ get_image_for_real (url u, int w, int h, tree eff, SI pixel) {
       }
       resvg_tree_destroy (tree);
     }
+  }
 #endif
-#ifdef USE_QTSVG
-    if (pm == NULL) {
-#ifdef USE_RESVG
-      std_warning << "SVG fallback: resvg failed for image '" << u
-                  << "', falling back to QtSvg" << LF;
-#endif
-      QSvgRenderer renderer (utf8_to_qstring (concretize (u)));
-      if (renderer.isValid ()) {
-        if (w <= 0) w = (int) ceil (renderer.defaultSize ().width ());
-        if (h <= 0) h = (int) ceil (renderer.defaultSize ().height ());
-        if (w > 0 && h > 0) {
-          pm= new QImage (w, h, QImage::Format_ARGB32);
-          pm->fill (Qt::transparent);
-          QPainter painter (pm);
-          renderer.render (&painter, QRectF (0, 0, w, h));
-        }
-      }
+  if (pm == NULL) {
+    if (qt_supports (u)) {
+      pm= new QImage (utf8_to_qstring (materialize (u)));
+    } else {
+      url temp= url_temp (".png");
+      image_to_png (u, temp, w, h);
+      pm= new QImage (utf8_to_qstring (materialize (temp, "")));
+      remove (temp);
     }
-#endif
-  } else if (qt_supports (u)) {
-    pm= new QImage (utf8_to_qstring (concretize (u)));
-  } else {
-    url temp= url_temp (".png");
-    image_to_png (u, temp, w, h);
-    pm= new QImage (utf8_to_qstring (as_string (temp)));
-    remove (temp);
   }
 
   // Error Handling
   if (pm == NULL || pm->isNull ()) {
-      if (pm != NULL) delete pm;
-      cout << "TeXmacs] warning: cannot render " << concretize (u) << "\n";
-      return NULL;
+    if (pm != NULL) delete pm;
+    std_warning << "cannot render " << u << "\n";
+    return NULL;
   }
 
   // Scaling
@@ -426,7 +409,7 @@ qt_apply_effect (tree eff, array<url> src, url dest, int w, int h) {
   picture t= e->apply (a, PIXEL);
   picture q= as_qt_picture (t);
   qt_picture_rep* pict= (qt_picture_rep*) q->get_handle ();
-  pict->pict.save (utf8_to_qstring (concretize (dest)));
+  pict->pict.save (utf8_to_qstring (materialize (dest, "")));
 }
 
 void
@@ -434,5 +417,5 @@ save_picture (url dest, picture p) {
   picture q= as_qt_picture (p);
   qt_picture_rep* pict= (qt_picture_rep*) q->get_handle ();
   if (exists (dest)) remove (dest);
-  pict->pict.save (utf8_to_qstring (concretize (dest)));
+  pict->pict.save (utf8_to_qstring (materialize (dest, "")));
 }
