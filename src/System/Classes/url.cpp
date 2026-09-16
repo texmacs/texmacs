@@ -1144,7 +1144,7 @@ concretize_url (url u) {
 }
 
 string
-concretize (url u) {
+concretize (url u, bool quiet) {
   // This routine transforms a resolved url into a system file name.
   // In the case of distant files from the web, a local copy is created.
 #ifdef OS_ANDROID
@@ -1153,19 +1153,19 @@ concretize (url u) {
   url c= concretize_url (u);
   if (!is_none (c)) return as_string (c);
   if (is_wildcard (u, 1)) return u->t[1]->label;
-  std_warning << "Couldn't concretize " << u->t << LF;
-  // failed_error << "u= " << u << LF;
-  // FAILED ("url has no root");
-  return "xxx";
+  if (!quiet)
+    std_warning << "concretize, failed for url " << u->t << LF;
+  return "";
 }
 
 string
-materialize (url u, string filter) {
+materialize (url u, string filter, bool quiet) {
   // Combines resolve and concretize
   url r= resolve (u, filter);
-  if (!(is_rooted (r) || is_here (r) || is_parent (r))) {
-    failed_error << "u= " << u << LF;
-    FAILED ("url could not be resolved");
-  }
-  return concretize (r);
+  string ret= "";
+  if (is_rooted (r) || is_here (r) || is_parent (r))
+    ret= concretize (r, true);
+  if (ret == "" && !quiet)
+    std_warning << "materialize, failed for url " << u << LF;
+  return ret;
 }
