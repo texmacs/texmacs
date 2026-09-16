@@ -1,6 +1,27 @@
 $ErrorActionPreference = 'Continue'
 $InformationPreference = 'Continue'
 
+# Ensure Windows user PATH and WindowsApps are included, especially when launched from MSYS2
+try {
+    $userPath = [Environment]::GetEnvironmentVariable('PATH', 'User')
+    if ($userPath) {
+        $existing = $env:PATH -split ';'
+        foreach ($p in ($userPath -split ';')) {
+            if ($p -and (Test-Path -LiteralPath $p) -and ($existing -notcontains $p)) {
+                $env:PATH += ";$p"
+            }
+        }
+    }
+    $localAppData = [Environment]::GetFolderPath([Environment+SpecialFolder]::LocalApplicationData)
+    if ($localAppData) {
+        $windowsApps = Join-Path $localAppData 'Microsoft\WindowsApps'
+        if ((Test-Path -LiteralPath $windowsApps) -and (($env:PATH -split ';') -notcontains $windowsApps)) {
+            $env:PATH += ";$windowsApps"
+        }
+    }
+}
+catch {}
+
 $rawInputEncoding = [Console]::InputEncoding
 [Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false)
 $OutputEncoding = [System.Text.UTF8Encoding]::new($false)
@@ -34,6 +55,7 @@ function Write-TexmacsBegin {
 }
 
 function Write-TexmacsChunk([string]$text) {
+    $text = $text.Replace([char]0x00A0, ' ').Replace([char]0x202F, ' ')
     $text = $text.Replace("`r`n", "`n").Replace("`r", "`n")
     $escaped = $text.Replace([string]$dataEscape, ([string]$dataEscape + [string]$dataEscape))
     $escaped = $escaped.Replace([string]$dataBegin, ([string]$dataEscape + [string]$dataBegin))
@@ -62,6 +84,7 @@ foreach ($line in $input) {
 
     $rawCommand = [string]::Join([Environment]::NewLine, $inputLines)
     $command = Convert-FromHostEncoding $rawCommand
+    $command = $command.Replace('<varspace>', ' ').Replace([char]0x00A0, ' ').Replace([char]0x202F, ' ')
     $inputLines.Clear()
     Write-TexmacsBegin
     try {
@@ -71,8 +94,7 @@ foreach ($line in $input) {
         }
     }
     catch {
-        Write-TexmacsChunk ("PowerShell error: " + $_.Exception.Message + "`n" +
-            $_.InvocationInfo.PositionMessage + "`n")
+        Write-TexmacsChunk ("PowerShell error: " + $_.Exception.Message + "`n")
     }
     Write-TexmacsEnd
     Write-TexmacsPrompt
