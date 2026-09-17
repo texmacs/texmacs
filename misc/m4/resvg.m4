@@ -48,9 +48,26 @@ AC_DEFUN([LC_RESVG],[
       TRY_CFLAGS=`$PKG_CONFIG --cflags resvg`
       TRY_LIBS=`$PKG_CONFIG --libs resvg`
     else
+      RESVG_DIR=""
       if test "$with_resvg" != "yes" && test "$with_resvg" != "auto" && test -d "$with_resvg"; then
-        TRY_CFLAGS="-I$with_resvg/include"
-        TRY_LDFLAGS="-L$with_resvg/lib"
+        RESVG_DIR="$with_resvg"
+      elif test -n "$TMREPO" && test -f "$TMREPO/include/resvg.h"; then
+        RESVG_DIR="$TMREPO"
+      elif test -n "$prefix" && test -f "$prefix/include/resvg.h"; then
+        RESVG_DIR="$prefix"
+      elif test -n "$WORKING_DIR_WIN" && test -f "$WORKING_DIR_WIN/local/include/resvg.h"; then
+        RESVG_DIR="$WORKING_DIR_WIN/local"
+      fi
+      if test -n "$RESVG_DIR"; then
+        case "$CONFIG_OS" in
+          MINGW)
+            if which cygpath >/dev/null 2>&1; then
+              RESVG_DIR=`cygpath -m "$RESVG_DIR"`
+            fi
+            ;;
+        esac
+        TRY_CFLAGS="-I$RESVG_DIR/include"
+        TRY_LDFLAGS="-L$RESVG_DIR/lib"
       fi
       RESVG_EXTRA_LIBS=""
       case "$CONFIG_OS" in

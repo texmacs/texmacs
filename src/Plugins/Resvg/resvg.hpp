@@ -15,18 +15,20 @@
 #ifdef USE_RESVG
 
 #include "url.hpp"
-#include <resvg.h>
+
+typedef struct resvg_options resvg_options;
+typedef struct resvg_render_tree resvg_render_tree;
 
 bool resvg_supports (url image);
 void resvg_image_size (url image, int& w_pt, int& h_pt);
 bool resvg_native_image_size (url image, int& w, int& h);
-bool resvg_render_tree (resvg_render_tree* tree, int w, int h, char* rgba_pixels, bool fit_aspect = false);
+bool resvg_do_render_tree (resvg_render_tree* tree, int w, int h, char* rgba_pixels, bool fit_aspect = false);
 bool resvg_render_image (url image, int w, int h, char* rgba_pixels, bool fit_aspect = false);
 
 resvg_options* resvg_get_options ();
 int resvg_parse_tree (url u, const resvg_options* opt = NULL, resvg_render_tree** tree = NULL);
+void resvg_destroy_tree (resvg_render_tree* tree);
 
-// Convenience / backward-compatibility aliases
 inline resvg_options* tm_get_resvg_options () {
   return resvg_get_options ();
 }

@@ -13,6 +13,7 @@
 
 #include "Resvg/resvg.hpp"
 #include "file.hpp"
+#include <resvg.h>
 #include <cmath>
 #include <cstring>
 #include <algorithm>
@@ -36,6 +37,7 @@ resvg_options*
 resvg_get_options () {
   static resvg_options* opt = NULL;
   if (opt == NULL) {
+    resvg_init_log ();
     opt = resvg_options_create ();
     resvg_options_load_system_fonts (opt);
   }
@@ -48,12 +50,35 @@ resvg_parse_tree (url u, const resvg_options* opt, resvg_render_tree** tree) {
     opt = resvg_get_options ();
   }
   string data;
-  if (load_string (materialize (u), data, false) || N (data) == 0) {
+  bool err_load = load_string (u, data, false);
+  if (err_load || N (data) == 0) {
+    string path = concretize (u);
+    if (path == "") path = materialize (u);
+    if (path != "") {
+      FILE* f = texmacs_fopen (path, "rb");
+      if (f != NULL) {
+        ssize_t sz = texmacs_fsize (f);
+        if (sz > 0) {
+          data = string ((int) sz);
+          size_t rd = fread (&data[0], 1, sz, f);
+          if (rd != (size_t) sz) data = "";
+        }
+        fclose (f);
+      }
+    }
+  }
+  if (N (data) == 0) {
+    std_warning << "resvg warning: failed to open/read SVG file '" << u << "'" << LF;
     return RESVG_ERROR_FILE_OPEN_FAILED;
   }
-  int err = resvg_parse_tree_from_data (data.c_str (),
+  resvg_render_tree* local_tree = NULL;
+  resvg_render_tree** out_tree = tree ? tree : &local_tree;
+  int err = resvg_parse_tree_from_data (&data[0],
                                         (uintptr_t) N (data),
-                                        opt, tree);
+                                        opt, out_tree);
+  if (tree == NULL && local_tree != NULL) {
+    resvg_tree_destroy (local_tree);
+  }
   if (err != RESVG_OK) {
     std_warning << "resvg warning: failed to parse SVG '" << u
                 << "' (" << resvg_error_string (err) << ", code " << err << ")" << LF;
@@ -97,7 +122,7 @@ resvg_native_image_size (url image, int& w, int& h) {
 }
 
 bool
-resvg_render_tree (resvg_render_tree* tree, int w, int h, char* rgba_pixels, bool fit_aspect) {
+resvg_do_render_tree (resvg_render_tree* tree, int w, int h, char* rgba_pixels, bool fit_aspect) {
   if (tree == NULL || w <= 0 || h <= 0 || rgba_pixels == NULL) return false;
   resvg_size sz = resvg_get_image_size (tree);
   resvg_transform tr = resvg_transform_identity ();
@@ -122,9 +147,16 @@ resvg_render_image (url image, int w, int h, char* rgba_pixels, bool fit_aspect)
   resvg_render_tree *tree = NULL;
   int err = resvg_parse_tree (image, NULL, &tree);
   if (err != RESVG_OK || tree == NULL) return false;
-  bool ok = resvg_render_tree (tree, w, h, rgba_pixels, fit_aspect);
+  bool ok = resvg_do_render_tree (tree, w, h, rgba_pixels, fit_aspect);
   resvg_tree_destroy (tree);
   return ok;
+}
+
+void
+resvg_destroy_tree (resvg_render_tree* tree) {
+  if (tree != NULL) {
+    resvg_tree_destroy (tree);
+  }
 }
 
 #endif // USE_RESVG
