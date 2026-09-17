@@ -104,13 +104,6 @@ void qt_image_to_eps (url image, url eps, int w_pt =0, int h_pt =0, int dpi= 0);
 string qt_image_to_eps (url image, int w_pt =0, int h_pt =0, int dpi= 0);
 void qt_image_to_pdf (url image, url pdf, int w_pt =0, int h_pt =0, int dpi =0);
 
-#ifdef USE_RESVG
-typedef struct resvg_options resvg_options;
-typedef struct resvg_render_tree resvg_render_tree;
-resvg_options* tm_get_resvg_options ();
-int tm_resvg_parse_tree (url u, const resvg_options* opt = NULL, resvg_render_tree** tree = NULL);
-#endif
-
 string qt_application_directory ();
 string qt_get_date (string lan, string fm);
 string qt_pretty_time (int t);

@@ -56,6 +56,11 @@
 #include "Pdf/pdf_hummus_renderer.hpp"
 #endif
 
+#ifdef USE_RESVG
+#include "Resvg/resvg.hpp"
+#endif
+
+
 /******************************************************************************
 * Inform about missing dependencies
 ******************************************************************************/
@@ -416,6 +421,12 @@ pdf_image_size (url image, int& w, int& h) {
 
 void
 svg_image_size (url image, int& w, int& h) {
+#ifdef USE_RESVG
+  if (resvg_supports (image)) {
+    resvg_image_size (image, w, h);
+    if (w > 0 && h > 0) return;
+  }
+#endif
 #if QTTEXMACS
   if (qt_supports (image)) {
     qt_image_size (image, w, h);
@@ -724,6 +735,11 @@ void qt_apply_effect (tree eff, array<url> src, url dest, int w, int h);
 
 void
 native_image_size (url image, int& w, int& h) {
+#ifdef USE_RESVG
+  if (resvg_supports (image)) {
+    if (resvg_native_image_size (image, w, h)) return;
+  }
+#endif
 #ifdef QTTEXMACS
   if (qt_native_image_size (image, w, h)) return;
 #endif
