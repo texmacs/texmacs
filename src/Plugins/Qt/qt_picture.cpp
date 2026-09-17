@@ -27,7 +27,7 @@
 #include <QPaintDevice>
 #include <QPixmap>
 #ifdef USE_RESVG
-#include <resvg.h>
+#include "Resvg/resvg.hpp"
 #endif
 #ifdef USE_QTSVG
 #include <QSvgRenderer>
@@ -242,24 +242,19 @@ get_image_for_real (url u, int w, int h, tree eff, SI pixel) {
   QImage *pm = NULL;
 #ifdef USE_RESVG
   if (suffix (u) == "svg") {
-    resvg_render_tree *tree = NULL;
-    int err = tm_resvg_parse_tree (u, NULL, &tree);
-    if (err == RESVG_OK && tree != NULL) {
-      resvg_size img_size = resvg_get_image_size (tree);
-      if (w <= 0 && img_size.width > 0) w = (int) ceil (img_size.width);
-      if (h <= 0 && img_size.height > 0) h = (int) ceil (img_size.height);
-      if (w > 0 && h > 0) {
-        QImage tmp (w, h, QImage::Format_RGBA8888_Premultiplied);
-        tmp.fill (Qt::transparent);
-        resvg_transform tr = resvg_transform_identity ();
-        if (img_size.width > 0 && img_size.height > 0) {
-          tr.a = (float) w / img_size.width;
-          tr.d = (float) h / img_size.height;
-        }
-        resvg_render (tree, tr, w, h, (char*) tmp.bits ());
+    if (w <= 0 || h <= 0) {
+      int nw = w, nh = h;
+      if (resvg_native_image_size (u, nw, nh)) {
+        if (w <= 0) w = nw;
+        if (h <= 0) h = nh;
+      }
+    }
+    if (w > 0 && h > 0) {
+      QImage tmp (w, h, QImage::Format_RGBA8888_Premultiplied);
+      tmp.fill (Qt::transparent);
+      if (resvg_render_image (u, w, h, (char*) tmp.bits ())) {
         pm = new QImage (tmp.convertToFormat (QImage::Format_ARGB32));
       }
-      resvg_tree_destroy (tree);
     }
   }
 #endif

@@ -115,6 +115,7 @@ cocoa_mm_src := $(call findmm_in,Plugins,@CONFIG_COCOA@ @CONFIG_MACOS@ @CONFIG_S
 os_src       := $(call findsrc_in,Plugins,@CONFIG_OS_COMPAT@)
 qt_src       := $(call findsrc_in,Plugins,$(QT_PLUGIN_DIR))
 gs_src       := $(call findsrc_in,Plugins,@CONFIG_GS@)
+resvg_src    := $(call findsrc_in,Plugins,Resvg)
 style_src    := $(call findsrc_in,Style,@CONFIG_EXPERIMENTAL@)
 typeset_src  := $(call findsrc,Typeset)
 edit_src     := $(call findsrc,Edit)
@@ -140,7 +141,7 @@ make_mm_deps = $(patsubst %.mm,Deps/%.d,$(notdir $(1)))
 texmacs_cpp_deps := $(call make_cpp_deps,$(system_src) $(kernel_src) $(data_src)\
  $(edit_src) $(scheme_src) $(graphics_src)\
  $(plugins_src) $(x11_src) $(texmacs_src)\
- $(typeset_src) $(style_src) $(qt_src) $(gs_src) $(os_src)\
+ $(typeset_src) $(style_src) $(qt_src) $(gs_src) $(resvg_src) $(os_src)\
  $(pdf_src) $(freetype_src) $(gnutls_src))
 texmacs_m_deps += $(call make_m_deps,$(cocoa_m_src))
 texmacs_mm_deps += $(call make_mm_deps,$(cocoa_mm_src))
@@ -291,6 +292,7 @@ os_obj       := $(call makeobj,$(os_src))
 moc_obj	     := $(call makeobj,$(qt_moc_src))
 qt_obj 	     := $(filter-out $(moc_obj), $(call makeobj,$(qt_src)))
 gs_obj       := $(call makeobj,$(gs_src))
+resvg_obj    := $(call makeobj,$(resvg_src))
 plugins_obj  := $(call makeobj,$(plugins_src))
 texmacs_obj  := $(call makeobj,$(texmacs_src))
 texmacs_open_obj := Objects/texmacs_open_main.o
@@ -355,6 +357,8 @@ $(moc_obj): Objects/%.o: ./Plugins/$(QT_PLUGIN_DIR)/%.cpp
 	$(call cxx_incl,$(qt_incl) $(CXXQT) $(CXXGUILE) $(CXXRESVG))
 $(gs_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(gs_incl)  $(CXXX11))
+$(resvg_obj): Objects/%.o: %.cpp
+	$(call cxx_incl,$(plugins_incl) $(CXXRESVG))
 $(cocoa_m_obj): Objects/%.o: %.m
 	$(call objc_incl,$(cocoa_incl) $(CXXCOCOA))
 $(cocoa_mm_obj): Objects/%.o: %.mm
@@ -425,6 +429,7 @@ uses_x11      := $(x11_obj)
 uses_os       := $(os_obj)
 uses_qt       := $(qt_obj) $(moc_obj)
 uses_gs       := $(gs_obj)
+uses_resvg    := $(resvg_obj)
 uses_cocoa    := $(cocoa_m_obj) $(cocoa_mm_obj)
 uses_typeset  := $(typeset_obj)
 uses_style    := $(style_obj)
@@ -439,7 +444,7 @@ uses_gnutls   := $(gnutls_obj)
 # Compilation rules
 
 TEXMACS_objects := $(strip $(call uses,system kernel data graphics\
- plugins x11 os qt gs cocoa style typeset edit scheme texmacs pdf\
+ plugins x11 os qt gs resvg cocoa style typeset edit scheme texmacs pdf\
  freetype gnutls windowsres)) $(texmacs_c_deps)
 
 TEXMACS_OPEN_objects := $(texmacs_open_obj) Objects/tm_ostream.o Objects/fast_alloc.o Objects/tree.o \
