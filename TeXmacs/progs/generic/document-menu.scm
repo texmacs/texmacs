@@ -380,6 +380,10 @@
           ("Schola" (init-font "schola" "math-schola")))
       (if (font-exists-in-tt? "texgyretermes-math")
           ("Termes" (init-font "termes" "math-termes"))))
+  (if (nnull? (opentype-math-font-list))
+      ---
+      (group "OpenType math")
+      (link opentype-font-menu))
   (if (or (font-exists-in-tt? "DejaVuSerif")
           (font-exists-in-tt? "FiraSans-Regular")
           (font-exists-in-tt? "LinLibertine_R")

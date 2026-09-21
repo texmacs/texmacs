@@ -584,7 +584,7 @@ bool get_hand_tuned_math_fonts () { return hand_tuned_math_fonts; }
 bool
 use_poor_rubber (font fn) {
   return has_poor_rubber && fn->type == FONT_TYPE_UNICODE &&
-    !starts (fn->res_name, "stix-");
+    !starts (locase_all (fn->res_name), "stix-");
 }
 
 font

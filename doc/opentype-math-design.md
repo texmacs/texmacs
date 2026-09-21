@@ -384,9 +384,11 @@ TM_TEST_FONT_DIR=/path/to/fonts tests/opentype/render-samples.sh
   numbered sizes can resolve to different subfonts of a smart font (the
   radical of the shipped STIX setup is served by a fallback font); the
   size queries now go to the subfont which renders the numbered names.
-  Note that the `starts (res_name, "stix-")` checks of `concat_math.cpp`
-  never match the capitalized smart font names ("Stix-..."), so the
-  `rubber_stix_font` path is only reached through `make_rubber_font`.
+  The `starts (res_name, "stix-")` checks of `concat_math.cpp` and
+  `use_poor_rubber` never matched the capitalized smart font names
+  ("Stix-..."), so the hand-tuned `rubber_stix_font` path for radicals and
+  large delimiters was dead code; the checks are case-insensitive now and
+  the tall STIX radical of the showcase renders correctly.
 
 - **Phase 3, profiles.** `math_font_profiles.cpp` holds the per-font
   profile table, filled at boot from

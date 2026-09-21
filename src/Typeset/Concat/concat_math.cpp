@@ -20,7 +20,7 @@
 void
 concater_rep::typeset_large (tree t, path ip, int tp, int otp, string prefix) {
   font old_fn= env->fn;
-  if (hand_tuned_math_fonts && starts (old_fn->res_name, "stix-"))
+  if (hand_tuned_math_fonts && starts (locase_all (old_fn->res_name), "stix-"))
     //if (old_fn->type == FONT_TYPE_UNICODE)
     env->fn= rubber_font (old_fn);
   
@@ -447,7 +447,8 @@ concater_rep::typeset_sqrt (tree t, path ip) {
   }
   SI sep= env->fn->sep;
   font lfn= env->fn;
-  bool stix= hand_tuned_math_fonts && starts (lfn->res_name, "stix-");
+  bool stix= hand_tuned_math_fonts &&
+             starts (locase_all (lfn->res_name), "stix-");
   if (stix) lfn= rubber_font (lfn);
   SI   gap= (3 * sep >> 1);
   bool use_opentype=
@@ -605,7 +606,8 @@ concater_rep::typeset_around (tree t, path ip, bool colored) {
         SI adjust= env->fn->double_bracket_correct;
         font old_fn= env->fn;
         font new_fn= env->fn;
-        if (hand_tuned_math_fonts && starts (new_fn->res_name, "stix-"))
+        if (hand_tuned_math_fonts &&
+            starts (locase_all (new_fn->res_name), "stix-"))
           //if (new_fn->type == FONT_TYPE_UNICODE)
           new_fn= rubber_font (new_fn);
         env->fn= new_fn;
