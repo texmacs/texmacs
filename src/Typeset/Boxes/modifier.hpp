@@ -56,6 +56,7 @@ public:
   SI        lsup_correction_at (SI h);
   SI        rsub_correction_at (SI h);
   SI        rsup_correction_at (SI h);
+  bool      extended_shape ();
   SI        sub_lo_base (int level);
   SI        sub_hi_lim  (int level);
   SI        sup_lo_lim  (int level);

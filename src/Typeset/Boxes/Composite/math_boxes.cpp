@@ -623,6 +623,8 @@ struct wide_box_rep: public composite_box_rep {
     return ref->rsub_correction_at (h); }
   SI rsup_correction_at (SI h) {
     return ref->rsup_correction_at (h); }
+  bool extended_shape () {
+    return ref->extended_shape (); }
   SI sub_lo_base (int level) {
     return ref->sub_lo_base (level); }
   SI sub_hi_lim  (int level) {

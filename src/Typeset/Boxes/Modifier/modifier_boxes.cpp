@@ -95,6 +95,8 @@ SI modifier_box_rep::rsub_correction_at (SI h) {
   return b->rsub_correction_at (h); }
 SI modifier_box_rep::rsup_correction_at (SI h) {
   return b->rsup_correction_at (h); }
+bool modifier_box_rep::extended_shape () {
+  return b->extended_shape (); }
 SI modifier_box_rep::sub_lo_base (int level) {
   return b->sub_lo_base (level); }
 SI modifier_box_rep::sub_hi_lim  (int level) {
@@ -394,6 +396,7 @@ struct macro_box_rep: public composite_box_rep {
   SI lsup_correction_at (SI h) { return bs[0]->lsup_correction_at (h); }
   SI rsub_correction_at (SI h) { return bs[0]->rsub_correction_at (h); }
   SI rsup_correction_at (SI h) { return bs[0]->rsup_correction_at (h); }
+  bool extended_shape () { return bs[0]->extended_shape (); }
   SI sub_lo_base (int l) {
     // second test separates small and large big operators
     return (!is_nil (big_fn)) && ((y2-y1) <= 3*big_fn->yx)?

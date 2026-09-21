@@ -547,31 +547,45 @@ edit_env_rep::get_script_size (int sz, int level) {
 * Updating the environment from the variables
 ******************************************************************************/
 
+font
+edit_env_rep::make_current_font (int sz) {
+  switch (mode) {
+  case 2:
+    return smart_font (get_string (MATH_FONT), get_string (MATH_FONT_FAMILY),
+                       get_string (MATH_FONT_SERIES),
+                       get_string (MATH_FONT_SHAPE),
+                       get_string (FONT), get_string (FONT_FAMILY),
+                       get_string (FONT_SERIES), "mathitalic",
+                       sz, (int) (magn*dpi));
+  case 3:
+    return smart_font (get_string (PROG_FONT), get_string (PROG_FONT_FAMILY),
+                       get_string (PROG_FONT_SERIES),
+                       get_string (PROG_FONT_SHAPE),
+                       get_string (FONT), get_string (FONT_FAMILY) * "-tt",
+                       get_string (FONT_SERIES), get_string (FONT_SHAPE),
+                       sz, (int) (magn*dpi));
+  default:
+    return smart_font (get_string (FONT), get_string (FONT_FAMILY),
+                       get_string (FONT_SERIES), get_string (FONT_SHAPE),
+                       sz, (int) (magn*dpi));
+  }
+}
+
 void
 edit_env_rep::update_font () {
   fn_size= (int) (((double) get_int (FONT_BASE_SIZE)) *
 		  get_double (FONT_SIZE) + 0.5);
-  switch (mode) {
-  case 0:
-  case 1:
-    fn= smart_font (get_string (FONT), get_string (FONT_FAMILY),
-                    get_string (FONT_SERIES), get_string (FONT_SHAPE),
-                    get_script_size (fn_size, index_level), (int) (magn*dpi));
-    break;
-  case 2:
-    fn= smart_font (get_string (MATH_FONT), get_string (MATH_FONT_FAMILY),
-                    get_string (MATH_FONT_SERIES), get_string (MATH_FONT_SHAPE),
-                    get_string (FONT), get_string (FONT_FAMILY),
-                    get_string (FONT_SERIES), "mathitalic",
-                    get_script_size (fn_size, index_level), (int) (magn*dpi));
-    break;
-  case 3:
-    fn= smart_font (get_string (PROG_FONT), get_string (PROG_FONT_FAMILY),
-                    get_string (PROG_FONT_SERIES), get_string (PROG_FONT_SHAPE),
-                    get_string (FONT), get_string (FONT_FAMILY) * "-tt",
-                    get_string (FONT_SERIES), get_string (FONT_SHAPE),
-                    get_script_size (fn_size, index_level), (int) (magn*dpi));
-    break;
+  int sz= get_script_size (fn_size, index_level);
+  fn= make_current_font (sz);
+  // fonts with an OpenType MATH table prescribe their own script sizes,
+  // unless the document sets math-font-sizes explicitly
+  if (index_level > 0 && fn->math_type == MATH_TYPE_OPENTYPE &&
+      math_font_sizes == "default") {
+    int pct= (index_level == 1)? fn->script_percent: fn->script_script_percent;
+    if (pct > 0) {
+      int nsz= max (1, (int) tm_round (fn_size * pct / 100.0));
+      if (nsz != sz) fn= make_current_font (nsz);
+    }
   }
   string eff= get_string (FONT_EFFECTS);
   if (N(eff) != 0) fn= apply_effects (fn, eff);

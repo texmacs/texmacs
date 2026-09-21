@@ -326,6 +326,20 @@ TM_TEST_FONT_DIR=/path/to/fonts tests/opentype/render-samples.sh
   the largest pre-drawn variant, so sizes grow monotonically with the
   variant number, as the delimiter search assumes.
 
+- **Phase 1 of the plan (21 September 2026).** Delimiters are chosen by
+  target height through `get_rubber_variant`, with assemblies made to
+  measure from the advances of the parts and their measured lengths.
+  Scripts follow the specification: standard shifts for ordinary glyphs,
+  height-based shifts within the baseline drop limits for boxes and
+  extended shapes (`is_extended_shape` hook and `extended_shape` box
+  method), `subSuperscriptGapMin` with the TeX resolution of conflicts,
+  `spaceAfterScript`, and script sizes from `scriptPercentScaleDown`
+  unless `math-font-sizes` is set. Display operators are capped at two em.
+  `above` and `below` are limit boxes and already use the limit constants,
+  so the stack constants are not needed. All `font_rep` MATH fields are
+  zero-initialized; before, they were read uninitialized for fonts without
+  a MATH table.
+
 ## 6. Known defects still open
 
 1. The delimiter search still probes `<left-x-N>` for increasing `N` and

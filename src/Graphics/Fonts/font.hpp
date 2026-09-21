@@ -96,27 +96,34 @@ struct font_rep: rep<font> {
   array<array<space> >   wide_spacing;     // wide spacing table
   SI double_bracket_correct; // extra space between double brackets
 
-  // math measurements for opentype fonts
-  SI  upper_limit_gap_min;
-  SI  upper_limit_baseline_rise_min;
-  SI  lower_limit_gap_min;
-  SI  lower_limit_baseline_drop_min;
-  SI  frac_rule_thickness;
-  SI  frac_num_shift_up;
-  SI  frac_num_disp_shift_up;
-  SI  frac_num_gap_min;
-  SI  frac_num_disp_gap_min;
-  SI  frac_denom_shift_down;
-  SI  frac_denom_disp_shift_down;
-  SI  frac_denom_gap_min;
-  SI  frac_denom_disp_gap_min;
-  SI  sqrt_ver_gap;
-  SI  sqrt_ver_disp_gap;
-  SI  sqrt_rule_thickness;
-  SI  sqrt_extra_ascender;
-  int sqrt_degree_rise_percent;
-  SI  sqrt_kern_before_degree;
-  SI  sqrt_kern_after_degree;
+  // math measurements for opentype fonts (zero when unknown)
+  SI  upper_limit_gap_min= 0;
+  SI  upper_limit_baseline_rise_min= 0;
+  SI  lower_limit_gap_min= 0;
+  SI  lower_limit_baseline_drop_min= 0;
+  SI  frac_rule_thickness= 0;
+  SI  frac_num_shift_up= 0;
+  SI  frac_num_disp_shift_up= 0;
+  SI  frac_num_gap_min= 0;
+  SI  frac_num_disp_gap_min= 0;
+  SI  frac_denom_shift_down= 0;
+  SI  frac_denom_disp_shift_down= 0;
+  SI  frac_denom_gap_min= 0;
+  SI  frac_denom_disp_gap_min= 0;
+  SI  sqrt_ver_gap= 0;
+  SI  sqrt_ver_disp_gap= 0;
+  SI  sqrt_rule_thickness= 0;
+  SI  sqrt_extra_ascender= 0;
+  int sqrt_degree_rise_percent= 0;
+  SI  sqrt_kern_before_degree= 0;
+  SI  sqrt_kern_after_degree= 0;
+  SI  sub_sup_gap_min= 0;         // subSuperscriptGapMin
+  SI  sup_drop_max= 0;            // superscriptBaselineDropMax
+  SI  sub_drop_min= 0;            // subscriptBaselineDropMin
+  SI  sup_bottom_max_with_sub= 0; // superscriptBottomMaxWithSubscript
+  SI  space_after_script= 0;      // spaceAfterScript
+  int script_percent= 0;          // scriptPercentScaleDown
+  int script_script_percent= 0;   // scriptScriptPercentScaleDown
 
   font_rep (string name);
   font_rep (string name, font fn);
@@ -127,6 +134,10 @@ struct font_rep: rep<font> {
   // the name of the smallest size variant reaching the given height, or of
   // an assembly made to measure; false when the font cannot tell
   virtual bool get_rubber_variant (string s, SI height, string& r);
+  // whether the glyph s is an "extended shape" (tall operator or
+  // delimiter) whose scripts follow its height, as opposed to an ordinary
+  // glyph whose scripts sit at the standard shifts
+  virtual bool is_extended_shape (string s);
 
   virtual bool   supports (string c) = 0;
   virtual void   get_extents (string s, metric& ex) = 0;

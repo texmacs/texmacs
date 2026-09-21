@@ -147,6 +147,13 @@ font_rep::copy_math_pars (font fn) {
   sqrt_degree_rise_percent     = fn->sqrt_degree_rise_percent;
   sqrt_kern_before_degree      = fn->sqrt_kern_before_degree;
   sqrt_kern_after_degree       = fn->sqrt_kern_after_degree;
+  sub_sup_gap_min              = fn->sub_sup_gap_min;
+  sup_drop_max                 = fn->sup_drop_max;
+  sub_drop_min                 = fn->sub_drop_min;
+  sup_bottom_max_with_sub      = fn->sup_bottom_max_with_sub;
+  space_after_script           = fn->space_after_script;
+  script_percent               = fn->script_percent;
+  script_script_percent        = fn->script_script_percent;
 }
 
 void
@@ -601,6 +608,12 @@ font_rep::make_rubber_font (font fn) {
 bool
 font_rep::get_rubber_variant (string s, SI height, string& r) {
   (void) s; (void) height; (void) r;
+  return false;
+}
+
+bool
+font_rep::is_extended_shape (string s) {
+  (void) s;
   return false;
 }
 

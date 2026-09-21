@@ -52,6 +52,7 @@ struct rubber_unicode_font_rep: font_rep {
   int    search_font_sub (string s, string& rew);
   int    search_font_sub_opentype (string s, string& rew);
   bool   get_rubber_variant (string s, SI height, string& r);
+  bool   is_extended_shape (string s);
   void   add_virtual_glyph (string name, string def);
   array<SI> part_lengths (GlyphAssembly gass, bool ver);
   int    search_font_cached (string s, string& rew);
@@ -381,6 +382,16 @@ rubber_unicode_font_rep::search_font_sub_opentype (string s, string& rew) {
   // if nr == 0, failed to find the sub font from subfn[1:4]
   // use default rubber font subfn[5]
   return nr == 0 ? 5 : nr;
+}
+
+bool
+rubber_unicode_font_rep::is_extended_shape (string s) {
+  // every stretched delimiter or operator is an extended shape; plain
+  // glyphs ask the base font
+  string rew;
+  int nr= search_font_cached (s, rew);
+  if (nr == 6 || starts (rew, "<@")) return true;
+  return get_font (nr)->is_extended_shape (rew);
 }
 
 // Measured lengths (heights or widths) of the parts of an assembly in the

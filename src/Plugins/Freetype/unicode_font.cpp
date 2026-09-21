@@ -145,6 +145,7 @@ struct unicode_font_rep: font_rep {
   bool get_ot_kerning (string s, SI height, bool top, bool left, SI& kerning);
   bool get_ot_italic_correction (string s, SI& r);
   bool is_ot_integral (string s);
+  bool is_extended_shape (string s);
   hashset<unsigned int> ot_integral;
 
   double design_unit_to_metric_factor;   // vertical
@@ -530,6 +531,15 @@ unicode_font_rep::unicode_font_rep (string name,
           math_table->constants_table[radicalKernBeforeDegree]);
       sqrt_kern_after_degree= design_unit_to_metric (
           math_table->constants_table[radicalKernAfterDegree]);
+      // scripts
+      sub_sup_gap_min= design_unit_to_metric (mc[subSuperscriptGapMin]);
+      sup_drop_max   = design_unit_to_metric (mc[superscriptBaselineDropMax]);
+      sub_drop_min   = design_unit_to_metric (mc[subscriptBaselineDropMin]);
+      sup_bottom_max_with_sub=
+          design_unit_to_metric (mc[superscriptBottomMaxWithSubscript]);
+      space_after_script= design_unit_to_metric_x (mc[spaceAfterScript]);
+      script_percent       = mc[scriptPercentScaleDown];
+      script_script_percent= mc[scriptScriptPercentScaleDown];
     }
   }
 }
@@ -1216,6 +1226,14 @@ unicode_font_rep::get_ot_kerning (string s, SI height, bool top, bool left,
   // cout << "Kerning for " << ss << " with height: " << kerning_unit << " -> "
   //      << kerning << LF;
   return true;
+}
+
+bool
+unicode_font_rep::is_extended_shape (string s) {
+  if (math_type != MATH_TYPE_OPENTYPE || N(s) == 0) return false;
+  unsigned int glyphID= get_glyphID (s);
+  glyphID= math_table->get_init_glyphID (glyphID);
+  return math_table->extended_shape_coverage->contains (glyphID);
 }
 
 bool

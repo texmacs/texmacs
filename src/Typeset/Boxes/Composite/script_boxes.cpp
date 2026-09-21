@@ -358,6 +358,39 @@ struct side_box_rep: public composite_box_rep {
   */
 };
 
+// Script shifts according to the OpenType MATH specification: the standard
+// shifts for ordinary glyphs; for boxes and extended shapes the scripts
+// follow the height of the base within the baseline drop limits; minimum
+// gap between a subscript and a superscript, resolved as in TeX.
+static void
+ot_script_shifts (font fn, box ref, int level, box sub, box sup,
+                  SI& ysub, SI& ysup) {
+  bool ext= ref->extended_shape ();
+  if (!is_nil (sup)) {
+    ysup= ref->sup_lo_base (level);
+    if (ext) ysup= max (ysup, ref->y2 - fn->sup_drop_max);
+    if (ysup + sup->y1 < fn->ysup_lo_lim) ysup= fn->ysup_lo_lim - sup->y1;
+  }
+  if (!is_nil (sub)) {
+    ysub= ref->sub_lo_base (level);
+    if (ext) ysub= min (ysub, ref->y1 - fn->sub_drop_min);
+    if (ysub + sub->y2 > fn->ysub_hi_lim) ysub= fn->ysub_hi_lim - sub->y2;
+  }
+  if (!is_nil (sub) && !is_nil (sup)) {
+    SI gap= (ysup + sup->y1) - (ysub + sub->y2);
+    if (gap < fn->sub_sup_gap_min) {
+      SI delta= fn->sub_sup_gap_min - gap;
+      ysub -= delta;
+      SI over= (ysup + sup->y1) - fn->sup_bottom_max_with_sub;
+      if (over > 0) {
+        SI d2= min (over, delta);
+        ysup -= d2;
+        ysub += d2;
+      }
+    }
+  }
+}
+
 side_box_rep::side_box_rep (
   path ip, box ref, box l1, box l2, box r1, box r2, font fn2, int level2):
   composite_box_rep (ip), fn (fn2), level (level2)
@@ -433,6 +466,13 @@ side_box_rep::side_box_rep (
     }
   }
 
+  // fonts with an OpenType MATH table place scripts by its constants
+  bool ot= (fn->math_type == MATH_TYPE_OPENTYPE) && (fn->sub_sup_gap_min > 0);
+  if (ot) {
+    ot_script_shifts (fn, ref, level, l1, l2, lsub, lsup);
+    ot_script_shifts (fn, ref, level, r1, r2, rsub, rsup);
+  }
+
   // The corrections are evaluated at the height of the edge of the script
   // which faces the base (for the base) and of the edge of the base which
   // faces the script (for the script), as needed for OpenType math kerning.
@@ -459,6 +499,7 @@ side_box_rep::side_box_rep (
 
   position ();
   left_justify ();
+  if (ot && nr_right > 0) x2 += fn->space_after_script;
 
   int i;
   id_left= id_right= 0;

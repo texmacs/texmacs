@@ -64,7 +64,11 @@ $(BUILD)/%.moc: %.cpp
 	@mkdir -p $(BUILD)
 	$(TM_MOC) $(TM_MOCFLAGS) $(abspath $<) -o $@
 
-$(BUILD)/%.o: %.cpp $(BUILD)/%.moc
+# test objects depend on every header of the main build: a changed vtable
+# in a stale object is a crash, not a compile error
+TM_HEADERS := $(shell find $(SRC) -name '*.hpp' -not -path '*/Objects/*')
+
+$(BUILD)/%.o: %.cpp $(BUILD)/%.moc $(TM_HEADERS)
 	cd $(SRC) && $(TM_CXX) $(TM_INCL) $(TM_CXXFLAGS) -I$(BUILD) \
 	  -c $(abspath $<) -o $@
 

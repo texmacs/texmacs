@@ -47,6 +47,7 @@ private slots:
   void test_assembly_monotone ();
   void test_hand_tuned_switch ();
   void test_rubber_variant_by_height ();
+  void test_script_parameters ();
 };
 
 void
@@ -319,6 +320,36 @@ TestOpenTypeFont::test_rubber_variant_by_height () {
   QVERIFY (rf->supports (r));
   // unknown characters are refused
   QVERIFY (!rf->get_rubber_variant ("<left-.>", du_y (2000), r));
+}
+
+void
+TestOpenTypeFont::test_script_parameters () {
+  if (!have_lm) QSKIP ("no Latin Modern Math");
+  // Latin Modern Math: subSuperscriptGapMin 160, superscriptBaselineDropMax
+  // 250, subscriptBaselineDropMin 200, superscriptBottomMaxWithSubscript
+  // 344, spaceAfterScript 56, script scales 70% and 50%
+  QCOMPARE (lm->sub_sup_gap_min, du_y (160));
+  QCOMPARE (lm->sup_drop_max, du_y (250));
+  QCOMPARE (lm->sub_drop_min, du_y (200));
+  QCOMPARE (lm->sup_bottom_max_with_sub, du_y (344));
+  QCOMPARE (lm->space_after_script, du_x (56));
+  QCOMPARE (lm->script_percent, 70);
+  QCOMPARE (lm->script_script_percent, 50);
+  // the standard shifts come from the table as well
+  QCOMPARE (lm->ysup_lo_base, du_y (363));
+  // integrals and summation signs are extended shapes, letters are not
+  QVERIFY (lm->is_extended_shape ("<#222B>"));
+  QVERIFY (lm->is_extended_shape ("<#2211>"));
+  QVERIFY (!lm->is_extended_shape ("<#1D453>"));
+  QVERIFY (!lm->is_extended_shape ("x"));
+  // the rubber font answers for stretched variants as well
+  font rf= rubber_font (lm);
+  QVERIFY (rf->is_extended_shape ("<big-int-2>"));
+  QVERIFY (rf->is_extended_shape ("<left-(-9>"));
+  // fonts without a MATH table have no extended shapes
+  font rm= unicode_font ("lmroman10-regular", LM_SIZE, LM_DPI);
+  QVERIFY (!rm->is_extended_shape ("<#222B>"));
+  QCOMPARE (rm->sub_sup_gap_min, (SI) 0);
 }
 
 QTEST_GUILESS_MAIN(TestOpenTypeFont)

@@ -70,6 +70,8 @@ SI change_box_rep::rsub_correction_at (SI h) {
   return big_flag? bs[0]->rsub_correction_at (h): box_rep::rsub_correction_at (h); }
 SI change_box_rep::rsup_correction_at (SI h) {
   return big_flag? bs[0]->rsup_correction_at (h): box_rep::rsup_correction_at (h); }
+bool change_box_rep::extended_shape () {
+  return big_flag? bs[0]->extended_shape (): box_rep::extended_shape (); }
 SI change_box_rep::sub_lo_base (int l) {
   return big_flag? bs[0]->sub_lo_base (l): box_rep::sub_lo_base (l); }
 SI change_box_rep::sub_hi_lim  (int l) {

@@ -64,6 +64,7 @@ struct text_box_rep: public box_rep {
   SI        lsup_correction_at (SI h);
   SI        rsub_correction_at (SI h);
   SI        rsup_correction_at (SI h);
+  bool      extended_shape ();
   SI        sub_lo_base (int level);
   SI        sub_hi_lim  (int level);
   SI        sup_lo_lim  (int level);
@@ -174,6 +175,9 @@ SI text_box_rep::rsub_correction_at (SI h) {
   return fn->get_rsub_correction_at (str, h); }
 SI text_box_rep::rsup_correction_at (SI h) {
   return fn->get_rsup_correction_at (str, h); }
+bool text_box_rep::extended_shape () {
+  if (tm_string_length (str) != 1) return true;
+  return fn->is_extended_shape (str); }
 
 SI
 text_box_rep::sub_lo_base (int level) {

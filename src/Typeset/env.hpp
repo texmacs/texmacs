@@ -495,6 +495,7 @@ public:
   SI     get_page_height (bool deco);
   tree   decode_arrow (tree t, string l, string h);
   int    get_script_size (int sz, int level);
+  font   make_current_font (int sz);
   void   update_font ();
   void   update_color ();
   void   update_pattern_mode ();
