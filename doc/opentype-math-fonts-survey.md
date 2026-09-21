@@ -121,8 +121,11 @@ of or next to Latin Modern.
 **TeX Gyre Pagella, Termes, Bonum, Schola Math** (GUST FL). Already shipped
 with TeXmacs together with their text faces, and already special-cased
 with hand-tuned tables (`adjust_pagella.cpp` and friends). No MathKernInfo.
-The MATH table should replace the hand-tuned tables once the OpenType path
-reaches parity; the visual sample gives the comparison.
+The hand-tuned tables stay and take precedence: they were crafted against
+TeXmacs's own layout and are better than what the font declares. The MATH
+table only supplies what they do not cover (variants and assemblies for
+delimiters, constants for fractions, radicals and limits); the visual
+sample shows where the two disagree.
 
 **TeX Gyre DejaVu Math** (Bitstream Vera / DejaVu license, free). Sans
 serif math for DejaVu Sans and DejaVu Serif; TeXmacs already knows the
@@ -288,7 +291,8 @@ What each field replaces:
   consistent.
 - `menu`: generates the "Mathematical font" and "Font" menus from the
   profiles that are installed, instead of the hand-written lists.
-- `quirks`: a closed set of C++ switches for the residual hand tuning, for
+- `quirks`: a closed set of C++ switches for hand tuning that is not a
+  correction table, for
   example the radical gap of Latin Modern or the integral spacing that
   `concat_math.cpp` currently keys on `MATH_TYPE_STIX` and
   `MATH_TYPE_TEX_GYRE`. Each quirk has a name so that it is greppable.
@@ -310,11 +314,18 @@ detected from the cmap, no cap.
    `smart_font.cpp` use it for `is_math_family`, the family fix-ups and the
    text companions. This is the change that lets an OpenType math font
    supply its own italic letters. Add the profiles for Tier 1.
-3. **Retire the hand-tuned tables** for TeX Gyre and STIX where the MATH
-   data does the same job: switch the constructor ladder to consult the
-   profile, keep the `adjust_*.cpp` corrections only as quirks where a
-   visual diff shows they are still better. Ship STIX Two Math and its text
-   faces next to (later instead of) STIX v1.
+3. **Layer the MATH data under the hand-tuned tables.** The `adjust_*.cpp`
+   corrections and the other per-font tuning keep precedence: when a
+   correction table has an entry for a glyph, it wins over the italic
+   correction and cut-in kern of the MATH table; when a font has no entry,
+   the MATH data is used. Concretely, the constructor ladder in
+   `unicode_font.cpp` must run the MATH activation *before* the per-family
+   branches, so that a hand-tuned branch can override individual fields
+   (`yfrac`, script shifts, corrections) while leaving the rest to the
+   table. New profiles may add hand-tuned tables of their own where the
+   font data is poor (the survey shows which fonts lack MathKernInfo or
+   italic corrections). Ship STIX Two Math and its text faces next to STIX
+   v1.
 4. **Menus and legacy names.** Generate the font menus from installed
    profiles; keep the `math-*` aliases so that old documents keep working.
 5. **Weights.** Use the bold math fonts (NewCM Math Bold, KpMath Bold, XITS

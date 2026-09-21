@@ -272,8 +272,10 @@ Work done on top of the port, in the order of the plan below:
 
 Not changed: activation is still implicit through the family-name ladder in
 `unicode_font.cpp`. TeX Gyre Math and the STIX text fonts keep their
-hand-tuned tables; `STIXMath-Regular` does not match the `STIX-` prefix and
-already takes the OpenType path.
+hand-tuned tables, which is intended: those tables are crafted against
+TeXmacs's layout and take precedence over the font data wherever both
+exist. `STIXMath-Regular` does not match the `STIX-` prefix and already
+takes the OpenType path.
 
 The uncommitted debugging edits of the original worktree (font database
 prints, the `get_unicode_range` experiment) were dropped.
@@ -386,8 +388,12 @@ TM_TEST_FONT_DIR=/path/to/fonts tests/opentype/render-samples.sh
   italic corrections and cut-in kerns are lost. Fonts with a MATH table
   should be treated as math families, with letters mapped to the plane 1
   code points of the same font.
-- Let STIX and TeX Gyre Math use the MATH table, then compare against the
-  hand-tuned tables and retire what the MATH data replaces.
+- Let STIX and TeX Gyre Math use the MATH table for what their hand-tuned
+  tables do not cover (delimiter variants and assemblies, fraction,
+  radical and limit constants). The hand-tuned tables are better than the
+  font data and keep precedence: MATH activation must happen before the
+  per-family branches of the constructor ladder, and a correction table
+  entry must win over the MATH italic correction and kern for that glyph.
 - Replace the family-name tests in `poor_rubber.cpp`, `concat_math.cpp` and
   `math_boxes.cpp` with `math_type` checks.
 - A preference to enable or disable MATH-table typesetting for comparison.
@@ -416,7 +422,7 @@ TM_TEST_FONT_DIR=/path/to/fonts tests/opentype/render-samples.sh
    attachment.
 3. Remaining script constants (`subSuperscriptGapMin`, drop limits,
    `spaceAfterScript`) and `scriptPercentScaleDown`.
-4. Enable the path for STIX and TeX Gyre Math and compare against the
-   hand-tuned output.
+4. Enable the path for STIX and TeX Gyre Math underneath their hand-tuned
+   tables, and check with the samples that nothing they tune has changed.
 5. GSUB `ssty` and GPOS kerning, which require a small OpenType layout
    reader alongside the MATH parser.
