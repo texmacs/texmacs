@@ -11,6 +11,7 @@
 
 #include "font.hpp"
 #include "iterator.hpp"
+#include "hashset.hpp"
 #include "file.hpp"
 #include "convert.hpp"
 #include "merge_sort.hpp"
@@ -278,8 +279,33 @@ on_blacklist (string name) {
     starts (name, "FonetikaDania");
 }
 
+// Scanning a font file means reading it whole and parsing its name table,
+// which is slow when there are thousands of them (a TeX Live installation
+// on the font path). Files whose name and size are already recorded in the
+// database are therefore skipped: this index maps "name size" to true and
+// is built once from the database.
+static hashset<string> scanned_files;
+static bool scanned_files_ready= false;
+static int  scan_new= 0, scan_skipped= 0;
+
+static void
+font_database_init_scanned () {
+  scanned_files= hashset<string> ();
+  iterator<tree> it= iterate (font_table);
+  while (it->busy ()) {
+    tree im= font_table[it->next ()];
+    for (int i=0; i<N(im); i++)
+      if (is_func (im[i], TUPLE, 3))
+        scanned_files->insert (as_string (im[i][0]) * " " *
+                               as_string (im[i][2]));
+  }
+  scanned_files_ready= true;
+  scan_new= scan_skipped= 0;
+}
+
 void
 font_database_build (url u) {
+  if (!scanned_files_ready) font_database_init_scanned ();
   if (is_none (u));
   else if (is_or (u)) {
     font_database_build (u[1]);
@@ -296,23 +322,30 @@ font_database_build (url u) {
           font_database_build (u * url (a[i]));
   }
   else if (is_regular (u)) {
-    if (on_blacklist (as_string (tail (u)))) return;
-    cout << "Process " << u << "\n";
+    string name= as_string (tail (u));
+    if (on_blacklist (name)) return;
+    int sz= file_size (u);
+    if (scanned_files->contains (name * " " * as_string (sz))) {
+      scan_skipped++;
+      return;
+    }
+    scan_new++;
+    if (DEBUG_VERBOSE) debug_fonts << "Process " << u << "\n";
     scheme_tree t= tt_font_name (u);
     for (int i=0; i<N(t); i++)
       if (is_func (t[i], TUPLE, 2) &&
           is_atomic (t[i][0]) &&
           is_atomic (t[i][1]))
         {
-          int  sz = file_size (u);
           tree key= t[i];
-          tree im = tuple (as_string (tail (u)), as_string (i), as_string (sz));
+          tree im = tuple (name, as_string (i), as_string (sz));
           tree all= tree (TUPLE);
           if (font_table->contains (key))
             all= font_table [key];
           tuple_insert (all, im);
           font_table (key)= all;
         }
+    scanned_files->insert (name * " " * as_string (sz));
   }
 }
 
@@ -331,7 +364,10 @@ font_database_guess_features () {
 void
 font_database_build_local () {
   font_database_load ();
+  font_database_init_scanned ();
   font_database_build (tt_font_path ());
+  cout << "TeXmacs] scanned " << scan_new << " new font file(s), skipped "
+       << scan_skipped << " already known\n";
   font_database_build_characteristics (false);
   font_database_guess_features ();
   font_database_save ();
@@ -341,6 +377,7 @@ void
 font_database_extend_local (url u) {
   tt_extend_font_path (u);
   font_database_load ();
+  font_database_init_scanned ();
   font_database_build (u);
   font_database_build_characteristics (false);
   font_database_guess_features ();
@@ -355,6 +392,7 @@ font_database_build_global (url u) {
   font_database_load_features (GLOBAL_FEATURES);
   font_database_load_characteristics (GLOBAL_CHARACTERISTICS);
   fonts_loaded= fonts_global_loaded= true;
+  font_database_init_scanned ();
   font_database_build (u);
   font_database_build_characteristics (false);
   font_database_guess_features ();
@@ -574,17 +612,22 @@ font_database_filter_characteristics () {
 void
 font_database_build_characteristics (bool force) {
   iterator<tree> it= iterate (font_table);
+  int done= 0;
   while (it->busy ()) {
     tree key= it->next ();
     tree im = font_table[key];
     if (!(is_func (key, TUPLE) && N(key) >= 2)) continue;
-    cout << "Analyzing " << key[0] << " " << key[1] << "\n";
+    if (!force && font_characteristics->contains (key)) continue;
+    if (DEBUG_VERBOSE)
+      debug_fonts << "Analyzing " << key[0] << " " << key[1] << "\n";
+    done++;
     for (int i=0; i<N(im); i++)
       if (force || !font_characteristics->contains (key))
         if (is_func (im[i], TUPLE, 3)) {
           string name= as_string (im[i][0]);
           string nr  = as_string (im[i][1]);
-          cout << "| Processing " << name << ", " << nr << "\n";
+          if (DEBUG_VERBOSE)
+            debug_fonts << "| Processing " << name << ", " << nr << "\n";
           if (ends (name, ".ttc"))
             name= (name (0, N(name)-4) * "." * nr * ".ttf");
           if (ends (name, ".ttf") ||
@@ -595,7 +638,7 @@ font_database_build_characteristics (bool force) {
               name= name (0, N(name)-2);
             if (tt_font_exists (name)) {
               array<string> a= tt_analyze (name);
-              cout << name << " ~> " << a << "\n";
+              if (DEBUG_VERBOSE) debug_fonts << name << " ~> " << a << "\n";
               tree t (TUPLE, N(a));
               for (int j=0; j<N(a); j++) t[j]= a[j];
               font_characteristics (key)= t;
@@ -603,6 +646,8 @@ font_database_build_characteristics (bool force) {
           }
         }
   }
+  if (done > 0)
+    cout << "TeXmacs] analyzed " << done << " font style(s)\n";
 }
 
 /******************************************************************************
