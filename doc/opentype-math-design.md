@@ -380,6 +380,14 @@ TM_TEST_FONT_DIR=/path/to/fonts tests/opentype/render-samples.sh
   `ssty` is read but not yet applied: the font does not know whether it is
   used at script size, which needs a flag from the environment.
 
+- **Smart font size queries.** Unnumbered rubber names and their
+  numbered sizes can resolve to different subfonts of a smart font (the
+  radical of the shipped STIX setup is served by a fallback font); the
+  size queries now go to the subfont which renders the numbered names.
+  Note that the `starts (res_name, "stix-")` checks of `concat_math.cpp`
+  never match the capitalized smart font names ("Stix-..."), so the
+  `rubber_stix_font` path is only reached through `make_rubber_font`.
+
 ## 6. Known defects still open
 
 1. The delimiter search still probes `<left-x-N>` for increasing `N` and
