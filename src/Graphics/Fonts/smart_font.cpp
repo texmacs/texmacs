@@ -726,6 +726,7 @@ struct smart_font_rep: font_rep {
   int    adjusted_dpi (string fam, string var, string ser, string sh, int att);
 
   font make_rubber_font (font base);
+  int  rubber_subfont (string s);
   bool get_rubber_variant (string s, SI height, string& r);
   bool is_extended_shape (string s);
   bool get_wide_variant (string s, SI width, string& r);
@@ -1197,22 +1198,32 @@ smart_font_rep::resolve_rubber (string c, string fam, int attempt) {
   return -1;
 }
 
+// The subfont which will render the numbered sizes <name-N> of a rubber or
+// wide character <name>: unnumbered names may resolve elsewhere, so the
+// size queries below ask the font of the numbered names
+int
+smart_font_rep::rubber_subfont (string s) {
+  if (N(s) < 2 || s[N(s)-1] != '>') return -1;
+  string probe= s (0, N(s)-1) * "-0>";
+  int i=0, nr;
+  string rr= probe;
+  advance (probe, i, rr, nr);
+  if (nr < 0 || nr >= N(fn) || is_nil (fn[nr])) return -1;
+  return nr;
+}
+
 bool
 smart_font_rep::get_rubber_variant (string s, SI height, string& r) {
-  int i=0, nr;
-  string rr= s;
-  advance (s, i, rr, nr);
-  if (nr < 0 || nr >= N(fn) || is_nil (fn[nr])) return false;
-  return fn[nr]->get_rubber_variant (rr, height, r);
+  int nr= rubber_subfont (s);
+  if (nr < 0) return false;
+  return fn[nr]->get_rubber_variant (s, height, r);
 }
 
 bool
 smart_font_rep::get_wide_variant (string s, SI width, string& r) {
-  int i=0, nr;
-  string rr= s;
-  advance (s, i, rr, nr);
-  if (nr < 0 || nr >= N(fn) || is_nil (fn[nr])) return false;
-  return fn[nr]->get_wide_variant (rr, width, r);
+  int nr= rubber_subfont (s);
+  if (nr < 0) return false;
+  return fn[nr]->get_wide_variant (s, width, r);
 }
 
 bool
