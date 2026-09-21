@@ -730,6 +730,7 @@ struct smart_font_rep: font_rep {
   bool is_extended_shape (string s);
   bool get_wide_variant (string s, SI width, string& r);
   bool get_top_accent (string s, SI& x);
+  bool get_feature_variant (string s, string feature, int alt, string& r);
 
   bool   supports (string c);
   void   get_extents (string s, metric& ex);
@@ -1222,6 +1223,17 @@ smart_font_rep::get_top_accent (string s, SI& x) {
   advance (s, i, r, nr);
   if (nr < 0 || nr >= N(fn) || is_nil (fn[nr])) return false;
   return fn[nr]->get_top_accent (r, x);
+}
+
+bool
+smart_font_rep::get_feature_variant (string s, string feature, int alt,
+                                     string& r) {
+  int i=0, n= N(s), nr;
+  if (n == 0) return false;
+  string rr= s;
+  advance (s, i, rr, nr);
+  if (nr < 0 || nr >= N(fn) || is_nil (fn[nr])) return false;
+  return fn[nr]->get_feature_variant (rr, feature, alt, r);
 }
 
 bool

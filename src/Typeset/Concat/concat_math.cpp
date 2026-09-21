@@ -467,7 +467,14 @@ concater_rep::typeset_sqrt (tree t, path ip) {
 void
 concater_rep::typeset_wide (tree t, path ip, bool above) {
   if (N(t) != 2) { typeset_error (t, ip); return; }
-  box b= typeset_as_concat (env, t[0], descend (ip, 0));
+  tree body= t[0];
+  // dotless i and j under accents, from the font (GSUB feature dtls)
+  if (above && env->fn->ot_math && is_atomic (body) &&
+      (body == "i" || body == "j")) {
+    string r;
+    if (env->fn->get_feature_variant (body->label, "dtls", 0, r)) body= r;
+  }
+  box b= typeset_as_concat (env, body, descend (ip, 0));
   string s= env->exec_string (t[1]);
   if (s == "^") s= "<hat>";
   if (s == "~") s= "<tilde>";

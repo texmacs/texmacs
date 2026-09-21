@@ -76,6 +76,7 @@ tt_face_rep::tt_face_rep (string name): rep<tt_face> (name) {
   }
   ft_select_charmap (ft_face, ft_encoding_adobe_custom);
   bad_face= false;
+  buffer_size= (int) fsize;
 
   // the font file may contain an OpenType MATH table;
   // parse it from the buffer that we already hold in memory
@@ -84,6 +85,17 @@ tt_face_rep::tt_face_rep (string name): rep<tt_face> (name) {
     debug_fonts << "Found MATH table for font " << name << "\n";
     dump_mathtable (debug_fonts, math_table);
   }
+}
+
+ot_gsub_map&
+tt_face_rep::gsub_feature (string tag) {
+  if (!gsub_features->contains (tag)) {
+    ot_gsub_map m;
+    if (buffer != nullptr)
+      m= parse_gsub_feature (string ((const char*) buffer, buffer_size), tag);
+    gsub_features (tag)= m;
+  }
+  return gsub_features (tag);
 }
 
 tt_face_rep::~tt_face_rep () {

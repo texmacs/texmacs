@@ -147,6 +147,7 @@ struct unicode_font_rep: font_rep {
   bool is_ot_integral (string s);
   bool is_extended_shape (string s);
   bool get_top_accent (string s, SI& x);
+  bool get_feature_variant (string s, string feature, int alt, string& r);
   void init_ot_math (tt_face face);
   hashset<unsigned int> ot_integral;
 
@@ -1254,6 +1255,20 @@ unicode_font_rep::get_top_accent (string s, SI& x) {
   unsigned int glyphID= get_glyphID (s);
   if (!math_table->top_accent->contains (glyphID)) return false;
   x= design_unit_to_metric_x (math_table->top_accent[glyphID].value);
+  return true;
+}
+
+bool
+unicode_font_rep::get_feature_variant (string s, string feature, int alt,
+                                       string& r) {
+  if (!ot_math || N(s) == 0 || is_nil (math_face)) return false;
+  unsigned int glyphID= get_glyphID (s);
+  if (glyphID == 0) return false;
+  ot_gsub_map& m= math_face->gsub_feature (feature);
+  if (!m->contains (glyphID)) return false;
+  array<unsigned int> alts= m[glyphID];
+  if (alt < 0 || alt >= N(alts)) return false;
+  r= "<@" * as_hexadecimal (alts[alt], 4) * ">";
   return true;
 }
 

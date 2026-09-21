@@ -632,6 +632,12 @@ font_rep::get_top_accent (string s, SI& x) {
   return false;
 }
 
+bool
+font_rep::get_feature_variant (string s, string feature, int alt, string& r) {
+  (void) s; (void) feature; (void) alt; (void) r;
+  return false;
+}
+
 font
 rubber_font (font base) {
   if (larger_font_table->contains (base->res_name))

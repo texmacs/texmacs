@@ -151,6 +151,11 @@ struct font_rep: rep<font> {
   // horizontal position of the attachment point of accents over the glyph
   // s, relative to its origin; false when unknown (use the center)
   virtual bool get_top_accent (string s, SI& x);
+  // the alt-th substitute of the glyph s under the OpenType feature
+  // (e.g. "dtls" for dotless letters, "flac" for flattened accents, "ssty"
+  // for script size alternates), as a native glyph name; false when none
+  virtual bool get_feature_variant (string s, string feature, int alt,
+                                    string& r);
 
   virtual bool   supports (string c) = 0;
   virtual void   get_extents (string s, metric& ex) = 0;

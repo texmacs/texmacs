@@ -778,6 +778,79 @@ parse_mathtable (const string& buf) {
   return table;
 }
 
+/******************************************************************************
+ * OpenType GSUB: single (type 1) and alternate (type 3) substitutions
+ ******************************************************************************/
+
+static void
+parse_gsub_subtable (const string& gsub, int type, int off, ot_gsub_map& m) {
+  if (type == 7) { // extension: the real type and a 32 bit offset
+    int ext_type= get_U16 (gsub, off + 2);
+    int ext_off = (int) get_U32 (gsub, off + 4);
+    parse_gsub_subtable (gsub, ext_type, off + ext_off, m);
+    return;
+  }
+  int format= get_U16 (gsub, off);
+  int cov_off= get_U16 (gsub, off + 2);
+  array<unsigned int> cov= parse_coverage_table (gsub, off + cov_off);
+  if (type == 1 && format == 1) {
+    int delta= (int) (S16) get_U16 (gsub, off + 4);
+    for (int i= 0; i < N(cov); i++)
+      if (!m->contains (cov[i])) {
+        array<unsigned int> a;
+        a << (unsigned int) ((cov[i] + delta) & 0xffff);
+        m (cov[i])= a;
+      }
+  }
+  else if (type == 1 && format == 2) {
+    int count= get_U16 (gsub, off + 4);
+    for (int i= 0; i < N(cov) && i < count; i++)
+      if (!m->contains (cov[i])) {
+        array<unsigned int> a;
+        a << (unsigned int) get_U16 (gsub, off + 6 + 2*i);
+        m (cov[i])= a;
+      }
+  }
+  else if (type == 3 && format == 1) {
+    int count= get_U16 (gsub, off + 4);
+    for (int i= 0; i < N(cov) && i < count; i++) {
+      int set_off= off + get_U16 (gsub, off + 6 + 2*i);
+      int n= get_U16 (gsub, set_off);
+      array<unsigned int> alts;
+      for (int k= 0; k < n; k++) alts << (unsigned int) get_U16 (gsub, set_off + 2 + 2*k);
+      if (!m->contains (cov[i])) m (cov[i])= alts;
+    }
+  }
+}
+
+ot_gsub_map
+parse_gsub_feature (const string& buf, string feature) {
+  ot_gsub_map m;
+  if ((N (buf) == 0) || (!tt_correct_version (buf, 0))) return m;
+  string gsub= tt_table (buf, 0, "GSUB");
+  if (N (gsub) < 10) return m;
+  int feature_list= get_U16 (gsub, 6);
+  int lookup_list = get_U16 (gsub, 8);
+  int feature_count= get_U16 (gsub, feature_list);
+  int lookup_count = get_U16 (gsub, lookup_list);
+  for (int f= 0; f < feature_count; f++) {
+    int rec= feature_list + 2 + 6*f;
+    if (get_tag (gsub, rec) != feature) continue;
+    int feat= feature_list + get_U16 (gsub, rec + 4);
+    int nl= get_U16 (gsub, feat + 2);
+    for (int l= 0; l < nl; l++) {
+      int li= get_U16 (gsub, feat + 4 + 2*l);
+      if (li >= lookup_count) continue;
+      int lookup= lookup_list + get_U16 (gsub, lookup_list + 2 + 2*li);
+      int type= get_U16 (gsub, lookup);
+      int nsub= get_U16 (gsub, lookup + 4);
+      for (int s= 0; s < nsub; s++)
+        parse_gsub_subtable (gsub, type, lookup + get_U16 (gsub, lookup + 6 + 2*s), m);
+    }
+  }
+  return m;
+}
+
 ot_mathtable
 parse_mathtable (url u) {
   string tt;

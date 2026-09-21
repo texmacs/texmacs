@@ -479,11 +479,24 @@ compute_wide_accent (path ip, box b, string s,
     ot_wide= fn->get_wide_variant ("<wide-" * ss * ">", width, dummy);
     if (ot_wide) ot_name= "<wide-" * ss * ">";
   }
-  if (ot_wide) {
-    // the font stretches the accent itself; keep its ink box only, the
-    // combining marks have no advance
-    SI width= b->x2 - b->x1;
-    wideb= wide_box (decorate_middle (ip), ot_name, fn, pen, width);
+  bool ot_narrow= !wide && fn->ot_math && !tex_gyre && !stix &&
+                  fn->math_type == MATH_TYPE_OPENTYPE && above &&
+                  fn->accent_base_height > 0;
+  if (ot_wide || ot_narrow) {
+    if (ot_wide) {
+      // the font stretches the accent itself; keep its ink box only, the
+      // combining marks have no advance
+      SI width= b->x2 - b->x1;
+      wideb= wide_box (decorate_middle (ip), ot_name, fn, pen, width);
+    }
+    else {
+      // flattened accents over tall bases (GSUB feature flac)
+      string acc= s, r;
+      if (fn->flattened_accent_base_height > 0 &&
+          b->y2 > fn->flattened_accent_base_height &&
+          fn->get_feature_variant (s, "flac", 0, r)) acc= r;
+      wideb= text_box (decorate_middle (ip), 0, acc, fn, pen);
+    }
     wideb= resize_box (decorate_middle (ip), wideb,
                        min (wideb->x1, wideb->x3), wideb->y1,
                        max (wideb->x2, wideb->x4), wideb->y2);

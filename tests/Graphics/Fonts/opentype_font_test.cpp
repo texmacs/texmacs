@@ -49,6 +49,7 @@ private slots:
   void test_rubber_variant_by_height ();
   void test_script_parameters ();
   void test_wide_variants ();
+  void test_feature_variants ();
 };
 
 void
@@ -415,6 +416,36 @@ TestOpenTypeFont::test_wide_variants () {
   QVERIFY (!lm->get_top_accent ("1", x) || x > 0);
   font rm= unicode_font ("lmroman10-regular", LM_SIZE, LM_DPI);
   QVERIFY (!rm->get_top_accent ("f", x));
+}
+
+void
+TestOpenTypeFont::test_feature_variants () {
+  if (!have_lm) QSKIP ("no Latin Modern Math");
+  string r;
+  // Latin Modern Math: dtls maps math italic i (U+1D456) to glyph 1322,
+  // ssty maps math italic x (U+1D465) to glyph 1427 (first alternate);
+  // it has no flac feature
+  QVERIFY (lm->get_feature_variant ("<#1D456>", "dtls", 0, r));
+  QVERIFY2 (r == string ("<@") * as_hexadecimal (1322, 4) * ">",
+            as_charp ("dtls of U+1D456 gave " * r));
+  QVERIFY (lm->supports (r));
+  QVERIFY (!lm->get_feature_variant ("<#1D465>", "dtls", 0, r));
+  QVERIFY (lm->get_feature_variant ("<#1D465>", "ssty", 0, r));
+  QCOMPARE (r, string ("<@") * as_hexadecimal (1427, 4) * ">");
+  QVERIFY (lm->get_feature_variant ("<#1D465>", "ssty", 1, r));
+  QVERIFY (!lm->get_feature_variant ("<#1D465>", "ssty", 2, r));
+  QVERIFY (!lm->get_feature_variant ("<#302>", "flac", 0, r));
+  // STIX Two Math: flac maps the combining circumflex to glyph 4800
+  if (tt_font_exists ("STIXTwoMath-Regular")) {
+    font st= unicode_font ("STIXTwoMath-Regular", LM_SIZE, LM_DPI);
+    QVERIFY (st->get_feature_variant ("<#302>", "flac", 0, r));
+    QCOMPARE (r, string ("<@") * as_hexadecimal (4800, 4) * ">");
+    QVERIFY (st->get_feature_variant ("<#1D456>", "dtls", 0, r));
+    QCOMPARE (r, string ("<@") * as_hexadecimal (3335, 4) * ">");
+  }
+  // fonts without a MATH table answer nothing
+  font rm= unicode_font ("lmroman10-regular", LM_SIZE, LM_DPI);
+  QVERIFY (!rm->get_feature_variant ("i", "dtls", 0, r));
 }
 
 QTEST_GUILESS_MAIN(TestOpenTypeFont)

@@ -220,6 +220,14 @@ struct ot_mathtable {
 CONCRETE_NULL_CODE (ot_mathtable);
 
 ot_mathtable parse_mathtable (const string& buf);
+
+/******************************************************************************
+ * OpenType GSUB: single and alternate substitutions of one feature
+ ******************************************************************************/
+// glyph -> substitutes (one for single substitutions, the alternates in
+// order for alternate substitutions), for all lookups of the feature tag
+typedef hashmap<unsigned int, array<unsigned int> > ot_gsub_map;
+ot_gsub_map parse_gsub_feature (const string& buf, string feature);
 ot_mathtable parse_mathtable (url u);
 void dump_mathtable (tm_ostream& str, ot_mathtable table);
 

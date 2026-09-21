@@ -370,6 +370,16 @@ TM_TEST_FONT_DIR=/path/to/fonts tests/opentype/render-samples.sh
   The sample diff shows the roman row unchanged and only sizes of nested
   delimiters and gaps changing for TeX Gyre Pagella.
 
+- **GSUB features.** `parse_gsub_feature` reads the single and alternate
+  substitutions of one feature (lookup types 1, 3 and 7), cached per face;
+  `get_feature_variant (s, feature, alt, r)` exposes them on fonts as
+  native glyph names. Used for `dtls` (dotless i and j under accents, in
+  `typeset_wide`) and `flac` (flattened accents over bases taller than
+  `flattenedAccentBaseHeight`). Narrow accents of untuned OpenType fonts
+  are placed by `accentBaseHeight` and the attachment points as well.
+  `ssty` is read but not yet applied: the font does not know whether it is
+  used at script size, which needs a flag from the environment.
+
 ## 6. Known defects still open
 
 1. The delimiter search still probes `<left-x-N>` for increasing `N` and

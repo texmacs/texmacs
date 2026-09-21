@@ -16,7 +16,7 @@
         </equation*>
 
         <\equation*>
-          <wide|f|^>+<wide|x|~>+<wide|v|\<vect\>>+<wide|abcdef|~>+<wide|x+y+z|\<check\>>+<wide*|a<rsub|1>+\<cdots\>+a<rsub|n>|\<underbrace\>>+<wide|u+v+w|\<overbrace\>>+A<long-arrow|\<rubber-rightarrow\>|f<rsub|n>\<rightarrow\>f>B<long-arrow|\<rubber-leftarrow\>|g|h>C
+          <wide|f|^>+<wide|i|^>+<wide|j|~>+<wide|x|~>+<wide|v|\<vect\>>+<wide|<around*|(|A|)>|^>+<wide|abcdef|~>+<wide|x+y+z|\<check\>>+<wide*|a<rsub|1>+\<cdots\>+a<rsub|n>|\<underbrace\>>+<wide|u+v+w|\<overbrace\>>+A<long-arrow|\<rubber-rightarrow\>|f<rsub|n>\<rightarrow\>f>B<long-arrow|\<rubber-leftarrow\>|g|h>C
         </equation*>
       </with>
     </macro>>

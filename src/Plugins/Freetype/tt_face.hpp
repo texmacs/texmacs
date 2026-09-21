@@ -24,7 +24,11 @@ struct tt_face_rep: rep<tt_face> {
   bool bad_face = true;
   FT_Face ft_face = nullptr;
   FT_Byte *buffer = nullptr;
+  int buffer_size = 0;
   ot_mathtable math_table;
+  hashmap<string,ot_gsub_map> gsub_features;
+  // the single and alternate substitutions of a GSUB feature (cached)
+  ot_gsub_map& gsub_feature (string tag);
 
   tt_face_rep (string name);
   ~tt_face_rep () override;
