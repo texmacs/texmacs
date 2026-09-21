@@ -712,28 +712,27 @@ parse_mathtable (const string& buf) {
   int extendedShapeCoverageOffset= get_U16 (tt, mathGlyphInfoOffset + 4);
   int mathKernInfoOffset= get_U16 (tt, mathGlyphInfoOffset + 6);
 
-  // MathItalicsCorrectionInfo table
-  //cout << "parse MathItalicsCorrectionInfo\n";
-  int mathItalicsCorrectionInfoAbsOffset=
-      mathGlyphInfoOffset + mathItalicsCorrectionInfoOffset;
-  int italicsCorrectionCoverageOffset=
-      get_U16 (tt, mathItalicsCorrectionInfoAbsOffset + 0);
-  // int italicsCorrectionCount= get_U16 (tt, mathItalicsCorrectionInfoOffset +
-  // 2); parse MathItalicsCorrection Coverage table
-  parse_record_with_coverage (tt, mathItalicsCorrectionInfoAbsOffset,
-                              italicsCorrectionCoverageOffset, 4,
-                              table->italics_correction);
+  // MathItalicsCorrectionInfo table (may be NULL)
+  if (mathItalicsCorrectionInfoOffset > 0) {
+    int mathItalicsCorrectionInfoAbsOffset=
+        mathGlyphInfoOffset + mathItalicsCorrectionInfoOffset;
+    int italicsCorrectionCoverageOffset=
+        get_U16 (tt, mathItalicsCorrectionInfoAbsOffset + 0);
+    // italicsCorrectionCount at offset 2 is implied by the coverage table
+    parse_record_with_coverage (tt, mathItalicsCorrectionInfoAbsOffset,
+                                italicsCorrectionCoverageOffset, 4,
+                                table->italics_correction);
+  }
 
-  // MathTopAccentAttachment table
-  //cout << "parse MathTopAccentAttachment\n";
-  int mathTopAccentAttachmentAbsOffset=
-      mathGlyphInfoOffset + mathTopAccentAttachmentOffset;
-  int topAccentCoverageOffset=
-      get_U16 (tt, mathTopAccentAttachmentAbsOffset + 0);
-  // int topAccentAttachmentCount= get_U16 (tt, mathTopAccentAttachmentOffset +
-  // 2)
-  parse_record_with_coverage (tt, mathTopAccentAttachmentAbsOffset,
-                              topAccentCoverageOffset, 4, table->top_accent);
+  // MathTopAccentAttachment table (may be NULL)
+  if (mathTopAccentAttachmentOffset > 0) {
+    int mathTopAccentAttachmentAbsOffset=
+        mathGlyphInfoOffset + mathTopAccentAttachmentOffset;
+    int topAccentCoverageOffset=
+        get_U16 (tt, mathTopAccentAttachmentAbsOffset + 0);
+    parse_record_with_coverage (tt, mathTopAccentAttachmentAbsOffset,
+                                topAccentCoverageOffset, 4, table->top_accent);
+  }
 
   // ExtendedShapeCoverage table (may be NULL)
   //cout << "parse ExtendedShapeCoverage\n";
@@ -746,10 +745,10 @@ parse_mathtable (const string& buf) {
   }
 
 
-  // MathKernInfo table
-  //cout << "parse MathKernInfo\n";
-  parse_math_kern_info_table (tt, mathGlyphInfoOffset + mathKernInfoOffset,
-                              table->math_kern_info);
+  // MathKernInfo table (may be NULL)
+  if (mathKernInfoOffset > 0)
+    parse_math_kern_info_table (tt, mathGlyphInfoOffset + mathKernInfoOffset,
+                                table->math_kern_info);
 
   // math variants
   table->minConnectorOverlap= get_U16 (tt, mathVariantsOffset + 0);

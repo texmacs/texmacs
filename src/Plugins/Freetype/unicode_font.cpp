@@ -147,11 +147,13 @@ struct unicode_font_rep: font_rep {
   bool is_ot_integral (string s);
   hashset<unsigned int> ot_integral;
 
-  double design_unit_to_metric_factor;
-  double metric_to_design_unit_factor;
+  double design_unit_to_metric_factor;   // vertical
+  double design_unit_to_metric_x_factor; // horizontal
+  double metric_to_design_unit_factor;   // vertical
   void   init_design_unit_factor ();
-  SI     design_unit_to_metric (int du);
-  int    metric_to_design_unit (SI m);
+  SI     design_unit_to_metric (int du);   // vertical lengths
+  SI     design_unit_to_metric_x (int du); // horizontal lengths
+  int    metric_to_design_unit (SI m);     // vertical lengths
 
   ////////////////////////////
 
@@ -486,7 +488,7 @@ unicode_font_rep::unicode_font_rep (string name,
       frac_denom_gap_min= design_unit_to_metric (
           math_table->constants_table[fractionDenominatorGapMin]);
       frac_denom_disp_gap_min= design_unit_to_metric (
-          math_table->constants_table[fractionDenominatorGapMin]);
+          math_table->constants_table[fractionDenomDisplayStyleGapMin]);
       // sqrt boxes
       sqrt_ver_gap= design_unit_to_metric (
           math_table->constants_table[radicalVerticalGap]);
@@ -1072,30 +1074,29 @@ unicode_font_rep::get_wide_correction (string s, int mode) {
 
 inline void
 unicode_font_rep::init_design_unit_factor () {
-  int units_of_m= 0;
-  SI  em        = 0;
-  // get the design units of the width of 'm'
-  FT_UInt glyph_index= FT_Get_Char_Index (math_face->ft_face, 'm');
-  FT_Load_Glyph (math_face->ft_face, glyph_index, FT_LOAD_NO_SCALE);
-  units_of_m= math_face->ft_face->glyph->metrics.horiAdvance;
-
-  // get the width of the character 'm'
-  metric ex;
-  get_extents ("m", ex);
-  em= ex->x2 - ex->x1;
-
-  metric_to_design_unit_factor= (double) units_of_m / (double) em;
-  design_unit_to_metric_factor= (double) em / (double) units_of_m;
+  // The face is scaled to 'size' points at hdpi x vdpi, so one design unit
+  // measures size/units_per_EM points, i.e. size*hpt/units_per_EM vertically
+  // and size*wpt/units_per_EM horizontally (in SI units).
+  double upem= (double) math_face->ft_face->units_per_EM;
+  if (upem <= 0.0) upem= 1000.0;
+  design_unit_to_metric_factor  = ((double) size * (double) hpt) / upem;
+  design_unit_to_metric_x_factor= ((double) size * (double) wpt) / upem;
+  metric_to_design_unit_factor  = 1.0 / design_unit_to_metric_factor;
 }
 
 inline SI
 unicode_font_rep::design_unit_to_metric (int du) {
-  return (SI) (design_unit_to_metric_factor * du);
+  return (SI) tm_round (design_unit_to_metric_factor * du);
+}
+
+inline SI
+unicode_font_rep::design_unit_to_metric_x (int du) {
+  return (SI) tm_round (design_unit_to_metric_x_factor * du);
 }
 
 inline int
 unicode_font_rep::metric_to_design_unit (SI m) {
-  return (int) (metric_to_design_unit_factor * m);
+  return (int) tm_round (metric_to_design_unit_factor * m);
 }
 
 font
@@ -1151,8 +1152,7 @@ unicode_font_rep::get_ot_italic_correction (string s, SI& r) {
 
   if (italics_correction->contains (glyphID)) {
     int correction= italics_correction[glyphID].value;
-    r= design_unit_to_metric (correction);
-    cout << "ot_italic_corr [" << s << "] [" << correction << "] [" << r << "]" << LF;
+    r= design_unit_to_metric_x (correction);
     return true;
   }
   return false;
@@ -1171,7 +1171,7 @@ unicode_font_rep::get_ot_kerning (string s, SI height, bool top, bool left,
   int kerning_unit= math_table->get_kerning (
       glyphID, metric_to_design_unit (height), top, left);
 
-  kerning= design_unit_to_metric (kerning_unit);
+  kerning= design_unit_to_metric_x (kerning_unit);
   // cout << "Kerning for " << ss << " with height: " << kerning_unit << " -> "
   //      << kerning << LF;
   return true;

@@ -547,7 +547,9 @@ rubber_unicode_font (font base) {
 
 font
 rubber_unicode_font (font base, tt_face face) {
-  string name= "rubberunicode[" * base->res_name * "]";
+  // NOTE: the name must differ from the one of rubber_unicode_font (base),
+  // which serves as fallback (subfont 5) inside this font
+  string name= "rubberunicode-ot[" * base->res_name * "]";
   return make (font, name, tm_new<rubber_unicode_font_rep> (name, base, face));
 }
 

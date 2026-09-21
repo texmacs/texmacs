@@ -27,7 +27,7 @@ struct tt_face_rep: rep<tt_face> {
   ot_mathtable math_table;
 
   tt_face_rep (string name);
-  ~tt_face_rep ();
+  ~tt_face_rep () override;
 };
 
 struct tt_font_metric_rep: font_metric_rep {

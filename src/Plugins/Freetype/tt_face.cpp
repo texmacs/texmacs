@@ -15,8 +15,6 @@
 #include "tt_file.hpp"
 #include "tm_timer.hpp"
 #include "sys_utils.hpp"
-#include "analyze.hpp" // locase_all
-#include "file.hpp" // load_string
 
 #ifdef USE_FREETYPE
 
@@ -79,18 +77,12 @@ tt_face_rep::tt_face_rep (string name): rep<tt_face> (name) {
   ft_select_charmap (ft_face, ft_encoding_adobe_custom);
   bad_face= false;
 
-  // .ttf/.otf file may contain a math table
-  string font_suffix= locase_all (suffix (u));
-  if (font_suffix == "ttf" || font_suffix == "otf") {
-    string buf;
-    if (!load_string (u, buf, false)) {
-      math_table= parse_mathtable (buf);
-    }
-    if (!is_nil (math_table)) {
-      // we have a MATH table
-      debug_fonts << "Found MATH table for font " << name << "\n";
-      dump_mathtable (debug_fonts, math_table);
-    }
+  // the font file may contain an OpenType MATH table;
+  // parse it from the buffer that we already hold in memory
+  math_table= parse_mathtable (string ((const char*) buffer, (int) fsize));
+  if (!is_nil (math_table) && DEBUG_VERBOSE) {
+    debug_fonts << "Found MATH table for font " << name << "\n";
+    dump_mathtable (debug_fonts, math_table);
   }
 }
 
