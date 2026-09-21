@@ -352,6 +352,14 @@ TM_TEST_FONT_DIR=/path/to/fonts tests/opentype/render-samples.sh
   (combining marks) are now accepted by `supports`. Flattened accents
   (`flac`) still need the GSUB reader.
 
+- **Phase 3, first step.** When the main font of a smart font is an
+  OpenType math font, letters in math mode are rewritten to its
+  mathematical italic alphabet (`REWRITE_MATH_ITALIC`, subfont `ot-italic`
+  which is the main font itself) instead of being taken from the text
+  italic face, and lowercase Greek uses the font's italic Greek. Italic
+  corrections and cut-in kerns therefore apply to letters. The profile
+  table, alphabets, GSUB features and menus are still to do.
+
 ## 6. Known defects still open
 
 1. The delimiter search still probes `<left-x-N>` for increasing `N` and

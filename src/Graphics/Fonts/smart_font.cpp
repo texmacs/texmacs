@@ -42,6 +42,9 @@ RESOURCE(smart_map);
 #define REWRITE_UPRIGHT         9
 #define REWRITE_ITALIC         10
 #define REWRITE_IGNORE         11
+#define REWRITE_MATH_ITALIC    12
+
+static string substitute_math_italic (string s);
 
 struct smart_map_rep: rep<smart_map> {
   int chv[256];
@@ -699,6 +702,7 @@ struct smart_font_rep: font_rep {
   int    dpi;
   int    math_kind;
   int    italic_nr;
+  bool   ot_math;    // the main font is an OpenType math font
 
   array<font> fn;
   smart_map   sm;
@@ -758,6 +762,7 @@ smart_font_rep::smart_font_rep (
     series (series2), shape (shape2), rshape (shape2),
     sz (sz2), hdpi (hdpi2), dpi (vdpi2),
     math_kind (0), italic_nr (-1),
+    ot_math (!is_nil (base_fn) && base_fn->math_type == MATH_TYPE_OPENTYPE),
     fn (2), sm (get_smart_map (tuple (family2, variant2, series2, shape2)))
 {
   fn[SUBFONT_MAIN ]= adjust_subfont (base_fn);
@@ -783,6 +788,12 @@ smart_font_rep::smart_font_rep (
       rshape= "right";
       if (math_kind == 2)
         this->copy_math_pars (base_fn);
+      else if (ot_math && math_kind == 1) {
+        // letters from the math italic alphabet of the math font itself
+        italic_nr= sm->add_font (tuple ("ot-italic"), REWRITE_MATH_ITALIC);
+        initialize_font (italic_nr);
+        this->copy_math_pars (fn[italic_nr]);
+      }
       else {
         italic_nr= sm->add_font (tuple ("fast-italic"), REWRITE_NONE);
         initialize_font (italic_nr);
@@ -898,6 +909,8 @@ rewrite (string s, int kind) {
     return substitute_italic (s);
   case REWRITE_IGNORE:
     return "";
+  case REWRITE_MATH_ITALIC:
+    return substitute_math_italic (s);
   default:
     return s;
   }
@@ -1228,6 +1241,36 @@ smart_font_rep::make_rubber_font (font base) {
   return font_rep::make_rubber_font (base);
 }
 
+// Letters in math mode for OpenType math fonts: the mathematical italic
+// alphabet of the font itself (plane 1, with the hole of the Planck
+// constant at U+210E), so that its italic corrections and cut-in kerns
+// apply to the letters
+static hashmap<string,string> math_italic_letters ("");
+
+static string
+substitute_math_italic (string s) {
+  hashmap<string,string>& h (math_italic_letters);
+  if (N (h) == 0) {
+    for (int i= 0; i < 26; i++) {
+      int lo= (i == 7)? 0x210e: 0x1d44e + i;
+      h (string ((char) ('a' + i)))=
+        "<#" * upcase_all (as_hexadecimal (lo)) * ">";
+      h (string ((char) ('A' + i)))=
+        "<#" * upcase_all (as_hexadecimal (0x1d434 + i)) * ">";
+    }
+  }
+  string r;
+  int i= 0, n= N(s);
+  while (i < n) {
+    int start= i;
+    tm_char_forwards (s, i);
+    string ss= s (start, i);
+    if (h->contains (ss)) r << h[ss];
+    else r << ss;
+  }
+  return r;
+}
+
 static bool
 use_italic_greek (array<string> a) {
   // FIXME: this is a very hacky fix for fonts such as
@@ -1263,7 +1306,8 @@ smart_font_rep::resolve (string c) {
       initialize_font (nr);
       return sm->add_char (key, c);
     }
-    if (is_greek (c) && use_italic_greek (a) && shape != "mathupright") {
+    if (is_greek (c) && (use_italic_greek (a) || ot_math) &&
+        shape != "mathupright") {
       string gc= substitute_italic_greek (c);
       if (gc != "" && fn[SUBFONT_MAIN]->supports (gc)) {
         tree key= tuple ("italic-greek");
@@ -1395,6 +1439,8 @@ smart_font_rep::initialize_font (int nr) {
   else if (a[0] == "bold-italic-math")
     fn[nr]= smart_font_bis (family, variant, "bold", "italic", sz, hdpi, dpi);
   else if (a[0] == "italic-greek")
+    fn[nr]= fn[SUBFONT_MAIN];
+  else if (a[0] == "ot-italic")
     fn[nr]= fn[SUBFONT_MAIN];
   else if (a[0] == "upright-greek")
     fn[nr]= fn[SUBFONT_MAIN];
