@@ -136,6 +136,8 @@
   (glyph-recognize recognize_glyph (string array_array_array_double))
   (set-new-fonts set_new_fonts (void bool))
   (new-fonts? get_new_fonts (bool))
+  (set-hand-tuned-math-fonts set_hand_tuned_math_fonts (void bool))
+  (hand-tuned-math-fonts? get_hand_tuned_math_fonts (bool))
   (tmtm-eqnumber->nonumber eqnumber_to_nonumber (tree tree))
   (busy-versioning? is_busy_versioning (bool))
   (players-set-elapsed players_set_elapsed (void tree double))

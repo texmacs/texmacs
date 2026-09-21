@@ -414,7 +414,150 @@ TM_TEST_FONT_DIR=/path/to/fonts tests/opentype/render-samples.sh
 - Extend the sample documents (accents, limits in text style, left scripts,
   primes) and keep reference PNGs for the pixel diff.
 
-## 8. Suggested order of the remaining work
+## 8. Hand-made constructions in the typesetter and their MATH counterparts
+
+TeXmacs draws several parts of formulas itself, with `line_box`, `arc_box`,
+magnified glyphs or virtual fonts, because TeX fonts and ordinary text
+fonts do not provide them. An OpenType math font provides most of them.
+This section lists the hand-made constructions, where they live, and what
+the MATH table offers instead. The hand-tuned corrections stay in charge
+wherever they exist; what follows is about the constructions that today
+are synthesized geometrically.
+
+### 8.1 Wide accents
+
+`compute_wide_accent` in `src/Typeset/Boxes/Composite/math_boxes.cpp`
+decides how to render `<wide|x|^>`, `<wide|x|~>`, bars, vectors, checks,
+breves and the over- and underbraces:
+
+- narrow bases get the accent glyph, shifted by heuristics on the slope of
+  the base (`ref->rsup_correction () + slope * yx / 2`) and clamped
+  between `yx/8` and `yx/3` above the base;
+- TeX Gyre uses `<wide-hat-N>` rubber names, which `tex_gyre_operators`
+  in `unicode_font.cpp` maps by hand to the font's `.h1` to `.h6` glyphs,
+  and `get_wide` in `text_boxes.cpp` probes widths;
+- STIX uses `wide_stix_box` and `get_wide_stix` with its own names;
+- other Unicode fonts magnify the accent glyph horizontally
+  (`fn->magnify (sx, sy)`) up to a limit, then fall back to
+  `wide_hat_box`, `wide_tilda_box`, `wide_bar_box`, `wide_vect_box`,
+  `wide_check_box`, `wide_breve_box`, `wide_squbr_box`, `wide_sqobr_box`
+  in `src/Typeset/Boxes/Basic/stretch_boxes.cpp`, which draw the shapes
+  from lines and arcs with the pen width `wline`.
+
+The MATH table has all of this: horizontal variants and assemblies for
+U+0302 circumflex, U+0303 tilde, U+0305 overline, U+0332 underline,
+U+20D7 vector, U+030C check, U+0306 breve, U+0311 inverted breve,
+U+23DE / U+23DF over- and underbrace, U+23B4 / U+23B5 square brackets and
+U+23DC / U+23DD parentheses (Pagella Math has 86 glyphs with horizontal
+variants, 71 with assemblies); the `topAccentAttachment` of both the base
+glyph and the accent, which replaces the slope heuristics; the constants
+`accentBaseHeight` and `flattenedAccentBaseHeight`, with the GSUB feature
+`flac` for the flattened accents used over tall bases; and
+`overbarVerticalGap`, `overbarRuleThickness`, `overbarExtraAscender` and
+their `underbar` twins for bars.
+
+How to implement:
+
+1. A mapping from TeXmacs accent names to the combining code points
+   (`hat` to U+0302, `tilde` to U+0303, `bar` to U+0305, `vect` to U+20D7,
+   `check` to U+030C, `breve` to U+0306, `invbreve` to U+0311, `overbrace`
+   to U+23DE, `underbrace` to U+23DF, `sqoverbrace` to U+23B4,
+   `squnderbrace` to U+23B5, `poverbrace` to U+23DC, `punderbrace` to
+   U+23DD). TeXmacs's `<hat>` converts to a spacing modifier letter, not to
+   the combining mark that carries the variants, so the table is needed.
+2. In `rubber_unicode_font.cpp`, accept `<wide-name-N>` in
+   `search_font_sub_opentype` through that mapping; the horizontal variants
+   and assemblies are already handled generically (`glue*` with overlaps).
+   Better than probing `N`: a new font hook `get_wide_variant (s, width)`
+   that returns the smallest variant whose advance measurement reaches the
+   width, or the assembly with the right number of repetitions, using the
+   advance measurements the parser already stores.
+3. A new font hook `get_top_accent (s)` on `font_rep`, defaulting to the
+   center of the ink box and implemented from `top_accent` in the Unicode
+   font, with the usual delegation through the smart and rubber fonts and a
+   `top_accent ()` box method (single glyph boxes return the font value,
+   others their center).
+4. A `MATH_TYPE_OPENTYPE` branch in `compute_wide_accent`, before the
+   generic Unicode branches: pick the variant by width, place it
+   horizontally so that the two attachment points coincide, vertically at
+   `max (base height, accentBaseHeight)` for narrow bases, and use the
+   overbar constants for `<bar>`; apply `flac` when the base is taller than
+   `flattenedAccentBaseHeight` (needs a small GSUB single-substitution
+   reader). The line-drawn shapes then remain as the fallback for fonts
+   without horizontal variants.
+
+### 8.2 Long arrows and wide relations
+
+`typeset_long_arrow` builds `<long-arrow|...>` with `wide_box` on the
+arrow's own name, so it depends on `<name-N>` variants that only TeX fonts
+and the TeX Gyre tables provide, and stacks the labels with `limit_box`.
+Math fonts have horizontal variants and assemblies for the arrows of
+U+2190 to U+21FF (in Pagella, `arrowright` has one variant and a
+three-part assembly). The same `get_wide_variant` hook serves here, and the
+labels above and below should use `stretchStackTopShiftUp`,
+`stretchStackBottomShiftDown`, `stretchStackGapAboveMin` and
+`stretchStackGapBelowMin`, which exist precisely for this construction.
+
+### 8.3 Radicals
+
+`sqrt_box` combines a `<large-sqrt-N>` delimiter with a `line_box` for
+the overline. The delimiter now comes from the MATH variants and assembly,
+and the rule thickness, gap, extra ascender and degree placement come from
+the radical constants. What is still hand-made is the junction: the rule is
+drawn at `sqrtb->y2 + dy` independently of the glyph, which in Latin Modern
+leaves a gap because the radical glyph's top does not reach the rule. Per
+the specification the rule starts at the top of the radical glyph and has
+`radicalRuleThickness`; the box should take the rule's vertical position
+from the glyph extents (the assembly's top part is designed to meet the
+rule), and `radicalKernBeforeDegree` should be applied.
+
+### 8.4 Fractions and wide fractions
+
+The bar is a `line_box`; it now has the table's thickness and the
+numerator and denominator follow the table's shifts and gaps. Wide
+fractions (`typeset_wide_frac`) fall back to a slash `<mid-/-N>`, which the
+MATH variants of U+2215 provide; `skewedFractionHorizontalGap` and
+`skewedFractionVerticalGap` describe how to place numerator and denominator
+around it should TeXmacs gain a skewed fraction primitive.
+
+### 8.5 Delimiters, middle bars and brackets
+
+`delimiter_box`, `typeset_wide_middle` and `bracket_box` (line-drawn
+brackets for `<left-.>` style TeX cases) all reduce to `<left-x-N>` names,
+which the rubber font now serves from variants and assemblies. The
+remaining hand-made part is the size search in `get_delimiter`: with a
+`get_delimiter_variant (s, height)` hook the typesetter could ask for the
+smallest variant or the exact assembly directly, and stretch the connector
+overlaps to fit, as the specification intends. `delimitedSubFormulaMinHeight`
+gives the minimum size for delimiters around sub-formulas, and the
+extended shape coverage tells which delimiters and operators should not
+have their superscripts raised.
+
+### 8.6 Stacks: above, below, limits, binomials
+
+`typeset_above`, `typeset_below` and `lim_box` place material above and
+below a base with `fn->sep` and `yshift`; limits already use the four
+limit constants. The stack constants (`stackTopShiftUp`,
+`stackBottomShiftDown`, their display variants and gaps) are the
+counterpart for `above`, `below`, `stack` and binomials without a bar.
+
+### 8.7 Negations
+
+`neg_box` strikes a diagonal `line_box` through the box. Unicode has
+precomposed negated symbols (U+2260, U+2209, U+2288 and about sixty more,
+listed in the `unicode-math` table) which every math font draws better than
+a stroke. TeXmacs already has `tradi-negate.vfn` for the reverse direction;
+the improvement is to map `<neg|x>` to the precomposed code point when the
+font supports it, and keep the stroke as the fallback.
+
+### 8.8 What has no counterpart
+
+`tree_box` (syntax trees), the `syntax` decorations, dotted and dashed
+rules, and the emulated bold and blackboard bold letters have nothing in
+the MATH table; the alphabets should simply come from the font when it has
+them (see the survey document), and the rest stays as it is.
+
+## 9. Suggested order of the remaining work
 
 1. Direct variant and assembly selection by target height in
    `get_delimiter`, and radical placement.

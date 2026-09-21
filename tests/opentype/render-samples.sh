@@ -12,6 +12,10 @@
 #   TM_TEST_FONT_DIR   directory (searched recursively) with additional fonts,
 #                      e.g. Latin Modern Math, STIX Two Math, Asana Math;
 #                      exported to TeXmacs as TEXMACS_FONT_PATH
+#   TM_HAND_TUNED=off  switch off the hand-tuned customizations of fonts
+#                      with a MATH table (preference "hand tuned math fonts")
+#                      to render the table-only result; the file names get
+#                      a "-notuned" suffix
 #   TEXMACS_HOME_PATH  defaults to tests/build/home so that the user's own
 #                      TeXmacs settings and font database are not touched;
 #                      the local font database is (re)built when missing
@@ -46,6 +50,11 @@ rev=$(cd "$top" && git rev-parse --short HEAD 2>/dev/null || echo nogit)
 if [ -n "$(cd "$top" && git status --porcelain -- src 2>/dev/null)" ]; then
   rev="$rev-dirty"
 fi
+tuned=""
+if [ "$TM_HAND_TUNED" = "off" ]; then
+  tuned="(set-hand-tuned-math-fonts #f)"
+  rev="$rev-notuned"
+fi
 
 if [ ! -f "$TEXMACS_HOME_PATH/fonts/font-database.scm" ] || [ -n "$FORCE_DB" ]; then
   echo "building local font database in $TEXMACS_HOME_PATH"
@@ -58,7 +67,11 @@ for tm in "$here"/samples/*.tm; do
   pdf="$out/$name-$rev.pdf"
   rm -f "$pdf" "$out/$name-$rev"-*.png
   echo "rendering $name -> $pdf"
-  "$bin" -c "$tm" "$pdf" -q > "$out/$name.log" 2>&1 || true
+  if [ -n "$tuned" ]; then
+    "$bin" -x "$tuned" -c "$tm" "$pdf" -q > "$out/$name.log" 2>&1 || true
+  else
+    "$bin" -c "$tm" "$pdf" -q > "$out/$name.log" 2>&1 || true
+  fi
   if [ ! -f "$pdf" ]; then
     echo "  FAILED, see $out/$name.log"; status=1; continue
   fi

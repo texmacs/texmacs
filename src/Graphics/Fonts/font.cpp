@@ -566,6 +566,10 @@ qt_font (string family, int size, int dpi) {
 
 static hashmap<string,font> larger_font_table;
 bool has_poor_rubber= true;
+bool hand_tuned_math_fonts= true;
+
+void set_hand_tuned_math_fonts (bool val) { hand_tuned_math_fonts= val; }
+bool get_hand_tuned_math_fonts () { return hand_tuned_math_fonts; }
 
 bool
 use_poor_rubber (font fn) {
@@ -576,11 +580,12 @@ use_poor_rubber (font fn) {
 font
 font_rep::make_rubber_font (font fn) {
   string name= locase_all (fn->res_name);
-  if (starts (name, "stix-") ||
-      starts (name, "stix,") ||
-      occurs (",stix,", name) ||
-      occurs ("math=stix", name) ||
-      occurs ("mathrubber=stix", name))
+  if (hand_tuned_math_fonts &&
+      (starts (name, "stix-") ||
+       starts (name, "stix,") ||
+       occurs (",stix,", name) ||
+       occurs ("math=stix", name) ||
+       occurs ("mathrubber=stix", name)))
     return rubber_stix_font (fn);
   else if (occurs ("mathlarge=", name) ||
            occurs ("mathrubber=", name))

@@ -303,7 +303,15 @@ unicode_font_rep::unicode_font_rep (string name,
   if (starts (family, "texgyre") && ends (family, "-math"))
     tex_gyre_operators ();
 
-  if (starts (family, "STIX-")) {
+  // Fonts with an OpenType MATH table are typeset from the table; the
+  // hand-tuned customizations below take precedence over the table when
+  // both exist, unless the user switched them off (preference
+  // "hand tuned math fonts") to compare with the table-only result.
+  tt_face ot_face= tt_face (family);
+  bool    has_ot  = !is_nil (ot_face) && !is_nil (ot_face->math_table);
+  bool    tuned   = hand_tuned_math_fonts || !has_ot;
+
+  if (tuned && starts (family, "STIX-")) {
     if (!ends (family, "italic")) {
       global_rsub_correct= (SI) (0.04 * wfn);
       global_rsup_correct= (SI) (0.04 * wfn);
@@ -324,7 +332,7 @@ unicode_font_rep::unicode_font_rep (string name,
     }
   }
 
-  else if (starts (family, "texgyre")) {
+  else if (tuned && starts (family, "texgyre")) {
     if (!ends (family, "italic")) {
       if (starts (family, "texgyretermes-")) {
         global_rsup_correct= (SI) (0.04 * wfn);
@@ -397,7 +405,7 @@ unicode_font_rep::unicode_font_rep (string name,
     }
   }
 
-  else if (starts (family, "Papyrus")) {
+  else if (tuned && starts (family, "Papyrus")) {
     lsup_correct= copy (lsup_guessed_table ());
     rsub_correct= copy (rsub_guessed_table ());
     adjust_integral (lsup_correct, "1", -0.15);
@@ -406,7 +414,7 @@ unicode_font_rep::unicode_font_rep (string name,
     adjust_integral (rsub_correct, "2", 0.15);
   }
 
-  else if (starts (family, "LinLibertine")) {
+  else if (tuned && starts (family, "LinLibertine")) {
     if (!ends (family, "I")) {
       lsub_correct= lsub_libertine_table ();
       lsup_correct= lsup_libertine_table ();
@@ -423,7 +431,7 @@ unicode_font_rep::unicode_font_rep (string name,
     }
     if (starts (family, "LinLibertine_a")) ligs= 0;
   }
-  else if (starts (family, "LinBiolinum")) {
+  else if (tuned && starts (family, "LinBiolinum")) {
     if (!ends (family, "I")) {
       lsub_correct= lsub_biolinum_table ();
       lsup_correct= lsup_biolinum_table ();
@@ -440,7 +448,7 @@ unicode_font_rep::unicode_font_rep (string name,
     }
     if (starts (family, "LinBiolinum_a")) ligs= 0;
   }
-  else if (starts (family, "FiraSans")) {
+  else if (tuned && starts (family, "FiraSans")) {
     if (!ends (family, "Italic")) {
       lsub_correct= lsub_fira_table ();
       lsup_correct= lsup_fira_table ();
@@ -457,11 +465,10 @@ unicode_font_rep::unicode_font_rep (string name,
     }
   }
   else {
-    // try to get OpenType math table
-    tt_face math_face2= tt_face (family);
-    if (!is_nil (math_face2->math_table)) {
-      this->math_face = math_face2;
-      this->math_table= math_face2->math_table;
+    // typeset from the OpenType MATH table when there is one
+    if (has_ot) {
+      this->math_face = ot_face;
+      this->math_table= ot_face->math_table;
       math_type       = MATH_TYPE_OPENTYPE;
       init_design_unit_factor ();
       MathConstantsTable& mc= math_table->constants_table;

@@ -77,6 +77,9 @@
 (define (notify-new-fonts var val)
   (set-new-fonts (== val "on")))
 
+(define (notify-hand-tuned-math-fonts var val)
+  (set-hand-tuned-math-fonts (== val "on")))
+
 (define (notify-fast-environments var val)
   (set-fast-environments (== val "on")))
 
@@ -146,6 +149,7 @@
   ("versioning tool" "off" notify-tool)
   ("experimental alpha" "on" notify-tool)
   ("new style fonts" "on" notify-new-fonts)
+  ("hand tuned math fonts" "on" notify-hand-tuned-math-fonts)
   ("bitmap effects" "on" notify-tool)
   ("new style page breaking" "on" notify-new-page-breaking)
   ("open console on errors" "on" noop)

@@ -45,6 +45,7 @@ private slots:
   void test_big_operators ();
   void test_kerning_at_height ();
   void test_assembly_monotone ();
+  void test_hand_tuned_switch ();
 };
 
 void
@@ -254,6 +255,31 @@ TestOpenTypeFont::test_assembly_monotone () {
       prev= h;
     }
   }
+}
+
+void
+TestOpenTypeFont::test_hand_tuned_switch () {
+  // With the hand-tuned customizations switched off, a shipped font with a
+  // MATH table takes the OpenType path. Fonts are cached by name, so use
+  // sizes not used elsewhere in this test.
+  QVERIFY (get_hand_tuned_math_fonts ());
+  set_hand_tuned_math_fonts (false);
+  font pag= unicode_font ("texgyrepagella-math", 12, LM_DPI);
+  QVERIFY (!is_nil (pag));
+  QCOMPARE (pag->math_type, MATH_TYPE_OPENTYPE);
+  QVERIFY (pag->frac_rule_thickness > 0);
+  // fractionRuleThickness 60 in Pagella Math
+  QCOMPARE (pag->wline, (SI) tm_round (60 * 12 * pag->hpt / 1000.0));
+  // a text font without MATH table is not affected by the switch: its
+  // math_type still comes from the file name (get_math_type in font.cpp)
+  font lib= unicode_font ("texgyrepagella-regular", 12, LM_DPI);
+  QVERIFY (!is_nil (lib));
+  QCOMPARE (lib->math_type, MATH_TYPE_TEX_GYRE);
+  QCOMPARE (lib->frac_rule_thickness, (SI) 0);
+  set_hand_tuned_math_fonts (true);
+  font pag2= unicode_font ("texgyrepagella-math", 14, LM_DPI);
+  QCOMPARE (pag2->math_type, MATH_TYPE_TEX_GYRE);
+  QCOMPARE (pag2->frac_rule_thickness, (SI) 0);
 }
 
 QTEST_GUILESS_MAIN(TestOpenTypeFont)

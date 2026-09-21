@@ -143,6 +143,8 @@
 "glyph-register"
 "glyph-recognize"
 "set-new-fonts"
+"set-hand-tuned-math-fonts"
+"hand-tuned-math-fonts?"
 "new-fonts?"
 "tmtm-eqnumber->nonumber"
 "busy-versioning?"

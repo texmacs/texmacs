@@ -267,6 +267,12 @@ tree get_spacing_desc (int spacing_id);
 extern bool new_fonts;
 void set_new_fonts (bool new_val);
 bool get_new_fonts ();
+// Whether the hand-tuned customizations for fonts which also carry an
+// OpenType MATH table (TeX Gyre Math, STIX, ...) are applied; when off,
+// such fonts are typeset from their MATH table only
+extern bool hand_tuned_math_fonts;
+void set_hand_tuned_math_fonts (bool val);
+bool get_hand_tuned_math_fonts ();
 void font_database_build (url u);
 void font_database_build_local ();
 void font_database_extend_local (url u);
