@@ -156,6 +156,7 @@ font_rep::copy_math_pars (font fn) {
   script_script_percent        = fn->script_script_percent;
   accent_base_height           = fn->accent_base_height;
   flattened_accent_base_height = fn->flattened_accent_base_height;
+  ot_math                      = fn->ot_math;
 }
 
 void

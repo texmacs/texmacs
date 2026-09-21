@@ -579,7 +579,7 @@ edit_env_rep::update_font () {
   fn= make_current_font (sz);
   // fonts with an OpenType MATH table prescribe their own script sizes,
   // unless the document sets math-font-sizes explicitly
-  if (index_level > 0 && fn->math_type == MATH_TYPE_OPENTYPE &&
+  if (index_level > 0 && fn->ot_math &&
       math_font_sizes == "default") {
     int pct= (index_level == 1)? fn->script_percent: fn->script_script_percent;
     if (pct > 0) {

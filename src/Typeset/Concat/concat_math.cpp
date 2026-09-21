@@ -451,7 +451,7 @@ concater_rep::typeset_sqrt (tree t, path ip) {
   if (stix) lfn= rubber_font (lfn);
   SI   gap= (3 * sep >> 1);
   bool use_opentype=
-      (lfn->math_type == MATH_TYPE_OPENTYPE) && (lfn->sqrt_ver_gap > 0);
+      lfn->ot_math && (lfn->sqrt_ver_gap > 0);
   if (use_opentype) {
     gap=
         (disp ? lfn->sqrt_ver_disp_gap : lfn->sqrt_ver_gap) + (lfn->wline >> 1);

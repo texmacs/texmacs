@@ -74,8 +74,7 @@ frac_box_rep::frac_box_rep (
 
   pencil bar_pen= pen->set_width (bar_w);
 
-  bool use_opentype=
-      (fn->math_type == MATH_TYPE_OPENTYPE) && (fn->frac_num_gap_min > 0);
+  bool use_opentype= fn->ot_math && (fn->frac_num_gap_min > 0);
 
   if (use_opentype) {
     if (fn->frac_rule_thickness > 0) {
@@ -170,8 +169,7 @@ sqrt_box_rep::sqrt_box_rep (
   SI by   = sqrtb->y2+ dy;
   if (sqrtb->x2 - sqrtb->x4 > wline) dx -= (sqrtb->x2 - sqrtb->x4);
   
-  bool use_open_type= (fn->math_type == MATH_TYPE_OPENTYPE) &&
-                      (fn->sqrt_degree_rise_percent > 0);
+  bool use_open_type= fn->ot_math && (fn->sqrt_degree_rise_percent > 0);
   pencil rpen= use_open_type ? pen->set_width (fn->sqrt_rule_thickness)
                              : pen->set_width (wline);
   insert (b1, 0, 0);
@@ -471,7 +469,8 @@ compute_wide_accent (path ip, box b, string s,
   }
   string ot_name;
   bool   ot_wide= false;
-  if (wide && fn->math_type == MATH_TYPE_OPENTYPE) {
+  // fonts with hand-tuned wide accents (TeX Gyre, STIX) keep them
+  if (wide && fn->ot_math && !tex_gyre && !stix) {
     string ss= s (1, N(s)-1);
     if (s == "^") ss= "hat";
     if (s == "~") ss= "tilde";
@@ -689,7 +688,8 @@ wide_box_rep::wide_box_rep (
     Y= ref->y2;
     X= m;
     SI ax, hx;
-    if (fn->math_type == MATH_TYPE_OPENTYPE && ref->top_accent (ax)) {
+    if (fn->math_type == MATH_TYPE_OPENTYPE && fn->ot_math &&
+        ref->top_accent (ax)) {
       // attach the accent at the attachment points of both glyphs
       if (!hi->top_accent (hx)) hx= (hi->x1 + hi->x2) >> 1;
       insert (hi, ax - hx, Y+ sep);

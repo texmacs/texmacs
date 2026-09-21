@@ -360,6 +360,16 @@ TM_TEST_FONT_DIR=/path/to/fonts tests/opentype/render-samples.sh
   corrections and cut-in kerns therefore apply to letters. The profile
   table, alphabets, GSUB features and menus are still to do.
 
+- **Phase 4 of the plan.** The MATH table is loaded before the per-family
+  branches of the Unicode font constructor (`init_ot_math`), and a new
+  `font_rep::ot_math` flag says so; `math_type` keeps its tuned value
+  (TeX Gyre, STIX) so that every hand-tuned check still fires and the
+  correction tables keep precedence, while fractions, radicals, limits,
+  script shifts, delimiter variants and assemblies come from the table.
+  Wide accents and math letters stay with the tuned tables for tuned fonts.
+  The sample diff shows the roman row unchanged and only sizes of nested
+  delimiters and gaps changing for TeX Gyre Pagella.
+
 ## 6. Known defects still open
 
 1. The delimiter search still probes `<left-x-N>` for increasing `N` and

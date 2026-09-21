@@ -147,6 +147,7 @@ struct unicode_font_rep: font_rep {
   bool is_ot_integral (string s);
   bool is_extended_shape (string s);
   bool get_top_accent (string s, SI& x);
+  void init_ot_math (tt_face face);
   hashset<unsigned int> ot_integral;
 
   double design_unit_to_metric_factor;   // vertical
@@ -312,6 +313,7 @@ unicode_font_rep::unicode_font_rep (string name,
   tt_face ot_face= tt_face (family);
   bool    has_ot  = !is_nil (ot_face) && !is_nil (ot_face->math_table);
   bool    tuned   = hand_tuned_math_fonts || !has_ot;
+  if (has_ot) init_ot_math (ot_face);
 
   if (tuned && starts (family, "STIX-")) {
     if (!ends (family, "italic")) {
@@ -466,87 +468,90 @@ unicode_font_rep::unicode_font_rep (string name,
       above_correct= above_fira_italic_table ();
     }
   }
-  else {
-    // typeset from the OpenType MATH table when there is one
-    if (has_ot) {
-      this->math_face = ot_face;
-      this->math_table= ot_face->math_table;
-      math_type       = MATH_TYPE_OPENTYPE;
-      init_design_unit_factor ();
-      MathConstantsTable& mc= math_table->constants_table;
-      // general parameters: math axis, rule thickness, script placement
-      if (mc[axisHeight] > 0)
-        yfrac= design_unit_to_metric (mc[axisHeight]);
-      if (mc[fractionRuleThickness] > 0)
-        wline= design_unit_to_metric (mc[fractionRuleThickness]);
-      if (mc[superscriptShiftUp] > 0 && mc[subscriptShiftDown] > 0) {
-        ysub_lo_base= -design_unit_to_metric (mc[subscriptShiftDown]);
-        ysub_hi_lim = design_unit_to_metric (mc[subscriptTopMax]);
-        ysup_lo_lim = design_unit_to_metric (mc[superscriptBottomMin]);
-        ysup_lo_base= design_unit_to_metric (mc[superscriptShiftUp]);
-        ysup_hi_lim = max (ysup_lo_base, yx);
-        yshift      = design_unit_to_metric (mc[superscriptShiftUp] -
-                                             mc[superscriptShiftUpCramped]);
-      }
-      // limit boxes
-      upper_limit_gap_min=
-          design_unit_to_metric (math_table->constants_table[upperLimitGapMin]);
-      upper_limit_baseline_rise_min= design_unit_to_metric (
-          math_table->constants_table[upperLimitBaselineRiseMin]);
-      lower_limit_gap_min=
-          design_unit_to_metric (math_table->constants_table[lowerLimitGapMin]);
-      lower_limit_baseline_drop_min= design_unit_to_metric (
-          math_table->constants_table[lowerLimitBaselineDropMin]);
-      // frac boxes
-      frac_rule_thickness= design_unit_to_metric (
-          math_table->constants_table[fractionRuleThickness]);
-      frac_num_shift_up= design_unit_to_metric (
-          math_table->constants_table[fractionNumeratorShiftUp]);
-      frac_num_disp_shift_up= design_unit_to_metric (
-          math_table->constants_table[fractionNumeratorDisplayStyleShiftUp]);
-      frac_num_gap_min= design_unit_to_metric (
-          math_table->constants_table[fractionNumeratorGapMin]);
-      frac_num_disp_gap_min= design_unit_to_metric (
-          math_table->constants_table[fractionNumDisplayStyleGapMin]);
-      frac_denom_shift_down= design_unit_to_metric (
-          math_table->constants_table[fractionDenominatorShiftDown]);
-      frac_denom_disp_shift_down= design_unit_to_metric (
-          math_table
-              ->constants_table[fractionDenominatorDisplayStyleShiftDown]);
-      frac_denom_gap_min= design_unit_to_metric (
-          math_table->constants_table[fractionDenominatorGapMin]);
-      frac_denom_disp_gap_min= design_unit_to_metric (
-          math_table->constants_table[fractionDenomDisplayStyleGapMin]);
-      // sqrt boxes
-      sqrt_ver_gap= design_unit_to_metric (
-          math_table->constants_table[radicalVerticalGap]);
-      sqrt_ver_disp_gap= design_unit_to_metric (
-          math_table->constants_table[radicalDisplayStyleVerticalGap]);
-      sqrt_rule_thickness= design_unit_to_metric (
-          math_table->constants_table[radicalRuleThickness]);
-      sqrt_extra_ascender= design_unit_to_metric (
-          math_table->constants_table[radicalExtraAscender]);
-      sqrt_degree_rise_percent=
-          math_table->constants_table[radicalDegreeBottomRaisePercent];
-      sqrt_kern_before_degree= design_unit_to_metric (
-          math_table->constants_table[radicalKernBeforeDegree]);
-      sqrt_kern_after_degree= design_unit_to_metric (
-          math_table->constants_table[radicalKernAfterDegree]);
-      // scripts
-      sub_sup_gap_min= design_unit_to_metric (mc[subSuperscriptGapMin]);
-      sup_drop_max   = design_unit_to_metric (mc[superscriptBaselineDropMax]);
-      sub_drop_min   = design_unit_to_metric (mc[subscriptBaselineDropMin]);
-      sup_bottom_max_with_sub=
-          design_unit_to_metric (mc[superscriptBottomMaxWithSubscript]);
-      space_after_script= design_unit_to_metric_x (mc[spaceAfterScript]);
-      script_percent       = mc[scriptPercentScaleDown];
-      script_script_percent= mc[scriptScriptPercentScaleDown];
-      // accents
-      accent_base_height= design_unit_to_metric (mc[accentBaseHeight]);
-      flattened_accent_base_height=
-          design_unit_to_metric (mc[flattenedAccentBaseHeight]);
-    }
+  else if (has_ot) math_type= MATH_TYPE_OPENTYPE;
+}
+
+// Load the layout parameters of an OpenType MATH table. This runs before
+// the hand-tuned per-family customizations of the constructor, which may
+// override any of these values.
+void
+unicode_font_rep::init_ot_math (tt_face face) {
+  this->math_face = face;
+  this->math_table= face->math_table;
+  ot_math= true;
+  init_design_unit_factor ();
+  MathConstantsTable& mc= math_table->constants_table;
+  // general parameters: math axis, rule thickness, script placement
+  if (mc[axisHeight] > 0)
+    yfrac= design_unit_to_metric (mc[axisHeight]);
+  if (mc[fractionRuleThickness] > 0)
+    wline= design_unit_to_metric (mc[fractionRuleThickness]);
+  if (mc[superscriptShiftUp] > 0 && mc[subscriptShiftDown] > 0) {
+    ysub_lo_base= -design_unit_to_metric (mc[subscriptShiftDown]);
+    ysub_hi_lim = design_unit_to_metric (mc[subscriptTopMax]);
+    ysup_lo_lim = design_unit_to_metric (mc[superscriptBottomMin]);
+    ysup_lo_base= design_unit_to_metric (mc[superscriptShiftUp]);
+    ysup_hi_lim = max (ysup_lo_base, yx);
+    yshift      = design_unit_to_metric (mc[superscriptShiftUp] -
+                                         mc[superscriptShiftUpCramped]);
   }
+  // limit boxes
+  upper_limit_gap_min=
+      design_unit_to_metric (math_table->constants_table[upperLimitGapMin]);
+  upper_limit_baseline_rise_min= design_unit_to_metric (
+      math_table->constants_table[upperLimitBaselineRiseMin]);
+  lower_limit_gap_min=
+      design_unit_to_metric (math_table->constants_table[lowerLimitGapMin]);
+  lower_limit_baseline_drop_min= design_unit_to_metric (
+      math_table->constants_table[lowerLimitBaselineDropMin]);
+  // frac boxes
+  frac_rule_thickness= design_unit_to_metric (
+      math_table->constants_table[fractionRuleThickness]);
+  frac_num_shift_up= design_unit_to_metric (
+      math_table->constants_table[fractionNumeratorShiftUp]);
+  frac_num_disp_shift_up= design_unit_to_metric (
+      math_table->constants_table[fractionNumeratorDisplayStyleShiftUp]);
+  frac_num_gap_min= design_unit_to_metric (
+      math_table->constants_table[fractionNumeratorGapMin]);
+  frac_num_disp_gap_min= design_unit_to_metric (
+      math_table->constants_table[fractionNumDisplayStyleGapMin]);
+  frac_denom_shift_down= design_unit_to_metric (
+      math_table->constants_table[fractionDenominatorShiftDown]);
+  frac_denom_disp_shift_down= design_unit_to_metric (
+      math_table
+          ->constants_table[fractionDenominatorDisplayStyleShiftDown]);
+  frac_denom_gap_min= design_unit_to_metric (
+      math_table->constants_table[fractionDenominatorGapMin]);
+  frac_denom_disp_gap_min= design_unit_to_metric (
+      math_table->constants_table[fractionDenomDisplayStyleGapMin]);
+  // sqrt boxes
+  sqrt_ver_gap= design_unit_to_metric (
+      math_table->constants_table[radicalVerticalGap]);
+  sqrt_ver_disp_gap= design_unit_to_metric (
+      math_table->constants_table[radicalDisplayStyleVerticalGap]);
+  sqrt_rule_thickness= design_unit_to_metric (
+      math_table->constants_table[radicalRuleThickness]);
+  sqrt_extra_ascender= design_unit_to_metric (
+      math_table->constants_table[radicalExtraAscender]);
+  sqrt_degree_rise_percent=
+      math_table->constants_table[radicalDegreeBottomRaisePercent];
+  sqrt_kern_before_degree= design_unit_to_metric (
+      math_table->constants_table[radicalKernBeforeDegree]);
+  sqrt_kern_after_degree= design_unit_to_metric (
+      math_table->constants_table[radicalKernAfterDegree]);
+  // scripts
+  sub_sup_gap_min= design_unit_to_metric (mc[subSuperscriptGapMin]);
+  sup_drop_max   = design_unit_to_metric (mc[superscriptBaselineDropMax]);
+  sub_drop_min   = design_unit_to_metric (mc[subscriptBaselineDropMin]);
+  sup_bottom_max_with_sub=
+      design_unit_to_metric (mc[superscriptBottomMaxWithSubscript]);
+  space_after_script= design_unit_to_metric_x (mc[spaceAfterScript]);
+  script_percent       = mc[scriptPercentScaleDown];
+  script_script_percent= mc[scriptScriptPercentScaleDown];
+  // accents
+  accent_base_height= design_unit_to_metric (mc[accentBaseHeight]);
+  flattened_accent_base_height=
+      design_unit_to_metric (mc[flattenedAccentBaseHeight]);
 }
 
 /******************************************************************************
@@ -1237,7 +1242,7 @@ unicode_font_rep::get_ot_kerning (string s, SI height, bool top, bool left,
 
 bool
 unicode_font_rep::is_extended_shape (string s) {
-  if (math_type != MATH_TYPE_OPENTYPE || N(s) == 0) return false;
+  if (!ot_math || N(s) == 0) return false;
   unsigned int glyphID= get_glyphID (s);
   glyphID= math_table->get_init_glyphID (glyphID);
   return math_table->extended_shape_coverage->contains (glyphID);
@@ -1245,7 +1250,7 @@ unicode_font_rep::is_extended_shape (string s) {
 
 bool
 unicode_font_rep::get_top_accent (string s, SI& x) {
-  if (math_type != MATH_TYPE_OPENTYPE || N(s) == 0) return false;
+  if (!ot_math || N(s) == 0) return false;
   unsigned int glyphID= get_glyphID (s);
   if (!math_table->top_accent->contains (glyphID)) return false;
   x= design_unit_to_metric_x (math_table->top_accent[glyphID].value);
@@ -1254,7 +1259,7 @@ unicode_font_rep::get_top_accent (string s, SI& x) {
 
 bool
 unicode_font_rep::is_ot_integral (string s) {
-  if (math_type != MATH_TYPE_OPENTYPE) return false;
+  if (!ot_math) return false;
   if (N (ot_integral) == 0) {
     array<string> integrals;
     integrals << string ("<int>") << string ("<iiint>") << string ("<iiiint>")

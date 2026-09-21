@@ -96,7 +96,11 @@ struct font_rep: rep<font> {
   array<array<space> >   wide_spacing;     // wide spacing table
   SI double_bracket_correct; // extra space between double brackets
 
-  // math measurements for opentype fonts (zero when unknown)
+  // math measurements for opentype fonts (zero when unknown); ot_math tells
+  // whether they were loaded from a MATH table. Fonts with hand-tuned
+  // customizations keep their own math_type (TeX Gyre, STIX): the tuned
+  // tables take precedence, the MATH data fills what they do not cover.
+  bool ot_math= false;
   SI  upper_limit_gap_min= 0;
   SI  upper_limit_baseline_rise_min= 0;
   SI  lower_limit_gap_min= 0;

@@ -702,7 +702,9 @@ struct smart_font_rep: font_rep {
   int    dpi;
   int    math_kind;
   int    italic_nr;
-  bool   ot_math;    // the main font is an OpenType math font
+  bool   ot_math;    // the main font is an OpenType math font without
+                     // hand-tuned customizations: letters and Greek come
+                     // from its own math alphabets
 
   array<font> fn;
   smart_map   sm;
@@ -1236,7 +1238,7 @@ font
 smart_font_rep::make_rubber_font (font base) {
   if (occurs ("mathlarge=", res_name) || occurs ("mathrubber=", res_name))
     return this;
-  else if (fn[SUBFONT_MAIN]->math_type == MATH_TYPE_OPENTYPE)
+  else if (fn[SUBFONT_MAIN]->ot_math)
     return fn[SUBFONT_MAIN]->make_rubber_font (base);
   return font_rep::make_rubber_font (base);
 }

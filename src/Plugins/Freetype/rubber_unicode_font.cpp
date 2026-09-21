@@ -111,7 +111,7 @@ rubber_unicode_font_rep::rubber_unicode_font_rep (string name, font base2,
     initialized << false;
     subfn << base;
   }
-  if (base->math_type == MATH_TYPE_OPENTYPE) {
+  if (base->ot_math) {
     big_flag    = true;
     big_sums    = true;
     string vname= "opentype_virtual[" * base->res_name * "]";

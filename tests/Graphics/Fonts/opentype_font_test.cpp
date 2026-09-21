@@ -81,6 +81,10 @@ TestOpenTypeFont::test_shipped_fonts_keep_legacy_math_type () {
   font pag= unicode_font ("texgyrepagella-math", LM_SIZE, LM_DPI);
   QVERIFY (!is_nil (pag));
   QCOMPARE (pag->math_type, MATH_TYPE_TEX_GYRE);
+  // ... but the MATH table is loaded underneath the hand-tuned tables
+  QVERIFY (pag->ot_math);
+  QCOMPARE (pag->frac_rule_thickness, (SI) tm_round (60 * LM_SIZE * pag->hpt / 1000.0));
+  QVERIFY (pag->is_extended_shape ("<#222B>"));
   font stix= unicode_font ("STIX-Regular", LM_SIZE, LM_DPI);
   QVERIFY (!is_nil (stix));
   QCOMPARE (stix->math_type, MATH_TYPE_STIX);
@@ -278,11 +282,13 @@ TestOpenTypeFont::test_hand_tuned_switch () {
   font lib= unicode_font ("texgyrepagella-regular", 12, LM_DPI);
   QVERIFY (!is_nil (lib));
   QCOMPARE (lib->math_type, MATH_TYPE_TEX_GYRE);
+  QVERIFY (!lib->ot_math);
   QCOMPARE (lib->frac_rule_thickness, (SI) 0);
   set_hand_tuned_math_fonts (true);
   font pag2= unicode_font ("texgyrepagella-math", 14, LM_DPI);
   QCOMPARE (pag2->math_type, MATH_TYPE_TEX_GYRE);
-  QCOMPARE (pag2->frac_rule_thickness, (SI) 0);
+  QVERIFY (pag2->ot_math);
+  QVERIFY (pag2->frac_rule_thickness > 0);
 }
 
 void

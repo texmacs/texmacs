@@ -87,7 +87,7 @@ lim_box_rep::lim_box_rep (path ip, box r2, box lo, box hi, font fn2, bool gl):
   SI X, Y;
   insert (ref, 0, 0);
   type= 0;
-  bool use_opentype= (fn->math_type == MATH_TYPE_OPENTYPE) &&
+  bool use_opentype= fn->ot_math &&
                      (fn->lower_limit_gap_min > 0) &&
                      (fn->lower_limit_baseline_drop_min > 0);
 
@@ -467,7 +467,7 @@ side_box_rep::side_box_rep (
   }
 
   // fonts with an OpenType MATH table place scripts by its constants
-  bool ot= (fn->math_type == MATH_TYPE_OPENTYPE) && (fn->sub_sup_gap_min > 0);
+  bool ot= fn->ot_math && (fn->sub_sup_gap_min > 0);
   if (ot) {
     ot_script_shifts (fn, ref, level, l1, l2, lsub, lsup);
     ot_script_shifts (fn, ref, level, r1, r2, rsub, rsup);
