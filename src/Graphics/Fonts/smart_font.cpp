@@ -199,7 +199,9 @@ is_rubber (string c) {
   return (starts (c, "<large-") ||
           starts (c, "<left-") ||
           starts (c, "<right-") ||
-          starts (c, "<mid-")) && ends (c, ">");
+          starts (c, "<mid-") ||
+          starts (c, "<wide-") ||
+          starts (c, "<rubber-")) && ends (c, ">");
 }
 
 static hashmap<string,string> special_table ("");
@@ -1186,6 +1188,9 @@ smart_font_rep::resolve_rubber (string c, string fam, int attempt) {
       goal= "]";
   }
   int bnr= resolve (goal, main_family (fam), attempt);
+  // long arrows whose long form the font lacks stretch the plain arrow
+  if (bnr < 0 && starts (ss, "long") && N(ss) > 4)
+    bnr= resolve ("<" * ss (4, N(ss)) * ">", main_family (fam), attempt);
   if (bnr >= 0 && bnr < N(fn) && !is_nil (fn[bnr])) {
     tree key= tuple ("rubber", as_string (bnr));
     int nr= sm->add_font (key, REWRITE_NONE);
@@ -1379,6 +1384,13 @@ smart_font_rep::resolve (string c) {
   for (int attempt= 1; attempt <= FONT_ATTEMPTS; attempt++) {
     if (attempt > 1 && substitute_math_letter (c, math_kind) != "") break;
     for (int i= 0; i < N(a); i++) {
+      // OpenType math fonts stretch their own accents, braces and arrows:
+      // try them before the emulated ones
+      if (ot_math && is_rubber (c) &&
+          (starts (c, "<wide-") || starts (c, "<rubber-"))) {
+        int nr= resolve_rubber (c, a[i], attempt);
+        if (nr >= 0) return nr;
+      }
       int nr= resolve (c, a[i], attempt);
       if (nr >= 0) {
         //initialize_font (nr);
