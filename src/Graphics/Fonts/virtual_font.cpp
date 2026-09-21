@@ -317,6 +317,7 @@ virtual_font_rep::supported (scheme_tree t, bool svg) {
 
   if (is_tuple (t, "glue-above", 3) ||
       is_tuple (t, "glue-below", 3) ||
+      is_tuple (t, "glue*", 3) ||
       is_tuple (t, "stack", 3) ||
       (is_tuple (t, "left-fit", 3) && is_double (t[3])) ||
       (is_tuple (t, "right-fit", 3) && is_double (t[3]))) {
@@ -555,11 +556,13 @@ virtual_font_rep::compile_bis (scheme_tree t, metric& ex) {
     return join (gl1, move (gl2, dx, 0));
   }
 
-  if (is_tuple (t, "glue*", 2)) {
+  if (is_tuple (t, "glue*", 2) || is_tuple (t, "glue*", 3)) {
     metric ey;
     glyph gl1= compile (t[1], ex);
     glyph gl2= compile (t[2], ey);
     SI dx= ex->x2;
+    if (N(t) >= 4 && is_double (t[3]))
+      dx += (SI) (as_double (t[3]) * hunit);
     outer_fit (ex, ey, dx, 0);
     return join (gl1, move (gl2, dx, 0));
   }
@@ -1275,10 +1278,12 @@ virtual_font_rep::draw_tree (renderer ren, scheme_tree t, SI x, SI y) {
     return;
   }
 
-  if (is_tuple (t, "glue*", 2)) {
+  if (is_tuple (t, "glue*", 2) || is_tuple (t, "glue*", 3)) {
     metric ex;
     get_metric (t[1], ex);
     SI dx= ex->x2;
+    if (N(t) >= 4 && is_double (t[3]))
+      dx += (SI) (as_double (t[3]) * hunit);
     draw_tree (ren, t[1], x, y);
     draw_tree (ren, t[2], x + dx, y);
     return;

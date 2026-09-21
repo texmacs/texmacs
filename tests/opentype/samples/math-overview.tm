@@ -26,7 +26,7 @@
 
   <demo|Latin Modern Math>
 
-  <demo|STIX Two Math>
+  <demo|Stix Two Math>
 
   <demo|Asana Math>
 

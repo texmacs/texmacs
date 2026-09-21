@@ -20,6 +20,9 @@
 #ifdef USE_FREETYPE
 
 bool supports_big_operators (string res_name); // from poor_rubber.cpp
+
+// largest number of repetitions of the extenders of an assembled glyph
+#define MAX_ASSEMBLY_REPS 64
 font rubber_unicode_font (font base, tt_face face);
 
 /******************************************************************************
@@ -161,24 +164,50 @@ parse_variant (string s, string& head, string& root) {
   return var;
 }
 
-// construct string for extender
+// Glue a list of glyph parts, listed bottom to top (vertical) or left to
+// right (horizontal), with the given overlaps between consecutive parts.
+// Overlaps are expressed as fractions of the em of the base font, which is
+// the unit of the third argument of glue-above and glue*.
 static string
-extend (string s, bool ver) {
-  return ver ? "(ver-take " * s * " 0.5 # 0.25)"
-             : "(hor-take " * s * " 0.5 # 0.25)";
-}
-
-// construct string (scheme tree) from a list of glyphs
-static string
-glue (array<string> glyphs, bool ver) {
+glue (array<string> glyphs, array<double> overlap, bool ver) {
   string gluer= ver ? "glue-above" : "glue*";
   int    g_N  = N (glyphs);
   if (g_N == 0) return "";
   string result= glyphs[g_N - 1];
   for (int i= g_N - 2; i >= 0; --i) {
-    result= "(" * gluer * " " * glyphs[i] * " " * result * ")";
+    result= "(" * gluer * " " * glyphs[i] * " " * result * " " *
+            as_string (-overlap[i]) * ")";
   }
   return result;
+}
+
+// Build the definition of an assembled glyph according to the OpenType MATH
+// specification: every extender part is repeated 'reps' times and
+// consecutive parts overlap by minConnectorOverlap, limited by the connector
+// lengths of the two parts. Parts are stacked bottom to top or glued left
+// to right; upem converts design units to fractions of the em.
+static string
+assemble (GlyphAssembly gass, int reps, int min_overlap, double upem,
+          bool ver) {
+  array<GlyphPartRecord> parts;
+  for (int i= 0; i < N (gass.partRecords); i++) {
+    GlyphPartRecord pr= gass.partRecords[i];
+    if ((pr.partFlags & 1) != 0)
+      for (int k= 0; k < reps; k++) parts << pr;
+    else parts << pr;
+  }
+  array<string> glyphs;
+  array<double> overlap;
+  for (int i= 0; i < N (parts); i++) {
+    glyphs << ("@" * as_hexadecimal (parts[i].glyphID, 4));
+    if (i + 1 < N (parts)) {
+      int o= min_overlap;
+      o= min (o, (int) parts[i].endConnectorLength);
+      o= min (o, (int) parts[i+1].startConnectorLength);
+      overlap << (o / upem);
+    }
+  }
+  return glue (glyphs, overlap, ver);
 }
 
 int
@@ -256,40 +285,35 @@ rubber_unicode_font_rep::search_font_sub_opentype (string s, string& rew) {
   }
 
   if (has_assembly) {
-    string virt_glyph;
-    // <xx-xx-#>, '#' can match any variant number
-    string ss= "<" * head * "-" * root * "-#>";
-    if (!virt->dict->contains (ss)) {
-      auto& gass = glyph_assembly (glyphID);
-      tree  glyph= tree ();
-
-      array<string> glyphs;
-      for (int i= 0; i < N (gass.partRecords); i++) {
-        auto& pr= gass.partRecords[i];
-        // whether the part is a extender
-        if (pr.partFlags == 0x0001) {
-          glyphs << extend (hex4 (pr.glyphID), using_vertical);
+    // Variant numbers beyond the pre-drawn variants are assembled from
+    // parts; number nvar + k - 1 repeats every extender k times. We define
+    // all the sizes of a glyph at once, so that the virtual font holding
+    // them has to be rebuilt only once per glyph.
+    int nvar= has_variants? N (glyph_variants (glyphID)): 0;
+    if (var < nvar + MAX_ASSEMBLY_REPS) {
+      if (!virt->dict->contains (s)) {
+        GlyphAssembly gass= glyph_assembly (glyphID);
+        int    min_overlap= (int) math_table->minConnectorOverlap;
+        double upem= (double) math_face->ft_face->units_per_EM;
+        if (upem <= 0.0) upem= 1000.0;
+        string prefix= "<" * head * "-" * root * "-";
+        int    shift = starts (s, "<big-")? 1: 0; // there is no <big-x-0>
+        for (int k= 1; k <= MAX_ASSEMBLY_REPS; k++) {
+          string name= prefix * as_string (nvar + k - 1 + shift) * ">";
+          if (virt->dict->contains (name)) continue;
+          string def= assemble (gass, k, min_overlap, upem, using_vertical);
+          virt->dict (name)= N (virt->virt_def);
+          virt->virt_def << string_to_scheme_tree (def);
         }
-        else {
-          glyphs << hex4 (pr.glyphID);
+        // subfn[6] is the virtual font for the assembled glyphs; it caches
+        // the definitions, so it must be recreated when new ones are added
+        if (initialized[6]) {
+          font::instances->reset (subfn[6]->res_name);
+          initialized[6]= false;
         }
       }
-      virt_glyph= glue (glyphs, using_vertical);
-
-      glyph          = string_to_scheme_tree (virt_glyph);
-      virt->dict (ss)= N (virt->virt_def);
-      virt->virt_def << glyph;
-
-      // subfn[6] is the virtual font for opentype math font
-      // FIXME: can we only add the new glyph to the virtual font instead of
-      // reset the whole virtual font?
-      if (initialized[6]) {
-        // fresh the virtual font, since new virtual glyph is added
-        font::instances->reset (subfn[6]->res_name);
-        initialized[6]= false;
-      }
+      return 6;
     }
-    return 6;
   }
   // cout << "No opentype variant for " << uu << " -> " << glyphID << LF;
 

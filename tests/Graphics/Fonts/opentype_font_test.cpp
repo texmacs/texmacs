@@ -161,6 +161,19 @@ TestOpenTypeFont::test_rubber_assembly () {
   rf->get_extents ("<left-(-12>", ex12);
   QVERIFY (ex12->y2 - ex12->y1 > ex8->y2 - ex8->y1);
   QVERIFY (ex8->y2 - ex8->y1 > ex7->y2 - ex7->y1);
+  // Latin Modern Math parenleft assembly: bottom and top parts of advance
+  // 1495 with connectors of 249, extender of 498, minConnectorOverlap 20.
+  // With k repetitions of the extender: 2*1495 + k*498 - (k+1)*20.
+  SI h8 = ex8->y2 - ex8->y1;
+  SI h12= ex12->y2 - ex12->y1;
+  SI tol= du_y (60); // parts are glued on their ink boxes, not advances
+  QVERIFY2 (qAbs (h8 - du_y (2*1495 + 498 - 2*20)) <= tol,
+            as_charp ("height " * as_string (h8) * " for one extender"));
+  QVERIFY2 (qAbs (h12 - du_y (2*1495 + 5*498 - 6*20)) <= tol,
+            as_charp ("height " * as_string (h12) * " for five extenders"));
+  // horizontal assemblies: arrows are not rubber characters, but the
+  // machinery must not break on horizontal variants either
+  QVERIFY (rf->supports ("<left-(-40>"));
 }
 
 void

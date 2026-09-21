@@ -306,21 +306,31 @@ make -C tests TM_TEST_FONT_DIR=/path/to/fonts
 TM_TEST_FONT_DIR=/path/to/fonts tests/opentype/render-samples.sh
 ```
 
+- **Assemblies per specification.** Variant number `nvar + k - 1` of a
+  stretchable glyph repeats every extender part `k` times; consecutive parts
+  overlap by `minConnectorOverlap`, limited by their connector lengths. The
+  definitions are ordinary `glue-above` / `glue*` trees with a negative
+  separation (a third argument was added to `glue*`), so both the bitmap and
+  the vector drawing paths work. All sizes up to 64 repetitions of a glyph
+  are defined at once, so the virtual font holding them is rebuilt once per
+  glyph instead of once per size. The overshooting bars of the sample are
+  gone.
+
 ## 6. Known defects still open
 
-1. Assemblies ignore `minConnectorOverlap` and the part connector lengths;
-   extenders are tiled by `ver-take` with fixed proportions. In the sample
-   rendering the vertical bars of Asana Math and STIX Two Math overshoot
-   their content by a large amount, and the radical of Latin Modern Math is
-   detached from its overline.
-2. The virtual font holding assemblies is destroyed and rebuilt each time a
-   new assembly is first used.
-3. `parse_variant` requires exactly three dash-separated tokens.
-4. `ysup_hi_lim` has no MATH counterpart and is set to
+1. The delimiter search still probes `<left-x-N>` for increasing `N` and
+   measures; assemblies grow by one extender per step, so the chosen size
+   can exceed the request by up to one extender. Parts are glued on their
+   ink boxes rather than on their advances.
+2. `parse_variant` requires exactly three dash-separated tokens.
+3. `ysup_hi_lim` has no MATH counterpart and is set to
    `max (superscriptShiftUp, x-height)`.
-5. Script sizes still come from `script ()` (2/3 per level), not from
+4. Script sizes still come from `script ()` (2/3 per level), not from
    `scriptPercentScaleDown`; the environment computes them before the font
    is known.
+5. The radical sign of Latin Modern Math shows a gap to its overline, and
+   the root index of Asana Math sits too far left: the radical constants
+   need a closer look.
 
 ## 7. What is still missing
 
@@ -350,14 +360,10 @@ TM_TEST_FONT_DIR=/path/to/fonts tests/opentype/render-samples.sh
 
 ### 7.3 Variants and assemblies
 
-- Lay out assemblies per the specification: compute the number of extender
-  repetitions from the target size, overlap connectors by at least
-  `minConnectorOverlap`, respect `startConnectorLength` and
-  `endConnectorLength`. This needs a virtual font primitive that receives a
-  target length rather than a variant number, or direct construction in the
-  rubber font.
-- Let `get_delimiter` (`text_boxes.cpp`) query the variants directly for
-  OpenType fonts instead of probing `<left-x-N>` and measuring.
+- Let `get_delimiter` (`text_boxes.cpp`) ask the font for the smallest
+  variant or assembly reaching a target height instead of probing
+  `<left-x-N>` and measuring; with a target height the connector overlaps
+  can be stretched to fit exactly, as the specification intends.
 - Route horizontal variants through `wide_box` / `get_wide` for wide
   accents, braces and arrows; today only rubber names reach them.
 - `<big-x-N>` for `N > 2`, and the interplay with `supports_big_operators`
@@ -396,8 +402,8 @@ TM_TEST_FONT_DIR=/path/to/fonts tests/opentype/render-samples.sh
 
 ## 8. Suggested order of the remaining work
 
-1. Spec-conformant assemblies and direct variant selection in
-   `get_delimiter`; this fixes the most visible defects in the samples.
+1. Direct variant and assembly selection by target height in
+   `get_delimiter`, and radical placement.
 2. Horizontal variants for wide accents and braces, with top accent
    attachment.
 3. Remaining script constants (`subSuperscriptGapMin`, drop limits,
