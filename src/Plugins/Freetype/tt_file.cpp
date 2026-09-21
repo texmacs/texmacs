@@ -42,6 +42,30 @@ tt_extend_font_path (url u) {
   }
 }
 
+// OpenType and TrueType font directories of the TeX Live installations
+// found under the usual roots, whatever their year
+static url
+texlive_font_dirs () {
+  url r= url_none ();
+  const char* roots[]= { "/usr/local/texlive", "/usr/share/texlive",
+                         "/opt/texlive", "$HOME/texlive" };
+  for (int i= 0; i < 4; i++) {
+    url root= url_system (roots[i]);
+    if (!is_directory (root)) continue;
+    bool err= false;
+    array<string> a= read_directory (root, err);
+    if (err) continue;
+    for (int j= 0; j < N(a); j++) {
+      if (starts (a[j], ".")) continue;
+      url fonts= root * url (a[j]) * url ("texmf-dist") * url ("fonts");
+      if (!is_directory (fonts)) continue;
+      r= r | search_sub_dirs (fonts * url ("opentype"))
+           | search_sub_dirs (fonts * url ("truetype"));
+    }
+  }
+  return r;
+}
+
 url
 tt_font_path () {
   string xtt= get_env ("TEXMACS_FONT_PATH");
@@ -66,12 +90,7 @@ tt_font_path () {
     search_sub_dirs ("/opt/local/share/texmf-texlive/fonts/truetype") |
     search_sub_dirs ("/opt/local/share/texmf-texlive-dist/fonts/opentype") |
     search_sub_dirs ("/opt/local/share/texmf-texlive-dist/fonts/truetype") |
-    search_sub_dirs ("/usr/local/texlive/2020/texmf-dist/fonts/opentype") |
-    search_sub_dirs ("/usr/local/texlive/2020/texmf-dist/fonts/truetype") |
-    search_sub_dirs ("/usr/local/texlive/2021/texmf-dist/fonts/opentype") |
-    search_sub_dirs ("/usr/local/texlive/2021/texmf-dist/fonts/truetype") |
-    search_sub_dirs ("/usr/local/texlive/2022/texmf-dist/fonts/opentype") |
-    search_sub_dirs ("/usr/local/texlive/2022/texmf-dist/fonts/truetype");
+    texlive_font_dirs ();
 #else
     search_sub_dirs ("$HOME/.fonts") |
     search_sub_dirs ("/usr/share/fonts/opentype") |

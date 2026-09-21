@@ -24,6 +24,9 @@ bool supports_big_operators (string res_name); // from poor_rubber.cpp
 
 // largest number of repetitions of the extenders of an assembled glyph
 #define MAX_ASSEMBLY_REPS 64
+// display operators are never required to be taller than this (in em):
+// some fonts declare very large displayOperatorMinHeight values
+#define DISPLAY_OPERATOR_MAX_EM 2.0
 font rubber_unicode_font (font base, tt_face face);
 
 /******************************************************************************
@@ -48,6 +51,9 @@ struct rubber_unicode_font_rep: font_rep {
   font   get_font (int nr);
   int    search_font_sub (string s, string& rew);
   int    search_font_sub_opentype (string s, string& rew);
+  bool   get_rubber_variant (string s, SI height, string& r);
+  void   add_virtual_glyph (string name, string def);
+  array<SI> part_lengths (GlyphAssembly gass, bool ver);
   int    search_font_cached (string s, string& rew);
   font   search_font (string& s);
 
@@ -202,28 +208,50 @@ assembled_length (GlyphAssembly gass, int reps, int min_overlap) {
 
 // Build the definition of an assembled glyph according to the OpenType MATH
 // specification: every extender part is repeated 'reps' times and
-// consecutive parts overlap by minConnectorOverlap, limited by the connector
-// lengths of the two parts. Parts are stacked bottom to top or glued left
-// to right; upem converts design units to fractions of the em.
+// consecutive parts overlap by at least minConnectorOverlap, limited by the
+// connector lengths of the two parts. When target > 0, the overlaps are
+// enlarged uniformly so that the assembly shrinks towards the target length
+// (in design units). Parts are stacked bottom to top or glued left to
+// right. The separations handed to glue-above / glue* are computed from
+// the advances of the parts (du is the size in SI of a design unit, em the
+// size of the em) and from their measured lengths in the rendered font
+// (ink, one entry per part record), so that the assembly has the length
+// prescribed by the table whatever the rounding of the rendered parts.
 static string
-assemble (GlyphAssembly gass, int reps, int min_overlap, double upem,
-          bool ver) {
+assemble (GlyphAssembly gass, int reps, int min_overlap, int target,
+          double du, double em, array<SI> ink, bool ver) {
   array<GlyphPartRecord> parts;
+  array<SI> len;
   for (int i= 0; i < N (gass.partRecords); i++) {
     GlyphPartRecord pr= gass.partRecords[i];
-    if ((pr.partFlags & 1) != 0)
-      for (int k= 0; k < reps; k++) parts << pr;
-    else parts << pr;
+    int n= ((pr.partFlags & 1) != 0)? reps: 1;
+    for (int k= 0; k < n; k++) { parts << pr; len << ink[i]; }
   }
+  int n= N (parts);
+  array<int> max_o (max (n - 1, 0));
+  int total= 0;
+  for (int i= 0; i < n; i++) {
+    total += (int) parts[i].fullAdvance;
+    if (i + 1 < n) {
+      max_o[i]= min ((int) parts[i].endConnectorLength,
+                     (int) parts[i+1].startConnectorLength);
+      total -= min (min_overlap, max_o[i]);
+    }
+  }
+  // extra overlap per joint needed to reach the target
+  int extra= 0;
+  if (target > 0 && n > 1 && total > target)
+    extra= (total - target + n - 2) / (n - 1);
   array<string> glyphs;
   array<double> overlap;
-  for (int i= 0; i < N (parts); i++) {
+  for (int i= 0; i < n; i++) {
     glyphs << ("@" * as_hexadecimal (parts[i].glyphID, 4));
-    if (i + 1 < N (parts)) {
-      int o= min_overlap;
-      o= min (o, (int) parts[i].endConnectorLength);
-      o= min (o, (int) parts[i+1].startConnectorLength);
-      overlap << (o / upem);
+    if (i + 1 < n) {
+      int o= min (min_overlap + extra, max_o[i]);
+      // the next part must start (fullAdvance - o) design units after the
+      // start of this one, i.e. sep after its measured end
+      double sep= ((int) parts[i].fullAdvance - o) * du - (double) len[i];
+      overlap << (-sep / em);
     }
   }
   return glue (glyphs, overlap, ver);
@@ -279,6 +307,9 @@ rubber_unicode_font_rep::search_font_sub_opentype (string s, string& rew) {
                            ? math_face->math_table->ver_glyph_assembly
                            : math_face->math_table->hor_glyph_assembly;
 
+  // names of made to measure assemblies (see get_rubber_variant)
+  if (virt->dict->contains (s)) return 6;
+
   // turn a number to a 4-digit hexadecimal string "@XXXX"
   auto hex4= [] (int x) { return "@" * as_hexadecimal (x, 4); };
 
@@ -289,6 +320,9 @@ rubber_unicode_font_rep::search_font_sub_opentype (string s, string& rew) {
     if (starts (s, "<big-") && var == 1 && using_vertical) {
       auto& adv= math_table->ver_glyph_variants_adv (glyphID);
       int   min_h= math_table->constants_table[displayOperatorMinHeight];
+      double upem= (double) math_face->ft_face->units_per_EM;
+      if (upem <= 0.0) upem= 1000.0;
+      min_h= min (min_h, (int) (DISPLAY_OPERATOR_MAX_EM * upem));
       int   i= N (gv) - 1;
       for (int j= 1; j < N (gv); j++)
         if ((int) adv[j] >= min_h) { i= j; break; }
@@ -327,23 +361,14 @@ rubber_unicode_font_rep::search_font_sub_opentype (string s, string& rew) {
           while (k0 < MAX_ASSEMBLY_REPS &&
                  assembled_length (gass, k0, min_overlap) <= largest) k0++;
         }
+        double du= ((double) base->size * (double) base->hpt) / upem;
+        double em= (double) base->size * (double) base->hpt;
+        array<SI> ink= part_lengths (gass, using_vertical);
         for (int k= k0; k < k0 + MAX_ASSEMBLY_REPS; k++) {
           string name= prefix * as_string (nvar + k - k0 + shift) * ">";
           if (virt->dict->contains (name)) continue;
-          string def= assemble (gass, k, min_overlap, upem, using_vertical);
-          virt->dict (name)= N (virt->virt_def);
-          virt->virt_def << string_to_scheme_tree (def);
-        }
-        // subfn[6] is the virtual font for the assembled glyphs; it caches
-        // the definitions, so it must be recreated when new ones are added.
-        // Its metric and glyph caches are resources with the same name and
-        // are sized after the number of definitions, so reset them as well.
-        if (initialized[6]) {
-          string vname= subfn[6]->res_name;
-          font::instances->reset (vname);
-          font_metric::instances->reset (vname);
-          font_glyphs::instances->reset (vname);
-          initialized[6]= false;
+          add_virtual_glyph (name, assemble (gass, k, min_overlap, 0,
+                                             du, em, ink, using_vertical));
         }
       }
       return 6;
@@ -356,6 +381,90 @@ rubber_unicode_font_rep::search_font_sub_opentype (string s, string& rew) {
   // if nr == 0, failed to find the sub font from subfn[1:4]
   // use default rubber font subfn[5]
   return nr == 0 ? 5 : nr;
+}
+
+// Measured lengths (heights or widths) of the parts of an assembly in the
+// base font, one entry per part record
+array<SI>
+rubber_unicode_font_rep::part_lengths (GlyphAssembly gass, bool ver) {
+  array<SI> r;
+  for (int i= 0; i < N (gass.partRecords); i++) {
+    metric ex;
+    base->get_extents ("<@" * as_hexadecimal (gass.partRecords[i].glyphID, 4)
+                       * ">", ex);
+    r << (ver? ex->y2 - ex->y1: ex->x2 - ex->x1);
+  }
+  return r;
+}
+
+// Add a glyph definition to the virtual font of the assembled glyphs.
+// subfn[6] caches the definitions, so it must be recreated when new ones
+// are added; its metric and glyph caches are resources with the same name
+// and are sized after the number of definitions, so reset them as well.
+void
+rubber_unicode_font_rep::add_virtual_glyph (string name, string def) {
+  virt->dict (name)= N (virt->virt_def);
+  virt->virt_def << string_to_scheme_tree (def);
+  if (initialized[6]) {
+    string vname= subfn[6]->res_name;
+    font::instances->reset (vname);
+    font_metric::instances->reset (vname);
+    font_glyphs::instances->reset (vname);
+    initialized[6]= false;
+  }
+}
+
+// Answer the delimiter search of the typesetter directly from the MATH
+// table: the smallest pre-drawn variant whose advance reaches the height,
+// or an assembly made to measure, named <head-root-hN> with N the height
+// in pixels.
+bool
+rubber_unicode_font_rep::get_rubber_variant (string s, SI height, string& r) {
+  if (is_nil (math_face) || is_nil (math_face->math_table)) return false;
+  // <left-(> style names, without a variant number
+  if (!starts (s, "<") || !ends (s, ">") || N(s) < 3) return false;
+  array<string> v= tokenize (s (1, N(s) - 1), "-");
+  if (N(v) != 2) return false;
+  string head= v[0], root= v[1];
+  if (root == "." || root == "") return false;
+  string uu= N (root) > 1 ? strict_cork_to_utf8 ("<" * root * ">") : root;
+  int      j= 0;
+  uint32_t u= decode_from_utf8 (uu, j);
+  unsigned int glyphID= ft_get_char_index (math_face->ft_face, u);
+  ot_mathtable mt= math_face->math_table;
+  if (!mt->ver_glyph_variants->contains (glyphID)) return false;
+
+  double upem= (double) math_face->ft_face->units_per_EM;
+  if (upem <= 0.0) upem= 1000.0;
+  // size in SI of one design unit (vertical)
+  double du= ((double) base->size * (double) base->hpt) / upem;
+  int target= (int) ceil (height / du);
+  string prefix= "<" * head * "-" * root * "-";
+
+  array<unsigned int> gv = mt->ver_glyph_variants (glyphID);
+  array<unsigned int> adv= mt->ver_glyph_variants_adv (glyphID);
+  for (int i= 0; i < N(gv) && i < N(adv); i++)
+    if ((int) adv[i] >= target) {
+      r= prefix * as_string (i) * ">";
+      return true;
+    }
+  if (!mt->ver_glyph_assembly->contains (glyphID)) {
+    // no assembly: the largest variant will have to do
+    r= prefix * as_string (N(gv) - 1) * ">";
+    return N(gv) > 0;
+  }
+  GlyphAssembly gass= mt->ver_glyph_assembly (glyphID);
+  int min_overlap= (int) mt->minConnectorOverlap;
+  int k= 1;
+  while (k < MAX_ASSEMBLY_REPS &&
+         assembled_length (gass, k, min_overlap) < target) k++;
+  r= prefix * "h" * as_string (height / PIXEL) * ">";
+  if (!virt->dict->contains (r)) {
+    double em= (double) base->size * (double) base->hpt;
+    add_virtual_glyph (r, assemble (gass, k, min_overlap, target, du, em,
+                                    part_lengths (gass, true), true));
+  }
+  return true;
 }
 
 int

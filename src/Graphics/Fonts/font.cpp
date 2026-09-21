@@ -598,6 +598,12 @@ font_rep::make_rubber_font (font fn) {
     return fn;
 }
 
+bool
+font_rep::get_rubber_variant (string s, SI height, string& r) {
+  (void) s; (void) height; (void) r;
+  return false;
+}
+
 font
 rubber_font (font base) {
   if (larger_font_table->contains (base->res_name))

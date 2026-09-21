@@ -404,6 +404,11 @@ get_delimiter (string s, font fn, SI height) {
   int ns= N(s);
   ASSERT (ns >= 2 && s[0] == '<' && s[ns-1] == '>',
 	  "invalid rubber character");
+  // fonts which know their size variants (OpenType MATH) answer directly
+  if (!is_digit (s[ns-2])) {
+    string r;
+    if (fn->get_rubber_variant (s, height - PIXEL, r)) return r;
+  }
   if (is_digit (s[ns-2])) {
     int pos;
     int plus= get_number (s, pos);

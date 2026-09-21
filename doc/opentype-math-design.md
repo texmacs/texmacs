@@ -570,8 +570,9 @@ L (a week or more). Phases 1 and 2 are independent of 3; phase 4 needs 3.
   invalidates objects on header changes (`check-stale` is a stopgap).
 - Replace the hard-coded TeX Live years in `tt_font_path` by a glob or
   `kpsewhich`, so system math fonts are found.
-- Family aliases in the font database (`Stix Two Math` versus `STIX Two
-  Math`), so that documents and the sample resolve the intended font.
+- Document the family name normalization of `tt_font_name` ("STIX Two
+  Math" becomes "Stix Two Math"), which is why the sample uses that
+  spelling; no alias mechanism is needed.
 - Push the branch; keep `master` merges small.
 
 ### Phase 1: finish the table-driven layout (M)

@@ -46,6 +46,7 @@ private slots:
   void test_kerning_at_height ();
   void test_assembly_monotone ();
   void test_hand_tuned_switch ();
+  void test_rubber_variant_by_height ();
 };
 
 void
@@ -280,6 +281,44 @@ TestOpenTypeFont::test_hand_tuned_switch () {
   font pag2= unicode_font ("texgyrepagella-math", 14, LM_DPI);
   QCOMPARE (pag2->math_type, MATH_TYPE_TEX_GYRE);
   QCOMPARE (pag2->frac_rule_thickness, (SI) 0);
+}
+
+void
+TestOpenTypeFont::test_rubber_variant_by_height () {
+  if (!have_lm) QSKIP ("no Latin Modern Math");
+  font rf= rubber_font (lm);
+  string r;
+  // Latin Modern Math parenleft variants: 997 1095 1195 1445 1793 2093 2393
+  // 2991 design units; the smallest one reaching the height is chosen
+  QVERIFY (rf->get_rubber_variant ("<left-(>", du_y (900), r));
+  QCOMPARE (r, string ("<left-(-0>"));
+  QVERIFY (rf->get_rubber_variant ("<left-(>", du_y (1500), r));
+  QCOMPARE (r, string ("<left-(-4>"));
+  QVERIFY (rf->get_rubber_variant ("<left-(>", du_y (2991), r));
+  QCOMPARE (r, string ("<left-(-7>"));
+  // beyond the variants an assembly is made to measure: one extender
+  // (3448 with minimal overlaps) shrunk to 3200
+  SI h= du_y (3200);
+  QVERIFY (rf->get_rubber_variant ("<left-(>", h, r));
+  QVERIFY2 (starts (r, "<left-(-h"), as_charp (r));
+  QVERIFY (rf->supports (r));
+  metric ex;
+  rf->get_extents (r, ex);
+  QVERIFY2 (qAbs ((ex->y2 - ex->y1) - h) <= du_y (60),
+            as_charp ("assembled height " * as_string (ex->y2 - ex->y1) *
+                      " for target " * as_string (h)));
+  // a much taller request needs more extenders and still fits
+  h= du_y (9000);
+  QVERIFY (rf->get_rubber_variant ("<left-(>", h, r));
+  rf->get_extents (r, ex);
+  QVERIFY2 (qAbs ((ex->y2 - ex->y1) - h) <= du_y (60),
+            as_charp ("assembled height " * as_string (ex->y2 - ex->y1) *
+                      " for target " * as_string (h)));
+  // radicals and integrals go through the same path
+  QVERIFY (rf->get_rubber_variant ("<large-sqrt>", du_y (2000), r));
+  QVERIFY (rf->supports (r));
+  // unknown characters are refused
+  QVERIFY (!rf->get_rubber_variant ("<left-.>", du_y (2000), r));
 }
 
 QTEST_GUILESS_MAIN(TestOpenTypeFont)

@@ -28,10 +28,9 @@ static url
 extra_font (string name) {
   string dir= get_env ("TM_TEST_FONT_DIR");
   if (dir == "") return url_none ();
-  url u= url_system (dir) * url_wildcard (name);
-  u= complete (u, "fr");
-  if (is_none (u)) return u;
-  return is_or (u) ? u[1] : u;
+  url u= complete (search_sub_dirs (url_system (dir)) * url_wildcard (name), "fr");
+  while (is_or (u)) u= u[1];
+  return u;
 }
 
 class TestTTTools: public QObject {

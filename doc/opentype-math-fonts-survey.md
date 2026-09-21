@@ -136,10 +136,12 @@ Gyre math fonts. Companions in the `dejavu` collection.
 stylistic sets for alternate glyph shapes (upright integrals, calligraphic
 versus script, and so on). Companions `STIXTwoText-{Regular, Italic, Bold,
 BoldItalic, Medium, SemiBold}`. Replaces STIX v1, which TeXmacs ships and
-special-cases (`rubber_stix_font.cpp`, `adjust_stix.cpp`); note that the
-font calls its family "Stix Two Math" in some builds and "STIX Two Math" in
-others, which already bit the sample document. Its `displayOperatorMinHeight`
-is 1800, so display operators come out large; `minConnectorOverlap` 100.
+special-cases (`rubber_stix_font.cpp`, `adjust_stix.cpp`). The font calls
+itself "STIX Two Math", but `tt_font_name` normalizes every family starting
+with "STIX" to "Stix", so inside TeXmacs the family is "Stix Two Math" and
+documents must use that spelling (the sample document had to be fixed).
+Its `displayOperatorMinHeight` is 1800, so display operators come out
+large; `minConnectorOverlap` 100.
 
 **XITS Math** (OFL, a fork of STIX v1 by Khaled Hosny). Regular and Bold
 math, `XITS-{Regular, Italic, Bold, BoldItalic}` text. Coverage like STIX

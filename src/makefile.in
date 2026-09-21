@@ -147,6 +147,9 @@ texmacs_m_deps += $(call make_m_deps,$(cocoa_m_src))
 texmacs_mm_deps += $(call make_mm_deps,$(cocoa_mm_src))
 texmacs_c_deps := $(call make_c_deps, $(call findc_in,System,Misc))
 texmacs_c_deps += $(call make_c_deps, $(pdf_c_src))
+# all dependency files; the "deps" target below and the include of the
+# dependency files rely on this variable
+deps := $(texmacs_cpp_deps) $(texmacs_m_deps) $(texmacs_mm_deps)
 
 #deps += $(texmacs_cpp_deps) $(texmacs_m_deps) $(texmacs_mm_deps)
 

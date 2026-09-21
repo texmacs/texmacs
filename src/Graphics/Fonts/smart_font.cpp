@@ -720,6 +720,7 @@ struct smart_font_rep: font_rep {
   int    adjusted_dpi (string fam, string var, string ser, string sh, int att);
 
   font make_rubber_font (font base);
+  bool get_rubber_variant (string s, SI height, string& r);
 
   bool   supports (string c);
   void   get_extents (string s, metric& ex);
@@ -1175,6 +1176,15 @@ smart_font_rep::resolve_rubber (string c, string fam, int attempt) {
       return sm->add_char (key, c);
   }
   return -1;
+}
+
+bool
+smart_font_rep::get_rubber_variant (string s, SI height, string& r) {
+  int i=0, nr;
+  string rr= s;
+  advance (s, i, rr, nr);
+  if (nr < 0 || nr >= N(fn) || is_nil (fn[nr])) return false;
+  return fn[nr]->get_rubber_variant (rr, height, r);
 }
 
 font

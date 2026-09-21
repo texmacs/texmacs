@@ -123,6 +123,10 @@ struct font_rep: rep<font> {
   void copy_math_pars (font fn);
 
   virtual font make_rubber_font (font base);
+  // For a rubber character s (<left-(>, <large-sqrt>, ...), return in r
+  // the name of the smallest size variant reaching the given height, or of
+  // an assembly made to measure; false when the font cannot tell
+  virtual bool get_rubber_variant (string s, SI height, string& r);
 
   virtual bool   supports (string c) = 0;
   virtual void   get_extents (string s, metric& ex) = 0;
