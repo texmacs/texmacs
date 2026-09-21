@@ -50,6 +50,7 @@ private slots:
   void test_script_parameters ();
   void test_wide_variants ();
   void test_feature_variants ();
+  void test_profiles ();
 };
 
 void
@@ -446,6 +447,24 @@ TestOpenTypeFont::test_feature_variants () {
   // fonts without a MATH table answer nothing
   font rm= unicode_font ("lmroman10-regular", LM_SIZE, LM_DPI);
   QVERIFY (!rm->get_feature_variant ("i", "dtls", 0, r));
+}
+
+void
+TestOpenTypeFont::test_profiles () {
+  // profiles are defined in Scheme at boot; here we set one by hand
+  tree p (TUPLE);
+  p << tuple ("file", "latinmodern-math") << tuple ("text", "Latin Modern Roman")
+    << tuple ("letters", "math") << tuple ("menu", "Latin Modern");
+  math_font_profile_set ("Latin Modern Math", p);
+  QCOMPARE (math_font_profile_attr ("Latin Modern Math", "text"),
+            string ("Latin Modern Roman"));
+  QCOMPARE (math_font_profile_attr ("Latin Modern Math", "nonsense"), string (""));
+  QCOMPARE (math_font_profile_attr ("No Such Font", "text"), string (""));
+  QCOMPARE (math_family_for_text ("Latin Modern Roman"), string ("Latin Modern Math"));
+  QCOMPARE (math_family_for_text ("Latin Modern Math"), string (""));
+  QCOMPARE (text_family_for_math ("Latin Modern Math"), string ("Latin Modern Roman"));
+  QVERIFY (N (math_font_profile_families ()) >= 1);
+  QCOMPARE (N (math_font_profile ("Latin Modern Math")), 4);
 }
 
 QTEST_GUILESS_MAIN(TestOpenTypeFont)

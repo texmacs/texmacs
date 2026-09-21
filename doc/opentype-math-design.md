@@ -388,6 +388,22 @@ TM_TEST_FONT_DIR=/path/to/fonts tests/opentype/render-samples.sh
   never match the capitalized smart font names ("Stix-..."), so the
   `rubber_stix_font` path is only reached through `make_rubber_font`.
 
+- **Phase 3, profiles.** `math_font_profiles.cpp` holds the per-font
+  profile table, filled at boot from
+  `TeXmacs/progs/fonts/fonts-opentype.scm` (twenty fonts). `profile_fix`
+  in `smart_font_bis` replaces a text family by its math companion in math
+  shapes when the math font is installed, and a math family by its text
+  companion otherwise, so `<with|font|Latin Modern Roman>` typesets
+  formulas in Latin Modern Math; the `letters` key can keep letters in the
+  text italic. The "Mathematical font" menu lists the installed profiled
+  fonts. Rubber names `<wide-...>` and `<rubber-...>` are resolved in the
+  rubber font before the emulated glyphs for OpenType math fonts, and long
+  arrows missing from a font stretch the plain arrow.
+  Also: `tests/opentype/samples/math-showcase.tm` tours every feature per
+  font; the local font database of the test home had been built only
+  partially and was rebuilt (with TeX Live now on the font path, a full
+  build takes a long time).
+
 ## 6. Known defects still open
 
 1. The delimiter search still probes `<left-x-N>` for increasing `N` and

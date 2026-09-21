@@ -1365,6 +1365,84 @@ tmg_glyph_recognize (tmscm arg1) {
 }
 
 tmscm
+tmg_math_font_profile_set (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "math-font-profile-set");
+  TMSCM_ASSERT_SCHEME_TREE (arg2, TMSCM_ARG2, "math-font-profile-set");
+
+  string in1= tmscm_to_string (arg1);
+  scheme_tree in2= tmscm_to_scheme_tree (arg2);
+
+  // TMSCM_DEFER_INTS;
+  math_font_profile_set (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return TMSCM_UNSPECIFIED;
+}
+
+tmscm
+tmg_math_font_profile (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "math-font-profile");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  scheme_tree out= math_font_profile (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return scheme_tree_to_tmscm (out);
+}
+
+tmscm
+tmg_math_font_profile_families () {
+  // TMSCM_DEFER_INTS;
+  array_string out= math_font_profile_families ();
+  // TMSCM_ALLOW_INTS;
+
+  return array_string_to_tmscm (out);
+}
+
+tmscm
+tmg_math_font_profile_attr (tmscm arg1, tmscm arg2) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "math-font-profile-attr");
+  TMSCM_ASSERT_STRING (arg2, TMSCM_ARG2, "math-font-profile-attr");
+
+  string in1= tmscm_to_string (arg1);
+  string in2= tmscm_to_string (arg2);
+
+  // TMSCM_DEFER_INTS;
+  string out= math_font_profile_attr (in1, in2);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
+tmg_math_family_for_text (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "math-family-for-text");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  string out= math_family_for_text (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
+tmg_text_family_for_math (tmscm arg1) {
+  TMSCM_ASSERT_STRING (arg1, TMSCM_ARG1, "text-family-for-math");
+
+  string in1= tmscm_to_string (arg1);
+
+  // TMSCM_DEFER_INTS;
+  string out= text_family_for_math (in1);
+  // TMSCM_ALLOW_INTS;
+
+  return string_to_tmscm (out);
+}
+
+tmscm
 tmg_set_hand_tuned_math_fonts (tmscm arg1) {
   TMSCM_ASSERT_BOOL (arg1, TMSCM_ARG1, "set-hand-tuned-math-fonts");
 
@@ -11419,6 +11497,12 @@ initialize_glue_basic () {
   tmscm_install_procedure ("set-new-fonts",  tmg_set_new_fonts, 1, 0, 0);
   tmscm_install_procedure ("new-fonts?",  tmg_new_fontsP, 0, 0, 0);
   tmscm_install_procedure ("set-hand-tuned-math-fonts",  tmg_set_hand_tuned_math_fonts, 1, 0, 0);
+  tmscm_install_procedure ("math-font-profile-set",  tmg_math_font_profile_set, 2, 0, 0);
+  tmscm_install_procedure ("math-font-profile",  tmg_math_font_profile, 1, 0, 0);
+  tmscm_install_procedure ("math-font-profile-families",  tmg_math_font_profile_families, 0, 0, 0);
+  tmscm_install_procedure ("math-font-profile-attr",  tmg_math_font_profile_attr, 2, 0, 0);
+  tmscm_install_procedure ("math-family-for-text",  tmg_math_family_for_text, 1, 0, 0);
+  tmscm_install_procedure ("text-family-for-math",  tmg_text_family_for_math, 1, 0, 0);
   tmscm_install_procedure ("hand-tuned-math-fonts?",  tmg_hand_tuned_math_fontsP, 0, 0, 0);
   tmscm_install_procedure ("tmtm-eqnumber->nonumber",  tmg_tmtm_eqnumber_2nonumber, 1, 0, 0);
   tmscm_install_procedure ("busy-versioning?",  tmg_busy_versioningP, 0, 0, 0);

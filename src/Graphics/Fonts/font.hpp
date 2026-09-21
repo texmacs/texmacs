@@ -296,6 +296,14 @@ void above_adjust_bbb (hashmap<string,double>& t, double force);
 int  get_spacing_id (tree spacing_desc);
 tree get_spacing_desc (int spacing_id);
 
+// Profiles of named OpenType math fonts (math_font_profiles.cpp)
+void          math_font_profile_set (string family, tree profile);
+tree          math_font_profile (string family);
+array<string> math_font_profile_families ();
+string        math_font_profile_attr (string family, string key);
+string        math_family_for_text (string text_family);
+string        text_family_for_math (string math_family);
+
 // Font database
 extern bool new_fonts;
 void set_new_fonts (bool new_val);

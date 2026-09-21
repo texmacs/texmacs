@@ -13,6 +13,7 @@
 #include "convert.hpp"
 #include "converter.hpp"
 #include "Freetype/tt_tools.hpp"
+#include "Freetype/tt_file.hpp"
 #include "translator.hpp"
 #include "iterator.hpp"
 #include "analyze.hpp" // contains
@@ -655,6 +656,31 @@ stix_fix (string family, string series, string shape) {
   return family;
 }
 
+// Profiled OpenType math fonts: in math shapes a text family is replaced
+// by its math companion when that font is installed, in text shapes a math
+// family by its text companion
+string
+profile_fix (string family, string series, string shape) {
+  (void) series;
+  array<string> a= trimmed_tokenize (family, ","), r;
+  for (int i= 0; i < N(a); i++) {
+    string item= a[i];
+    if (!occurs ("=", item)) {
+      if (starts (shape, "math")) {
+        string m= math_family_for_text (item);
+        if (m != "" && tt_font_exists (math_font_profile_attr (m, "file")))
+          item= m;
+      }
+      else {
+        string t= text_family_for_math (item);
+        if (t != "" && t != item) item= t;
+      }
+    }
+    r << item;
+  }
+  return recompose (r, ",");
+}
+
 string
 math_fix (string family, string series, string shape) {
   if (starts (shape, "math")) {
@@ -768,7 +794,8 @@ smart_font_rep::smart_font_rep (
     series (series2), shape (shape2), rshape (shape2),
     sz (sz2), hdpi (hdpi2), dpi (vdpi2),
     math_kind (0), italic_nr (-1),
-    ot_math (!is_nil (base_fn) && base_fn->math_type == MATH_TYPE_OPENTYPE),
+    ot_math (!is_nil (base_fn) && base_fn->math_type == MATH_TYPE_OPENTYPE &&
+             math_font_profile_attr (main_family (family2), "letters") != "text"),
     fn (2), sm (get_smart_map (tuple (family2, variant2, series2, shape2)))
 {
   fn[SUBFONT_MAIN ]= adjust_subfont (base_fn);
@@ -1937,6 +1964,7 @@ smart_font_bis (string family, string variant, string series, string shape,
   family= kepler_fix (family, series, shape);
   //family= stix_fix (family, series, shape);
   family= math_fix (family, series, shape);
+  family= profile_fix (family, series, shape);
   string sh= shape;
   if (shape == "mathitalic" || shape == "mathshape") sh= "right";
   string mfam= main_family (family);

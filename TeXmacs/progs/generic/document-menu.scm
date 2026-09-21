@@ -256,7 +256,11 @@
       (if (font-exists-in-tt? "STIX-Regular")
           ("Stix" (init-env "math-font" "math-stix")))
       (if (font-exists-in-tt? "texgyretermes-math")
-          ("Termes" (init-env "math-font" "math-termes"))))
+          ("Termes" (init-env "math-font" "math-termes")))
+      (if (nnull? (opentype-math-font-list))
+          ---
+          (group "OpenType math fonts")
+          (link opentype-math-font-menu)))
   (-> "Program font"
       ("Default" (init-default "prog-font"))
       ---
