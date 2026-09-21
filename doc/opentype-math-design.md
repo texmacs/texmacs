@@ -423,6 +423,14 @@ TM_TEST_FONT_DIR=/path/to/fonts tests/opentype/render-samples.sh
   glyph. Whether this build should embed outlines for OpenType fonts is a
   separate question of the PDF writer, not of the math work.
 
+- **Scanning and shipping.** Files already recorded in the font database
+  (same name and size) are no longer re-read when scanning, and styles
+  with known characteristics are not re-analyzed: rescanning a complete
+  database went from minutes to about two seconds. Latin Modern Math, New
+  Computer Modern Math, STIX Two Math, KpMath and Fira Math are shipped
+  with text companions and registered in the global database, so they work
+  in a fresh installation without a scan; see section 6 of the survey.
+
 ## 6. Known defects still open
 
 1. The delimiter search still probes `<left-x-N>` for increasing `N` and
@@ -430,12 +438,15 @@ TM_TEST_FONT_DIR=/path/to/fonts tests/opentype/render-samples.sh
    can exceed the request by up to one extender. Parts are glued on their
    ink boxes rather than on their advances.
 2. `parse_variant` requires exactly three dash-separated tokens.
-3. `ysup_hi_lim` has no MATH counterpart and is set to
+3. The glue function `font-database-search` (four arguments) blocks for
+   minutes on some families, apparently in an external lookup; no Scheme
+   code calls it, it is a debugging entry point.
+4. `ysup_hi_lim` has no MATH counterpart and is set to
    `max (superscriptShiftUp, x-height)`.
-4. Script sizes still come from `script ()` (2/3 per level), not from
+5. Script sizes still come from `script ()` (2/3 per level), not from
    `scriptPercentScaleDown`; the environment computes them before the font
    is known.
-5. The radical sign of Latin Modern Math shows a gap to its overline, and
+6. The radical sign of Latin Modern Math shows a gap to its overline, and
    the root index of Asana Math sits too far left: the radical constants
    need a closer look.
 

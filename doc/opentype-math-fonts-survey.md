@@ -357,18 +357,36 @@ detected from the cmap, no cap.
 
 ## 6. Shipping
 
-TeXmacs currently ships TeX Gyre (text and math, GUST FL) and STIX v1. A
-sensible OpenType set to ship, all freely redistributable:
+TeXmacs now ships, besides the TeX Gyre text and math fonts and STIX v1
+which were already there:
 
-| Family | Files | Size | License |
+| Directory | Fonts | Size | License |
 |---|---|---|---|
-| TeX Gyre Pagella, Termes, Bonum, Schola Math | already shipped | | GUST FL |
-| Latin Modern Math + `lmroman10` four faces | 5 | 1.3 MB | GUST FL |
-| STIX Two Math + STIX Two Text four faces | 5 | 1.4 MB | OFL |
-| NewCM Math Regular and Bold + NewCM10 four faces | 6 | 3 MB | GUST FL |
+| `TeXmacs/fonts/truetype/lm` | Latin Modern Math and the four 10 pt Latin Modern Roman text faces | 1.2 MB | GUST Font License |
+| `TeXmacs/fonts/truetype/newcm` | New Computer Modern Math regular and bold, and four NewCM10 text faces | 4.2 MB | GUST Font License |
+| `TeXmacs/fonts/truetype/stix2` | STIX Two Math and four STIX Two Text faces | 2.0 MB | SIL OFL 1.1 |
+| `TeXmacs/fonts/truetype/kp` | KpMath regular and bold, and four KpRoman text faces | 1.1 MB | SIL OFL 1.1 |
+| `TeXmacs/fonts/truetype/fira` | Fira Math, next to the Fira Sans and Fira Mono faces already shipped | 0.2 MB | SIL OFL 1.1 |
 
-Everything else is picked up from the system or TeX Live through
-`TEXMACS_FONT_PATH` and the font database, with profiles activating when
-the files are found. `tt_font_path` already searches TeX Live's `opentype`
-directories on macOS, but only for hard-coded years; that list should be
-replaced by a glob or by `kpsewhich`.
+Each directory carries the license text and a `README.md` with the
+upstream address, the version and the copyright of every file. Together
+this is about 8.6 MB, roughly doubling the shipped font tree.
+
+The five families are registered in the shipped global font database
+(`TeXmacs/fonts/font-database.scm`, `font-features.scm`,
+`font-characteristics.scm`), so a new installation finds them with no disk
+scan: rendering the samples with an empty home directory and no
+`TEXMACS_FONT_PATH` gives the same result as with the fonts installed
+system-wide. Users with an existing local database get them when TeXmacs
+loads the global tables for a missing family, or after a rescan.
+
+Only one weight and one optical size of each text family is shipped. A
+document typeset with the whole upstream family available can therefore
+differ slightly, as the extra optical sizes of Latin Modern and the Medium
+and SemiBold weights of STIX Two Text are then used instead.
+
+Everything else in the survey is picked up from the system or from TeX
+Live through `TEXMACS_FONT_PATH` and the font database; the profiles in
+`TeXmacs/progs/fonts/fonts-opentype.scm` activate when the files are
+found, and the font menus list exactly the profiled fonts that are
+installed.
