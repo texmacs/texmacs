@@ -51,6 +51,7 @@ private slots:
   void test_wide_variants ();
   void test_feature_variants ();
   void test_profiles ();
+  void test_feature_font ();
 };
 
 void
@@ -465,6 +466,37 @@ TestOpenTypeFont::test_profiles () {
   QCOMPARE (text_family_for_math ("Latin Modern Math"), string ("Latin Modern Roman"));
   QVERIFY (N (math_font_profile_families ()) >= 1);
   QCOMPARE (N (math_font_profile ("Latin Modern Math")), 4);
+}
+
+void
+TestOpenTypeFont::test_feature_font () {
+  if (!have_lm) QSKIP ("no Latin Modern Math");
+  // the ssty alternates of Latin Modern Math are heavier: a different
+  // glyph for the same character
+  font sf= feature_font (lm, "ssty", 0);
+  QVERIFY (!is_nil (sf));
+  QVERIFY (sf->res_name != lm->res_name);
+  QVERIFY (sf->supports ("<#1D465>"));
+  metric ex1, ex2;
+  lm->get_extents ("<#1D465>", ex1);
+  sf->get_extents ("<#1D465>", ex2);
+  QVERIFY (ex1->y2 > 0 && ex2->y2 > 0);
+  font_metric fm1, fm2; font_glyphs fg1, fg2;
+  QVERIFY (sf->index_glyph ("<#1D465>", fm1, fg1) !=
+           lm->index_glyph ("<#1D465>", fm2, fg2));
+  QVERIFY (sf->supports ("1") && sf->supports ("+"));
+  // positions are reported per byte of the original string
+  string s= "<#1D465><#1D466>1";
+  SI* xpos= tm_new_array<SI> (N(s) + 1);
+  sf->get_xpositions (s, xpos);
+  QCOMPARE (xpos[0], (SI) 0);
+  QVERIFY (xpos[8] > 0 && xpos[16] > xpos[8] && xpos[N(s)] > xpos[16]);
+  tm_delete_array (xpos);
+  // the rubber font of the decorated font is the one of the base font
+  string r;
+  font rf= rubber_font (sf);
+  QVERIFY (rf->get_rubber_variant ("<left-(>", du_y (1500), r));
+  QCOMPARE (r, string ("<left-(-4>"));
 }
 
 QTEST_GUILESS_MAIN(TestOpenTypeFont)

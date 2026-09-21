@@ -404,6 +404,17 @@ TM_TEST_FONT_DIR=/path/to/fonts tests/opentype/render-samples.sh
   partially and was rebuilt (with TeX Live now on the font path, a full
   build takes a long time).
 
+- **Phase 5, partly.** `feature_font (base, feature, alt)` is a font
+  decorator which replaces every glyph by the alt-th substitute of a GSUB
+  feature; the environment wraps untuned OpenType math fonts in it with
+  `ssty` at script levels, so scripts use the script-size alternates.
+  `<neg|...>` of a relation which Unicode encodes as a single negated
+  symbol typesets that symbol when the (untuned OpenType) font has it, and
+  strikes through otherwise. `tests/opentype/check.sh` runs the unit tests
+  and both sample renders. Bold mathematics comes for free through the
+  font database when the math family has a Bold style (New Computer Modern
+  Math, KpMath); it is not yet selected explicitly.
+
 ## 6. Known defects still open
 
 1. The delimiter search still probes `<left-x-N>` for increasing `N` and

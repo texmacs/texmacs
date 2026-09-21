@@ -490,9 +490,48 @@ concater_rep::typeset_wide (tree t, path ip, bool above) {
   if (ends (s, "brace>")) with_limits (LIMITS_ALWAYS);
 }
 
+// negated relations which Unicode encodes as single symbols; OpenType math
+// fonts draw these better than a stroke through the relation
+static hashmap<string,string>&
+negated_symbols () {
+  static hashmap<string,string> h ("");
+  if (N(h) != 0) return h;
+  h ("=")= "<#2260>";               h ("<equiv>")= "<#2262>";
+  h ("<in>")= "<#2209>";            h ("<ni>")= "<#220C>";
+  h ("<subset>")= "<#2284>";        h ("<supset>")= "<#2285>";
+  h ("<subseteq>")= "<#2288>";      h ("<supseteq>")= "<#2289>";
+  h ("<sqsubseteq>")= "<#22E2>";    h ("<sqsupseteq>")= "<#22E3>";
+  h ("<sim>")= "<#2241>";           h ("<simeq>")= "<#2244>";
+  h ("<approx>")= "<#2249>";        h ("<cong>")= "<#2247>";
+  h ("<asymp>")= "<#226D>";
+  h ("<less>")= "<#226E>";          h ("<gtr>")= "<#226F>";
+  h ("<leq>")= "<#2270>";           h ("<geq>")= "<#2271>";
+  h ("<prec>")= "<#2280>";          h ("<succ>")= "<#2281>";
+  h ("<preceq>")= "<#22E0>";        h ("<succeq>")= "<#22E1>";
+  h ("<rightarrow>")= "<#219B>";    h ("<leftarrow>")= "<#219A>";
+  h ("<leftrightarrow>")= "<#21AE>";
+  h ("<Rightarrow>")= "<#21CF>";    h ("<Leftarrow>")= "<#21CD>";
+  h ("<Leftrightarrow>")= "<#21CE>";
+  h ("<exists>")= "<#2204>";        h ("<mid>")= "<#2224>";
+  h ("<parallel>")= "<#2226>";      h ("<vdash>")= "<#22AC>";
+  h ("<models>")= "<#22AD>";        h ("<Vdash>")= "<#22AE>";
+  h ("<triangleleft>")= "<#22EA>";  h ("<triangleright>")= "<#22EB>";
+  h ("<trianglelefteq>")= "<#22EC>"; h ("<trianglerighteq>")= "<#22ED>";
+  return h;
+}
+
 void
 concater_rep::typeset_neg (tree t, path ip) {
   if (N(t) != 1) { typeset_error (t, ip); return; }
+  if (is_atomic (t[0]) && env->fn->math_type == MATH_TYPE_OPENTYPE) {
+    hashmap<string,string>& neg= negated_symbols ();
+    string s= t[0]->label;
+    if (neg->contains (s) && env->fn->supports (neg[s])) {
+      box b= typeset_as_concat (env, tree (neg[s]), descend (ip, 0));
+      print_semantic (b, t[0]);
+      return;
+    }
+  }
   box b= typeset_as_concat (env, t[0], descend (ip, 0));
   print_semantic (neg_box (ip, b, env->fn, env->pen), t[0]);
 }

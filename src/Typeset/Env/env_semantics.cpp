@@ -586,6 +586,9 @@ edit_env_rep::update_font () {
       int nsz= max (1, (int) tm_round (fn_size * pct / 100.0));
       if (nsz != sz) fn= make_current_font (nsz);
     }
+    // script size alternates (GSUB feature ssty) of untuned OpenType fonts
+    if (fn->math_type == MATH_TYPE_OPENTYPE)
+      fn= feature_font (fn, "ssty", min (index_level, 2) - 1);
   }
   string eff= get_string (FONT_EFFECTS);
   if (N(eff) != 0) fn= apply_effects (fn, eff);
