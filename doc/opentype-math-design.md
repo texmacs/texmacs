@@ -415,6 +415,12 @@ TM_TEST_FONT_DIR=/path/to/fonts tests/opentype/render-samples.sh
   font database when the math family has a Bold style (New Computer Modern
   Math, KpMath); it is not yet selected explicitly.
 
+- **Export check.** In the exported PDFs of the samples every TrueType and
+  OpenType font, tuned or not, is embedded as a Type 3 bitmap font (the TeX
+  fonts as Type 1), so native glyphs and assemblies export like any other
+  glyph. Whether this build should embed outlines for OpenType fonts is a
+  separate question of the PDF writer, not of the math work.
+
 ## 6. Known defects still open
 
 1. The delimiter search still probes `<left-x-N>` for increasing `N` and
