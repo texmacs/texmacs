@@ -557,15 +557,127 @@ rules, and the emulated bold and blackboard bold letters have nothing in
 the MATH table; the alphabets should simply come from the font when it has
 them (see the survey document), and the rest stays as it is.
 
-## 9. Suggested order of the remaining work
+## 9. Plan to complete the OpenType support
 
-1. Direct variant and assembly selection by target height in
-   `get_delimiter`, and radical placement.
-2. Horizontal variants for wide accents and braces, with top accent
-   attachment.
-3. Remaining script constants (`subSuperscriptGapMin`, drop limits,
-   `spaceAfterScript`) and `scriptPercentScaleDown`.
-4. Enable the path for STIX and TeX Gyre Math underneath their hand-tuned
-   tables, and check with the samples that nothing they tune has changed.
-5. GSUB `ssty` and GPOS kerning, which require a small OpenType layout
-   reader alongside the MATH parser.
+Principles: the hand-tuned tables keep precedence everywhere; every step
+lands with a unit test or a sample row; the "hand tuned math fonts" switch
+is the comparison tool. Sizes are S (a day or less), M (a few days),
+L (a week or more). Phases 1 and 2 are independent of 3; phase 4 needs 3.
+
+### Phase 0: groundwork (S)
+
+- Turn dependency tracking on in the autotools build, or add a rule that
+  invalidates objects on header changes (`check-stale` is a stopgap).
+- Replace the hard-coded TeX Live years in `tt_font_path` by a glob or
+  `kpsewhich`, so system math fonts are found.
+- Family aliases in the font database (`Stix Two Math` versus `STIX Two
+  Math`), so that documents and the sample resolve the intended font.
+- Push the branch; keep `master` merges small.
+
+### Phase 1: finish the table-driven layout (M)
+
+1. `get_delimiter_variant (s, height)` hook on `font_rep`: the rubber font
+   returns the smallest pre-drawn variant reaching the height, or the
+   assembly with the exact number of repetitions, stretching connector
+   overlaps to fit. `get_delimiter` uses it for `MATH_TYPE_OPENTYPE` fonts
+   instead of probing; `delimitedSubFormulaMinHeight` gives the minimum.
+2. Radical junction: rule position from the radical glyph's top,
+   `radicalKernBeforeDegree`; fixes the Latin Modern gap.
+3. Remaining script constants: `subSuperscriptGapMin`,
+   `superscriptBaselineDropMax`, `subscriptBaselineDropMin`,
+   `spaceAfterScript`; `scriptPercentScaleDown` through
+   `get_script_size`, which needs the font before the size is computed.
+4. Stack constants for `above`, `below`, `stack` and binomials.
+5. Extended shape coverage: no raised superscripts on tall delimiters and
+   operators.
+6. Display operator cap (`display-operator-max`) to tame fonts like IBM
+   Plex Math.
+
+Tests: expected heights for `<left-(-N>` at given target heights, radical
+rule position, script positions on STIX Two Math and Latin Modern Math;
+sample rows checked against LuaLaTeX with `unicode-math` for the same
+formulas.
+
+### Phase 2: wide accents and horizontal constructions (M)
+
+1. Table of TeXmacs accent names to combining code points (section 8.1).
+2. `get_wide_variant (s, width)` hook, shared by `wide_box`,
+   `typeset_long_arrow` and the braces; `<wide-x-N>` in the rubber font
+   goes through the horizontal variants and assemblies already
+   implemented.
+3. `get_top_accent (s)` hook and `top_accent ()` box method; accent
+   placement in `compute_wide_accent` from the attachment points,
+   `accentBaseHeight`, and the overbar constants for `<bar>`.
+4. Small GSUB reader for single substitutions, used for `flac` (flattened
+   accents) here and for `ssty` and `dtls` in phase 3.
+5. `stretchStack*` constants for the labels of long arrows.
+
+Tests: widths of `<wide-hat-N>` variants and assemblies from the table;
+a sample row of accents over letters and over wide bases in every font.
+
+### Phase 3: letters, alphabets and font profiles (L)
+
+1. The math font profile table of the survey document, in Scheme, read at
+   boot: family, file, aliases, text companions, bold math variant, letter
+   routing, real alphabets, rubber policy, display cap, menu placement,
+   quirks.
+2. `is_math_family`, `tex_gyre_fix`, `math_fix`, `supports_big_operators`
+   and the `font_translate` aliases consult the profiles; letters in math
+   mode are rewritten to the plane 1 code points of the math font when the
+   profile says so, which makes italic corrections and MathKernInfo
+   effective for letters (today they only reach digits and symbols).
+3. Real alphabets from the font when present; virtual emulation only for
+   the missing ones (script and double-struck are the usual gaps).
+4. `ssty` alternates for script sizes and `dtls` under accents through the
+   GSUB reader; GPOS pair kerning through a small GPOS reader, since math
+   fonts have no legacy `kern` table.
+5. Font menus generated from installed profiles; `math-*` legacy values
+   kept as aliases.
+6. Profiles for Tier 1: Latin Modern, New Computer Modern, TeX Gyre (five),
+   STIX Two, XITS, Libertinus, KpMath.
+
+Tests: a profile validation test (files exist, names match, companions and
+declared alphabets present); kerning through the smart font on letters,
+which the current test could not do.
+
+### Phase 4: the shipped fonts under their hand tuning (M)
+
+1. Reorder the constructor ladder so MATH activation runs first and each
+   hand-tuned branch overrides its own fields (`yfrac`, script shifts,
+   corrections, integral spacing); a correction table entry wins over the
+   table's italic correction and kern for that glyph.
+2. TeX Gyre Math and STIX get delimiter variants, assemblies and the
+   constants they never had, with their corrections untouched. Compare
+   tuned and untuned renders of every sample row; anything the tables tune
+   must be pixel-identical to before.
+3. Ship STIX Two Math and its text faces, and Latin Modern Math with four
+   text faces; route the `stix` family to STIX Two through a profile while
+   keeping STIX v1 for old documents.
+
+### Phase 5: polish (M)
+
+- Bold mathematics from real bold math fonts (New Computer Modern, KpMath,
+  XITS) through the profile's `bold-math` field.
+- Negations mapped to precomposed Unicode symbols when available.
+- Verify `<@XXXX>` glyphs and assemblies in PDF, PostScript and SVG
+  export; embedded subsets must contain the variant glyphs.
+- Cache assembled glyphs without rebuilding the virtual font; measure
+  startup and typesetting time with a large document.
+- Device tables are deliberately left out.
+
+### Phase 6: tests and documentation (S, continuous)
+
+- Reference PNGs for the pixel diff of the samples, refreshed on purpose.
+- A kerning and accents sample next to `math-overview.tm`.
+- `make -C tests` and both renders in a script that can run before every
+  commit; the design and survey documents updated as steps land.
+
+### Definition of done
+
+A document set in Latin Modern Math, New Computer Modern Math or STIX Two
+Math, with letters, scripts, accents, delimiters and operators, renders
+with no hand-drawn construction and compares well with LuaLaTeX's
+`unicode-math` output of the same source; TeX Gyre and STIX documents
+render exactly as before with the switch on; every installed Tier 1 font
+has a profile and passes the profile test; all unit tests and both sample
+renders pass.
