@@ -12,6 +12,7 @@
 #include "config.h"
 #include "font.hpp"
 #include "converter.hpp"
+#include "bitmap_font.hpp"
 #include "Freetype/tt_face.hpp"
 #include "Freetype/tt_tools.hpp"
 #include "translator.hpp"
@@ -181,6 +182,24 @@ glue (array<string> glyphs, array<double> overlap, bool ver) {
   return result;
 }
 
+// Length (in design units) of an assembly whose extenders are repeated
+// 'reps' times, following the connector arithmetic of the specification.
+static int
+assembled_length (GlyphAssembly gass, int reps, int min_overlap) {
+  int total= 0, prev_end= -1;
+  for (int i= 0; i < N (gass.partRecords); i++) {
+    GlyphPartRecord pr= gass.partRecords[i];
+    int n= ((pr.partFlags & 1) != 0)? reps: 1;
+    for (int k= 0; k < n; k++) {
+      total += (int) pr.fullAdvance;
+      if (prev_end >= 0)
+        total -= min (min_overlap, min (prev_end, (int) pr.startConnectorLength));
+      prev_end= (int) pr.endConnectorLength;
+    }
+  }
+  return total;
+}
+
 // Build the definition of an assembled glyph according to the OpenType MATH
 // specification: every extender part is repeated 'reps' times and
 // consecutive parts overlap by minConnectorOverlap, limited by the connector
@@ -298,17 +317,32 @@ rubber_unicode_font_rep::search_font_sub_opentype (string s, string& rew) {
         if (upem <= 0.0) upem= 1000.0;
         string prefix= "<" * head * "-" * root * "-";
         int    shift = starts (s, "<big-")? 1: 0; // there is no <big-x-0>
-        for (int k= 1; k <= MAX_ASSEMBLY_REPS; k++) {
-          string name= prefix * as_string (nvar + k - 1 + shift) * ">";
+        // sizes must grow with the variant number: start with the smallest
+        // number of repetitions which exceeds the largest pre-drawn variant
+        int k0= 1;
+        if (nvar > 0) {
+          auto& adv= using_vertical? math_table->ver_glyph_variants_adv (glyphID)
+                                   : math_table->hor_glyph_variants_adv (glyphID);
+          int largest= (N (adv) == nvar)? (int) adv[nvar - 1]: 0;
+          while (k0 < MAX_ASSEMBLY_REPS &&
+                 assembled_length (gass, k0, min_overlap) <= largest) k0++;
+        }
+        for (int k= k0; k < k0 + MAX_ASSEMBLY_REPS; k++) {
+          string name= prefix * as_string (nvar + k - k0 + shift) * ">";
           if (virt->dict->contains (name)) continue;
           string def= assemble (gass, k, min_overlap, upem, using_vertical);
           virt->dict (name)= N (virt->virt_def);
           virt->virt_def << string_to_scheme_tree (def);
         }
         // subfn[6] is the virtual font for the assembled glyphs; it caches
-        // the definitions, so it must be recreated when new ones are added
+        // the definitions, so it must be recreated when new ones are added.
+        // Its metric and glyph caches are resources with the same name and
+        // are sized after the number of definitions, so reset them as well.
         if (initialized[6]) {
-          font::instances->reset (subfn[6]->res_name);
+          string vname= subfn[6]->res_name;
+          font::instances->reset (vname);
+          font_metric::instances->reset (vname);
+          font_glyphs::instances->reset (vname);
           initialized[6]= false;
         }
       }

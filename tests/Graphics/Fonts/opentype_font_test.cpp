@@ -44,6 +44,7 @@ private slots:
   void test_rubber_assembly ();
   void test_big_operators ();
   void test_kerning_at_height ();
+  void test_assembly_monotone ();
 };
 
 void
@@ -227,6 +228,32 @@ TestOpenTypeFont::test_kerning_at_height () {
   // subfont (smart_font_rep::get_*_correction_at). Smart fonts need the
   // font database and a running TeXmacs, so that path is covered by the
   // visual samples in tests/opentype rather than here.
+}
+
+void
+TestOpenTypeFont::test_assembly_monotone () {
+  // The delimiter search assumes that sizes grow with the variant number.
+  // Asana Math parentheses have 4 variants and an assembly whose smallest
+  // instance is shorter than the largest variant; braces have 4 variants
+  // with two extenders; bars have 7 variants and a two-part assembly.
+  if (get_env ("TM_TEST_FONT_DIR") == "" || !tt_font_exists ("Asana-Math"))
+    QSKIP ("no Asana Math in TM_TEST_FONT_DIR");
+  font as= unicode_font ("Asana-Math", LM_SIZE, LM_DPI);
+  QCOMPARE (as->math_type, MATH_TYPE_OPENTYPE);
+  font rf= rubber_font (as);
+  const char* roots[]= {"(", "{", "|", "sqrt"};
+  for (int r= 0; r < 4; r++) {
+    SI prev= 0;
+    for (int i= 0; i < 16; i++) {
+      string s= "<left-" * string (roots[r]) * "-" * as_string (i) * ">";
+      QVERIFY2 (rf->supports (s), as_charp (s));
+      metric ex;
+      rf->get_extents (s, ex);
+      SI h= ex->y2 - ex->y1;
+      QVERIFY2 (h > prev, as_charp (s * " is not taller than the previous size"));
+      prev= h;
+    }
+  }
 }
 
 QTEST_GUILESS_MAIN(TestOpenTypeFont)

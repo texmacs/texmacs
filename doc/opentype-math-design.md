@@ -316,6 +316,14 @@ TM_TEST_FONT_DIR=/path/to/fonts tests/opentype/render-samples.sh
   glyph instead of once per size. The overshooting bars of the sample are
   gone.
 
+- **Cache invalidation.** When new assemblies are added, the rubber font
+  now resets the `font_metric` and `font_glyphs` resources of the virtual
+  font as well as the font itself; they share its name and were sized for
+  the earlier definitions, which produced wrong glyphs for every glyph after
+  the first one. Assemblies start at the number of repetitions that exceeds
+  the largest pre-drawn variant, so sizes grow monotonically with the
+  variant number, as the delimiter search assumes.
+
 ## 6. Known defects still open
 
 1. The delimiter search still probes `<left-x-N>` for increasing `N` and
