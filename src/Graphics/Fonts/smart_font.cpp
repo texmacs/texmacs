@@ -739,6 +739,10 @@ struct smart_font_rep: font_rep {
   SI     get_lsup_correction  (string s);
   SI     get_rsub_correction  (string s);
   SI     get_rsup_correction  (string s);
+  SI     get_lsub_correction_at (string s, SI h);
+  SI     get_lsup_correction_at (string s, SI h);
+  SI     get_rsub_correction_at (string s, SI h);
+  SI     get_rsup_correction_at (string s, SI h);
   SI     get_wide_correction  (string s, int mode);
 };
 
@@ -1710,6 +1714,46 @@ smart_font_rep::get_rsup_correction (string s) {
   while (i<n) advance (s, i, r, nr);
   nr= max (nr, 0);
   return fn[nr]->get_rsup_correction (r);
+}
+
+SI
+smart_font_rep::get_lsub_correction_at (string s, SI h) {
+  int i=0, n= N(s), nr;
+  if (n == 0) return fn[0]->get_lsub_correction_at (s, h);
+  string r= s;
+  advance (s, i, r, nr);
+  nr= max (nr, 0);
+  return fn[nr]->get_lsub_correction_at (r, h);
+}
+
+SI
+smart_font_rep::get_lsup_correction_at (string s, SI h) {
+  int i=0, n= N(s), nr;
+  if (n == 0) return fn[0]->get_lsup_correction_at (s, h);
+  string r= s;
+  advance (s, i, r, nr);
+  nr= max (nr, 0);
+  return fn[nr]->get_lsup_correction_at (r, h);
+}
+
+SI
+smart_font_rep::get_rsub_correction_at (string s, SI h) {
+  int i=0, n= N(s), nr;
+  if (n == 0) return fn[0]->get_rsub_correction_at (s, h);
+  string r= s;
+  while (i<n) advance (s, i, r, nr);
+  nr= max (nr, 0);
+  return fn[nr]->get_rsub_correction_at (r, h);
+}
+
+SI
+smart_font_rep::get_rsup_correction_at (string s, SI h) {
+  int i=0, n= N(s), nr;
+  if (n == 0) return fn[0]->get_rsup_correction_at (s, h);
+  string r= s;
+  while (i<n) advance (s, i, r, nr);
+  nr= max (nr, 0);
+  return fn[nr]->get_rsup_correction_at (r, h);
 }
 
 SI

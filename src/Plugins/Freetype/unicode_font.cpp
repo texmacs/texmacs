@@ -181,6 +181,10 @@ struct unicode_font_rep: font_rep {
   SI     get_lsup_correction  (string s);
   SI     get_rsub_correction  (string s);
   SI     get_rsup_correction  (string s);
+  SI     get_lsub_correction_at (string s, SI h);
+  SI     get_lsup_correction_at (string s, SI h);
+  SI     get_rsub_correction_at (string s, SI h);
+  SI     get_rsup_correction_at (string s, SI h);
   SI     get_wide_correction  (string s, int mode);
 };
 
@@ -460,6 +464,21 @@ unicode_font_rep::unicode_font_rep (string name,
       this->math_table= math_face2->math_table;
       math_type       = MATH_TYPE_OPENTYPE;
       init_design_unit_factor ();
+      MathConstantsTable& mc= math_table->constants_table;
+      // general parameters: math axis, rule thickness, script placement
+      if (mc[axisHeight] > 0)
+        yfrac= design_unit_to_metric (mc[axisHeight]);
+      if (mc[fractionRuleThickness] > 0)
+        wline= design_unit_to_metric (mc[fractionRuleThickness]);
+      if (mc[superscriptShiftUp] > 0 && mc[subscriptShiftDown] > 0) {
+        ysub_lo_base= -design_unit_to_metric (mc[subscriptShiftDown]);
+        ysub_hi_lim = design_unit_to_metric (mc[subscriptTopMax]);
+        ysup_lo_lim = design_unit_to_metric (mc[superscriptBottomMin]);
+        ysup_lo_base= design_unit_to_metric (mc[superscriptShiftUp]);
+        ysup_hi_lim = max (ysup_lo_base, yx);
+        yshift      = design_unit_to_metric (mc[superscriptShiftUp] -
+                                             mc[superscriptShiftUpCramped]);
+      }
       // limit boxes
       upper_limit_gap_min=
           design_unit_to_metric (math_table->constants_table[upperLimitGapMin]);
@@ -975,9 +994,29 @@ unicode_font_rep::get_right_correction (string s) {
 
 SI
 unicode_font_rep::get_lsub_correction (string s) {
+  return get_lsub_correction_at (s, y1);
+}
+
+SI
+unicode_font_rep::get_lsup_correction (string s) {
+  return get_lsup_correction_at (s, y2);
+}
+
+SI
+unicode_font_rep::get_rsub_correction (string s) {
+  return get_rsub_correction_at (s, y1);
+}
+
+SI
+unicode_font_rep::get_rsup_correction (string s) {
+  return get_rsup_correction_at (s, y2);
+}
+
+SI
+unicode_font_rep::get_lsub_correction_at (string s, SI h) {
   if (math_type == MATH_TYPE_OPENTYPE) {
     SI r= 0;
-    if (get_ot_kerning (s, y1, false, true, r)) return r;
+    if (get_ot_kerning (s, h, false, true, r)) return r;
   }
   SI r= -get_left_correction (s) + global_lsub_correct;
   if (math_type == MATH_TYPE_STIX &&
@@ -990,10 +1029,10 @@ unicode_font_rep::get_lsub_correction (string s) {
 }
 
 SI
-unicode_font_rep::get_lsup_correction (string s) {
+unicode_font_rep::get_lsup_correction_at (string s, SI h) {
   if (math_type == MATH_TYPE_OPENTYPE) {
     SI r= 0;
-    if (get_ot_kerning (s, y2, true, true, r)) return r;
+    if (get_ot_kerning (s, h, true, true, r)) return r;
   }
   SI r= global_lsup_correct;
   if (math_type == MATH_TYPE_STIX &&
@@ -1007,18 +1046,16 @@ unicode_font_rep::get_lsup_correction (string s) {
 }
 
 SI
-unicode_font_rep::get_rsub_correction (string s) {
+unicode_font_rep::get_rsub_correction_at (string s, SI h) {
   if (math_type == MATH_TYPE_OPENTYPE) {
     SI   ic= 0, kern= 0;
     bool has_ic  = get_ot_italic_correction (s, ic);
-    bool has_kern= get_ot_kerning (s, y1, false, false, kern);
+    bool has_kern= get_ot_kerning (s, h, false, false, kern);
 
     if (has_ic || has_kern) {
       // for integral, we use 3/5 of italic correction for rsub, otherwise 0
       ic  = is_ot_integral (s) ? (SI) (0.6 * ic) : 0;
-      SI r= -ic + kern;
-      // cout << "get_rsup_correction for: " << s << " " << rr << LF;
-      return r;
+      return -ic + kern;
     }
   }
   SI r= global_rsub_correct;
@@ -1032,19 +1069,16 @@ unicode_font_rep::get_rsub_correction (string s) {
 }
 
 SI
-unicode_font_rep::get_rsup_correction (string s) {
-  //cout << "Check " << s << ", " << rsup_correct[s] << ", " << this->res_name << LF;
+unicode_font_rep::get_rsup_correction_at (string s, SI h) {
   if (math_type == MATH_TYPE_OPENTYPE) {
     SI   ic= 0, kern= 0;
     bool has_ic  = get_ot_italic_correction (s, ic);
-    bool has_kern= get_ot_kerning (s, y2, true, false, kern);
+    bool has_kern= get_ot_kerning (s, h, true, false, kern);
 
     if (has_ic || has_kern) {
       // for integral signs, we use 2/5 of italic correction for rsup
       if (is_ot_integral (s)) ic= (SI) (0.4 * ic);
-      SI r= ic + kern;
-      // cout << "get_rsup_correction for: " << s << " " << rr << LF;
-      return r;
+      return ic + kern;
     }
   }
   SI r= get_right_correction (s) + global_rsup_correct;

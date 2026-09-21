@@ -41,6 +41,10 @@ struct concat_box_rep: public composite_box_rep {
   SI        lsup_correction ();
   SI        rsub_correction ();
   SI        rsup_correction ();
+  SI        lsub_correction_at (SI h);
+  SI        lsup_correction_at (SI h);
+  SI        rsub_correction_at (SI h);
+  SI        rsup_correction_at (SI h);
   SI        sub_lo_base (int level);
   SI        sub_hi_lim  (int level);
   SI        sup_lo_lim  (int level);
@@ -264,6 +268,34 @@ SI
 concat_box_rep::rsup_correction () {
   int i= get_last ();
   if (i>=0) return bs[i]->rsup_correction ();
+  return 0;
+}
+
+SI
+concat_box_rep::lsub_correction_at (SI h) {
+  int i= get_first ();
+  if (i<N(bs)) return bs[i]->lsub_correction_at (h);
+  return 0;
+}
+
+SI
+concat_box_rep::lsup_correction_at (SI h) {
+  int i= get_first ();
+  if (i<N(bs)) return bs[i]->lsup_correction_at (h);
+  return 0;
+}
+
+SI
+concat_box_rep::rsub_correction_at (SI h) {
+  int i= get_last ();
+  if (i>=0) return bs[i]->rsub_correction_at (h);
+  return 0;
+}
+
+SI
+concat_box_rep::rsup_correction_at (SI h) {
+  int i= get_last ();
+  if (i>=0) return bs[i]->rsup_correction_at (h);
   return 0;
 }
 

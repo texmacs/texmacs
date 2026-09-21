@@ -62,6 +62,14 @@ SI change_box_rep::rsub_correction () {
   return big_flag? bs[0]->rsub_correction(): box_rep::rsub_correction(); }
 SI change_box_rep::rsup_correction () {
   return big_flag? bs[0]->rsup_correction(): box_rep::rsup_correction(); }
+SI change_box_rep::lsub_correction_at (SI h) {
+  return big_flag? bs[0]->lsub_correction_at (h): box_rep::lsub_correction_at (h); }
+SI change_box_rep::lsup_correction_at (SI h) {
+  return big_flag? bs[0]->lsup_correction_at (h): box_rep::lsup_correction_at (h); }
+SI change_box_rep::rsub_correction_at (SI h) {
+  return big_flag? bs[0]->rsub_correction_at (h): box_rep::rsub_correction_at (h); }
+SI change_box_rep::rsup_correction_at (SI h) {
+  return big_flag? bs[0]->rsup_correction_at (h): box_rep::rsup_correction_at (h); }
 SI change_box_rep::sub_lo_base (int l) {
   return big_flag? bs[0]->sub_lo_base (l): box_rep::sub_lo_base (l); }
 SI change_box_rep::sub_hi_lim  (int l) {

@@ -78,6 +78,10 @@ frac_box_rep::frac_box_rep (
       (fn->math_type == MATH_TYPE_OPENTYPE) && (fn->frac_num_gap_min > 0);
 
   if (use_opentype) {
+    if (fn->frac_rule_thickness > 0) {
+      bar_w  = fn->frac_rule_thickness;
+      bar_pen= pen->set_width (bar_w);
+    }
     SI num_gap_min   = fn->frac_num_gap_min;
     SI den_gap_min   = fn->frac_denom_gap_min;
     SI num_shift_up  = fn->frac_num_shift_up;
@@ -611,6 +615,14 @@ struct wide_box_rep: public composite_box_rep {
       return rc; }
     */
     return ref->rsup_correction (); }
+  SI lsub_correction_at (SI h) {
+    return ref->lsub_correction_at (h); }
+  SI lsup_correction_at (SI h) {
+    return ref->lsup_correction_at (h); }
+  SI rsub_correction_at (SI h) {
+    return ref->rsub_correction_at (h); }
+  SI rsup_correction_at (SI h) {
+    return ref->rsup_correction_at (h); }
   SI sub_lo_base (int level) {
     return ref->sub_lo_base (level); }
   SI sub_hi_lim  (int level) {

@@ -433,20 +433,27 @@ side_box_rep::side_box_rep (
     }
   }
 
+  // The corrections are evaluated at the height of the edge of the script
+  // which faces the base (for the base) and of the edge of the base which
+  // faces the script (for the script), as needed for OpenType math kerning.
   if (!is_nil (l1)) {
-    SI dx= l1->rsup_correction () - ref->lsub_correction ();
+    SI dx= l1->rsup_correction_at (ref->y1 - lsub) -
+           ref->lsub_correction_at (lsub + l1->y2);
     insert (l1, -l1->x2- dx, lsub);
   }
   if (!is_nil (l2)) {
-    SI dx= l2->rsub_correction () - ref->lsup_correction ();
+    SI dx= l2->rsub_correction_at (ref->y2 - lsup) -
+           ref->lsup_correction_at (lsup + l2->y1);
     insert (l2, -l2->x2- dx, lsup);
   }
   if (!is_nil (r1)) {
-    SI dx= -r1->lsup_correction () + ref->rsub_correction ();
+    SI dx= -r1->lsup_correction_at (ref->y1 - rsub) +
+           ref->rsub_correction_at (rsub + r1->y2);
     insert (r1, ref->x2+ dx, rsub);
   }
   if (!is_nil (r2)) {
-    SI dx= -r2->lsub_correction () + ref->rsup_correction ();
+    SI dx= -r2->lsub_correction_at (ref->y2 - rsup) +
+           ref->rsup_correction_at (rsup + r2->y1);
     insert (r2, ref->x2+ dx, rsup);
   }
 

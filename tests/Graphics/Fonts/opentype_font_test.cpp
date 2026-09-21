@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include "font.hpp"
 #include "sys_utils.hpp"
+#include "analyze.hpp"
 #include "Freetype/tt_file.hpp"
 
 #define LM_UPEM 1000.0
@@ -42,6 +43,7 @@ private slots:
   void test_rubber_variants ();
   void test_rubber_assembly ();
   void test_big_operators ();
+  void test_kerning_at_height ();
 };
 
 void
@@ -174,6 +176,44 @@ TestOpenTypeFont::test_big_operators () {
   QVERIFY (ex2->y2 - ex2->y1 > ex1->y2 - ex1->y1);
   QVERIFY (qAbs ((ex1->y2 - ex1->y1) - du_y (1112)) <= du_y (40));
   QVERIFY (qAbs ((ex2->y2 - ex2->y1) - du_y (2223)) <= du_y (40));
+}
+
+void
+TestOpenTypeFont::test_kerning_at_height () {
+  // STIX Two Math has MathKernInfo; Latin Modern Math does not.
+  if (get_env ("TM_TEST_FONT_DIR") == "" || !tt_font_exists ("STIXTwoMath-Regular"))
+    QSKIP ("no STIX Two Math in TM_TEST_FONT_DIR");
+  font st= unicode_font ("STIXTwoMath-Regular", LM_SIZE, LM_DPI);
+  QVERIFY (!is_nil (st));
+  QCOMPARE (st->math_type, MATH_TYPE_OPENTYPE);
+  double upem= 1000.0;
+  auto du_x= [&] (int du) { return (SI) tm_round (du * LM_SIZE * st->wpt / upem); };
+  auto du_y= [&] (int du) { return (SI) tm_round (du * LM_SIZE * st->hpt / upem); };
+
+  // U+1D449 math italic V: italic correction 100,
+  //   bottom right kern: heights [156, 280] -> values [-222, -118, 202]
+  //   top right kern: single value 0
+  string V= "<#1D449>";
+  QCOMPARE (st->get_rsub_correction_at (V, du_y (100)), du_x (-222));
+  QCOMPARE (st->get_rsub_correction_at (V, du_y (200)), du_x (-118));
+  QCOMPARE (st->get_rsub_correction_at (V, du_y (400)), du_x (202));
+  // superscript: italic correction plus (zero) kern, at any height
+  QCOMPARE (st->get_rsup_correction_at (V, du_y (100)), du_x (100));
+  QCOMPARE (st->get_rsup_correction_at (V, du_y (900)), du_x (100));
+  // the height-less version evaluates at the font descender
+  QCOMPARE (st->get_rsub_correction (V), st->get_rsub_correction_at (V, st->y1));
+
+  // U+1D434 math italic A: no italic correction,
+  //   top right kern: heights [213, 350] -> values [58, -58, -70]
+  string A= "<#1D434>";
+  QCOMPARE (st->get_rsup_correction_at (A, du_y (100)), du_x (58));
+  QCOMPARE (st->get_rsup_correction_at (A, du_y (300)), du_x (-58));
+  QCOMPARE (st->get_rsup_correction_at (A, du_y (400)), du_x (-70));
+
+  // NOTE: the smart font used by the typesetter forwards the height to the
+  // subfont (smart_font_rep::get_*_correction_at). Smart fonts need the
+  // font database and a running TeXmacs, so that path is covered by the
+  // visual samples in tests/opentype rather than here.
 }
 
 QTEST_GUILESS_MAIN(TestOpenTypeFont)

@@ -212,6 +212,12 @@ public:
   virtual SI        lsup_correction ();
   virtual SI        rsub_correction ();
   virtual SI        rsup_correction ();
+  // corrections when the height h of the facing edge of the script
+  // (relative to the baseline of this box) is known
+  virtual SI        lsub_correction_at (SI h);
+  virtual SI        lsup_correction_at (SI h);
+  virtual SI        rsub_correction_at (SI h);
+  virtual SI        rsup_correction_at (SI h);
   virtual SI        sub_lo_base (int level);
   virtual SI        sub_hi_lim  (int level);
   virtual SI        sup_lo_lim  (int level);

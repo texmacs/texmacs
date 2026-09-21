@@ -149,6 +149,13 @@ struct font_rep: rep<font> {
   virtual SI     get_lsup_correction  (string s);
   virtual SI     get_rsub_correction  (string s);
   virtual SI     get_rsup_correction  (string s);
+  // script corrections when the vertical position of the script is known:
+  // h is the height, relative to the baseline of s, of the edge of the
+  // script facing s (bottom of a superscript, top of a subscript)
+  virtual SI     get_lsub_correction_at (string s, SI h);
+  virtual SI     get_lsup_correction_at (string s, SI h);
+  virtual SI     get_rsub_correction_at (string s, SI h);
+  virtual SI     get_rsup_correction_at (string s, SI h);
   virtual SI     get_left_protrusion  (string s, int mode);
   virtual SI     get_right_protrusion (string s, int mode);
   virtual SI     get_wide_correction (string s, int mode);

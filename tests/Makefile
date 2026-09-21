@@ -10,6 +10,12 @@
 # The CMake build has its own test harness (tests/CMakeLists.txt); this file
 # reuses the flags of src/makefile and links every object of the main build
 # except the program entry point.
+#
+# CAVEAT: when the main build was configured without dependency tracking
+# (src/Deps only contains a stamp), objects are not recompiled after a header
+# changes. Linking such stale objects gives ABI mismatches and crashes. Run
+# `make -C tests check-stale` to list objects older than some header, and
+# delete them (or run `make clean` at the top level) before rebuilding.
 ###############################################################################
 
 TOP   := $(abspath ..)
@@ -69,5 +75,17 @@ $(BUILD)/%: $(BUILD)/%.o $(TM_OBJS)
 clean:
 	rm -rf $(BUILD)
 
-.PHONY: all build run clean
+# objects of the main build that are older than the newest header
+check-stale:
+	@newest=$$(find $(SRC) -name '*.hpp' -newer $(SRC)/makefile.in \
+	  -exec ls -t {} + 2>/dev/null | head -1); \
+	[ -n "$$newest" ] || newest=$$(ls -t $$(find $(SRC) -name '*.hpp') | head -1); \
+	echo "newest header: $$newest"; \
+	stale=$$(find $(SRC)/Objects -name '*.o' ! -newer "$$newest"); \
+	if [ -n "$$stale" ]; then \
+	  echo "$$stale" | wc -l | xargs echo "stale objects:"; \
+	  echo "remove them with: find $(SRC)/Objects -name '*.o' ! -newer '$$newest' -delete"; \
+	else echo "no stale objects"; fi
+
+.PHONY: all build run clean check-stale
 .PRECIOUS: $(BUILD)/%.moc $(BUILD)/%.o

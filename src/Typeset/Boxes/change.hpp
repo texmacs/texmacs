@@ -29,6 +29,10 @@ struct change_box_rep: public composite_box_rep {
   SI lsup_correction ();
   SI rsub_correction ();
   SI rsup_correction ();
+  SI lsub_correction_at (SI h);
+  SI lsup_correction_at (SI h);
+  SI rsub_correction_at (SI h);
+  SI rsup_correction_at (SI h);
   SI sub_lo_base (int l);
   SI sub_hi_lim  (int l);
   SI sup_lo_lim  (int l);

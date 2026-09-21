@@ -65,6 +65,10 @@ struct rubber_unicode_font_rep: font_rep {
   SI     get_lsup_correction  (string s);
   SI     get_rsub_correction  (string s);
   SI     get_rsup_correction  (string s);
+  SI     get_lsub_correction_at (string s, SI h);
+  SI     get_lsup_correction_at (string s, SI h);
+  SI     get_rsub_correction_at (string s, SI h);
+  SI     get_rsup_correction_at (string s, SI h);
   SI     get_wide_correction  (string s, int mode);
 };
 
@@ -232,6 +236,16 @@ rubber_unicode_font_rep::search_font_sub_opentype (string s, string& rew) {
 
   if (has_variants) {
     auto& gv= glyph_variants (glyphID);
+    // display style big operators: the smallest variant which is at least
+    // displayOperatorMinHeight tall (or the largest one)
+    if (starts (s, "<big-") && var == 1 && using_vertical) {
+      auto& adv= math_table->ver_glyph_variants_adv (glyphID);
+      int   min_h= math_table->constants_table[displayOperatorMinHeight];
+      int   i= N (gv) - 1;
+      for (int j= 1; j < N (gv); j++)
+        if ((int) adv[j] >= min_h) { i= j; break; }
+      var= max (i, 1);
+    }
     if (var < N (gv)) {
       int res= gv[var];
       // use <@XXXX> for native glyph id
@@ -527,6 +541,30 @@ SI
 rubber_unicode_font_rep::get_rsup_correction  (string s) {
   font fn= search_font (s);
   return fn->get_rsup_correction (s);
+}
+
+SI
+rubber_unicode_font_rep::get_lsub_correction_at (string s, SI h) {
+  font fn= search_font (s);
+  return fn->get_lsub_correction_at (s, h);
+}
+
+SI
+rubber_unicode_font_rep::get_lsup_correction_at (string s, SI h) {
+  font fn= search_font (s);
+  return fn->get_lsup_correction_at (s, h);
+}
+
+SI
+rubber_unicode_font_rep::get_rsub_correction_at (string s, SI h) {
+  font fn= search_font (s);
+  return fn->get_rsub_correction_at (s, h);
+}
+
+SI
+rubber_unicode_font_rep::get_rsup_correction_at (string s, SI h) {
+  font fn= search_font (s);
+  return fn->get_rsup_correction_at (s, h);
 }
 
 SI

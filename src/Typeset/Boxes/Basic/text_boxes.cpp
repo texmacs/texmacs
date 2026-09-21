@@ -60,6 +60,10 @@ struct text_box_rep: public box_rep {
   SI        lsup_correction ();
   SI        rsub_correction ();
   SI        rsup_correction ();
+  SI        lsub_correction_at (SI h);
+  SI        lsup_correction_at (SI h);
+  SI        rsub_correction_at (SI h);
+  SI        rsup_correction_at (SI h);
   SI        sub_lo_base (int level);
   SI        sub_hi_lim  (int level);
   SI        sup_lo_lim  (int level);
@@ -162,6 +166,14 @@ SI text_box_rep::rsub_correction () {
   return fn->get_rsub_correction (str); }
 SI text_box_rep::rsup_correction () {
   return fn->get_rsup_correction (str); }
+SI text_box_rep::lsub_correction_at (SI h) {
+  return fn->get_lsub_correction_at (str, h); }
+SI text_box_rep::lsup_correction_at (SI h) {
+  return fn->get_lsup_correction_at (str, h); }
+SI text_box_rep::rsub_correction_at (SI h) {
+  return fn->get_rsub_correction_at (str, h); }
+SI text_box_rep::rsup_correction_at (SI h) {
+  return fn->get_rsup_correction_at (str, h); }
 
 SI
 text_box_rep::sub_lo_base (int level) {

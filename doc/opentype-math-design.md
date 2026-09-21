@@ -233,164 +233,176 @@ both the bitmap compiler and the vector `draw_tree` path.
 Each consumer guards with `math_type == MATH_TYPE_OPENTYPE` and a non-zero
 constant, so fonts with a degenerate MATH table fall back to the old code.
 
-## 4. Status
+## 4. Status (updated 21 September 2026)
 
-- The code compiled and ran on 28 December 2024 (binary in `TeXmacs/bin`).
-  With Apple clang 17 the tree does not build because of a pre-existing bug in
-  `src/Kernel/Containers/hashtree.cpp:97` (`*this->contains (key)` must be
-  `(*this)->contains (key)`), identical on `master`. The branch itself has not
-  been compiled with the current toolchain.
-- Uncommitted changes in the worktree are debugging leftovers and should not
-  be committed as is: `font_database.cpp` enables two `cout` prints,
-  `find_font.cpp` adds a `debug_fonts` line, `tt_face.cpp` comments one out,
-  `smart_font.cpp` makes `get_unicode_range` return an empty string for
-  the math alphanumerics block (which changes fallback behaviour for every
-  font), and `unicode_font.cpp` only moves a declaration.
-- No tests, no documentation and no user-visible switch exist. Activation is
-  implicit and depends on the font family not matching an earlier branch of
-  the constructor ladder.
+Work done on top of the port, in the order of the plan below:
 
-## 5. Known defects in the current code
+- **Build.** The tree compiles again with Apple clang 17 after fixing a
+  pre-existing template bug in `src/Kernel/Containers/hashtree.cpp`. The
+  generated `src/makefile` also needed its macOS SDK paths refreshed and the
+  removed AGL framework dropped; those are local configuration fixes, not
+  source changes. Note that this configuration has no dependency tracking
+  (`src/Deps` holds only a stamp): after a header change, objects must be
+  removed by hand or they link with a stale vtable and crash.
+- **Parser.** NULL offsets for the italic correction, top accent and kern
+  info sub-tables are honored; before, fonts without MathKernInfo (TeX Gyre,
+  Latin Modern) made the parser read garbage.
+- **Unit conversion.** Design units are converted through `units_per_EM`,
+  the font size and the horizontal or vertical dpi, with `tm_round`.
+- **Constants in use.** In addition to the fraction, radical and limit
+  constants of the port, the Unicode font now sets from the MATH table:
+  `yfrac` from `axisHeight`; `wline` from `fractionRuleThickness` (also used
+  by `frac_box` for the bar); `ysub_lo_base`, `ysub_hi_lim`, `ysup_lo_lim`,
+  `ysup_lo_base` and `yshift` from `subscriptShiftDown`, `subscriptTopMax`,
+  `superscriptBottomMin`, `superscriptShiftUp` and
+  `superscriptShiftUpCramped`. The display denominator gap bug is fixed.
+- **Display operators.** `<big-x-2>` selects the smallest vertical variant
+  whose advance is at least `displayOperatorMinHeight`, or the largest one,
+  instead of always the second variant.
+- **Kerning at the script height.** New hooks `get_*_correction_at (s, h)`
+  on `font_rep` and `*_correction_at (h)` on `box_rep`, with defaults that
+  fall back to the height-less versions and delegations in the smart font,
+  the rubber font, and the concat, modifier, change and wide boxes.
+  `side_box_rep` evaluates the base's correction at the facing edge of the
+  script and the script's correction at the facing edge of the base, which
+  is what MathKernInfo expects. The height-less versions still evaluate at
+  the font ascender or descender for callers that have no position.
+- **Resource names.** The MATH-aware rubber font is `rubberunicode-ot[...]`,
+  distinct from the legacy `rubberunicode[...]` it falls back to.
 
-1. `unicode_font.cpp` around line 488: `frac_denom_disp_gap_min` is filled
-   from `fractionDenominatorGapMin`; it must use
-   `fractionDenomDisplayStyleGapMin`.
-2. `unicode_font.cpp` around line 1155: `get_ot_italic_correction` prints to
-   `cout` for every glyph with an italic correction.
-3. `rubber_unicode_font (base, face)` and `rubber_unicode_font (base)` build
-   the same resource name `rubberunicode[<base>]`. Whichever is created first
-   is returned for both. Subfont 5 (the fallback) is meant to be the plain
-   variant; today it resolves to `poor_rubber_font` because `has_poor_rubber`
-   is true, but with that flag off it would resolve to the OpenType rubber
-   font itself and recurse.
-4. `tt_face_rep` reads the font file from disk a second time to parse the
-   MATH table although the bytes are already in `buffer`.
-5. The unit conversion through the advance of `m` introduces rounding error
-   and depends on the font having an `m`.
-6. Cut-in kerning is evaluated at the font ascender or descender rather than
-   at the real script position.
-7. Assemblies ignore `minConnectorOverlap` and the part connector lengths;
-   extenders are tiled by `ver-take` with fixed proportions, so joins may
-   overlap or gap depending on the font.
-8. The virtual font holding assemblies is destroyed and rebuilt each time a
-   new assembly is first used, which also discards all compiled glyphs.
-9. The `override` specifier on `~tt_face_rep` was dropped.
-10. `parse_variant` requires exactly three dash-separated tokens; a root that
-    itself contains a dash would not parse (none exists today, but nothing
-    checks).
+Not changed: activation is still implicit through the family-name ladder in
+`unicode_font.cpp`. TeX Gyre Math and the STIX text fonts keep their
+hand-tuned tables; `STIXMath-Regular` does not match the `STIX-` prefix and
+already takes the OpenType path.
 
-## 6. What is still missing
+The uncommitted debugging edits of the original worktree (font database
+prints, the `get_unicode_range` experiment) were dropped.
 
-### 6.1 Constants that are parsed but unused
+## 5. Tests
+
+- `tests/Plugins/Freetype/tt_tools_test.cpp`: the parser against values
+  extracted with fontTools from the shipped `texgyrepagella-math.otf`
+  (constants including a negative one, glyph info, vertical and horizontal
+  variants and assemblies, `get_init_glyphID`) and, when
+  `TM_TEST_FONT_DIR` provides STIX Two Math, the MathKern lookup with its
+  height intervals.
+- `tests/Graphics/Fonts/opentype_font_test.cpp`: activation and
+  `math_type` of the shipped fonts, constant conversion and its linearity in
+  the size, italic correction, monotone rubber variants and assemblies for
+  `<left-(-N>`, display operator sizes, and kerning at several heights
+  through the Unicode font and the smart font (Latin Modern Math and STIX Two
+  Math from `TM_TEST_FONT_DIR`).
+- `tests/opentype/render-samples.sh` with `samples/math-overview.tm`: the
+  same formulas in TeX fonts, TeX Gyre Pagella, STIX, Latin Modern Math,
+  STIX Two Math, Asana Math, Fira Math, KpMath, TeX Gyre DejaVu Math and Neo
+  Euler, rendered to PNG per revision for side-by-side inspection and pixel
+  diffs.
+
+How to run everything, from the top of the tree after `make`:
+
+```
+make -C tests check-stale
+make -C tests TM_TEST_FONT_DIR=/path/to/fonts
+TM_TEST_FONT_DIR=/path/to/fonts tests/opentype/render-samples.sh
+```
+
+## 6. Known defects still open
+
+1. Assemblies ignore `minConnectorOverlap` and the part connector lengths;
+   extenders are tiled by `ver-take` with fixed proportions. In the sample
+   rendering the vertical bars of Asana Math and STIX Two Math overshoot
+   their content by a large amount, and the radical of Latin Modern Math is
+   detached from its overline.
+2. The virtual font holding assemblies is destroyed and rebuilt each time a
+   new assembly is first used.
+3. `parse_variant` requires exactly three dash-separated tokens.
+4. `ysup_hi_lim` has no MATH counterpart and is set to
+   `max (superscriptShiftUp, x-height)`.
+5. Script sizes still come from `script ()` (2/3 per level), not from
+   `scriptPercentScaleDown`; the environment computes them before the font
+   is known.
+
+## 7. What is still missing
+
+### 7.1 Constants parsed but unused
 
 | Group | Constants | Where they would apply |
 |---|---|---|
-| Scripts | `superscriptShiftUp`, `superscriptShiftUpCramped`, `superscriptBottomMin`, `superscriptBaselineDropMax`, `subscriptShiftDown`, `subscriptTopMax`, `subscriptBaselineDropMin`, `subSuperscriptGapMin`, `superscriptBottomMaxWithSubscript`, `spaceAfterScript` | `script_box_rep` in `script_boxes.cpp`; today driven by `ysub_*`, `ysup_*`, `yshift` |
-| Axis | `axisHeight`, `mathLeading` | `yfrac` (currently the middle of `-`), centering of delimiters and big operators |
+| Scripts | `superscriptBaselineDropMax`, `subscriptBaselineDropMin`, `subSuperscriptGapMin`, `superscriptBottomMaxWithSubscript`, `spaceAfterScript` | `side_box_rep`: the drop limits for tall bases, the gap between a sub- and a superscript (now `fn->sep`), the space after a script |
+| Axis | `mathLeading` | not needed by TeXmacs |
 | Accents | `accentBaseHeight`, `flattenedAccentBaseHeight` | `wide_box_rep` accent placement and flattened accent selection |
 | Stacks | `stackTopShiftUp`, `stackTopDisplayStyleShiftUp`, `stackBottomShiftDown`, `stackBottomDisplayStyleShiftDown`, `stackGapMin`, `stackDisplayStyleGapMin`, `stretchStack*` | `stack` / `binom` style constructions and `above`/`below` |
 | Bars | `overbarVerticalGap`, `overbarRuleThickness`, `overbarExtraAscender`, `underbar*` | `<wide-bar>`, `<wide-underline>` |
-| Skewed fractions | `skewedFractionHorizontalGap`, `skewedFractionVerticalGap` | `tfrac`-like slanted fractions (not a TeXmacs primitive today) |
-| Radicals | `radicalKernBeforeDegree` | parsed, commented out in `sqrt_box` |
-| Sizes | `scriptPercentScaleDown`, `scriptScriptPercentScaleDown` | `script (sz, level)` in `font.cpp` uses a fixed 2/3 |
-| Operators | `displayOperatorMinHeight`, `delimitedSubFormulaMinHeight` | choice of `<big-x-1>` versus `<big-x-2>` and minimum delimiter size |
-| Fractions | `fractionRuleThickness` | stored as `frac_rule_thickness` but `frac_box` still uses `wline` |
+| Skewed fractions | `skewedFractionHorizontalGap`, `skewedFractionVerticalGap` | not a TeXmacs primitive today |
+| Radicals | `radicalKernBeforeDegree` | commented out in `sqrt_box` |
+| Sizes | `scriptPercentScaleDown`, `scriptScriptPercentScaleDown` | `get_script_size` in the environment |
+| Operators | `delimitedSubFormulaMinHeight` | minimum delimiter size |
 
-### 6.2 Glyph information not used
+### 7.2 Glyph information not used
 
 - **Top accent attachment**: parsed into `top_accent`, never read. Accents
   are still centered on the ink box with `above_correct` tables.
 - **Extended shape coverage**: parsed, never read. The spec uses it to keep
   superscripts on tall delimiters from being raised.
-- **Kerning at the right height**: needs the correction API to receive the
-  script box (or its baseline offset) instead of guessing with `y1`/`y2`.
-- **Italic correction of assemblies** (`GlyphAssembly.italicsCorrection`) and
-  the per-variant advance measurements are ignored.
-- **Device tables** are not applied. They matter little at high dpi but
-  affect on-screen rendering at small sizes.
+- **Italic correction of assemblies** and the per-variant advance
+  measurements (except for display operators) are ignored.
+- **Device tables** are not applied.
 
-### 6.3 Variants and assemblies
+### 7.3 Variants and assemblies
 
-- Assemblies should be laid out per the specification: compute the number of
-  extender repetitions from the target size, overlap connectors by at least
-  `minConnectorOverlap`, and respect `startConnectorLength` and
-  `endConnectorLength`. This requires a virtual font primitive that receives a
-  target length rather than a variant number, or building the glyph directly
-  in the rubber font instead of through the virtual font language.
-- The delimiter search (`get_delimiter` in `text_boxes.cpp`) still probes
-  `<left-(-N>` for increasing `N` and measures the result. With MATH variants
-  the font knows the available sizes and the assembly can produce an exact
-  height; the search could be replaced by a direct query for fonts of
-  `MATH_TYPE_OPENTYPE`.
-- Horizontal variants are only reachable through rubber names. Wide accents
-  and braces go through `wide_box` / `get_wide` and `wide_box_rep`, which do
-  not consult the rubber font unless the font is STIX. The horizontal MATH
-  variants (for `<wide-hat>`, `<wide-tilde>`, `<overbrace>`, `<underbrace>`,
-  arrows) are therefore unused.
-- It should be verified per font whether the first MathGlyphVariantRecord is
-  the base glyph itself (common) or the first larger size, since this shifts
-  every variant number by one.
-- `<big-x-N>` operators for `N > 2` and the interplay with
-  `supports_big_operators` (which is still name based) need a rule.
+- Lay out assemblies per the specification: compute the number of extender
+  repetitions from the target size, overlap connectors by at least
+  `minConnectorOverlap`, respect `startConnectorLength` and
+  `endConnectorLength`. This needs a virtual font primitive that receives a
+  target length rather than a variant number, or direct construction in the
+  rubber font.
+- Let `get_delimiter` (`text_boxes.cpp`) query the variants directly for
+  OpenType fonts instead of probing `<left-x-N>` and measuring.
+- Route horizontal variants through `wide_box` / `get_wide` for wide
+  accents, braces and arrows; today only rubber names reach them.
+- `<big-x-N>` for `N > 2`, and the interplay with `supports_big_operators`
+  (still name based).
 
-### 6.4 Activation and integration
+### 7.4 Activation and integration
 
-- **Shipped fonts**: STIX and TeX Gyre Math must be able to use the MATH
-  table. That means either removing the hand-tuned branches for those
-  families when a MATH table exists, or letting the OpenType data fill the
-  gaps that the tables leave. The hand-tuned data was calibrated against the
-  old behaviour, so this is a visual regression exercise, not just a code
-  change.
-- **Family name matching**: `math_type` is set from the name prefix in
-  `font_rep::font_rep` and by the Unicode font constructor; `poor_rubber.cpp`,
-  `concat_math.cpp` and `math_boxes.cpp` still test the family name for
-  `stix` and `agella`. These need to become `math_type` checks so that an
-  OpenType font is handled uniformly.
-- **Smart font subfonts**: the smart font forwards `make_rubber_font` to its
-  main subfont only. Characters resolved from a secondary family (for example
-  a `math=` sequence item) get the rubber font of that family, which is
-  correct, but constants are copied only from the main font.
-- **A user-visible switch** (preference or environment variable) to enable
-  or disable MATH-table typesetting would ease comparison and debugging.
+- `is_math_family` in `smart_font.cpp` is a fixed list (`roman`, `concrete`,
+  `Euler`, `ENR`). For any other family, letters in math mode are routed to
+  the `fast-italic` text font and Unicode math alphanumerics are rewritten,
+  so an OpenType math font never supplies its own italic letters, and their
+  italic corrections and cut-in kerns are lost. Fonts with a MATH table
+  should be treated as math families, with letters mapped to the plane 1
+  code points of the same font.
+- Let STIX and TeX Gyre Math use the MATH table, then compare against the
+  hand-tuned tables and retire what the MATH data replaces.
+- Replace the family-name tests in `poor_rubber.cpp`, `concat_math.cpp` and
+  `math_boxes.cpp` with `math_type` checks.
+- A preference to enable or disable MATH-table typesetting for comparison.
 
-### 6.5 Beyond the MATH table
+### 7.5 Beyond the MATH table
 
-These are not part of MATH but are needed for OpenType math fonts to look
-right:
+- GSUB `ssty` script-style alternates and `dtls`.
+- GPOS kerning instead of the legacy `kern` table.
+- Bypass the virtual bold and blackboard-bold emulation for fonts with
+  complete plane 1 alphabets.
+- Verify `<@XXXX>` glyphs and assemblies in PDF, PostScript and SVG export.
 
-- GSUB `ssty` feature for script-size alternates; GSUB `dtls` for dotless
-  variants under accents.
-- GPOS kerning (`kern` feature) instead of the legacy `kern` table, which
-  most modern math fonts do not include.
-- Math alphanumerics: fonts with a MATH table normally have complete plane 1
-  alphabets; the smart font's rewriting into `<b-x>`-style names and virtual
-  bold/blackboard-bold emulation should be bypassed for them (the uncommitted
-  `get_unicode_range` change is a first, too broad, attempt at this).
-- Export: verify that `<@XXXX>` glyphs and virtual assemblies round-trip
-  through the PDF renderer (which embeds glyphs by `glyph->index`) and the
-  PostScript and SVG exporters.
+### 7.6 Engineering
 
-### 6.6 Engineering
-
-- Unit tests for `parse_mathtable` against a known font (the tree ships
-  `texgyrepagella-math.otf`) and for `get_kerning`.
-- Remove the debug output and the uncommitted experiments; fix the defects
-  listed in section 5.
-- Parse the MATH table from the in-memory buffer already held by `tt_face`.
+- Enable dependency tracking in the autotools build, or add a rule that
+  invalidates objects on header changes.
 - Cache assembled glyphs without rebuilding the virtual font.
+- Extend the sample documents (accents, limits in text style, left scripts,
+  primes) and keep reference PNGs for the pixel diff.
 
-## 7. Suggested order of work
+## 8. Suggested order of the remaining work
 
-1. Fix the build (`hashtree.cpp`), the `frac_denom_disp_gap_min` bug, the
-   stray `cout`, and the resource-name collision. Drop the debugging changes.
-2. Replace the `m`-based unit conversion with `units_per_EM`.
-3. Use the fraction rule thickness, `axisHeight` and the script constants;
-   these give the most visible improvement for the least code.
-4. Pass script heights to the kerning code.
-5. Rework assemblies to follow the specification and query MATH variants
-   directly from `get_delimiter` for OpenType fonts.
-6. Route horizontal variants through `wide_box`.
-7. Enable the path for STIX and TeX Gyre Math and compare against the
+1. Spec-conformant assemblies and direct variant selection in
+   `get_delimiter`; this fixes the most visible defects in the samples.
+2. Horizontal variants for wide accents and braces, with top accent
+   attachment.
+3. Remaining script constants (`subSuperscriptGapMin`, drop limits,
+   `spaceAfterScript`) and `scriptPercentScaleDown`.
+4. Enable the path for STIX and TeX Gyre Math and compare against the
    hand-tuned output.
-8. Add GSUB `ssty` and GPOS kerning support, which requires a small
-   OpenType layout reader alongside the MATH parser.
+5. GSUB `ssty` and GPOS kerning, which require a small OpenType layout
+   reader alongside the MATH parser.

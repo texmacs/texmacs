@@ -38,3 +38,40 @@ Or just using ctest(we've set the necessary environment variables):
 ``` bash
 ctest -R converter_test
 ```
+
+## Unit tests with the autotools build
+
+The CMake harness above needs a CMake build. With the usual
+`./configure && make` build, `tests/Makefile` compiles the same test sources
+against the objects in `src/Objects` and QtTest:
+
+```
+make -C tests                      # build and run all tests
+make -C tests run-tt_tools_test    # one test, with QtTest output
+make -C tests TM_TEST_FONT_DIR=/path/to/fonts
+```
+
+`TM_TEST_FONT_DIR` points to a directory (searched recursively) with extra
+fonts that some tests need, for instance Latin Modern Math and STIX Two Math
+for the OpenType tests; those tests are skipped when the fonts are missing.
+The tests run with `TEXMACS_PATH` set to the source tree and a scratch
+`TEXMACS_HOME_PATH` under `tests/build`, so they never touch `~/.TeXmacs`.
+
+Because dependency tracking may be disabled in the main build, run
+`make -C tests check-stale` after changing a header and remove the listed
+objects before rebuilding.
+
+## Visual regression for math typesetting
+
+`tests/opentype/render-samples.sh` renders every document in
+`tests/opentype/samples/` to PDF and PNG (one PNG per page, via mutool) in
+`tests/build/vis`, with the git revision in the file name:
+
+```
+TM_TEST_FONT_DIR=/path/to/fonts tests/opentype/render-samples.sh
+tests/opentype/render-samples.sh -c reference-dir   # pixel diff with ImageMagick
+```
+
+The sample `math-overview.tm` typesets the same formulas with TeX fonts,
+the shipped TeX Gyre and STIX fonts, and several OpenType math fonts, so the
+effect of a change on each code path can be compared side by side.

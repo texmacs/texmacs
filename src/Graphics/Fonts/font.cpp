@@ -298,6 +298,19 @@ font_rep::get_rsup_correction (string s) {
 }
 
 SI
+font_rep::get_lsub_correction_at (string s, SI h) {
+  (void) h; return get_lsub_correction (s); }
+SI
+font_rep::get_lsup_correction_at (string s, SI h) {
+  (void) h; return get_lsup_correction (s); }
+SI
+font_rep::get_rsub_correction_at (string s, SI h) {
+  (void) h; return get_rsub_correction (s); }
+SI
+font_rep::get_rsup_correction_at (string s, SI h) {
+  (void) h; return get_rsup_correction (s); }
+
+SI
 font_rep::get_wide_correction (string s, int mode) {
   if (mode > 0 && above_correct->contains (s))
     return (SI) (above_correct[s] * wfn);
