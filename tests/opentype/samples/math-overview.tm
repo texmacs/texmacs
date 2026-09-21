@@ -14,6 +14,10 @@
         <\equation*>
           <frac|a+b|c>+<frac|<frac|1|2>|<frac|3|4>>+<sqrt|<frac|x<rsup|2>+1|2>|n>+<big|int><rsub|0><rsup|1><frac|f<around*|(|x|)>|g<around*|(|x|)>>*\<mathd\>x+<big|sum><rsub|n=0><rsup|\<infty\>><around*|(|<frac|a<rsub|n>|n!>|)>+<around*|{|<around*|[|<around*|(|<frac|<frac|a|b>|<frac|c|d>>|)>|]>|}>+<wide|abc|^>+<wide|x+y|\<bar\>>+<big|prod><rsub|k=1><rsup|m><around*|\||<frac|1|<frac|1|<frac|1|x<rsub|k>>>>|\|>
         </equation*>
+
+        <\equation*>
+          <wide|f|^>+<wide|x|~>+<wide|v|\<vect\>>+<wide|abcdef|~>+<wide|x+y+z|\<check\>>+<wide*|a<rsub|1>+\<cdots\>+a<rsub|n>|\<underbrace\>>+<wide|u+v+w|\<overbrace\>>+A<long-arrow|\<rubber-rightarrow\>|f<rsub|n>\<rightarrow\>f>B<long-arrow|\<rubber-leftarrow\>|g|h>C
+        </equation*>
       </with>
     </macro>>
   </hide-preamble>

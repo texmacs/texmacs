@@ -154,6 +154,8 @@ font_rep::copy_math_pars (font fn) {
   space_after_script           = fn->space_after_script;
   script_percent               = fn->script_percent;
   script_script_percent        = fn->script_script_percent;
+  accent_base_height           = fn->accent_base_height;
+  flattened_accent_base_height = fn->flattened_accent_base_height;
 }
 
 void
@@ -614,6 +616,18 @@ font_rep::get_rubber_variant (string s, SI height, string& r) {
 bool
 font_rep::is_extended_shape (string s) {
   (void) s;
+  return false;
+}
+
+bool
+font_rep::get_wide_variant (string s, SI width, string& r) {
+  (void) s; (void) width; (void) r;
+  return false;
+}
+
+bool
+font_rep::get_top_accent (string s, SI& x) {
+  (void) s; (void) x;
   return false;
 }
 

@@ -221,6 +221,8 @@ public:
   // whether scripts follow the height of this box (composite boxes and
   // extended shapes) or sit at the standard shifts (ordinary glyphs)
   virtual bool      extended_shape ();
+  // horizontal attachment point of accents, when the box knows it
+  virtual bool      top_accent (SI& x);
   virtual SI        sub_lo_base (int level);
   virtual SI        sub_hi_lim  (int level);
   virtual SI        sup_lo_lim  (int level);

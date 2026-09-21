@@ -48,6 +48,7 @@ private slots:
   void test_hand_tuned_switch ();
   void test_rubber_variant_by_height ();
   void test_script_parameters ();
+  void test_wide_variants ();
 };
 
 void
@@ -350,6 +351,64 @@ TestOpenTypeFont::test_script_parameters () {
   font rm= unicode_font ("lmroman10-regular", LM_SIZE, LM_DPI);
   QVERIFY (!rm->is_extended_shape ("<#222B>"));
   QCOMPARE (rm->sub_sup_gap_min, (SI) 0);
+}
+
+void
+TestOpenTypeFont::test_wide_variants () {
+  if (!have_lm) QSKIP ("no Latin Modern Math");
+  font rf= rubber_font (lm);
+  string r;
+  // the hat has horizontal variants and an assembly in Latin Modern Math;
+  // widths must grow with the variant number and the chosen variant must
+  // reach the requested width
+  SI prev= 0;
+  for (int i= 0; i < 7; i++) {
+    string s= "<wide-hat-" * as_string (i) * ">";
+    QVERIFY2 (rf->supports (s), as_charp (s));
+    metric ex;
+    rf->get_extents (s, ex);
+    SI w= ex->x4 - ex->x3;
+    QVERIFY2 (w > prev, as_charp (s * " not wider than the previous size"));
+    prev= w;
+  }
+  QVERIFY (rf->get_wide_variant ("<wide-hat>", du_x (300), r));
+  QCOMPARE (r, string ("<wide-hat-0>"));
+  QVERIFY (rf->get_wide_variant ("<wide-hat>", du_x (1000), r));
+  metric ex;
+  rf->get_extents (r, ex);
+  QVERIFY2 (ex->x4 - ex->x3 >= du_x (1000) - du_x (10), as_charp (r));
+  // the hat has no assembly: beyond its widest variant (1897) we get that one
+  SI w= du_x (4000);
+  QVERIFY (rf->get_wide_variant ("<wide-hat>", w, r));
+  QCOMPARE (r, string ("<wide-hat-7>"));
+  // the overbrace has one (its widest variant is 4007): an assembly made
+  // to measure
+  w= du_x (6000);
+  QVERIFY (rf->get_wide_variant ("<wide-overbrace>", w, r));
+  QVERIFY2 (starts (r, "<wide-overbrace-w"), as_charp (r));
+  QVERIFY (rf->supports (r));
+  rf->get_extents (r, ex);
+  QVERIFY2 (qAbs ((ex->x2 - ex->x1) - w) <= du_x (60),
+            as_charp ("assembled width " * as_string (ex->x2 - ex->x1) *
+                      " for target " * as_string (w)));
+  // long arrows: <rubber-rightarrow> maps to U+2192
+  w= du_x (3000);
+  QVERIFY (rf->get_wide_variant ("<rubber-rightarrow>", w, r));
+  rf->get_extents (r, ex);
+  QVERIFY (ex->x2 - ex->x1 >= w - du_x (60));
+  QVERIFY (rf->get_wide_variant ("<rubber-longrightarrow>", w, r));
+  // over- and underbraces
+  QVERIFY (rf->get_wide_variant ("<wide-overbrace>", du_x (2500), r));
+  QVERIFY (rf->supports (r));
+  // no horizontal variants for parentheses
+  QVERIFY (!rf->get_wide_variant ("<wide-(>", du_x (1000), r));
+  // top accent attachment of the math italic f (464 design units)
+  SI x;
+  QVERIFY (lm->get_top_accent ("<#1D453>", x));
+  QCOMPARE (x, du_x (464));
+  QVERIFY (!lm->get_top_accent ("1", x) || x > 0);
+  font rm= unicode_font ("lmroman10-regular", LM_SIZE, LM_DPI);
+  QVERIFY (!rm->get_top_accent ("f", x));
 }
 
 QTEST_GUILESS_MAIN(TestOpenTypeFont)

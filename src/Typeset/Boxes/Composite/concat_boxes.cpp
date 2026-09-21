@@ -46,6 +46,7 @@ struct concat_box_rep: public composite_box_rep {
   SI        rsub_correction_at (SI h);
   SI        rsup_correction_at (SI h);
   bool      extended_shape ();
+  bool      top_accent (SI& x);
   SI        sub_lo_base (int level);
   SI        sub_hi_lim  (int level);
   SI        sup_lo_lim  (int level);
@@ -304,6 +305,12 @@ bool
 concat_box_rep::extended_shape () {
   if (N(bs) == 1) return bs[0]->extended_shape ();
   return true;
+}
+
+bool
+concat_box_rep::top_accent (SI& x) {
+  if (N(bs) == 1 && bs[0]->top_accent (x)) { x += sx (0); return true; }
+  return false;
 }
 
 SI

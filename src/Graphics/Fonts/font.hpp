@@ -124,6 +124,8 @@ struct font_rep: rep<font> {
   SI  space_after_script= 0;      // spaceAfterScript
   int script_percent= 0;          // scriptPercentScaleDown
   int script_script_percent= 0;   // scriptScriptPercentScaleDown
+  SI  accent_base_height= 0;      // accentBaseHeight
+  SI  flattened_accent_base_height= 0; // flattenedAccentBaseHeight
 
   font_rep (string name);
   font_rep (string name, font fn);
@@ -138,6 +140,13 @@ struct font_rep: rep<font> {
   // delimiter) whose scripts follow its height, as opposed to an ordinary
   // glyph whose scripts sit at the standard shifts
   virtual bool is_extended_shape (string s);
+  // For a wide character s (<wide-hat>, <rubber-rightarrow>, ...), return
+  // in r the name of the narrowest variant reaching the width, or of an
+  // assembly made to measure; false when the font cannot tell
+  virtual bool get_wide_variant (string s, SI width, string& r);
+  // horizontal position of the attachment point of accents over the glyph
+  // s, relative to its origin; false when unknown (use the center)
+  virtual bool get_top_accent (string s, SI& x);
 
   virtual bool   supports (string c) = 0;
   virtual void   get_extents (string s, metric& ex) = 0;

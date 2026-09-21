@@ -65,6 +65,7 @@ struct text_box_rep: public box_rep {
   SI        rsub_correction_at (SI h);
   SI        rsup_correction_at (SI h);
   bool      extended_shape ();
+  bool      top_accent (SI& x);
   SI        sub_lo_base (int level);
   SI        sub_hi_lim  (int level);
   SI        sup_lo_lim  (int level);
@@ -178,6 +179,9 @@ SI text_box_rep::rsup_correction_at (SI h) {
 bool text_box_rep::extended_shape () {
   if (tm_string_length (str) != 1) return true;
   return fn->is_extended_shape (str); }
+bool text_box_rep::top_accent (SI& x) {
+  if (tm_string_length (str) != 1) return false;
+  return fn->get_top_accent (str, x); }
 
 SI
 text_box_rep::sub_lo_base (int level) {
@@ -478,6 +482,11 @@ static string
 get_wide (string s, font fn, SI width) {
   ASSERT (N(s) >= 2 && s[0] == '<' && s[N(s)-1] == '>',
 	  "invalid rubber character");
+  // fonts which know their width variants (OpenType MATH) answer directly
+  if (!is_digit (s[N(s)-2])) {
+    string r;
+    if (fn->get_wide_variant (s, width, r)) return r;
+  }
   string radical= s (0, N(s)-1) * "-";
   string first  = radical * "0>";
   metric ex;

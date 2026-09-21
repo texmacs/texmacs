@@ -57,6 +57,7 @@ public:
   SI        rsub_correction_at (SI h);
   SI        rsup_correction_at (SI h);
   bool      extended_shape ();
+  bool      top_accent (SI& x);
   SI        sub_lo_base (int level);
   SI        sub_hi_lim  (int level);
   SI        sup_lo_lim  (int level);

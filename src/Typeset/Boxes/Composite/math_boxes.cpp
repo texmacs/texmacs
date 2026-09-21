@@ -469,6 +469,32 @@ compute_wide_accent (path ip, box b, string s,
       }
     }
   }
+  string ot_name;
+  bool   ot_wide= false;
+  if (wide && fn->math_type == MATH_TYPE_OPENTYPE) {
+    string ss= s (1, N(s)-1);
+    if (s == "^") ss= "hat";
+    if (s == "~") ss= "tilde";
+    string dummy;
+    SI width= b->x2 - b->x1;
+    ot_wide= fn->get_wide_variant ("<wide-" * ss * ">", width, dummy);
+    if (ot_wide) ot_name= "<wide-" * ss * ">";
+  }
+  if (ot_wide) {
+    // the font stretches the accent itself; keep its ink box only, the
+    // combining marks have no advance
+    SI width= b->x2 - b->x1;
+    wideb= wide_box (decorate_middle (ip), ot_name, fn, pen, width);
+    wideb= resize_box (decorate_middle (ip), wideb,
+                       min (wideb->x1, wideb->x3), wideb->y1,
+                       max (wideb->x2, wideb->x4), wideb->y2);
+    // accents are designed for bases of height accentBaseHeight and are
+    // raised by the excess height of the base
+    SI abh= fn->accent_base_height;
+    if (above) sep= (abh > 0)? -min (b->y2, abh): -fn->yx;
+    else sep= fn->sep;
+    return wide;
+  }
   if (very_wide) {
     SI w= fn->wline;
     if (stix) w= (SI) (1.189 * w);
@@ -625,6 +651,9 @@ struct wide_box_rep: public composite_box_rep {
     return ref->rsup_correction_at (h); }
   bool extended_shape () {
     return ref->extended_shape (); }
+  bool top_accent (SI& x) {
+    if (ref->top_accent (x)) { x += sx (0); return true; }
+    return false; }
   SI sub_lo_base (int level) {
     return ref->sub_lo_base (level); }
   SI sub_hi_lim  (int level) {
@@ -659,11 +688,19 @@ wide_box_rep::wide_box_rep (
   if (above) {
     Y= ref->y2;
     X= m;
-    if (ref->right_slope () != 0)
-      X += ref->rsup_correction() + ((SI) (ref->right_slope() * fn->yx * 0.5));
-    X += ref->wide_correction (1);
-    //X= ((SI) (ref->right_slope () * (Y - fn->yx))) + m;
-    insert (hi, X- ((hi->x1 + hi->x2)>>1), Y+ sep);
+    SI ax, hx;
+    if (fn->math_type == MATH_TYPE_OPENTYPE && ref->top_accent (ax)) {
+      // attach the accent at the attachment points of both glyphs
+      if (!hi->top_accent (hx)) hx= (hi->x1 + hi->x2) >> 1;
+      insert (hi, ax - hx, Y+ sep);
+    }
+    else {
+      if (ref->right_slope () != 0)
+        X += ref->rsup_correction() + ((SI) (ref->right_slope() * fn->yx * 0.5));
+      X += ref->wide_correction (1);
+      //X= ((SI) (ref->right_slope () * (Y - fn->yx))) + m;
+      insert (hi, X- ((hi->x1 + hi->x2)>>1), Y+ sep);
+    }
   }
   else {
     Y= ref->y1 - hi->y2;

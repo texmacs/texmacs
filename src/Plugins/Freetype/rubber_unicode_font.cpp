@@ -52,7 +52,10 @@ struct rubber_unicode_font_rep: font_rep {
   int    search_font_sub (string s, string& rew);
   int    search_font_sub_opentype (string s, string& rew);
   bool   get_rubber_variant (string s, SI height, string& r);
+  bool   get_wide_variant (string s, SI width, string& r);
+  bool   get_top_accent (string s, SI& x);
   bool   is_extended_shape (string s);
+  bool   variant_glyph (string head, string root, unsigned int& glyphID);
   void   add_virtual_glyph (string name, string def);
   array<SI> part_lengths (GlyphAssembly gass, bool ver);
   int    search_font_cached (string s, string& rew);
@@ -156,6 +159,41 @@ rubber_unicode_font_rep::get_font (int nr) {
 /******************************************************************************
 * Find the font
 ******************************************************************************/
+
+// The code point carrying the horizontal variants of a wide accent or
+// stretchable relation, for the TeXmacs names used in <wide-name-N> and
+// <rubber-name-N>. TeXmacs's own translation of these names gives spacing
+// modifier letters or the long forms, which fonts do not stretch.
+static uint32_t
+wide_code_point (string root) {
+  static hashmap<string,int> t (0);
+  if (N(t) == 0) {
+    t ("hat")= 0x302;          t ("^")= 0x302;
+    t ("tilde")= 0x303;        t ("~")= 0x303;
+    t ("bar")= 0x305;          t ("overline")= 0x305;
+    t ("underline")= 0x332;    t ("underbar")= 0x332;
+    t ("vect")= 0x20D7;        t ("check")= 0x30C;
+    t ("breve")= 0x306;        t ("invbreve")= 0x311;
+    t ("acute")= 0x301;        t ("grave")= 0x300;
+    t ("dot")= 0x307;          t ("ddot")= 0x308;
+    t ("dddot")= 0x20DB;       t ("abovering")= 0x30A;
+    t ("overbrace")= 0x23DE;   t ("underbrace")= 0x23DF;
+    t ("overbrace*")= 0x23DE;  t ("underbrace*")= 0x23DF;
+    t ("sqoverbrace")= 0x23B4; t ("squnderbrace")= 0x23B5;
+    t ("sqoverbrace*")= 0x23B4; t ("squnderbrace*")= 0x23B5;
+    t ("poverbrace")= 0x23DC;  t ("punderbrace")= 0x23DD;
+    t ("poverbrace*")= 0x23DC; t ("punderbrace*")= 0x23DD;
+    t ("longrightarrow")= 0x2192;     t ("longleftarrow")= 0x2190;
+    t ("longleftrightarrow")= 0x2194; t ("longmapsto")= 0x21A6;
+    t ("longhookrightarrow")= 0x21AA; t ("longhookleftarrow")= 0x21A9;
+    t ("Longrightarrow")= 0x21D2;     t ("Longleftarrow")= 0x21D0;
+    t ("Longleftrightarrow")= 0x21D4;
+  }
+  if (t->contains (root)) return (uint32_t) t[root];
+  string uu= N (root) > 1 ? strict_cork_to_utf8 ("<" * root * ">") : root;
+  int j= 0;
+  return decode_from_utf8 (uu, j);
+}
 
 int
 parse_variant (string s, string& head, string& root) {
@@ -274,11 +312,8 @@ rubber_unicode_font_rep::search_font_sub_opentype (string s, string& rew) {
 
   if (root == "") return search_font_sub (s, rew);
 
-  string uu= N (root) > 1 ? strict_cork_to_utf8 ("<" * root * ">") : root;
-
-  int          j      = 0;
-  uint32_t     u      = decode_from_utf8 (uu, j);
-  unsigned int glyphID= ft_get_char_index (math_face->ft_face, u);
+  unsigned int glyphID= 0;
+  (void) variant_glyph (head, root, glyphID);
 
   // cout << "unicode " << uu << " -> " << lolly::data::to_hex (u) << LF;
   // cout << "search_font_sub_opentype for " << s << " -> " << glyphID << LF;
@@ -382,6 +417,76 @@ rubber_unicode_font_rep::search_font_sub_opentype (string s, string& rew) {
   // if nr == 0, failed to find the sub font from subfn[1:4]
   // use default rubber font subfn[5]
   return nr == 0 ? 5 : nr;
+}
+
+// Glyph of the base character of a rubber or wide character name
+bool
+rubber_unicode_font_rep::variant_glyph (string head, string root,
+                                        unsigned int& glyphID) {
+  if (is_nil (math_face) || root == "" || root == ".") return false;
+  uint32_t u;
+  if (head == "wide" || head == "rubber") u= wide_code_point (root);
+  else {
+    string uu= N (root) > 1 ? strict_cork_to_utf8 ("<" * root * ">") : root;
+    int j= 0;
+    u= decode_from_utf8 (uu, j);
+  }
+  glyphID= ft_get_char_index (math_face->ft_face, u);
+  return glyphID != 0;
+}
+
+// Answer the width search of the typesetter for wide accents, braces and
+// long arrows from the horizontal variants and assemblies of the MATH
+// table; made to measure assemblies are named <head-root-wN> with N the
+// width in pixels.
+bool
+rubber_unicode_font_rep::get_wide_variant (string s, SI width, string& r) {
+  if (is_nil (math_face) || is_nil (math_face->math_table)) return false;
+  if (!starts (s, "<") || !ends (s, ">") || N(s) < 3) return false;
+  array<string> v= tokenize (s (1, N(s) - 1), "-");
+  if (N(v) != 2) return false;
+  string head= v[0], root= v[1];
+  unsigned int glyphID;
+  if (!variant_glyph (head, root, glyphID)) return false;
+  ot_mathtable mt= math_face->math_table;
+  if (!mt->hor_glyph_variants->contains (glyphID)) return false;
+
+  double upem= (double) math_face->ft_face->units_per_EM;
+  if (upem <= 0.0) upem= 1000.0;
+  double du= ((double) base->size * (double) base->wpt) / upem;
+  double em= (double) base->size * (double) base->wpt;
+  int target= (int) ceil (width / du);
+  string prefix= "<" * head * "-" * root * "-";
+
+  array<unsigned int> gv = mt->hor_glyph_variants (glyphID);
+  array<unsigned int> adv= mt->hor_glyph_variants_adv (glyphID);
+  for (int i= 0; i < N(gv) && i < N(adv); i++)
+    if ((int) adv[i] >= target) {
+      r= prefix * as_string (i) * ">";
+      return true;
+    }
+  if (!mt->hor_glyph_assembly->contains (glyphID)) {
+    r= prefix * as_string (N(gv) - 1) * ">";
+    return N(gv) > 0;
+  }
+  GlyphAssembly gass= mt->hor_glyph_assembly (glyphID);
+  int min_overlap= (int) mt->minConnectorOverlap;
+  int k= 1;
+  while (k < MAX_ASSEMBLY_REPS &&
+         assembled_length (gass, k, min_overlap) < target) k++;
+  r= prefix * "w" * as_string (width / PIXEL) * ">";
+  if (!virt->dict->contains (r))
+    add_virtual_glyph (r, assemble (gass, k, min_overlap, target, du, em,
+                                    part_lengths (gass, false), false));
+  return true;
+}
+
+bool
+rubber_unicode_font_rep::get_top_accent (string s, SI& x) {
+  string rew;
+  int nr= search_font_cached (s, rew);
+  if (nr == 6) return false;
+  return get_font (nr)->get_top_accent (rew, x);
 }
 
 bool
@@ -574,6 +679,13 @@ rubber_unicode_font_rep::search_font (string& s) {
 
 bool
 rubber_unicode_font_rep::supports (string s) {
+  // fonts with a MATH table: whatever the variant search resolves
+  if (!is_nil (math_face) && !is_nil (math_face->math_table)) {
+    string rew;
+    int nr= search_font_cached (s, rew);
+    if (nr == 6) return true;
+    if (nr != 0 || rew != s) return get_font (nr)->supports (rew);
+  }
   if (starts (s, "<big-") && (ends (s, "-1>") || ends (s, "-2>"))) {
     string r= s (5, N(s) - 3);
     if (ends (r, "lim")) r= r (0, N(r) - 3);

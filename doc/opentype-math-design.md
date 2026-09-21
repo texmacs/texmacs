@@ -340,6 +340,18 @@ TM_TEST_FONT_DIR=/path/to/fonts tests/opentype/render-samples.sh
   zero-initialized; before, they were read uninitialized for fonts without
   a MATH table.
 
+- **Phase 2 of the plan.** Wide accents, braces and long arrows come
+  from the horizontal variants and assemblies of the table through
+  `get_wide_variant` (names `<wide-name-N>`, `<rubber-name-N>`, with a
+  table mapping TeXmacs accent and arrow names to the combining marks and
+  base arrows that carry the variants). Accents are attached at the top
+  accent attachment points of the base and of the accent (`get_top_accent`
+  hook and `top_accent` box method) and raised by the excess of the base
+  height over `accentBaseHeight`. The line-drawn shapes remain the fallback
+  for fonts without horizontal variants. Native glyphs without advance
+  (combining marks) are now accepted by `supports`. Flattened accents
+  (`flac`) still need the GSUB reader.
+
 ## 6. Known defects still open
 
 1. The delimiter search still probes `<left-x-N>` for increasing `N` and

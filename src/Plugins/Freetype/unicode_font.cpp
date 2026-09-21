@@ -146,6 +146,7 @@ struct unicode_font_rep: font_rep {
   bool get_ot_italic_correction (string s, SI& r);
   bool is_ot_integral (string s);
   bool is_extended_shape (string s);
+  bool get_top_accent (string s, SI& x);
   hashset<unsigned int> ot_integral;
 
   double design_unit_to_metric_factor;   // vertical
@@ -540,6 +541,10 @@ unicode_font_rep::unicode_font_rep (string name,
       space_after_script= design_unit_to_metric_x (mc[spaceAfterScript]);
       script_percent       = mc[scriptPercentScaleDown];
       script_script_percent= mc[scriptScriptPercentScaleDown];
+      // accents
+      accent_base_height= design_unit_to_metric (mc[accentBaseHeight]);
+      flattened_accent_base_height=
+          design_unit_to_metric (mc[flattenedAccentBaseHeight]);
     }
   }
 }
@@ -754,6 +759,8 @@ unicode_font_rep::supports (string c) {
   if (uc >= 0x42 && uc <= 0x5a && !fnm->exists (0x41)) return false;
   if (uc >= 0x62 && uc <= 0x7a && !fnm->exists (0x61)) return false;
   metric_struct* m= fnm->get (uc);
+  // native glyphs (<@XXXX>) may be combining marks without advance
+  if (uc >= 0xc000000) return m->x3 < m->x4 && m->y3 < m->y4;
   return m->x1 < m->x2 && m->y1 < m->y2;
 }
 
@@ -1234,6 +1241,15 @@ unicode_font_rep::is_extended_shape (string s) {
   unsigned int glyphID= get_glyphID (s);
   glyphID= math_table->get_init_glyphID (glyphID);
   return math_table->extended_shape_coverage->contains (glyphID);
+}
+
+bool
+unicode_font_rep::get_top_accent (string s, SI& x) {
+  if (math_type != MATH_TYPE_OPENTYPE || N(s) == 0) return false;
+  unsigned int glyphID= get_glyphID (s);
+  if (!math_table->top_accent->contains (glyphID)) return false;
+  x= design_unit_to_metric_x (math_table->top_accent[glyphID].value);
+  return true;
 }
 
 bool

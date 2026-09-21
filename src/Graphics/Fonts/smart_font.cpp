@@ -722,6 +722,8 @@ struct smart_font_rep: font_rep {
   font make_rubber_font (font base);
   bool get_rubber_variant (string s, SI height, string& r);
   bool is_extended_shape (string s);
+  bool get_wide_variant (string s, SI width, string& r);
+  bool get_top_accent (string s, SI& x);
 
   bool   supports (string c);
   void   get_extents (string s, metric& ex);
@@ -1186,6 +1188,25 @@ smart_font_rep::get_rubber_variant (string s, SI height, string& r) {
   advance (s, i, rr, nr);
   if (nr < 0 || nr >= N(fn) || is_nil (fn[nr])) return false;
   return fn[nr]->get_rubber_variant (rr, height, r);
+}
+
+bool
+smart_font_rep::get_wide_variant (string s, SI width, string& r) {
+  int i=0, nr;
+  string rr= s;
+  advance (s, i, rr, nr);
+  if (nr < 0 || nr >= N(fn) || is_nil (fn[nr])) return false;
+  return fn[nr]->get_wide_variant (rr, width, r);
+}
+
+bool
+smart_font_rep::get_top_accent (string s, SI& x) {
+  int i=0, n= N(s), nr;
+  if (n == 0) return false;
+  string r= s;
+  advance (s, i, r, nr);
+  if (nr < 0 || nr >= N(fn) || is_nil (fn[nr])) return false;
+  return fn[nr]->get_top_accent (r, x);
 }
 
 bool

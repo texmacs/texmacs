@@ -40,6 +40,7 @@ SI box_rep::lsup_correction_at (SI h) { (void) h; return lsup_correction (); }
 SI box_rep::rsub_correction_at (SI h) { (void) h; return rsub_correction (); }
 SI box_rep::rsup_correction_at (SI h) { (void) h; return rsup_correction (); }
 bool box_rep::extended_shape () { return true; }
+bool box_rep::top_accent (SI& x) { (void) x; return false; }
 SI box_rep::sub_lo_base (int level) { (void) level; return y1; }
 SI box_rep::sub_hi_lim  (int level) { (void) level; return y1 + ((y2-y1)/3); }
 SI box_rep::sup_lo_lim  (int level) { (void) level; return (y1 + y2) >> 1; }
