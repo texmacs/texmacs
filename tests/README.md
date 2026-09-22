@@ -120,6 +120,21 @@ python3 tests/opentype/missing-symbols.py \
   -t /path/to/unicode-math-table.tex -o doc/math-symbol-coverage.md
 ```
 
+With `--emit` it prints draft Scheme for a chosen family instead: the lines
+to put in place of the comments that hold their place in the encoding table,
+and a `std-symbols.scm` group built from the unicode-math class, which is
+what gives a symbol its spacing.
+
+```
+python3 tests/opentype/missing-symbols.py -t /path/to/unicode-math-table.tex \
+  --emit --block "Mathematical operators" --min-fonts 10
+```
+
+With `--check` it verifies the tables themselves, that no name is given two
+code points and no code point two two-way names, and exits non-zero on a
+failure. `check.sh` runs it when `TM_UNICODE_MATH_TABLE` points at the list.
+
+
 The sample `math-overview.tm` typesets the same formulas with TeX fonts,
 the shipped TeX Gyre and STIX fonts, and several OpenType math fonts, so the
 effect of a change on each code path can be compared side by side.

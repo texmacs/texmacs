@@ -770,7 +770,10 @@ into `src/opentype-math/`, which is the gallery of `src/OPENTYPEMATH.md`.
 `doc/opentype-math-fonts-survey.md` with fontTools, and
 `tests/opentype/missing-symbols.py` those of
 `doc/math-symbol-coverage.md`, the mathematical symbols TeXmacs has no
-name for.
+name for. The same script drafts the entries for a family with `--emit`,
+the encoding lines and the `std-symbols.scm` group that gives them their
+spacing, and checks the tables with `--check`, which `check.sh` runs when
+`TM_UNICODE_MATH_TABLE` points at the `unicode-math` list.
 
 ### How to run everything
 

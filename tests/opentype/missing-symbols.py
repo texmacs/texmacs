@@ -20,8 +20,18 @@ Ordinary text characters below U+2000, which are typed as themselves, and
 the combining marks of U+0300..U+036F and U+20D0..U+20FF, which belong to
 the wide accent constructs rather than to the symbol palettes.
 
-usage: missing-symbols.py -t unicode-math-table.tex [-o report.md]
+usage: missing-symbols.py -t unicode-math-table.tex [-o out.md]
                           [--texmacs DIR] [font.otf ...]
+       ... --emit [--block NAME] [--class CLS] [--min-fonts N]
+       ... --check
+
+The first form writes the coverage report. The second prints draft Scheme
+for the selected symbols: the lines to put in place of the comments that
+hold their place in the encoding table, and a group for std-symbols.scm
+built from the unicode-math class, which is what gives a symbol its
+spacing. The third checks the tables themselves, that no name is given two
+code points and no code point two two-way names, and says which named
+symbols no math font draws; it exits non-zero on a failure.
 
 Without font arguments the shipped math fonts of TeXmacs/fonts/truetype are
 used, and each missing symbol is reported with the number of them that have
@@ -61,23 +71,41 @@ CODE_TO_NAME = re.compile (r'\("#([0-9A-Fa-f]+)"\s+"(<[^"]+>)"\)')
 NOTED = re.compile (r';\s*(.+?)\s+"#([0-9A-Fa-f]+)"')
 
 def load_named (texmacs):
-    """code point -> set of TeXmacs names, from langs/encoding"""
+    """code point -> set of TeXmacs names, from langs/encoding
+
+    Also returns the placeholder comments, with the file and line where
+    they sit, and the two-way mappings with their provenance."""
     named = collections.defaultdict (set)
     noted = {}
+    where = {}          # code point -> (file, line number, text)
+    two_way = {}        # name -> (code point, file, line number)
+    doubles = []        # names given two different code points
     for path in sorted (glob.glob (os.path.join (texmacs, 'langs', 'encoding',
                                                  '*.scm'))):
-        for line in open (path, encoding='utf-8', errors='replace'):
-            line = line.strip ()
+        oneway = ('oneway' in path) or ('fallback' in path)
+        for nr, raw in enumerate (open (path, encoding='utf-8',
+                                        errors='replace'), 1):
+            line = raw.strip ()
             if line.startswith (';'):
                 m = NOTED.match (line)
-                if m and int (m.group (2), 16) not in noted:
-                    noted[int (m.group (2), 16)] = m.group (1)
+                if m:
+                    code = int (m.group (2), 16)
+                    if code not in noted:
+                        noted[code] = m.group (1)
+                        where[code] = (path, nr, raw.rstrip ('\n'))
                 continue
             m = NAME_TO_CODE.match (line)
-            if m: named[int (m.group (2), 16)].add (m.group (1))
+            if m:
+                code = int (m.group (2), 16)
+                named[code].add (m.group (1))
+                if not oneway:
+                    prev = two_way.get (m.group (1))
+                    if prev and prev[0] != code:
+                        doubles.append ((m.group (1), prev[0], code, path, nr))
+                    two_way[m.group (1)] = (code, path, nr)
             m = CODE_TO_NAME.match (line)
             if m: named[int (m.group (1), 16)].add (m.group (2))
-    return named, noted
+    return named, noted, where, two_way, doubles
 
 # The alphabets smart_font.cpp generates names for. Keep this list in step
 # with init_unicode_substitution; the script prints a warning when the file
@@ -183,6 +211,157 @@ def shipped_math_fonts (texmacs):
         if 'math' in base: out.append (p)
     return out
 
+# --------------------------------------------------------- draft and check
+
+# unicode-math class -> the group of std-symbols.scm a symbol belongs to,
+# with the declarations that group carries
+GROUPS = {
+  'ord':   ("Miscellaneous-symbol", ["(:type symbol)"]),
+  'bin':   ("a binary operator group, next to Plus-symbol or Times-symbol",
+            ["(:type infix)"]),
+  'rel':   ("Relation-nolim-symbol",
+            ["(:type infix)", "(:penalty 20)", "(:spacing wide wide)"]),
+  'op':    ("N-ary-operator-symbol",
+            ["(:type n-ary)", "(:penalty invalid)", "(:spacing none default)",
+             "(:limits display)"]),
+  'open':  ("Open-symbol", ["(:type opening-bracket)"]),
+  'close': ("Close-symbol", ["(:type closing-bracket)"]),
+  'fence': ("Middle-bracket-symbol",
+            ["(:type middle-bracket)", "(:spacing middle middle)"]),
+  'punct': ("Ponctuation-visible-symbol", ["(:type separator)"]),
+  'alpha': ("Letter-symbol", ["(:type symbol)"]),
+}
+NOT_A_SYMBOL = ('accent', 'over', 'under', 'botaccent', 'radical')
+
+def std_symbol_names (texmacs):
+    """every name std-symbols.scm declares, mapped to Unicode or not"""
+    path = os.path.join (texmacs, 'progs', 'language', 'std-symbols.scm')
+    try: text = open (path, encoding='utf-8', errors='replace').read ()
+    except OSError: return set ()
+    return set (re.findall (r'"(<[^"]+>)"', text))
+
+def candidate_name (latex):
+    "the TeXmacs name a unicode-math name suggests"
+    return "<" + latex + ">"
+
+def emit_draft (codes, syms, noted, where, two_way, cov, texmacs):
+    """draft Scheme for the selected symbols: the encoding lines to put in
+    place of the comments, and a group for std-symbols.scm"""
+    out, w = [], None
+    out.append ("# Draft entries for %d symbol(s)" % len (codes))
+    out.append ("")
+    out.append ("Review the names before using them: they come from")
+    out.append ("unicode-math and TeXmacs names are shape-based and")
+    out.append ("compositional (`var`, `n`, `long`, `up`, `big-`).")
+    out.append ("")
+    declared = std_symbol_names (texmacs)
+    taken, classed, ok = [], [], []
+    for code in codes:
+        latex, cls, desc = syms[code]
+        name = candidate_name (latex)
+        if name in two_way: taken.append ((code, name, two_way[name][0]))
+        else:
+            if name in declared: classed.append ((code, name))
+            ok.append ((code, name, cls, desc))
+    out.append ("## The Unicode mapping")
+    out.append ("")
+    out.append ("In `TeXmacs/langs/encoding/tmuniversaltounicode.scm`, replacing")
+    out.append ("the comment that holds the place:")
+    out.append ("")
+    out.append ("```")
+    for code, name, cls, desc in ok:
+        loc = where.get (code)
+        if loc:
+            out.append ("%s:%d" % (os.path.relpath (loc[0], texmacs), loc[1]))
+            out.append ("-%s" % loc[2])
+        else:
+            out.append ("(no placeholder; insert in Unicode order)")
+        head = '("%s"' % name
+        pad = "\t" * max (1, (31 - len (head)) // 8)
+        out.append ('+%s%s"#%04X")   ; %s' % (head, pad, code, desc))
+        out.append ("")
+    out.append ("```")
+    out.append ("")
+    if classed:
+        out.append ("Names that `std-symbols.scm` already declares without a")
+        out.append ("Unicode mapping. Check that the shape is the same before")
+        out.append ("reusing the name; where it is, the mapping also repairs")
+        out.append ("the export of a symbol users already type:")
+        out.append ("")
+        for code, name in classed:
+            out.append ("- `%s` would become U+%04X" % (name, code))
+        out.append ("")
+    if taken:
+        out.append ("Names already in use, to be chosen by hand:")
+        out.append ("")
+        for code, name, other in taken:
+            out.append ("- U+%04X wants `%s`, which already names U+%04X"
+                        % (code, name, other))
+        out.append ("")
+    out.append ("## The class")
+    out.append ("")
+    out.append ("In `TeXmacs/progs/language/std-symbols.scm`, added to the")
+    out.append ("group named below, or as a group of its own:")
+    out.append ("")
+    by_class = collections.defaultdict (list)
+    for code, name, cls, desc in ok:
+        by_class[cls.replace ("math", "")].append (name)
+    for cls in sorted (by_class):
+        if cls in NOT_A_SYMBOL:
+            out.append ("`%s` is an accent or a radical, not a plain symbol:"
+                        % cls)
+            out.append ("it belongs to the wide constructs, not to a group.")
+            out.append ("")
+            continue
+        group, decls = GROUPS.get (cls, ("Miscellaneous-symbol",
+                                         ["(:type symbol)"]))
+        out.append ("```scheme")
+        out.append (";; %s: goes with %s" % (cls, group))
+        out.append ("  (define New-%s-symbol" % cls)
+        for d in decls: out.append ("    %s" % d)
+        line = "   "
+        for nm in by_class[cls]:
+            if len (line) + len (nm) > 72:
+                out.append (line); line = "   "
+            line += ' "%s"' % nm
+        out.append (line + ")")
+        out.append ("```")
+        out.append ("")
+    out.append ("The font side needs nothing; see the coverage report.")
+    return "\n".join (out)
+
+KNOWN_DOUBLE = {"<mu>"}   # U+00B5 micro and U+03BC greek mu, on purpose
+
+def run_check (named, two_way, doubles, cov, font_names):
+    """invariants of the symbol tables; returns the number of failures"""
+    bad = 0
+    seen = collections.defaultdict (list)
+    for name, (code, path, nr) in sorted (two_way.items ()):
+        seen[code].append (name)
+    two = [(c, ns) for c, ns in seen.items () if len (ns) > 1]
+    if two:
+        bad += len (two)
+        print ("FAIL: %d code point(s) with several two-way names:" % len (two))
+        for c, ns in two[:10]:
+            print ("   U+%04X %s" % (c, " ".join (sorted (ns))))
+    for name, first, second, path, nr in doubles:
+        if name in KNOWN_DOUBLE: continue
+        bad += 1
+        print ("FAIL: %s names both U+%04X and U+%04X (%s:%d)"
+               % (name, first, second, path, nr))
+    print ("checked %d two-way names over %d code points"
+           % (len (two_way), len (seen)))
+    if cov:
+        unseen = sorted ([(n, c) for n, (c, p, l) in two_way.items ()
+                          if c not in cov], key=lambda x: x[1])
+        if unseen:
+            print ("note: %d named symbol(s) that none of the %d math fonts "
+                   "draws, so they rely on a text font or on emulation:"
+                   % (len (unseen), len (font_names)))
+            for n2, c in unseen[:10]:
+                print ("   %-16s U+%04X" % (n2, c))
+    return bad
+
 # ------------------------------------------------------------------- report
 
 def main ():
@@ -193,6 +372,15 @@ def main ():
     ap.add_argument ('--texmacs', default=None, help='the TeXmacs directory')
     ap.add_argument ('--all', action='store_true',
                      help='list every missing symbol, not only those a font has')
+    ap.add_argument ('--emit', action='store_true',
+                     help='print draft Scheme entries instead of the report')
+    ap.add_argument ('--block', help='with --emit: restrict to a Unicode block')
+    ap.add_argument ('--class', dest='cls',
+                     help='with --emit: restrict to a unicode-math class')
+    ap.add_argument ('--min-fonts', type=int, default=None,
+                     help='with --emit: only symbols that many fonts draw')
+    ap.add_argument ('--check', action='store_true',
+                     help='check the symbol tables and exit non-zero on error')
     ap.add_argument ('fonts', nargs='*', help='fonts to check for the glyphs')
     a = ap.parse_args ()
 
@@ -203,7 +391,7 @@ def main ():
     syms = load_reference (a.table)
     if not syms:
         sys.exit ("no symbols read from %s" % a.table)
-    named, noted = load_named (texmacs)
+    named, noted, where, two_way, doubles = load_named (texmacs)
     if not named:
         sys.exit ("no encoding tables under %s/langs/encoding" % texmacs)
     alphabet = alphabet_codes ()
@@ -218,6 +406,25 @@ def main ():
         elif is_combining (code): combining.append (code)
         elif is_text_char (code): text_chars.append (code)
         else: missing.append (code)
+
+    if a.check:
+        sys.exit (1 if run_check (named, two_way, doubles, cov, font_names)
+                  else 0)
+
+    if a.emit:
+        sel = missing
+        if a.block:
+            sel = [c for c in sel if a.block.lower () in block (c).lower ()]
+        if a.cls:
+            sel = [c for c in sel
+                   if syms[c][1].replace ("math", "") == a.cls]
+        floor = a.min_fonts if a.min_fonts is not None else 0
+        sel = [c for c in sel if len (cov.get (c, [])) >= floor]
+        if not sel: sys.exit ("nothing selected")
+        text = emit_draft (sel, syms, noted, where, two_way, cov, texmacs)
+        if a.output: open (a.output, 'w', encoding='utf-8').write (text)
+        else: print (text)
+        return
 
     out = []
     w = out.append

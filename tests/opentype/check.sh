@@ -11,4 +11,8 @@ make -C tests
 ref=""; [ -d tests/build/ref ] && ref="-c $top/tests/build/ref"
 tests/opentype/render-samples.sh $ref
 TM_HAND_TUNED=off tests/opentype/render-samples.sh
+# the symbol tables, when the unicode-math list is at hand
+if [ -n "$TM_UNICODE_MATH_TABLE" ]; then
+  python3 "$here/missing-symbols.py" -t "$TM_UNICODE_MATH_TABLE" --check
+fi
 echo "check.sh: all passed"
