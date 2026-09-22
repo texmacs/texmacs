@@ -40,26 +40,40 @@ works well without C++ changes.
 
 ```
   .otf file
-     |  tt_face_rep ctor (tt_face.cpp)
+     |  tt_face_rep ctor (tt_face.cpp): MATH, and on demand GSUB and GPOS
      v
   ot_mathtable  <---- parse_mathtable (tt_tools.cpp)
      |
-     |  unicode_font_rep ctor, final else-branch (unicode_font.cpp)
+     |  unicode_font_rep::init_ot_math (unicode_font.cpp), called BEFORE the
+     |  per-family branches, which then override what they tune
      v
   unicode_font_rep                         font_rep fields
-    math_type = MATH_TYPE_OPENTYPE  ---->  frac_*, sqrt_*, *_limit_* constants
+    ot_math = true                  ---->  frac_*, sqrt_*, *_limit_*,
+    math_type = MATH_TYPE_OPENTYPE         stretch_stack_*, *bar_*, script_*
+      (unless a tuned branch keeps           (about forty constants)
+       its own math_type)
     math_face, math_table
     get_ot_italic_correction ------------> get_right_correction, get_rsup_correction
-    get_ot_kerning ----------------------> get_[lr]su[bp]_correction
+    get_ot_kerning ----------------------> get_[lr]su[bp]_correction_at (height aware)
+    get_top_accent, is_extended_shape ---> top_accent, extended_shape on boxes
+    get_feature_variant (GSUB) ----------> dtls, flac, and ssty through feature_font
     make_rubber_font --------------------> rubber_unicode_font (base, face)
                                              |
-                                             |  search_font_sub_opentype
+                                             |  search_font_sub_opentype,
+                                             |  get_rubber_variant (by height),
+                                             |  get_wide_variant (by width)
                                              v
                                    variants  -> "<@XXXX>" native glyph ids
                                    assembly  -> runtime translator + virtual_font
                                                 (glue-above / glue*, ver-take / hor-take)
 
-  Typesetter consumers: frac_box, sqrt_box, lim_box, typeset_sqrt
+  Font choice:  smart_font.cpp (profile_fix, math italic letters, ssty)
+                <---- math_font_profiles.cpp <---- fonts-opentype.scm
+
+  Typesetter consumers: frac_box, sqrt_box, lim_box (limits and stretch
+  stacks), side_box and script placement, wide_box and compute_wide_accent,
+  concat_math (delimiters, big operators, long arrows, negations) and
+  env_semantics (script sizes, ssty at script levels)
 ```
 
 ### 3.1 MATH table parser (`src/Plugins/Freetype/tt_tools.{hpp,cpp}`)
@@ -98,47 +112,73 @@ version 1.0.
 
 ### 3.2 Face integration (`src/Plugins/Freetype/tt_face.{hpp,cpp}`)
 
-`tt_face_rep` gains an `ot_mathtable math_table` member. The constructor
-parses the MATH table for every `.ttf` and `.otf` face right after creating
-the `FT_Face`, and dumps it to `debug_fonts`. Since `tt_face` instances are
-cached resources, parsing happens once per font file.
+`tt_face_rep` keeps the file in memory (`buffer`, `buffer_size`) and holds
+three parsed tables: `math_table`, filled by the constructor for every
+`.ttf` and `.otf` face right after the `FT_Face` is created, and dumped to
+`debug_fonts` in a verbose build; `gsub_features`, a map from feature tag to its substitutions,
+filled on demand by `gsub_feature (tag)`; and `gpos_kern_table`, filled on
+demand by `gpos_kern ()`. Since `tt_face` instances are cached resources,
+each table is parsed once per font file.
+
+`tt_font_metric_rep::kerning` asks the GPOS table first and falls back to the
+legacy `kern` table of FreeType. No OpenType math font has a legacy `kern`
+table, TeX Gyre Pagella included, so without GPOS they were all set with no
+kerning at all.
 
 ### 3.3 Font activation (`src/Plugins/Freetype/unicode_font.cpp`)
 
-The `unicode_font_rep` constructor ends with an `if / else if` ladder on the
-family name that installs hand-made correction tables for STIX, TeX Gyre,
-Papyrus, Libertine, Biolinum and Fira. The branch adds a final `else`: look up
-the face, and if it has a MATH table:
+The `unicode_font_rep` constructor has an `if / else if` ladder on the family
+name that installs the hand-made correction tables of STIX, TeX Gyre,
+Papyrus, Libertine, Biolinum and Fira. `init_ot_math (face)` runs **before**
+that ladder, so a hand-tuned branch overrides the fields it tunes and leaves
+the rest to the table. It:
 
-- store `math_face` and `math_table` on the font;
-- set `math_type = MATH_TYPE_OPENTYPE` (new constant in `font.hpp`);
-- compute a design-unit conversion factor;
-- copy twenty constants into new `font_rep` fields:
-  `upper_limit_gap_min`, `upper_limit_baseline_rise_min`,
-  `lower_limit_gap_min`, `lower_limit_baseline_drop_min`,
-  `frac_rule_thickness`, `frac_num_shift_up`, `frac_num_disp_shift_up`,
-  `frac_num_gap_min`, `frac_num_disp_gap_min`, `frac_denom_shift_down`,
-  `frac_denom_disp_shift_down`, `frac_denom_gap_min`,
-  `frac_denom_disp_gap_min`, `sqrt_ver_gap`, `sqrt_ver_disp_gap`,
-  `sqrt_rule_thickness`, `sqrt_extra_ascender`, `sqrt_degree_rise_percent`,
-  `sqrt_kern_before_degree`, `sqrt_kern_after_degree`.
+- stores `math_face` and `math_table` on the font and sets the `ot_math`
+  flag, which is what the typesetter tests;
+- leaves `math_type` alone: the ladder sets it to `MATH_TYPE_OPENTYPE` in
+  its final `else`, that is only when no tuned branch claimed the font, so
+  every tuned check still fires and the tuned font keeps its own
+  `math_type`;
+- computes the design unit conversion;
+- fills thirty-nine `font_rep` fields from the table: the limit constants
+  (`upper_limit_gap_min`, `upper_limit_baseline_rise_min`,
+  `lower_limit_gap_min`, `lower_limit_baseline_drop_min`), the stretch stack
+  constants (`stretch_stack_top_shift_up`, `stretch_stack_bottom_shift_down`,
+  `stretch_stack_gap_above_min`, `stretch_stack_gap_below_min`), the fraction
+  constants (`frac_rule_thickness` and the eight numerator and denominator
+  shifts and gaps), the radical constants (`sqrt_ver_gap`,
+  `sqrt_ver_disp_gap`, `sqrt_rule_thickness`, `sqrt_extra_ascender`,
+  `sqrt_degree_rise_percent`, `sqrt_kern_before_degree`,
+  `sqrt_kern_after_degree`), the script constants (`sub_sup_gap_min`,
+  `sup_drop_max`, `sub_drop_min`, `sup_bottom_max_with_sub`,
+  `space_after_script`, `script_percent`, `script_script_percent`), the
+  accent constants (`accent_base_height`, `flattened_accent_base_height`) and
+  the six bar constants (`overbar_vertical_gap`, `overbar_rule_thickness`,
+  `overbar_extra_ascender` and their `underbar` twins);
+- sets the classical TeXmacs parameters the table can give: `yfrac` from
+  `axisHeight`, `wline` from `fractionRuleThickness`, and the script shifts
+  `ysub_lo_base`, `ysub_hi_lim`, `ysup_lo_lim`, `ysup_lo_base` and `yshift`.
 
-`copy_math_pars` propagates these fields to derived fonts (smart fonts, rubber
-fonts, magnified fonts), so the typesetter can read them from `env->fn`.
+All the fields are zero-initialized in `font.hpp`, so a font without a MATH
+table reads zeros rather than garbage, and `copy_math_pars` propagates them to
+derived fonts (smart fonts, rubber fonts, magnified fonts), so the typesetter
+reads them from `env->fn`.
 
-**Unit conversion.** `init_design_unit_factor` loads the glyph `m` unscaled to
-get its advance in font units, measures the same glyph through
-`get_extents ("m")` in `SI`, and takes the ratio. `design_unit_to_metric` and
-`metric_to_design_unit` multiply by that factor. This avoids reaching into
-FreeType's size metrics but depends on rounding of one glyph advance; the
-principled alternative is `units_per_EM` together with the font's size and
-dpi.
+**Unit conversion.** The face is scaled to `size` points at `hdpi` by `vdpi`,
+so one design unit measures `size * hpt / units_per_EM` vertically and
+`size * wpt / units_per_EM` horizontally. `init_design_unit_factor` computes
+both factors and `design_unit_to_metric`, `design_unit_to_metric_x` and
+`metric_to_design_unit` apply them with `tm_round`. An earlier version took
+the ratio of one glyph advance measured twice, which depended on the rounding
+of that glyph.
 
-**Important consequence of the ladder position.** Because STIX and the TeX
-Gyre math fonts match earlier branches, the shipped math fonts
-(`TeXmacs/fonts/truetype/stix/STIXMath-Regular.otf`,
-`texgyre/texgyre*-math.otf`) never enter the OpenType path. Only third-party
-fonts exercise it.
+**Consequence of the ladder position.** Because `init_ot_math` runs first,
+the shipped STIX and TeX Gyre math fonts are on the OpenType path for
+everything their tuned tables do not cover: they get the delimiter variants,
+the assemblies and the constants they never had, while their corrections,
+wide accents and integral spacing stay hand-tuned. The switch `(set-hand-tuned-math-fonts #f)` bypasses the tuned branches for
+the fonts that have a MATH table, which is how the two can be compared; a
+font without a table keeps its hand-made tables either way.
 
 ### 3.4 Glyph-level corrections
 
@@ -148,21 +188,37 @@ Native glyph addressing. `read_unicode_char` accepts `<@XXXX>` and returns
 glyph indices. `get_glyphID (s)` maps any TeXmacs character string to a glyph
 id, either from the `<@XXXX>` form or through `index_glyph`.
 
-For fonts with `math_type == MATH_TYPE_OPENTYPE`:
+Two different guards appear from here on, and the difference matters:
+`font_rep::ot_math` says that the font has a MATH table, whether or not it is
+hand-tuned, while `math_type == MATH_TYPE_OPENTYPE` says that no hand-tuned
+branch claimed the font, so the table alone drives it. The geometry
+constants, the stretchable glyphs, the top accent attachment and the GSUB
+features use the first. The per-glyph corrections use the second, because a
+hand-tuned font has correction tables of its own that must win; so do the
+narrow accents and the precomposed negations.
+
+For a font with `math_type == MATH_TYPE_OPENTYPE`:
 
 - `get_right_correction` returns the MATH italic correction of the last
   glyph when present (`get_ot_italic_correction`).
 - `get_lsub_correction`, `get_lsup_correction` return the bottom-left and
   top-left cut-in kern of the first glyph (`get_ot_kerning`).
 - `get_rsub_correction`, `get_rsup_correction` combine the bottom-right or
-  top-right kern with the italic correction; for integrals (detected by
+  top-right kern with the italic correction. A subscript gets no italic
+  correction at all unless the glyph is an integral (detected by
   `is_ot_integral` via a fixed list of integral names mapped to glyph ids and
-  reduced to base glyphs with `get_init_glyphID`) only 60 percent
-  respectively 40 percent of the italic correction is applied.
+  reduced to base glyphs with `get_init_glyphID`), where 60 percent of it is
+  applied; a superscript gets the full correction, or 40 percent of it over
+  an integral.
 
-The MathKern lookup needs the height at which the script attaches. The
-correction API has no access to the script box, so the code passes the font's
-`y1` or `y2` (descender or ascender), an approximation.
+The MathKern lookup needs the height at which the script attaches, which the
+correction API did not have. The four corrections therefore exist in a second
+form, `get_*_correction_at (s, h)`, with `*_correction_at (h)` on boxes;
+`side_box_rep` evaluates the base's correction at the facing edge of the
+script and the script's correction at the facing edge of the base, which is
+what MathKernInfo is for. The height-less versions evaluate at the ascender
+or the descender, for callers that have no position, and the smart, rubber
+and derived fonts forward both forms.
 
 ### 3.5 Stretchable characters
 
@@ -193,22 +249,33 @@ table is now:
 available. That function:
 
 1. parses the rubber name with `parse_variant`: `<head-root-N>` gives
-   `head` (`left`, `mid`, `right`, `large`, `big`), `root` (the delimiter or
-   operator name) and the variant number `N`; `<big-...>` numbers are shifted
-   down by one because there is no `<big-x-0>`;
+   `head` (`left`, `mid`, `right`, `large`, `big`, `wide`, `rubber`), `root`
+   (the delimiter, accent or operator name, which may itself contain dashes)
+   and the variant number `N`, the last dash-separated token; `<big-...>`
+   numbers are shifted down by one because there is no `<big-x-0>`;
 2. converts the root to a code point and then to a glyph id with
    `ft_get_char_index`;
 3. if the glyph has vertical or horizontal variants and `N` is within range,
-   rewrites the string to `<@XXXX>` for the Nth variant and returns subfont 0;
-4. otherwise, if it has an assembly, synthesizes on first use a virtual glyph
-   definition: each part becomes `@XXXX`, extender parts become
-   `(ver-take @XXXX 0.5 # 0.25)` or `(hor-take ...)`, and the parts are
-   folded with `glue-above` (vertical) or `glue*` (horizontal). The
-   definition is stored in `virt` under the template name `<head-root-#>`;
-   `#` is replaced by `N` by the virtual font machinery, so larger `N` yields
-   longer extenders. Because the virtual font caches compiled definitions,
-   the existing instance is evicted from `font::instances` whenever a new
-   glyph is added, and subfont 6 is re-created (marked FIXME in the code);
+   rewrites the string to `<@XXXX>` for the Nth variant and returns subfont 0.
+   The typesetter no longer probes sizes: `get_rubber_variant (s, h)` and
+   `get_wide_variant (s, w)` return the smallest variant whose advance
+   reaches a target height or width, or the assembly with the number of
+   repetitions that does, from the advances the parser stores;
+4. otherwise, if it has an assembly, synthesizes on first use one virtual
+   glyph definition per size: every part becomes an `@XXXX` leaf, an extender
+   part is repeated as many times as that size needs, and the leaves are
+   folded with `glue-above` (vertical) or `glue*` (horizontal) with a
+   negative separation, the overlap. The first size is the smallest number of
+   repetitions whose assembled length exceeds the largest pre-drawn variant,
+   so sizes keep growing with the variant number, and the definitions are
+   stored in `virt` under their concrete names. Because the virtual font caches compiled definitions,
+   adding a glyph evicts the existing instance from `font::instances` and
+   also from `font_metric::instances` and `font_glyphs::instances`, which
+   share its name and were sized for the earlier definitions; subfont 6 is
+   then re-created. All sizes up to 64 repetitions are defined at once, so
+   this happens once per glyph rather than once per size. `MAX_ASSEMBLY_REPS`
+   is 64, so 64 sizes are defined, from the first useful repetition count
+   upwards;
 5. otherwise falls back to the legacy `search_font_sub`, and if that yields
    subfont 0 (meaning "not handled") uses subfont 5.
 
@@ -217,25 +284,89 @@ both the bitmap compiler and the vector `draw_tree` path.
 
 ### 3.6 Typesetter changes
 
-- `frac_box` (`math_boxes.cpp`) receives a `disp` flag (threaded from
-  `typeset_frac` in `concat_math.cpp`). With an OpenType font and a
-  non-zero `frac_num_gap_min`, the numerator is placed at
-  `max (shift_up, bar + gap_min ...)` and the denominator symmetrically,
-  using the display or text values of the four shift and gap constants. The
-  rule thickness still comes from `wline`.
-- `sqrt_box` uses `sqrt_rule_thickness` for the overline, `sqrt_extra_ascender`
-  above it, `sqrt_degree_rise_percent` and `sqrt_kern_after_degree` for the
-  index. `typeset_sqrt` uses `sqrt_ver_gap` or `sqrt_ver_disp_gap` for the
-  gap between the radicand and the overline.
-- `lim_box` (`script_boxes.cpp`) uses the four limit constants for the
-  distance between a big operator and its limits.
+Every consumer guards on a MATH table and on the constant it needs being
+non-zero, so a font with a degenerate table falls back to the old code.
 
-Each consumer guards with `math_type == MATH_TYPE_OPENTYPE` and a non-zero
-constant, so fonts with a degenerate MATH table fall back to the old code.
+- **Fractions.** `frac_box` (`math_boxes.cpp`) receives a `disp` flag from
+  `typeset_frac` (`concat_math.cpp`) and places the numerator at
+  `max (shift_up, bar + gap_min ...)` and the denominator symmetrically,
+  from the display or text values of the four shift and gap constants. The
+  rule is drawn with `frac_rule_thickness` when the table gives one, and with
+  `wline` otherwise.
+- **Radicals.** `sqrt_box` draws the rule with `sqrt_rule_thickness`, half a
+  thickness below the top of the radical glyph, adds `sqrt_extra_ascender`
+  above it, raises the degree by `sqrt_degree_rise_percent` of the sign's
+  height, offsets it by `sqrt_kern_after_degree` and takes
+  `sqrt_kern_before_degree` off the left of the box. `typeset_sqrt` uses
+  `sqrt_ver_gap` or `sqrt_ver_disp_gap` between the radicand and the rule.
+- **Limits and stretch stacks.** `lim_box` (`script_boxes.cpp`) uses the four
+  limit constants for a big operator and the four `stretchStack*` constants
+  when the base is a stretched glyph, which `typeset_long_arrow` signals.
+- **Scripts.** `side_box_rep` follows the specification: the standard shifts
+  for an ordinary glyph, height-based shifts within `superscriptBaselineDropMax`
+  and `subscriptBaselineDropMin` for a box or an extended shape,
+  `subSuperscriptGapMin` with the TeX resolution of a conflict, and
+  `spaceAfterScript` after the pair. `extended_shape` on boxes asks the font
+  whether the base is in the extended shape coverage.
+- **Delimiters.** `get_delimiter` (`text_boxes.cpp`) asks the font for the
+  variant that reaches the target height, through `get_rubber_variant`,
+  instead of probing sizes; only a font without an answer falls back to the
+  old search.
+- **Big operators.** `concat_math.cpp` builds the `<big-...>` name and the
+  rubber font picks the variant: the smallest one that reaches
+  `displayOperatorMinHeight`, or the largest one, capped at two em by
+  `DISPLAY_OPERATOR_MAX_EM`.
+- **Wide accents, bars and braces.** `compute_wide_accent` (`math_boxes.cpp`)
+  takes the horizontal variant that reaches the width, places it at the top
+  accent attachment points of the base and of the accent, raises it by the
+  excess of the base over `accentBaseHeight`, and uses the `flac` feature
+  over a base taller than `flattenedAccentBaseHeight`. Over- and underlines
+  are rules from the six bar constants, measured from the ink of the base.
+- **Script sizes and `ssty`.** `edit_env_rep::update_font`
+  (`env_semantics.cpp`) computes the script size from `scriptPercentScaleDown`
+  unless the document sets `math-font-sizes`, and wraps an untuned OpenType
+  math font in `feature_font (fn, "ssty", level)` at script levels.
+- **Negations.** `<neg|x>` typesets the precomposed negated symbol when the
+  font has one, and strikes through otherwise.
+
+### 3.7 Font choice: profiles, letters and features
+
+Three pieces sit between the document and the font.
+
+`math_font_profiles.cpp` holds a table keyed by the family name of a math
+font, filled at boot from `TeXmacs/progs/fonts/fonts-opentype.scm`, which
+records what the MATH table cannot: the text, sans serif and typewriter
+companions, whether math letters come from the math font or from the text
+italic, a bold math face, a menu label and a group. A companion is named by
+its *master*, the way the `font` environment variable names a font.
+
+`profile_fix` in `smart_font.cpp` applies it. In a math shape a text family
+is replaced by its math companion when that font is installed, and the
+variant picks the companion: sans serif and typewriter mathematics come from
+the `sans` and `mono` masters, since a math font has no such face. In a text
+shape a math family is replaced by its text companion. Whatever it produces
+goes through `font_database_master`, so a profile that names a family instead
+of a master still resolves.
+
+`REWRITE_MATH_ITALIC` in the same file takes the letters of a formula from
+the mathematical italic alphabet of the math font itself, rather than from
+the text italic face; italic corrections and cut-in kerns then apply to
+letters. It applies when the main font is an untuned OpenType math font and
+the profile does not say `letters text`, so a font with no profile at all
+gets it too, and a hand-tuned font never does.
+
+`feature_font (base, feature, alt)` (`feature_font.cpp`) is a font decorator
+that replaces every glyph by the alt-th substitute of a GSUB feature. The
+environment wraps an untuned OpenType math font in it with `ssty` at script
+levels. The other two features are applied at the call site: `dtls` for
+dotless letters under an accent, and `flac` for the flattened accent over a
+tall base.
 
 ## 4. Status (updated 22 September 2026)
 
-Work done on top of the port, in the order of the plan below:
+This is a log, in the order the work was done. Later entries correct earlier
+ones: a sentence saying that something is missing or implicit is history if a
+later entry says it was done. Sections 6 and 7 are the current state.
 
 - **Build.** The tree compiles again with Apple clang 17 after fixing a
   pre-existing template bug in `src/Kernel/Containers/hashtree.cpp`. The
@@ -243,7 +374,10 @@ Work done on top of the port, in the order of the plan below:
   removed AGL framework dropped; those are local configuration fixes, not
   source changes. Note that this configuration has no dependency tracking
   (`src/Deps` holds only a stamp): after a header change, objects must be
-  removed by hand or they link with a stale vtable and crash.
+  removed by hand or they link with a stale vtable and crash. *Later:* the
+  `deps` variable of `makefile.in` was never defined, which is why nothing
+  was tracked; with it defined, `src/Deps` holds a dependency file per
+  object and `make -C tests check-stale` is only a safety net.
 - **Parser.** NULL offsets for the italic correction, top accent and kern
   info sub-tables are honored; before, fonts without MathKernInfo (TeX Gyre,
   Latin Modern) made the parser read garbage.
@@ -280,42 +414,11 @@ takes the OpenType path.
 The uncommitted debugging edits of the original worktree (font database
 prints, the `get_unicode_range` experiment) were dropped.
 
-## 5. Tests
-
-- `tests/Plugins/Freetype/tt_tools_test.cpp`: the parser against values
-  extracted with fontTools from the shipped `texgyrepagella-math.otf`
-  (constants including a negative one, glyph info, vertical and horizontal
-  variants and assemblies, `get_init_glyphID`) and, when
-  `TM_TEST_FONT_DIR` provides STIX Two Math, the MathKern lookup with its
-  height intervals.
-- `tests/Graphics/Fonts/opentype_font_test.cpp`: activation and
-  `math_type` of the shipped fonts, constant conversion and its linearity in
-  the size, italic correction, monotone rubber variants and assemblies for
-  `<left-(-N>`, display operator sizes, and kerning at several heights
-  through the Unicode font and the smart font (Latin Modern Math and STIX Two
-  Math from `TM_TEST_FONT_DIR`).
-- `tests/opentype/render-samples.sh` with `samples/math-overview.tm`: the
-  same formulas in TeX fonts, TeX Gyre Pagella, STIX, Latin Modern Math,
-  STIX Two Math, Asana Math, Fira Math, KpMath, TeX Gyre DejaVu Math and Neo
-  Euler, rendered to PNG per revision for side-by-side inspection and pixel
-  diffs.
-
-- `tests/opentype/compare-lualatex.sh`: the same formulas through
-  `unicode-math` under LuaLaTeX and through TeXmacs with the same font,
-  stacked in one PNG per formula pair, for eyeball comparison against the
-  reference implementation of the specification.
-
-How to run everything, from the top of the tree after `make`:
-
-```
-make -C tests check-stale
-make -C tests TM_TEST_FONT_DIR=/path/to/fonts
-TM_TEST_FONT_DIR=/path/to/fonts tests/opentype/render-samples.sh
-```
-
-- **Assemblies per specification.** Variant number `nvar + k - 1` of a
-  stretchable glyph repeats every extender part `k` times; consecutive parts
-  overlap by `minConnectorOverlap`, limited by their connector lengths. The
+- **Assemblies per specification.** A stretchable glyph gets one definition
+  per size, repeating every extender part `k` times, with `k` starting at the
+  first count whose assembled length exceeds the largest pre-drawn variant so
+  that sizes keep growing; consecutive parts overlap by `minConnectorOverlap`,
+  limited by their connector lengths. The
   definitions are ordinary `glue-above` / `glue*` trees with a negative
   separation (a third argument was added to `glue*`), so both the bitmap and
   the vector drawing paths work. All sizes up to 64 repetitions of a glyph
@@ -497,7 +600,7 @@ TM_TEST_FONT_DIR=/path/to/fonts tests/opentype/render-samples.sh
   compiles under Qt 6 (`mac_images.h` drops its declarations there) and is
   excluded, and a stale expectation in `analyze_test` came to light:
   `unescape_guile` was asserted to double a backslash, which it has never
-  done since it was written in 2012. All nineteen test binaries pass.
+  done since it was written in 2012. All eighteen test binaries pass.
 
 - **Math families and bold mathematics.** `math-font-family` set to `ms`
   or `mt` now reaches the `sans` and `mono` companions of the profile:
@@ -565,6 +668,83 @@ TM_TEST_FONT_DIR=/path/to/fonts tests/opentype/render-samples.sh
   instead of at every lookup. What is left of the log of a full sample is
   two lines.
 
+## 5. Tests
+
+### Unit tests
+
+`make -C tests` builds and runs eighteen binaries, 142 test functions in
+all, counting the setup and teardown that QtTest reports as tests. Two
+sources of the tree are left out: `xml_test`, which includes a file that is
+already part of the main build, and `mac_images_test`, whose functions
+`mac_images.h` does not declare in a Qt 6 build. Two of the binaries are
+this work:
+
+- `tests/Plugins/Freetype/tt_tools_test.cpp`, nine tests of the readers
+  against values extracted with fontTools: a font without a MATH table and a
+  truncated one, the constants of the shipped `texgyrepagella-math.otf`
+  including a negative one, its glyph info, its vertical and horizontal
+  variants and assemblies, the absence of MathKernInfo there, the MathKern
+  lookup with its height intervals on STIX Two Math, and GPOS pair kerning.
+- `tests/Graphics/Fonts/opentype_font_test.cpp`, twenty tests of the font
+  level: activation and `math_type` of the shipped fonts, the conversion of
+  the constants and its linearity in the size, italic correction, rubber
+  variants by number and by target height, assemblies and their monotonicity,
+  display operator sizes, kerning at several heights through the Unicode font
+  and the smart font, the hand-tuning switch, wide variants, the GSUB feature
+  variants and the feature font, the script, bar and radical parameters, the
+  stretch stack constants, the bold math face, GPOS kerning through a text
+  font, and a validation of every profile of `fonts-opentype.scm` against the
+  installed fonts.
+
+Both need OpenType math fonts that TeXmacs does not ship. `TM_TEST_FONT_DIR`
+points at a directory that is searched recursively; the tests that need a
+missing font skip themselves.
+
+### Renders
+
+`tests/opentype/render-samples.sh` typesets the three documents of
+`tests/opentype/samples/` to PDF and to one PNG per page, named after the git
+revision, and compares them with a reference directory when one is given:
+
+- `math-overview.tm`, the same formulas in TeX fonts, TeX Gyre Pagella, STIX,
+  Latin Modern Math, STIX Two Math, Asana Math, Fira Math, KpMath, TeX Gyre
+  DejaVu Math and Neo Euler, one block per font, for side-by-side inspection;
+- `math-showcase.tm`, a tour of every MATH feature font by font: alphabets,
+  scripts and kerning, fractions, radicals, delimiters, wide accents, big
+  operators and arrows with labels;
+- `math-variants.tm`, math roman, math sans serif, math typewriter and bold
+  mathematics for six profiled fonts, each with its text companion.
+
+`tests/opentype/check.sh` is what to run before a commit: it runs the unit
+tests, then the samples twice, once as they are and once with the hand-tuned
+customizations switched off. Only the first render is diffed against
+`tests/build/ref`; the untuned one is rendered for inspection.
+
+`tests/opentype/compare-lualatex.sh` typesets the formula pairs of
+`tests/opentype/compare/` twice with the same OpenType font, once through
+`unicode-math` under LuaLaTeX and once through TeXmacs, and stacks the two
+renders in one PNG. LuaLaTeX is the reference implementation of the
+specification, so a disagreement is worth looking at.
+
+`tests/opentype/font-gallery.sh` renders one specimen per installed math font
+into `src/opentype-math/`, which is the gallery of `src/OPENTYPEMATH.md`.
+`tests/opentype/survey-math-fonts.py` produces the statistics of
+`doc/opentype-math-fonts-survey.md` with fontTools.
+
+### How to run everything
+
+From the top of the tree, after `make`:
+
+```
+make -C tests check-stale                 # stale objects after a header change
+TM_TEST_FONT_DIR=/path/to/fonts make -C tests
+TM_TEST_FONT_DIR=/path/to/fonts tests/opentype/check.sh
+```
+
+`tests/README.md` describes the harness itself, including what the pixel diff
+does and why the build must have the native PDF renderer for the renders to
+be comparable.
+
 ## 6. Known defects still open
 
 1. `ysup_hi_lim` has no MATH counterpart and is set to
@@ -621,12 +801,13 @@ samples are compared against them.
 through the font database now that the math series is honored. What is
 left:
 
-- `bold-math` is not read. In every profile it either repeats the family
-  name, which only records that a real bold face exists, or names a
-  family whose Bold style the database finds anyway. It would be needed
-  for a font whose bold companion is a separate family, and none of the
-  twenty is.
-- `group` only labels the menus.
+- `bold-math` is not read. In every profile it names the master whose Bold
+  style the database finds anyway, so it only records that a real bold face
+  exists. It would be needed for a font whose bold companion is a family of
+  its own, and none of the twenty is.
+- `group` is not read either. The menus are built from `menu`; `group`
+  records the grouping they could have, and the profile test only requires
+  it to be there.
 - A key for the alphabets a font really provides is still missing, so an
   incomplete alphabet (Latin Modern Math has 18 of 52 script letters) is
   silently mixed with emulated glyphs instead of being declared.
@@ -676,12 +857,15 @@ breves and the over- and underbraces:
   in `unicode_font.cpp` maps by hand to the font's `.h1` to `.h6` glyphs,
   and `get_wide` in `text_boxes.cpp` probes widths;
 - STIX uses `wide_stix_box` and `get_wide_stix` with its own names;
-- other Unicode fonts magnify the accent glyph horizontally
-  (`fn->magnify (sx, sy)`) up to a limit, then fall back to
-  `wide_hat_box`, `wide_tilda_box`, `wide_bar_box`, `wide_vect_box`,
-  `wide_check_box`, `wide_breve_box`, `wide_squbr_box`, `wide_sqobr_box`
-  in `src/Typeset/Boxes/Basic/stretch_boxes.cpp`, which draw the shapes
-  from lines and arcs with the pen width `wline`.
+- any other Unicode font without horizontal variants falls back to the
+  line-drawn `wide_hat_box`, `wide_tilda_box`, `wide_bar_box`,
+  `wide_vect_box`, `wide_check_box`, `wide_breve_box`, `wide_squbr_box`
+  and `wide_sqobr_box` of `src/Typeset/Boxes/Basic/stretch_boxes.cpp`,
+  which draw the shapes from lines and arcs with the pen width `wline`.
+  There is also a path that magnifies the accent glyph horizontally
+  (`fn->magnify (sx, sy)`), but the width heuristic that would select it is
+  commented out and `very_wide` is now set unconditionally, so that path is
+  not reached any more.
 
 The MATH table has all of this: horizontal variants and assemblies for
 U+0302 circumflex, U+0303 tilde, U+0305 overline, U+0332 underline,
@@ -698,47 +882,46 @@ their `underbar` twins for bars. The bar constants are in use since
 OpenType math fonts are rules of the table's thickness, set off from the
 ink of the base by the table's gap.
 
-How to implement:
+What was implemented, on 21 and 22 September 2026:
 
-1. A mapping from TeXmacs accent names to the combining code points
-   (`hat` to U+0302, `tilde` to U+0303, `bar` to U+0305, `vect` to U+20D7,
-   `check` to U+030C, `breve` to U+0306, `invbreve` to U+0311, `overbrace`
-   to U+23DE, `underbrace` to U+23DF, `sqoverbrace` to U+23B4,
-   `squnderbrace` to U+23B5, `poverbrace` to U+23DC, `punderbrace` to
-   U+23DD). TeXmacs's `<hat>` converts to a spacing modifier letter, not to
-   the combining mark that carries the variants, so the table is needed.
-2. In `rubber_unicode_font.cpp`, accept `<wide-name-N>` in
-   `search_font_sub_opentype` through that mapping; the horizontal variants
-   and assemblies are already handled generically (`glue*` with overlaps).
-   Better than probing `N`: a new font hook `get_wide_variant (s, width)`
-   that returns the smallest variant whose advance measurement reaches the
-   width, or the assembly with the right number of repetitions, using the
-   advance measurements the parser already stores.
-3. A new font hook `get_top_accent (s)` on `font_rep`, defaulting to the
-   center of the ink box and implemented from `top_accent` in the Unicode
-   font, with the usual delegation through the smart and rubber fonts and a
-   `top_accent ()` box method (single glyph boxes return the font value,
-   others their center).
-4. A `MATH_TYPE_OPENTYPE` branch in `compute_wide_accent`, before the
-   generic Unicode branches: pick the variant by width, place it
-   horizontally so that the two attachment points coincide, vertically at
-   `max (base height, accentBaseHeight)` for narrow bases, and use the
-   overbar constants for `<bar>`; apply `flac` when the base is taller than
-   `flattenedAccentBaseHeight` (needs a small GSUB single-substitution
-   reader). The line-drawn shapes then remain as the fallback for fonts
-   without horizontal variants.
+1. `wide_code_point` in `rubber_unicode_font.cpp` maps the TeXmacs accent
+   and arrow names to the combining marks and base arrows that carry the
+   variants (`hat` to U+0302, `tilde` to U+0303, `bar` to U+0305,
+   `underline` to U+0332, `vect` to U+20D7, `check` to U+030C, `breve` to
+   U+0306, `invbreve` to U+0311, the four brace and bracket pairs, and the
+   long arrows to U+2190 and its neighbours). It is needed because TeXmacs's
+   `<hat>` converts to a spacing modifier letter, not to the combining mark.
+2. `get_wide_variant (s, width)` on `font_rep` returns the smallest
+   horizontal variant whose advance reaches the width, or the assembly with
+   the right number of repetitions; `get_wide` in `text_boxes.cpp` asks it
+   before the older tables, and the rubber font resolves the `wide` and
+   `rubber` heads through the mapping above.
+3. `get_top_accent (s)` on `font_rep` and `top_accent ()` on boxes give the
+   attachment point, from the font for a single glyph and from the centre of
+   the ink otherwise.
+4. `compute_wide_accent` has an OpenType branch before the generic ones: it
+   picks the variant by width, places it so that the two attachment points
+   coincide, lifts a narrow accent by the excess of the base over
+   `accentBaseHeight`, uses `flac` over a base taller than
+   `flattenedAccentBaseHeight`, and draws `<bar>` as a rule from the six bar
+   constants. The line-drawn shapes remain for fonts with no horizontal
+   variants.
 
 ### 8.2 Long arrows and wide relations
 
 `typeset_long_arrow` builds `<long-arrow|...>` with `wide_box` on the
-arrow's own name, so it depends on `<name-N>` variants that only TeX fonts
-and the TeX Gyre tables provide, and stacks the labels with `limit_box`.
-Math fonts have horizontal variants and assemblies for the arrows of
-U+2190 to U+21FF (in Pagella, `arrowright` has one variant and a
-three-part assembly). The same `get_wide_variant` hook serves here, and the
-labels above and below should use `stretchStackTopShiftUp`,
-`stretchStackBottomShiftDown`, `stretchStackGapAboveMin` and
-`stretchStackGapBelowMin`, which exist precisely for this construction.
+arrow's own name and stacks the labels with `limit_box`. It used to depend
+on `<name-N>` variants that only TeX fonts and the TeX Gyre tables provide;
+now `get_wide` asks `get_wide_variant` first, and the name mapping of
+section 8.1 sends the long arrows to U+2190 and its neighbours, so a math
+font serves them from its horizontal variants and assemblies (in Pagella,
+`arrowright` has one variant and a three-part assembly). Only a font with
+no such variants still needs the old tables.
+
+The labels are a stretch stack, not the limits of an operator, and
+`limit_box` takes a `stretched` flag that `typeset_long_arrow` sets: the
+label above uses `stretchStackGapAboveMin` and `stretchStackTopShiftUp`,
+the one below `stretchStackGapBelowMin` and `stretchStackBottomShiftDown`.
 
 ### 8.3 Radicals
 
@@ -801,23 +984,31 @@ them (see the survey document), and the rest stays as it is.
 
 ## 9. Plan to complete the OpenType support
 
+This is the plan as it was written on 21 September 2026 and executed over
+the two days that followed. It is kept as the record of what was decided;
+each phase now carries the state of its items, so the list is not mistaken
+for open work. What remains open is section 7.
+
 Principles: the hand-tuned tables keep precedence everywhere; every step
 lands with a unit test or a sample row; the "hand tuned math fonts" switch
 is the comparison tool. Sizes are S (a day or less), M (a few days),
 L (a week or more). Phases 1 and 2 are independent of 3; phase 4 needs 3.
 
-### Phase 0: groundwork (S)
+### Phase 0: groundwork (S) — partly done
 
 - Turn dependency tracking on in the autotools build, or add a rule that
   invalidates objects on header changes (`check-stale` is a stopgap).
 - Replace the hard-coded TeX Live years in `tt_font_path` by a glob or
-  `kpsewhich`, so system math fonts are found.
+  `kpsewhich`, so system math fonts are found. *Done for macOS only:*
+  `texlive_font_dirs` scans `/usr/local/texlive`, `/usr/share/texlive`,
+  `/opt/texlive` and `$HOME/texlive` for any year; the Linux branch of
+  `tt_file.cpp` still lists 2020, 2021 and 2022 by hand.
 - Document the family name normalization of `tt_font_name` ("STIX Two
   Math" becomes "Stix Two Math"), which is why the sample uses that
   spelling; no alias mechanism is needed.
 - Push the branch; keep `master` merges small.
 
-### Phase 1: finish the table-driven layout (M)
+### Phase 1: finish the table-driven layout (M) — done except item 4
 
 1. `get_delimiter_variant (s, height)` hook on `font_rep`: the rubber font
    returns the smallest pre-drawn variant reaching the height, or the
@@ -830,18 +1021,23 @@ L (a week or more). Phases 1 and 2 are independent of 3; phase 4 needs 3.
    `superscriptBaselineDropMax`, `subscriptBaselineDropMin`,
    `spaceAfterScript`; `scriptPercentScaleDown` through
    `get_script_size`, which needs the font before the size is computed.
-4. Stack constants for `above`, `below`, `stack` and binomials.
+4. Stack constants for `above`, `below`, `stack` and binomials. *Not done,
+   deliberately:* those are limit boxes and the limit constants suit them;
+   the stack constants would move every `above` (444 against 111 design
+   units in Latin Modern Math). The `stretchStack*` four are in use for
+   labels on stretched arrows.
 5. Extended shape coverage: no raised superscripts on tall delimiters and
    operators.
-6. Display operator cap (`display-operator-max`) to tame fonts like IBM
-   Plex Math.
+6. Display operator cap to tame fonts like IBM Plex Math. *Done as a
+   constant,* `DISPLAY_OPERATOR_MAX_EM` of two em in
+   `rubber_unicode_font.cpp`; there is no document variable for it.
 
 Tests: expected heights for `<left-(-N>` at given target heights, radical
 rule position, script positions on STIX Two Math and Latin Modern Math;
 sample rows checked against LuaLaTeX with `unicode-math` for the same
 formulas.
 
-### Phase 2: wide accents and horizontal constructions (M)
+### Phase 2: wide accents and horizontal constructions (M) — done
 
 1. Table of TeXmacs accent names to combining code points (section 8.1).
 2. `get_wide_variant (s, width)` hook, shared by `wide_box`,
@@ -858,7 +1054,7 @@ formulas.
 Tests: widths of `<wide-hat-N>` variants and assemblies from the table;
 a sample row of accents over letters and over wide bases in every font.
 
-### Phase 3: letters, alphabets and font profiles (L)
+### Phase 3: letters, alphabets and profiles (L) — done but for the alphabet key
 
 1. The math font profile table of the survey document, in Scheme, read at
    boot: family, file, aliases, text companions, bold math variant, letter
@@ -883,7 +1079,7 @@ Tests: a profile validation test (files exist, names match, companions and
 declared alphabets present); kerning through the smart font on letters,
 which the current test could not do.
 
-### Phase 4: the shipped fonts under their hand tuning (M)
+### Phase 4: the shipped fonts under their hand tuning (M) — done
 
 1. Reorder the constructor ladder so MATH activation runs first and each
    hand-tuned branch overrides its own fields (`yfrac`, script shifts,
@@ -897,23 +1093,31 @@ which the current test could not do.
    text faces; route the `stix` family to STIX Two through a profile while
    keeping STIX v1 for old documents.
 
-### Phase 5: polish (M)
+### Phase 5: polish (M) — done except the two items marked below
 
 - Bold mathematics from real bold math fonts (New Computer Modern, KpMath,
-  XITS) through the profile's `bold-math` field.
-- Negations mapped to precomposed Unicode symbols when available.
-- Verify `<@XXXX>` glyphs and assemblies in PDF, PostScript and SVG
-  export; embedded subsets must contain the variant glyphs.
+  XITS). Done, though not through `bold-math`: making `math-font-series`
+  reach the font was enough, the database then finds the Bold style of the
+  math family.
+- Negations mapped to precomposed Unicode symbols when available. Done.
+- Verify `<@XXXX>` glyphs and assemblies in PDF export. Done: with the
+  native PDF renderer the variants and assemblies come out of the embedded
+  font subsets. *PostScript and SVG export are not checked.*
 - Cache assembled glyphs without rebuilding the virtual font; measure
-  startup and typesetting time with a large document.
+  startup and typesetting time with a large document. *Partly:* all sizes of
+  a glyph are defined at once, so the virtual font is rebuilt once per glyph
+  rather than once per size, but nothing has been measured.
 - Device tables are deliberately left out.
 
-### Phase 6: tests and documentation (S, continuous)
+### Phase 6: tests and documentation (S, continuous) — done, and continuing
 
 - Reference PNGs for the pixel diff of the samples, refreshed on purpose.
-- A kerning and accents sample next to `math-overview.tm`.
+  Done, in `tests/build/ref`, which is not under version control.
+- A kerning and accents sample next to `math-overview.tm`. Done as
+  `math-showcase.tm`, which covers both, and `math-variants.tm`.
 - `make -C tests` and both renders in a script that can run before every
-  commit; the design and survey documents updated as steps land.
+  commit; the design and survey documents updated as steps land. Done as
+  `tests/opentype/check.sh`.
 
 ### Definition of done
 
@@ -945,5 +1149,5 @@ Met, with three things worth naming exactly:
 Everything under "What is still missing" is either deliberate
 (`delimitedSubFormulaMinHeight`, the device tables, the stack constants
 for `above`) or a small, named gap. The twenty-two tests of
-`opentype_font_test`, the eleven of `tt_tools_test`, the other seventeen
+`opentype_font_test`, the eleven of `tt_tools_test`, the other sixteen
 test binaries and the three samples, tuned and untuned, pass.

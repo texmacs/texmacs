@@ -8,11 +8,13 @@ or launch a Scheme session and then run `(run-all-tests)`.
 
 ## Guide to Run Unit Tests for cpp
 
-First, compile the whole project.
+First, compile the whole project with the tests enabled. That harness is
+built against Qt 5 (`find_package(Qt5Test)`), so it needs a Qt 5
+configuration; with Qt 6 use the autotools harness described below.
 ```
 cd texmacs/
 mkdir build/ && cd build/
-cmake ..
+cmake -DBUILD_TESTS=ON ..
 make -j8
 ```
 
@@ -51,9 +53,11 @@ make -C tests run-tt_tools_test    # one test, with QtTest output
 make -C tests TM_TEST_FONT_DIR=/path/to/fonts
 ```
 
-`TM_TEST_FONT_DIR` points to a directory (searched recursively) with extra
-fonts that some tests need, for instance Latin Modern Math and STIX Two Math
-for the OpenType tests; those tests are skipped when the fonts are missing.
+`TM_TEST_FONT_DIR` points to a directory, searched recursively, with the
+fonts the OpenType tests need. Latin Modern Math and STIX Two Math are
+shipped in the tree now, but the tests still look for them through this
+variable and skip themselves when it is not set; other fonts, Asana Math for
+instance, are genuinely external.
 The tests run with `TEXMACS_PATH` set to the source tree and a scratch
 `TEXMACS_HOME_PATH` under `tests/build`, so they never touch `~/.TeXmacs`.
 

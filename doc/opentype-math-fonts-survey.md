@@ -31,8 +31,8 @@ importance:
    for the letters.
 3. **Symbol coverage.** TeXmacs's math symbols map to Unicode; the
    `unicode-math` symbol list (2435 code points) is a good yardstick. The
-   TeX Gyre level (about 1650 symbols, all of the Mathematical Operators
-   block) is enough for everyday mathematics; STIX level (all of them)
+   TeX Gyre level (about 1650 symbols, 92 percent of the Mathematical
+   Operators block) is enough for everyday mathematics; STIX level (all of them)
    covers everything TeXmacs can name.
 4. **Alphabets** in the Mathematical Alphanumeric Symbols block: bold,
    italic, script, fraktur, double-struck, sans, mono. Missing alphabets can
@@ -47,8 +47,9 @@ Symbols is the coverage of the `unicode-math` list, alnum the coverage of
 the Mathematical Alphanumeric Symbols block (996 assigned code points), ops
 the Mathematical Operators block. Kern info is the number of glyphs with
 MathKernInfo; vert (asm) the number of glyphs with vertical variants and how
-many of them have an assembly. All fonts have `ssty` (script-style
-alternates) and `dtls` (dotless i and j) unless noted.
+many of them have an assembly. Most fonts have `ssty` (script-style
+alternates) and `dtls` (dotless i and j); XITS Math Bold and Libertinus Math
+have `ssty` but no `dtls`, and STIX Math v1 has neither.
 
 | Font | Version | Glyphs | KB | Symbols | Alnum | Ops | Kern info | Italics | Top acc | Vert (asm) | Horiz (asm) | GPOS |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
@@ -63,14 +64,14 @@ alternates) and `dtls` (dotless i and j) unless noted.
 | TeX Gyre Schola Math | 1.533 | 4246 | 582 | 67% | 99% | 92% | 0 | 1026 | 1942 | 95 (47) | 86 (71) | none |
 | TeX Gyre DejaVu Math | 1.106 | 4280 | 512 | 67% | 99% | 92% | 0 | 448 | 1960 | 95 (47) | 86 (71) | none |
 | STIX Math (v1, shipped) | 1.1.0 | 4226 | 466 | 98% | 99% | 100% | 0 | 0 | 141 | 98 (33) | 43 (32) | kern |
-| STIX Two Math | 2.13 | 6760 | 818 | 100% | 100% | 100% | 233 | 889 | 2652 | 118 (32) | 47 (37) | kern |
+| STIX Two Math | 2.12 | 6760 | 818 | 100% | 100% | 100% | 233 | 889 | 2652 | 118 (32) | 47 (37) | kern |
 | XITS Math | 1.302 | 4559 | 535 | 99% | 100% | 100% | 29 | 643 | 1328 | 168 (38) | 41 (34) | kern |
 | XITS Math Bold | 1.302 | 2154 | 244 | 62% | 92% | 92% | 14 | 300 | 479 | 40 (1) | 0 (0) | kern |
 | Libertinus Math | 7.051 | 4463 | 575 | 67% | 98% | 85% | 0 | 423 | 981 | 59 (15) | 27 (22) | kern, mark |
 | Asana Math | 0.958 | 3447 | 423 | 94% | 100% | 100% | 76 | 347 | 933 | 77 (22) | 36 (30) | kern |
 | Fira Math | 0.3.4 | 2094 | 175 | 43% | 44% | 61% | 0 | 244 | 529 | 40 (18) | 6 (6) | none |
 | KpMath Regular | 0.66 | 3465 | 416 | 65% | 91% | 89% | 707 | 1004 | 1271 | 105 (25) | 53 (45) | none |
-| KpMath Light / Semibold / Bold / Sans / SansBold | 0.66 | 2213 to 3465 | | 61 to 65% | 91% | 81 to 89% | 105 to 708 | | | | | none |
+| KpMath Light / Semibold / Bold / Sans / SansBold | 0.66 | 2058 to 3465 | | 61 to 65% | 91% | 81 to 89% | 105 to 708 | | | | | none |
 | Erewhon Math | 0.67 | 3230 | 404 | 68% | 94% | 93% | 403 | 752 | 1337 | 80 (34) | 52 (45) | kern |
 | XCharter Math | 0.65 | 3111 | 357 | 67% | 94% | 93% | 54 | 778 | 874 | 70 (26) | 52 (45) | none |
 | Concrete Math | 0.65 | 3188 | 375 | 67% | 94% | 93% | 2 | 557 | 703 | 70 (26) | 52 (45) | kern |
@@ -87,12 +88,20 @@ and Office), Minion Math (commercial), Lucida Bright Math OpenType
 (commercial), Noto Sans Math (no MATH table). The ConTeXt "companion" fonts
 (`context-companion-fonts`) are patch fonts, not standalone.
 
-The variant conventions are uniform: in every surveyed font the first
+The variant conventions are mostly uniform, and the exceptions are the
+reason the code may assume none of them. Usually the first
 MathGlyphVariantRecord of a glyph is the glyph itself, parentheses,
 brackets, braces, bars, radicals and integrals have both size variants and
-an assembly, and summation has two sizes without an assembly. STIX Math v1
-is the outlier: no italic corrections, few top accents, no `ssty`, which is
-why TeXmacs hard-coded its behaviour.
+an assembly, and summation has two sizes without an assembly. But the first
+record is not the base glyph for the parentheses, brackets and braces of
+XCharter Math and Concrete Math, nor for the bar of STIX Math v1 and XITS
+Math Bold; the integrals have no assembly in Latin Modern Math, STIX Math v1,
+both XITS weights, Libertinus Math, Fira Math, Garamond Math and Neo Euler;
+the bar has no vertical variants in STIX Math v1 and XITS Math Bold, which
+also has none for the radical and no assembly for the parentheses; and Asana
+Math gives summation four sizes. STIX Math v1 is the outlier overall: no
+italic corrections, few top accents, no `ssty`, which is why TeXmacs
+hard-coded its behaviour.
 
 ## 3. The fonts, one by one
 
@@ -108,15 +117,17 @@ cut-in kerning falls back to italic corrections. Script and script-script
 scales 70/50 like TeX. TeXmacs's default "roman" font is Computer Modern
 through Metafont, so this is the natural OpenType default and the reference
 against which to compare TeXmacs's own TeX-based layout. Quirk seen in the
-samples: the radical sign is designed to sit apart from the overline
-(`radicalExtraAscender`), so the current `sqrt_box` gap looks large.
+samples: the radical sign is drawn so that its top edge is the rule, and its
+`radicalExtraAscender` of 40 design units is the smallest of the fonts
+measured, so a gap between the sign and the rule shows immediately. This is
+what the radical junction of 22 September 2026 fixed.
 
 **New Computer Modern Math** (GUST FL). Regular, Book (slightly heavier,
 for screens) and Bold math fonts, with matching `NewCM10-{Regular, Italic,
 Bold, BoldItalic, Book, BookItalic}` text faces, sans and mono, plus a Sans
-Math. Complete symbol coverage, kerning info, many stylistic sets. The only
-free family with a real **bold math font**. Strong candidate to ship instead
-of or next to Latin Modern.
+Math. Complete symbol coverage, kerning info, many stylistic sets, and a real
+**bold math font**, which XITS, KpMath, Concrete, Erewhon, XCharter and Lete
+Sans also have. Strong candidate to ship instead of or next to Latin Modern.
 
 **TeX Gyre Pagella, Termes, Bonum, Schola Math** (GUST FL). Already shipped
 with TeXmacs together with their text faces, and already special-cased
@@ -158,8 +169,9 @@ map Linux Libertine users to Libertinus when both are present.
 **KpMath** (OFL). Kp-Fonts in OpenType: Light, Regular, Semibold, Bold math,
 plus Sans and Sans Bold math, with `KpRoman`, `KpSans` and `KpMono` text
 faces in matching weights. Very rich MathKernInfo (700 glyphs) and many
-stylistic sets. Alphabets partial (script 18, double-struck 20 of 52). The
-only free family with **five math weights**, valuable for presentations.
+stylistic sets. Alphabets partial (script 18, double-struck 20 of 52). Six math fonts: four
+weights of the serif design, Light, Regular, Semibold and Bold, plus Sans and
+SansBold, which are a design of their own. Valuable for presentations.
 
 ### Tier 2: good fonts with a narrower audience
 
@@ -199,7 +211,7 @@ capped.
 Standard text (historical and slavistic typography).
 
 **GFS Neohellenic Math** (OFL). Greek sans; 41% of the alphanumerics
-block, complete operators. Niche.
+block, 98% of the operators. Niche.
 
 ### Tier 3: do not integrate
 
@@ -222,7 +234,8 @@ what an integration should consolidate:
 - `rubber_stix_font.cpp`: knows the STIX size fonts (`STIXSizeOneSym`,
   `STIXIntegralsD`, ...) by file name.
 - `smart_font.cpp`: `is_math_family` (fixed list), `tex_gyre_fix`,
-  `kepler_fix`, `stix_fix`, `math_fix` (append " Math" to the family for
+  `kepler_fix`, `math_fix` (`stix_fix` exists but every call is commented
+  out), which append " Math" to the family for
   math shapes), `supports_big_operators` in `poor_rubber.cpp`.
 - `font_translate.cpp`: the map from legacy names (`math-stix`,
   `math-pagella`, `math-asana`, ...) to database family names.
@@ -357,8 +370,9 @@ detected from the cmap, no cap.
 
 ## 6. Shipping
 
-TeXmacs now ships, besides the TeX Gyre text and math fonts and STIX v1
-which were already there:
+TeXmacs now ships these math families, besides the TeX Gyre text and math
+fonts and STIX v1 which were already there (the branch also adds an
+unrelated text family, OpenDyslexic):
 
 | Directory | Fonts | Size | License |
 |---|---|---|---|
@@ -368,9 +382,10 @@ which were already there:
 | `TeXmacs/fonts/truetype/kp` | KpMath regular and bold, and four KpRoman text faces | 1.1 MB | SIL OFL 1.1 |
 | `TeXmacs/fonts/truetype/fira` | Fira Math, next to the Fira Sans and Fira Mono faces already shipped | 0.2 MB | SIL OFL 1.1 |
 
-Each directory carries the license text and a `README.md` with the
-upstream address, the version and the copyright of every file. Together
-this is about 8.6 MB, roughly doubling the shipped font tree.
+Each directory carries the license text and a `README.md` with the upstream
+address, the version and the copyright of every file. Together
+this is about 8.6 MB, which adds about two thirds to the TrueType font
+directory and a third to the whole font tree.
 
 The five families are registered in the shipped global font database
 (`TeXmacs/fonts/font-database.scm`, `font-features.scm`,

@@ -117,7 +117,7 @@ make SAFE_TEXMACS_REV && make
 Then, from the top of the tree:
 
 ```
-make -C tests                                   # 19 test binaries
+make -C tests                                   # 18 binaries, 142 tests
 TM_TEST_FONT_DIR=/path/to/fonts tests/opentype/check.sh    # tests + renders
 tests/opentype/compare-lualatex.sh              # against unicode-math
 tests/opentype/font-gallery.sh                  # the specimens below
@@ -134,11 +134,13 @@ limits, wide accents, an overbrace and a labelled arrow. They were produced
 with
 
 ```
-TM_TEST_FONT_DIR=/Users/mgubi/t/tm-fonts tests/opentype/font-gallery.sh -w 900
+TM_TEST_FONT_DIR=/path/to/extra/fonts tests/opentype/font-gallery.sh -w 900
 ```
 
-so they show the fonts installed on that machine; the script regenerates them
-for any other set.
+on a machine with TeX Live installed, so they show the fonts that were
+installed there: the script asks TeXmacs which profiled math fonts it finds
+and renders those. On another machine it produces the gallery of that
+machine's fonts.
 
 ### References, without the MATH path
 
@@ -165,11 +167,12 @@ above.
 
 ![Fira Math](opentype-math/fira-math.png)
 
-### TeX Gyre, hand-tuned
+### TeX Gyre
 
-The five TeX Gyre math fonts keep their tuned tables for corrections, wide
-accents and integrals; the MATH table gives them the delimiter variants, the
-assemblies and the constants they never had.
+Four of the five keep their hand-tuned tables for corrections, wide accents
+and integrals, while the MATH table gives them the delimiter variants, the
+assemblies and the constants they never had. TeX Gyre DejaVu Math has no
+tuned tables at all and takes the MATH path like the fonts above.
 
 ![TeX Gyre Pagella Math](opentype-math/tex-gyre-pagella-math.png)
 
@@ -186,9 +189,10 @@ assemblies and the constants they never had.
 Profiled and untuned: they work, and their quirks are the fonts' own. XITS
 and Libertinus are complete families like the shipped ones, and the survey
 in `doc/opentype-math-fonts-survey.md` puts the others one tier lower:
-Asana, Erewhon, XCharter, Concrete and Euler for a narrower audience, GFS
-Neohellenic with 41 percent of the alphanumerics, and IBM Plex Math, the font
-whose display operators needed the two-em cap.
+Asana, Erewhon, XCharter, Concrete and Euler for a narrower audience, Lete
+Sans Math for sans serif mathematics, GFS Neohellenic with 41 percent of the
+alphanumerics, and IBM Plex Math, the font whose display operators needed the
+two-em cap.
 
 ![Asana Math](opentype-math/asana-math.png)
 
