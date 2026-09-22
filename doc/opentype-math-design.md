@@ -431,6 +431,17 @@ TM_TEST_FONT_DIR=/path/to/fonts tests/opentype/render-samples.sh
   with text companions and registered in the global database, so they work
   in a fresh installation without a scan; see section 6 of the survey.
 
+- **GPOS pair kerning.** `parse_gpos_kern` reads the pair adjustments of
+  the GPOS `kern` feature, both the explicit pairs of a format 1 subtable
+  and the class matrices of a format 2 one, through extension lookups when
+  present; `tt_face` caches it and `tt_font_metric_rep::kerning` uses it in
+  preference to the legacy `kern` table. None of the OpenType fonts
+  TeXmacs ships has a legacy `kern` table, TeX Gyre Pagella included, so
+  until now they were all set with no kerning at all. Multi-letter runs in
+  text and in formulas are now kerned; single letters in mathematics are
+  separate boxes and are unaffected, being governed by the MATH cut-in
+  kerning instead.
+
 ## 6. Known defects still open
 
 1. The radical of Latin Modern Math leaves a gap to its overline and the
@@ -452,16 +463,16 @@ TM_TEST_FONT_DIR=/path/to/fonts tests/opentype/render-samples.sh
 
 ## 7. What is still missing
 
-### 7.1 The kerning of ordinary letters (the largest gap)
+### 7.1 Kerning: what is left
 
-TeXmacs reads kerning through `FT_Get_Kerning`, which only sees the legacy
-`kern` table. Modern OpenType math fonts carry their kerning in GPOS
-instead, and most ship no `kern` table at all, so adjacent letters in a
-formula are set without kerning. The MATH cut-in kerning that we do
-implement applies only between a base and its scripts, not between letters.
-A small GPOS pair-positioning reader, on the model of
-`parse_gsub_feature`, would close this; it is the change with the widest
-visible effect left.
+Pair kerning of the GPOS `kern` feature is implemented (see above). What
+remains is the rest of GPOS, none of which TeXmacs needs today: cursive
+attachment, mark positioning (`mark`, `mkmk`, used by Libertinus Math and
+IBM Plex Math for combining marks), and contextual positioning. Kerning is
+also not applied across box boundaries, so two adjacent single letters in
+a formula are still unkerned; the MATH cut-in kerning governs the gap
+between a base and its scripts, which is the case the specification cares
+about.
 
 ### 7.2 Constants parsed but still unused
 

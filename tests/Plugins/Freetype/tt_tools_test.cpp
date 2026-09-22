@@ -45,6 +45,7 @@ private slots:
   void test_pagella_horizontal_variants ();
   void test_pagella_no_kerning ();
   void test_stixtwo_kerning ();
+  void test_gpos_kern ();
 };
 
 void
@@ -272,6 +273,42 @@ TestTTTools::test_stixtwo_kerning () {
   QCOMPARE (t->get_kerning (3300, 100, true, false), 58);
   QCOMPARE (t->get_kerning (3300, 300, true, false), -58);
   QCOMPARE (t->get_kerning (3300, 400, true, false), -70);
+}
+
+void
+TestTTTools::test_gpos_kern () {
+  // Pair kerning of the GPOS 'kern' feature; expected values and glyph ids
+  // extracted with fontTools. These fonts have no legacy 'kern' table.
+  string buf;
+  QVERIFY (!load_string (shipped_font ("stix2/STIXTwoText-Regular.otf"),
+                         buf, false));
+  ot_gpos_kern k= parse_gpos_kern (buf);
+  QVERIFY (!is_nil (k));
+  QVERIFY (!k->empty ());
+  QCOMPARE (k->get (3, 24), -100);   // A V
+  QCOMPARE (k->get (24, 3), -105);   // V A
+  QCOMPARE (k->get (22, 270), -70);  // T o
+  QCOMPARE (k->get (25, 255), -60);  // W a
+  QCOMPARE (k->get (260, 263), 10);  // f i, a positive adjustment
+  QCOMPARE (k->get (273, 1829), -65);// r .
+  QCOMPARE (k->get (18, 255), -25);  // P a
+  QCOMPARE (k->get (3, 3), 0);       // A A is not kerned
+
+  string buf2;
+  QVERIFY (!load_string (shipped_font ("newcm/NewCM10-Regular.otf"),
+                         buf2, false));
+  ot_gpos_kern k2= parse_gpos_kern (buf2);
+  QVERIFY (!is_nil (k2) && !k2->empty ());
+  QCOMPARE (k2->get (34, 55), -111); // A V
+  QCOMPARE (k2->get (53, 80), -83);  // T o
+  QCOMPARE (k2->get (49, 66), -28);  // P a
+
+  // a font without GPOS kerning gives an empty table
+  string buf3;
+  QVERIFY (!load_string (shipped_font ("lm/latinmodern-math.otf"),
+                         buf3, false));
+  ot_gpos_kern k3= parse_gpos_kern (buf3);
+  QVERIFY (is_nil (k3) || k3->empty ());
 }
 
 QTEST_GUILESS_MAIN(TestTTTools)

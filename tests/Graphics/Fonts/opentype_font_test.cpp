@@ -52,6 +52,7 @@ private slots:
   void test_feature_variants ();
   void test_profiles ();
   void test_feature_font ();
+  void test_gpos_kerning ();
 };
 
 void
@@ -497,6 +498,33 @@ TestOpenTypeFont::test_feature_font () {
   font rf= rubber_font (sf);
   QVERIFY (rf->get_rubber_variant ("<left-(>", du_y (1500), r));
   QCOMPARE (r, string ("<left-(-4>"));
+}
+
+void
+TestOpenTypeFont::test_gpos_kerning () {
+  // STIX Two Text has its kerning in GPOS and no legacy kern table:
+  // 'AV' must be narrower than 'A' and 'V' set apart, by 100 design units
+  font tx= unicode_font ("STIXTwoText-Regular", LM_SIZE, LM_DPI);
+  QVERIFY (!is_nil (tx));
+  metric a, v, av;
+  tx->get_extents ("A", a);
+  tx->get_extents ("V", v);
+  tx->get_extents ("AV", av);
+  SI expected= (SI) tm_round (-100 * LM_SIZE * tx->wpt / 1000.0);
+  SI got= (av->x2 - av->x1) - ((a->x2 - a->x1) + (v->x2 - v->x1));
+  QVERIFY2 (qAbs (got - expected) <= PIXEL,
+            as_charp ("kerning of AV is " * as_string (got) *
+                      " instead of " * as_string (expected)));
+  // an unkerned pair is unchanged
+  metric aa;
+  tx->get_extents ("AA", aa);
+  QCOMPARE ((aa->x2 - aa->x1) - 2 * (a->x2 - a->x1), (SI) 0);
+  // cursor positions follow the kerning
+  SI* xpos= tm_new_array<SI> (3);
+  tx->get_xpositions ("AV", xpos);
+  QCOMPARE (xpos[0], (SI) 0);
+  QVERIFY (qAbs (xpos[1] - ((a->x2 - a->x1) + expected)) <= PIXEL);
+  tm_delete_array (xpos);
 }
 
 QTEST_GUILESS_MAIN(TestOpenTypeFont)

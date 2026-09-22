@@ -98,6 +98,17 @@ tt_face_rep::gsub_feature (string tag) {
   return gsub_features (tag);
 }
 
+ot_gpos_kern
+tt_face_rep::gpos_kern () {
+  if (!gpos_kern_ready) {
+    if (buffer != nullptr)
+      gpos_kern_table=
+        parse_gpos_kern (string ((const char*) buffer, buffer_size));
+    gpos_kern_ready= true;
+  }
+  return gpos_kern_table;
+}
+
 tt_face_rep::~tt_face_rep () {
   std_warning << "tt_face_rep should not be deleted\n";
   if (ft_face) ft_done_face (ft_face);
@@ -179,13 +190,32 @@ tt_font_metric_rep::get (int i) {
   return *((metric*) ((void*) fnm [i]));
 }
 
+// FT_MulFix: multiply by a 16.16 fixed point scale, rounding to nearest
+static long
+mul_fix (long a, long b) {
+  int sign= 1;
+  if (a < 0) { a= -a; sign= -sign; }
+  if (b < 0) { b= -b; sign= -sign; }
+  long long c= (((long long) a) * b + 0x8000) >> 16;
+  return (sign > 0)? ((long) c): (-((long) c));
+}
+
 SI
 tt_font_metric_rep::kerning (int left, int right) {
-  if (face->bad_face || !FT_HAS_KERNING (face->ft_face)) return 0;
-  FT_Vector k;
+  if (face->bad_face) return 0;
   FT_UInt l= decode_index (face->ft_face, left);
   FT_UInt r= decode_index (face->ft_face, right);
   ft_set_char_size (face->ft_face, 0, size<<6, hdpi, vdpi);
+  // OpenType fonts keep their kerning in GPOS and usually have no legacy
+  // 'kern' table, which is the only one FreeType exposes
+  ot_gpos_kern gk= face->gpos_kern ();
+  if (!is_nil (gk) && !gk->empty ()) {
+    int du= gk->get ((unsigned int) l, (unsigned int) r);
+    if (du == 0) return 0;
+    return tt_si ((int) mul_fix (du, face->ft_face->size->metrics.x_scale));
+  }
+  if (!FT_HAS_KERNING (face->ft_face)) return 0;
+  FT_Vector k;
   if (ft_get_kerning (face->ft_face, l, r, FT_KERNING_DEFAULT, &k)) return 0;
   return tt_si (k.x);
 }

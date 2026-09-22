@@ -851,6 +851,149 @@ parse_gsub_feature (const string& buf, string feature) {
   return m;
 }
 
+/******************************************************************************
+ * OpenType GPOS: pair kerning
+ ******************************************************************************/
+
+bool
+ot_gpos_kern_rep::empty () {
+  return N (pairs) == 0 && N (classes) == 0;
+}
+
+int
+ot_gpos_kern_rep::get (unsigned int left, unsigned int right) {
+  unsigned int key= (left << 16) | (right & 0xffff);
+  if (pairs->contains (key)) return pairs[key];
+  for (int i= 0; i < N (classes); i++) {
+    ot_kern_classes& k= classes[i];
+    if (!k.coverage->contains (left)) continue;
+    int c1= k.class1[left], c2= k.class2[right];
+    if (c1 < k.class1_count && c2 < k.class2_count)
+      return k.values[c1 * k.class2_count + c2];
+  }
+  return 0;
+}
+
+// number of bytes of a value record with the given value format
+static int
+value_record_size (int format) {
+  int n= 0;
+  for (int bit= 1; bit <= 0x80; bit <<= 1)
+    if ((format & bit) != 0) n += 2;
+  return n;
+}
+
+// offset of the x advance inside a value record, -1 when it has none
+static int
+x_advance_offset (int format) {
+  if ((format & 0x0004) == 0) return -1;
+  int off= 0;
+  if ((format & 0x0001) != 0) off += 2;
+  if ((format & 0x0002) != 0) off += 2;
+  return off;
+}
+
+// glyph -> class; class 0 is the default and is not stored
+static void
+parse_class_def (const string& t, int off, hashmap<unsigned int, int>& m) {
+  int format= get_U16 (t, off);
+  if (format == 1) {
+    unsigned int start= get_U16 (t, off + 2);
+    int          n    = get_U16 (t, off + 4);
+    for (int i= 0; i < n; i++) {
+      int c= get_U16 (t, off + 6 + 2 * i);
+      if (c != 0) m (start + i)= c;
+    }
+  }
+  else if (format == 2) {
+    int n= get_U16 (t, off + 2);
+    for (int i= 0; i < n; i++) {
+      unsigned int s= get_U16 (t, off + 4 + 6 * i);
+      unsigned int e= get_U16 (t, off + 4 + 6 * i + 2);
+      int          c= get_U16 (t, off + 4 + 6 * i + 4);
+      if (c != 0)
+        for (unsigned int g= s; g <= e && g <= s + 0xffff; g++) m (g)= c;
+    }
+  }
+}
+
+static void
+parse_pair_pos (const string& t, int off, ot_gpos_kern_rep* r) {
+  int format  = get_U16 (t, off);
+  int cov_off = get_U16 (t, off + 2);
+  int vf1     = get_U16 (t, off + 4);
+  int vf2     = get_U16 (t, off + 6);
+  int xadv    = x_advance_offset (vf1);
+  if (xadv < 0) return; // nothing which changes an advance
+  int sz1= value_record_size (vf1), sz2= value_record_size (vf2);
+  array<unsigned int> cov= parse_coverage_table (t, off + cov_off);
+  if (format == 1) {
+    int n= get_U16 (t, off + 8);
+    for (int i= 0; i < N (cov) && i < n; i++) {
+      int set_off= off + get_U16 (t, off + 10 + 2 * i);
+      int m      = get_U16 (t, set_off);
+      for (int j= 0; j < m; j++) {
+        int          rec   = set_off + 2 + j * (2 + sz1 + sz2);
+        unsigned int second= get_U16 (t, rec);
+        int          v     = (int) get_S16 (t, rec + 2 + xadv);
+        if (v != 0) r->pairs ((cov[i] << 16) | second)= v;
+      }
+    }
+  }
+  else if (format == 2) {
+    ot_kern_classes k;
+    for (int i= 0; i < N (cov); i++) k.coverage->insert (cov[i]);
+    parse_class_def (t, off + get_U16 (t, off + 8), k.class1);
+    parse_class_def (t, off + get_U16 (t, off + 10), k.class2);
+    k.class1_count= get_U16 (t, off + 12);
+    k.class2_count= get_U16 (t, off + 14);
+    if (k.class1_count <= 0 || k.class2_count <= 0) return;
+    k.values= array<int> (k.class1_count * k.class2_count);
+    int base= off + 16, rec_size= sz1 + sz2;
+    for (int a= 0; a < k.class1_count; a++)
+      for (int b= 0; b < k.class2_count; b++) {
+        int rec= base + (a * k.class2_count + b) * rec_size;
+        k.values[a * k.class2_count + b]= (int) get_S16 (t, rec + xadv);
+      }
+    r->classes << k;
+  }
+}
+
+ot_gpos_kern
+parse_gpos_kern (const string& buf) {
+  if ((N (buf) == 0) || (!tt_correct_version (buf, 0))) return {};
+  string t= tt_table (buf, 0, "GPOS");
+  if (N (t) < 10) return {};
+  ot_gpos_kern r (tm_new<ot_gpos_kern_rep> ());
+  int feature_list= get_U16 (t, 6);
+  int lookup_list = get_U16 (t, 8);
+  int feature_count= get_U16 (t, feature_list);
+  int lookup_count = get_U16 (t, lookup_list);
+  for (int f= 0; f < feature_count; f++) {
+    int rec= feature_list + 2 + 6 * f;
+    if (get_tag (t, rec) != "kern") continue;
+    int feat= feature_list + get_U16 (t, rec + 4);
+    int nl  = get_U16 (t, feat + 2);
+    for (int l= 0; l < nl; l++) {
+      int li= get_U16 (t, feat + 4 + 2 * l);
+      if (li >= lookup_count) continue;
+      int lookup= lookup_list + get_U16 (t, lookup_list + 2 + 2 * li);
+      int type  = get_U16 (t, lookup);
+      int nsub  = get_U16 (t, lookup + 4);
+      for (int s= 0; s < nsub; s++) {
+        int sub= lookup + get_U16 (t, lookup + 6 + 2 * s);
+        if (type == 2) parse_pair_pos (t, sub, r.rep);
+        else if (type == 9) { // extension positioning
+          int ext_type= get_U16 (t, sub + 2);
+          int ext_off = (int) get_U32 (t, sub + 4);
+          if (ext_type == 2) parse_pair_pos (t, sub + ext_off, r.rep);
+        }
+      }
+    }
+  }
+  return r;
+}
+
 ot_mathtable
 parse_mathtable (url u) {
   string tt;

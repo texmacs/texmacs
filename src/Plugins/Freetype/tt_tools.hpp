@@ -228,6 +228,40 @@ ot_mathtable parse_mathtable (const string& buf);
 // order for alternate substitutions), for all lookups of the feature tag
 typedef hashmap<unsigned int, array<unsigned int> > ot_gsub_map;
 ot_gsub_map parse_gsub_feature (const string& buf, string feature);
+
+/******************************************************************************
+ * OpenType GPOS: pair kerning
+ ******************************************************************************/
+// Modern OpenType fonts keep their kerning in the GPOS table; the legacy
+// 'kern' table which FreeType exposes is usually absent. We read the pair
+// adjustments of the 'kern' feature: the explicit pairs of a format 1
+// subtable and the class matrices of a format 2 one.
+
+struct ot_kern_classes {
+  hashset<unsigned int>      coverage;
+  hashmap<unsigned int, int> class1, class2;
+  array<int>                 values; // class1_count x class2_count
+  int                        class1_count, class2_count;
+  ot_kern_classes ()
+      : class1 (0), class2 (0), class1_count (0), class2_count (0) {}
+};
+
+struct ot_gpos_kern_rep : concrete_struct {
+  hashmap<unsigned int, int> pairs; // (left << 16) | right -> x advance
+  array<ot_kern_classes>     classes;
+  ot_gpos_kern_rep () : pairs (0) {}
+  bool empty ();
+  // horizontal adjustment in design units, zero when the pair is not kerned
+  int  get (unsigned int left, unsigned int right);
+};
+
+struct ot_gpos_kern {
+  CONCRETE_NULL (ot_gpos_kern);
+  ot_gpos_kern (ot_gpos_kern_rep* rep2) : rep (rep2) {}
+};
+CONCRETE_NULL_CODE (ot_gpos_kern);
+
+ot_gpos_kern parse_gpos_kern (const string& buf);
 ot_mathtable parse_mathtable (url u);
 void dump_mathtable (tm_ostream& str, ot_mathtable table);
 
