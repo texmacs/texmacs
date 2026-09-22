@@ -131,6 +131,10 @@ font_rep::copy_math_pars (font fn) {
   upper_limit_baseline_rise_min= fn->upper_limit_baseline_rise_min;
   lower_limit_gap_min          = fn->lower_limit_gap_min;
   lower_limit_baseline_drop_min= fn->lower_limit_baseline_drop_min;
+  stretch_stack_top_shift_up     = fn->stretch_stack_top_shift_up;
+  stretch_stack_bottom_shift_down= fn->stretch_stack_bottom_shift_down;
+  stretch_stack_gap_above_min    = fn->stretch_stack_gap_above_min;
+  stretch_stack_gap_below_min    = fn->stretch_stack_gap_below_min;
   frac_rule_thickness          = fn->frac_rule_thickness;
   frac_num_shift_up            = fn->frac_num_shift_up;
   frac_num_disp_shift_up       = fn->frac_num_disp_shift_up;

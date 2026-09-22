@@ -505,6 +505,15 @@ unicode_font_rep::init_ot_math (tt_face face) {
       design_unit_to_metric (math_table->constants_table[lowerLimitGapMin]);
   lower_limit_baseline_drop_min= design_unit_to_metric (
       math_table->constants_table[lowerLimitBaselineDropMin]);
+  // labels above and below a stretched glyph (long arrows, wide braces)
+  stretch_stack_top_shift_up= design_unit_to_metric (
+      math_table->constants_table[stretchStackTopShiftUp]);
+  stretch_stack_bottom_shift_down= design_unit_to_metric (
+      math_table->constants_table[stretchStackBottomShiftDown]);
+  stretch_stack_gap_above_min= design_unit_to_metric (
+      math_table->constants_table[stretchStackGapAboveMin]);
+  stretch_stack_gap_below_min= design_unit_to_metric (
+      math_table->constants_table[stretchStackGapBelowMin]);
   // frac boxes
   frac_rule_thickness= design_unit_to_metric (
       math_table->constants_table[fractionRuleThickness]);

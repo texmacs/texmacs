@@ -69,7 +69,8 @@ struct lim_box_rep: public composite_box_rep {
   font fn;
   bool glued;
   int  type;
-  lim_box_rep (path ip, box ref, box lo, box hi, font fn, bool glued);
+  lim_box_rep (path ip, box ref, box lo, box hi, font fn, bool glued,
+               bool stretched= false);
   operator tree () { return tree (TUPLE, "lim", bs[0]); }
   void finalize ();
   box adjust_kerning (int mode, double factor);
@@ -79,7 +80,8 @@ struct lim_box_rep: public composite_box_rep {
   path find_tree_path (path bp);
 };
 
-lim_box_rep::lim_box_rep (path ip, box r2, box lo, box hi, font fn2, bool gl):
+lim_box_rep::lim_box_rep (path ip, box r2, box lo, box hi, font fn2, bool gl,
+                          bool stretched):
   composite_box_rep (ip), ref (r2), fn (fn2), glued (gl)
 {
   SI sep_lo= fn->sep + fn->yshift;
@@ -98,8 +100,18 @@ lim_box_rep::lim_box_rep (path ip, box r2, box lo, box hi, font fn2, bool gl):
     Y= ref->y1;
     X= ((SI) (ref->right_slope ()* (Y+top-lo->y1))) + ((ref->x1+ref->x2)>>1);
     if (use_opentype) {
-      top= lo->y2 + fn->lower_limit_gap_min;
-      top= max (top, fn->lower_limit_baseline_drop_min);
+      // a stretched base (a long arrow, a wide brace) has its own
+      // constants: the label sits closer to it than a limit to an operator
+      if (stretched && fn->stretch_stack_gap_below_min > 0) {
+        top= lo->y2 + fn->stretch_stack_gap_below_min;
+        // the shift is measured from the baseline of the base, the limit
+        // drop from its bottom edge
+        top= max (top, fn->stretch_stack_bottom_shift_down + ref->y1);
+      }
+      else {
+        top= lo->y2 + fn->lower_limit_gap_min;
+        top= max (top, fn->lower_limit_baseline_drop_min);
+      }
     }
     insert (lo, X- (lo->x2 >> 1), Y-top);
     italic_correct (lo);
@@ -109,8 +121,14 @@ lim_box_rep::lim_box_rep (path ip, box r2, box lo, box hi, font fn2, bool gl):
     Y= ref->y2;
     X= ((SI) (ref->right_slope ()*(Y+hi->y2-bot))) + ((ref->x1+ref->x2)>>1);
     if (use_opentype) {
-      bot= hi->y1 - fn->upper_limit_gap_min;
-      bot= min (bot, -fn->upper_limit_baseline_rise_min);
+      if (stretched && fn->stretch_stack_gap_above_min > 0) {
+        bot= hi->y1 - fn->stretch_stack_gap_above_min;
+        bot= min (bot, ref->y2 - fn->stretch_stack_top_shift_up);
+      }
+      else {
+        bot= hi->y1 - fn->upper_limit_gap_min;
+        bot= min (bot, -fn->upper_limit_baseline_rise_min);
+      }
     }
     insert (hi, X- (hi->x2 >> 1), Y-bot);
     italic_correct (hi);
@@ -735,8 +753,9 @@ side_box_rep::get_bracket_extents (SI& lo, SI& hi) {
 ******************************************************************************/
 
 box
-limit_box (path ip, box ref, box lo, box hi, font fn, bool glued) {
-  return tm_new<lim_box_rep> (ip, ref, lo, hi, fn, glued);
+limit_box (path ip, box ref, box lo, box hi, font fn, bool glued,
+           bool stretched) {
+  return tm_new<lim_box_rep> (ip, ref, lo, hi, fn, glued, stretched);
 }
 
 box

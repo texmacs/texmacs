@@ -60,6 +60,7 @@ private slots:
   void test_gpos_kerning ();
   void test_profile_file ();
   void test_bold_math_font ();
+  void test_stretch_stack_constants ();
 };
 
 void
@@ -676,6 +677,30 @@ TestOpenTypeFont::test_bold_math_font () {
   reg->get_extents ("a", ra);
   bld->get_extents ("a", ba);
   QVERIFY (ba->x2 - ba->x1 > ra->x2 - ra->x1);
+}
+
+void
+TestOpenTypeFont::test_stretch_stack_constants () {
+  // Labels above and below a stretched glyph (a long arrow) follow the
+  // stretch stack constants. In Latin Modern Math they repeat the limit
+  // constants, so nothing moves there; STIX Two Math wants a much larger
+  // shift up and a much smaller gap, which is the case the constants exist
+  // for.
+  if (!have_lm) QSKIP ("Latin Modern Math missing");
+  QCOMPARE (lm->stretch_stack_top_shift_up, du_y (111));
+  QCOMPARE (lm->stretch_stack_bottom_shift_down, du_y (600));
+  QCOMPARE (lm->stretch_stack_gap_above_min, du_y (200));
+  QCOMPARE (lm->stretch_stack_gap_below_min, du_y (167));
+  QCOMPARE (lm->stretch_stack_top_shift_up, lm->upper_limit_baseline_rise_min);
+  QCOMPARE (lm->stretch_stack_gap_below_min, lm->lower_limit_gap_min);
+  if (!tt_font_exists ("STIXTwoMath-Regular")) return;
+  font st= unicode_font ("STIXTwoMath-Regular", LM_SIZE, LM_DPI);
+  QVERIFY (!is_nil (st));
+  QCOMPARE (st->stretch_stack_top_shift_up, du_y (800));
+  QCOMPARE (st->stretch_stack_bottom_shift_down, du_y (590));
+  QCOMPARE (st->stretch_stack_gap_above_min, du_y (68));
+  QCOMPARE (st->stretch_stack_gap_below_min, du_y (68));
+  QVERIFY (st->stretch_stack_gap_above_min < st->upper_limit_gap_min);
 }
 
 QTEST_GUILESS_MAIN(TestOpenTypeFont)

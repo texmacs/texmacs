@@ -250,7 +250,7 @@ concater_rep::typeset_long_arrow (tree t, path ip) {
   if (env->math_condensed) spc= space (spc->min>>3, spc->def>>3, spc->max>>2);
   else spc= space (spc->min>>1, spc->def>>1, spc->max);
   print (spc);
-  print (limit_box (ip, arrow, sub_b, sup_b, env->fn, false));
+  print (limit_box (ip, arrow, sub_b, sup_b, env->fn, false, true));
   print (spc);
 }
 

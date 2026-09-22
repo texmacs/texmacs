@@ -105,6 +105,10 @@ struct font_rep: rep<font> {
   SI  upper_limit_baseline_rise_min= 0;
   SI  lower_limit_gap_min= 0;
   SI  lower_limit_baseline_drop_min= 0;
+  SI  stretch_stack_top_shift_up= 0;
+  SI  stretch_stack_bottom_shift_down= 0;
+  SI  stretch_stack_gap_above_min= 0;
+  SI  stretch_stack_gap_below_min= 0;
   SI  frac_rule_thickness= 0;
   SI  frac_num_shift_up= 0;
   SI  frac_num_disp_shift_up= 0;

@@ -511,6 +511,19 @@ TM_TEST_FONT_DIR=/path/to/fonts tests/opentype/render-samples.sh
   profiled fonts side by side, with the text set in each profile's
   companion.
 
+- **Stretch stacks.** A label above or below a stretched glyph is not a
+  limit of an operator, and the table says so with its own four constants.
+  `limit_box` takes a `stretched` flag, which `typeset_long_arrow` sets,
+  and then uses `stretchStackGapAboveMin` and `stretchStackTopShiftUp` for
+  the label above, `stretchStackGapBelowMin` and
+  `stretchStackBottomShiftDown` for the one below, the shifts measured from
+  the baseline of the arrow and the gaps from its edges. In Latin Modern
+  Math, New Computer Modern Math, KpMath and TeX Gyre DejaVu the four
+  values repeat the limit constants, so nothing moves; STIX Two Math asks
+  for a shift up of 800 design units against a limit rise of 300 and a gap
+  of 68 against 135, and Asana Math for tighter gaps than its limits, so
+  those two change. Big operators keep the limit constants.
+
 ## 6. Known defects still open
 
 1. `parse_variant` requires exactly three dash-separated tokens, so a
@@ -542,7 +555,7 @@ about.
 
 | Group | Constants | Where they would apply |
 |---|---|---|
-| Stacks | `stackTopShiftUp`, `stackTopDisplayStyleShiftUp`, `stackBottomShiftDown`, `stackBottomDisplayStyleShiftDown`, `stackGapMin`, `stackDisplayStyleGapMin`, `stretchStack*` | `above`, `below` and binomials without a bar; limits already use the limit constants |
+| Stacks | `stackTopShiftUp`, `stackTopDisplayStyleShiftUp`, `stackBottomShiftDown`, `stackBottomDisplayStyleShiftDown`, `stackGapMin`, `stackDisplayStyleGapMin` | `above`, `below` and binomials over an ordinary base, which are limit boxes and use the limit constants; the stack constants would place the top element much higher (444 against 111 design units in Latin Modern Math), so adopting them is a visible change to every `above`, not a gap to fill blindly. The `stretchStack*` four are in use for stretched bases. |
 | Fine positioning | device tables | parsed but never applied; they matter only at small sizes on screen |
 | Delimiters | `delimitedSubFormulaMinHeight` | deliberately not applied, see below |
 | Assemblies | `GlyphAssembly.italicsCorrection` | ignored |
