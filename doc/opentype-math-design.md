@@ -767,7 +767,10 @@ specification, so a disagreement is worth looking at.
 `tests/opentype/font-gallery.sh` renders one specimen per installed math font
 into `src/opentype-math/`, which is the gallery of `src/OPENTYPEMATH.md`.
 `tests/opentype/survey-math-fonts.py` produces the statistics of
-`doc/opentype-math-fonts-survey.md` with fontTools.
+`doc/opentype-math-fonts-survey.md` with fontTools, and
+`tests/opentype/missing-symbols.py` those of
+`doc/math-symbol-coverage.md`, the mathematical symbols TeXmacs has no
+name for.
 
 ### How to run everything
 
@@ -849,6 +852,14 @@ left:
 - A key for the alphabets a font really provides is still missing, so an
   incomplete alphabet (Latin Modern Math has 18 of 52 script letters) is
   silently mixed with emulated glyphs instead of being declared.
+
+The symbols themselves are a separate gap, on the TeXmacs side rather than
+the font side: of the 2435 code points of the `unicode-math` list, 892 have
+no TeXmacs name at all, so they can only be typed as `<#XXXX>` and reach
+neither the palettes nor the LaTeX conversion.
+`doc/math-symbol-coverage.md` lists them, block by block, with the note the
+encoding tables already carry for most of them and the number of shipped
+math fonts that draw them.
 
 ### 7.4 Name-based logic not yet profile-driven
 

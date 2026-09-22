@@ -110,6 +110,16 @@ tests/opentype/compare-lualatex.sh            # all pairs
 tests/opentype/compare-lualatex.sh radicals-bars
 ```
 
+`tests/opentype/missing-symbols.py` answers a different question: which
+mathematical symbols TeXmacs has no name for. It reads the symbol list of
+`unicode-math` and the tables of `TeXmacs/langs/encoding` and writes
+`doc/math-symbol-coverage.md`:
+
+```
+python3 tests/opentype/missing-symbols.py \
+  -t /path/to/unicode-math-table.tex -o doc/math-symbol-coverage.md
+```
+
 The sample `math-overview.tm` typesets the same formulas with TeX fonts,
 the shipped TeX Gyre and STIX fonts, and several OpenType math fonts, so the
 effect of a change on each code path can be compared side by side.
