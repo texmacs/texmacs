@@ -263,7 +263,16 @@ box_widget (scheme_tree p, string s, color col, bool trans, bool ink) {
   if ((n >= 4) && is_atomic (p[3])) shape   = as_string (p[3]);
   if ((n >= 5) && is_atomic (p[4])) sz      = as_int (p[4]);
   if ((n >= 6) && is_atomic (p[5])) dpi     = as_int (p[5]);
-  font fn= find_font (family, fn_class, series, shape, sz, dpi);
+  font fn;
+  if (fn_class == "mr" || fn_class == "ms" || fn_class == "mt")
+    // The symbols of the palettes are drawn in mathematical mode, where the
+    // old compound font only carries what the TeX fonts happen to have: a
+    // symbol which lives in a Unicode font alone came out blank. The smart
+    // font searches the same way the typesetter does, so a button shows
+    // whatever TeXmacs is able to typeset.
+    fn= smart_font (family, fn_class, series, shape,
+                    family, "rm", series, "mathitalic", sz, dpi);
+  if (is_nil (fn)) fn= find_font (family, fn_class, series, shape, sz, dpi);
   box  b = text_box (decorate (), 0, s, fn, col);
   if (ink) b= resize_box (decorate (), b, b->x3, b->y3, b->x4, b->y4, true);
   return box_widget (b, trans);

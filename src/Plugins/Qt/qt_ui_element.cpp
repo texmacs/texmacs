@@ -982,10 +982,23 @@ qt_ui_element_rep::as_qwidget (QWidget* parent_widget) {
       string     ks = x.x4;
       int     style = x.x5;
       
-      if (qtw->type == xpm_widget) {  // Toolbar button
+      if (qtw->type == xpm_widget || qtw->type == simple_widget) {
+        // Toolbar button, or a button on a TeXmacs box such as the
+        // mathematical symbols of the palettes: in both cases the contents
+        // are drawn as the icon of the action. Before, a box only reached
+        // the screen through a menu, and in a window the button stayed empty
         QAction*     a = as_qaction();        // Create key shortcuts and actions
         QToolButton* b = new QToolButton (parent_widget);
         b->setIcon (a->icon());
+        if (qtw->type == simple_widget) {
+          // the icon engine draws the box at the size we ask for, and the
+          // default icon size of a tool button would shrink it
+          SI bw, bh;
+          qt_simple_widget_rep* sw=
+            static_cast<qt_simple_widget_rep*> (qtw.rep);
+          sw->handle_get_size_hint (bw, bh);
+          b->setIconSize (to_qsize (bw, bh));
+        }
         b->setPopupMode (QToolButton::InstantPopup);
         b->setAutoRaise (true);
         b->setDefaultAction (a);

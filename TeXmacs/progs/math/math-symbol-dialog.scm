@@ -278,7 +278,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (tm-widget (math-symbols-widget)
-  (resize "660px" "480px"
+  (resize "820px" "560px"
     (padded
       (tabs
         (tab (text "Common") (dynamic (math-symbols-common)))
