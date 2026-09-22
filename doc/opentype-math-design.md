@@ -535,6 +535,36 @@ TM_TEST_FONT_DIR=/path/to/fonts tests/opentype/render-samples.sh
   of 68 against 135, and Asana Math for tighter gaps than its limits, so
   those two change. Big operators keep the limit constants.
 
+- **Masters, not families, and a quiet log.** Opening a sample in the
+  editor printed thousands of lines: `missing 'Fira Sans' master`,
+  `missing 'KpMath' master`, and `glyphCoverageFormat 20 not supported`.
+  Three causes, all now fixed.
+
+  The font selection is driven by *masters*, the second field of an entry
+  of `font-features.scm` ("Fira" for the family "Fira Sans", "Kepler" for
+  "KpRoman"), and the profiles named families. Five groups were wrong:
+  DejaVu, Libertinus, Kp, Fira and IBM Plex. Their companions are masters
+  now, and `profile_fix` translates whatever it produces through the new
+  `font_database_master`, which answers from the features database without
+  guessing and without printing, so a profile that names a family still
+  resolves. Ten entries were added to `font-features.scm` for profiled math
+  fonts it did not know, among them TeX Gyre DejaVu Math and Lete Sans
+  Math. The visible effect: the text of a Fira Math document is Fira Sans
+  and not the default serif, math typewriter of KpMath is KpMono, and the
+  emulated script and blackboard bold alphabets of TeX Gyre DejaVu Math
+  are spaced correctly.
+
+  The coverage warnings were a NULL offset of the same kind as the ones
+  fixed in `MathGlyphInfo`: `vertGlyphCoverageOffset` and
+  `horizGlyphCoverageOffset` may be zero, and the parser then read
+  `minConnectorOverlap` as a coverage format — the "format 20" and
+  "format 100" of the message were that value. The MathKernInfo and the
+  italic correction coverages are guarded the same way, and
+  `parse_gsub_subtable` no longer parses a coverage table for a lookup type
+  it does not handle. Finally, a missing family or master is reported once
+  instead of at every lookup. What is left of the log of a full sample is
+  two lines.
+
 ## 6. Known defects still open
 
 1. `ysup_hi_lim` has no MATH counterpart and is set to
@@ -910,7 +940,7 @@ Met, with three things worth naming exactly:
   size or kerning.
 - The profile test checks the math font of every profile, its family name
   and its MATH table, but not that the text, sans and typewriter
-  companions it names are installed.
+  companions it names exist as masters or are installed.
 
 Everything under "What is still missing" is either deliberate
 (`delimitedSubFormulaMinHeight`, the device tables, the stack constants

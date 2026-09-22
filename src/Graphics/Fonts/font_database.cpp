@@ -737,6 +737,23 @@ font_database_search (string fam, string var, string series, string shape) {
   return font_database_search (pfn[0], pfn[1]);
 }
 
+// The master a family belongs to ("Fira" for "Fira Sans", "Kepler Math" for
+// "KpMath"), or "" when the features database does not know the family. The
+// font selection is driven by masters, so a name that comes from elsewhere
+// has to be translated before it is used as a font. Unlike family_to_master,
+// this says so instead of guessing, and it prints nothing.
+string
+font_database_master (string family) {
+  font_database_load ();
+  if (!font_features->contains (tree (family))) {
+    font_database_global_load ();
+    if (!font_features->contains (tree (family))) return "";
+  }
+  tree t= font_features [tree (family)];
+  if (is_func (t, TUPLE) && N(t) >= 1 && is_atomic (t[0])) return t[0]->label;
+  return "";
+}
+
 array<string>
 font_database_characteristics (string family, string style) {
   font_database_load ();

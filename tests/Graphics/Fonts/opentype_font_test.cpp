@@ -565,7 +565,6 @@ TestOpenTypeFont::test_profile_file () {
   known->insert ("mono"); known->insert ("letters");
   known->insert ("bold-math"); known->insert ("menu"); known->insert ("group");
   hashset<string> names, texts;
-  array<string> boldmaths;
   int nr_profiles= 0, nr_installed= 0;
   for (int i=0; i<N(forms); i++) {
     scheme_tree f= forms[i];
@@ -614,7 +613,6 @@ TestOpenTypeFont::test_profile_file () {
       first_claim= !texts->contains (val["text"]);
       texts->insert (val["text"]);
     }
-    if (val->contains ("bold-math")) boldmaths << val["bold-math"];
     // the table and its accessors must return what the file declares
     math_font_profile_set (name, props);
     QCOMPARE (math_font_profile_attr (name, "file"), val["file"]);
@@ -642,10 +640,9 @@ TestOpenTypeFont::test_profile_file () {
   }
   QVERIFY2 (nr_profiles >= 15,
             as_charp ("only " * as_string (nr_profiles) * " profiles read"));
-  // a bold math family must be a family of its own or one that is profiled
-  for (int i=0; i<N(boldmaths); i++)
-    QVERIFY2 (names->contains (boldmaths[i]),
-              as_charp ("bold-math " * boldmaths[i] * " has no profile"));
+  // The companions (text, sans, mono, bold-math) are master names, the way
+  // the font environment variable names a font, not family names; the test
+  // does not resolve them, see section 7.5 of doc/opentype-math-design.md.
   QVERIFY2 (nr_installed >= 1, "no profiled math font is installed");
 }
 

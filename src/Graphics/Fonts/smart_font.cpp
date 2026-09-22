@@ -678,10 +678,16 @@ profile_fix (string family, string variant, string series, string shape) {
           string comp= math_font_profile_attr (item, key);
           if (comp != "" && N (font_database_styles (comp)) > 0) item= comp;
         }
+        // the font selection is driven by masters, and a profile names a
+        // family when the two differ ("KpMath" belongs to "Kepler Math")
+        string mst= font_database_master (item);
+        if (mst != "") item= mst;
       }
       else {
         string t= text_family_for_math (item);
         if (t != "" && t != item) item= t;
+        string mst= font_database_master (item);
+        if (mst != "") item= mst;
       }
     }
     r << item;

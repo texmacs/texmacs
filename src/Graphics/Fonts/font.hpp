@@ -339,6 +339,7 @@ void font_database_save_local_delta ();
 array<string> font_database_families ();
 array<string> font_database_delta_families ();
 array<string> font_database_styles (string family);
+string        font_database_master (string family);
 array<string> font_database_global_styles (string family);
 array<string> font_database_search (string family, string style);
 array<string> font_database_search (string fam, string var,

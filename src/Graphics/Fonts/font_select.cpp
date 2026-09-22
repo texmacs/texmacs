@@ -10,6 +10,7 @@
 ******************************************************************************/
 
 #include "font.hpp"
+#include "hashset.hpp"
 #include "Freetype/tt_tools.hpp"
 #include "analyze.hpp"
 
@@ -267,6 +268,18 @@ Replace (string s, string w, string b) {
   return s (0, 1) * replace (s (1, N(s)), w, b);
 }
 
+// A name which is neither a known family nor a known master is reported
+// once and not at every lookup: a document in a font the database does not
+// know used to print thousands of identical lines while it was typeset.
+static bool
+report_once (string kind, string name) {
+  static hashset<string> seen;
+  string key= kind * ":" * name;
+  if (seen->contains (key)) return false;
+  seen->insert (key);
+  return true;
+}
+
 string
 family_to_master (string f) {
   if (occurs (",", f) && occurs ("=", f)) f= main_family (f);
@@ -274,7 +287,8 @@ family_to_master (string f) {
   font_database_load ();
   if (!font_features->contains (tree (f)) &&
       f != "tcx" && f != "tc") {
-    cout << "TeXmacs] missing '" << f << "' family\n";
+    if (report_once ("family", f))
+      cout << "TeXmacs] missing '" << f << "' family\n";
     font_database_global_load ();
   }
   if (font_features->contains (tree (f))) {
@@ -328,7 +342,8 @@ master_to_families (string m) {
   font_database_load ();
   if (!font_variants->contains (tree (m)) &&
       m != "tcx" && m != "tc") {
-    cout << "TeXmacs] missing '" << m << "' master\n";
+    if (report_once ("master", m))
+      cout << "TeXmacs] missing '" << m << "' master\n";
     font_database_global_load ();
   }
   array<string> r;

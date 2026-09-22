@@ -494,7 +494,7 @@ parse_coverage_table (const string& tt, int offset) {
     }
   }
   else {
-    cout << "parse_mathtable : glyphCoverageFormat " << format
+    cout << "parse_coverage_table : coverage format " << format
          << " not supported." << LF;
   }
   return coverage;
@@ -611,6 +611,7 @@ parse_math_kern_info_table (const string& tt, int offset,
                             hashmap<unsigned int, MathKernInfoRecord>& table) {
   unsigned int mathKernCoverageOffset= get_U16 (tt, offset);
   // unsigned int mathKernCount          = get_U16 (tt, offset + 2);
+  if (mathKernCoverageOffset == 0) return; // no coverage, no kerning
   auto coverage= parse_coverage_table (tt, offset + mathKernCoverageOffset);
   int  coverage_N= N (coverage);
   for (unsigned int i= 0; i < coverage_N; i++) {
@@ -651,6 +652,7 @@ static void
 parse_record_with_coverage (
     const string& tt, int parent_table_offset, int coverage_offset,
     int record_offset, hashmap<unsigned int, MathValueRecord>& record_map) {
+  if (coverage_offset == 0) return; // NULL coverage: nothing is covered
   int coverage_abs_offset = parent_table_offset + coverage_offset;
   array<unsigned int> coverage= parse_coverage_table (tt, coverage_abs_offset);
   int record_abs_offset= parent_table_offset + record_offset;
@@ -752,10 +754,13 @@ parse_mathtable (const string& buf) {
 
   // math variants
   table->minConnectorOverlap= get_U16 (tt, mathVariantsOffset + 0);
-  int vertGlyphCoverageOffset=
-      mathVariantsOffset + get_U16 (tt, mathVariantsOffset + 2);
-  int horizGlyphCoverageOffset=
-      mathVariantsOffset + get_U16 (tt, mathVariantsOffset + 4);
+  // both coverage offsets may be NULL, for a font with no vertical or no
+  // horizontal variants; adding zero to the parent offset would make the
+  // parser read minConnectorOverlap as a coverage format
+  int vertGlyphCoverageRel = get_U16 (tt, mathVariantsOffset + 2);
+  int horizGlyphCoverageRel= get_U16 (tt, mathVariantsOffset + 4);
+  int vertGlyphCoverageOffset = mathVariantsOffset + vertGlyphCoverageRel;
+  int horizGlyphCoverageOffset= mathVariantsOffset + horizGlyphCoverageRel;
   int vertGlyphCount= get_U16 (tt, mathVariantsOffset + 6);
   //int horizGlyphCount= get_U16 (tt, mathVariantsOffset + 8); // unused
 
@@ -764,16 +769,18 @@ parse_mathtable (const string& buf) {
 
   // parse vertical variants
   // cout << "parse vertical variants\n";
-  parse_variants (tt, mathVariantsOffset, vertGlyphCoverageOffset,
-                  mathVariantsOffset + 10, table->ver_glyph_variants,
-                  table->ver_glyph_variants_adv, table->ver_glyph_assembly);
+  if (vertGlyphCoverageRel > 0)
+    parse_variants (tt, mathVariantsOffset, vertGlyphCoverageOffset,
+                    mathVariantsOffset + 10, table->ver_glyph_variants,
+                    table->ver_glyph_variants_adv, table->ver_glyph_assembly);
 
   // parse horizontal variants
   // cout << "parse horizontal variants\n";
-  parse_variants (tt, mathVariantsOffset, horizGlyphCoverageOffset,
-                  mathVariantsOffset + 10 + 2 * vertGlyphCount,
-                  table->hor_glyph_variants, table->hor_glyph_variants_adv,
-                  table->hor_glyph_assembly);
+  if (horizGlyphCoverageRel > 0)
+    parse_variants (tt, mathVariantsOffset, horizGlyphCoverageOffset,
+                    mathVariantsOffset + 10 + 2 * vertGlyphCount,
+                    table->hor_glyph_variants, table->hor_glyph_variants_adv,
+                    table->hor_glyph_assembly);
 
   return table;
 }
@@ -791,6 +798,12 @@ parse_gsub_subtable (const string& gsub, int type, int off, ot_gsub_map& m) {
     return;
   }
   int format= get_U16 (gsub, off);
+  // Only single (type 1) and alternate (type 3) substitutions are read. In
+  // any other lookup the fields below mean something else, so the coverage
+  // table must not even be parsed: it would read garbage and complain.
+  if (!((type == 1 && (format == 1 || format == 2)) ||
+        (type == 3 && format == 1)))
+    return;
   int cov_off= get_U16 (gsub, off + 2);
   array<unsigned int> cov= parse_coverage_table (gsub, off + cov_off);
   if (type == 1 && format == 1) {
@@ -920,6 +933,7 @@ parse_class_def (const string& t, int off, hashmap<unsigned int, int>& m) {
 static void
 parse_pair_pos (const string& t, int off, ot_gpos_kern_rep* r) {
   int format  = get_U16 (t, off);
+  if (format != 1 && format != 2) return;
   int cov_off = get_U16 (t, off + 2);
   int vf1     = get_U16 (t, off + 4);
   int vf2     = get_U16 (t, off + 6);

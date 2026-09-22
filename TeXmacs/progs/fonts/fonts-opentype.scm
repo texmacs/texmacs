@@ -22,6 +22,15 @@
 ;; math font without suffix, to test for its presence), letters (math or
 ;; text), bold-math (family of a bold math font), menu (label), group.
 ;;
+;; A companion is named the way the `font' environment variable names one,
+;; that is by its MASTER, the second field of an entry of
+;; TeXmacs/fonts/font-features.scm, not by the family. The master of
+;; `Fira Sans' is `Fira' and the master of `KpRoman' is `Kepler'; naming
+;; the family instead makes the font selection fall back to the feature
+;; distance and print "missing 'Fira Sans' master". The variant (roman,
+;; sans serif, typewriter) picks the family inside the master, which is
+;; why the three keys often repeat the same name.
+;;
 ;; When two math fonts name the same text companion (Asana Math and TeX Gyre
 ;; Pagella Math are both Palladio designs), the first profile below is the
 ;; one that companion pulls in for formulas, so canonical pairings come
@@ -62,8 +71,8 @@
   '(letters "text") '(menu "Schola") '(group "TeX Gyre"))
 
 (math-font-profile! "TeX Gyre DejaVu Math"
-  '(file "texgyredejavu-math") '(text "DejaVu Serif")
-  '(sans "DejaVu Sans") '(mono "DejaVu Sans Mono")
+  '(file "texgyredejavu-math") '(text "DejaVu")
+  '(sans "DejaVu") '(mono "DejaVu")
   '(letters "math") '(menu "DejaVu") '(group "TeX Gyre"))
 
 (math-font-profile! "Stix Two Math"
@@ -76,14 +85,14 @@
   '(menu "XITS") '(group "OpenType math"))
 
 (math-font-profile! "Libertinus Math"
-  '(file "LibertinusMath-Regular") '(text "Libertinus Serif")
-  '(sans "Libertinus Sans") '(mono "Libertinus Mono")
+  '(file "LibertinusMath-Regular") '(text "Libertinus")
+  '(sans "Libertinus") '(mono "Libertinus")
   '(letters "math") '(menu "Libertinus") '(group "OpenType math"))
 
 (math-font-profile! "KpMath"
-  '(file "KpMath-Regular") '(text "KpRoman")
-  '(sans "KpSans") '(mono "KpMono")
-  '(letters "math") '(bold-math "KpMath")
+  '(file "KpMath-Regular") '(text "Kepler")
+  '(sans "Kepler") '(mono "Kepler")
+  '(letters "math") '(bold-math "Kepler Math")
   '(menu "Kp Fonts") '(group "OpenType math"))
 
 (math-font-profile! "Asana Math"
@@ -91,8 +100,8 @@
   '(letters "math") '(menu "Asana") '(group "OpenType math"))
 
 (math-font-profile! "Fira Math"
-  '(file "FiraMath-Regular") '(text "Fira Sans")
-  '(sans "Fira Sans") '(mono "Fira Mono")
+  '(file "FiraMath-Regular") '(text "Fira")
+  '(sans "Fira") '(mono "Fira")
   '(letters "math") '(menu "Fira Math") '(group "OpenType math"))
 
 (math-font-profile! "Erewhon Math"
@@ -112,8 +121,8 @@
   '(letters "math") '(menu "Euler Math") '(group "OpenType math"))
 
 (math-font-profile! "IBM Plex Math"
-  '(file "IBMPlexMath-Regular") '(text "IBM Plex Serif")
-  '(sans "IBM Plex Sans") '(mono "IBM Plex Mono")
+  '(file "IBMPlexMath-Regular") '(text "IBM Plex")
+  '(sans "IBM Plex") '(mono "IBM Plex")
   '(letters "math") '(menu "IBM Plex") '(group "OpenType math"))
 
 (math-font-profile! "Lete Sans Math"

@@ -72,7 +72,8 @@ of them was set with no kerning at all.
 `TeXmacs/progs/fonts/fonts-opentype.scm`). What the MATH table cannot say:
 the text, sans serif and typewriter companions of a math font, whether math
 letters come from the math font or from the text italic, the menu label.
-Twenty fonts are profiled. A text family typesets its formulas in its math
+Twenty fonts are profiled, and a companion is named by its master, the way
+the `font` environment variable names a font, not by its family. A text family typesets its formulas in its math
 companion and the other way round, math sans serif and math typewriter use
 the declared companions, and the "Mathematical font" menu lists the profiled
 fonts that are installed.
@@ -224,7 +225,7 @@ The short version, with the details in section 7 of
   place accents with `mark`/`mkmk` rather than with the top accent
   attachment.
 - The profile test checks each math font, its family name and its MATH table,
-  but not that the companion families a profile names are installed.
+  but not that the companion masters a profile names exist or are installed.
 - Glyphs TeXmacs glues itself still export as Type 3 bitmap fonts, where the
   PDF writer could place the parts as vectors. The MATH variants and
   assemblies are not affected: they come out of the embedded font subsets.
