@@ -603,10 +603,11 @@ left:
 
 ### 7.4 Name-based logic not yet profile-driven
 
-`supports_big_operators` in `poor_rubber.cpp` still matches family names
-to decide whether a font's own big operators are usable. The remaining
-`stix` and `agella` name tests in the typesetter are deliberate: they
-guard hand-tuned corrections, which keep precedence.
+`supports_big_operators` in `poor_rubber.cpp` still matches family names,
+but only for fonts without a MATH table: a font that has one is taken to
+have its own big operators, as the MATH-aware rubber font already assumed.
+The remaining `stix` and `agella` name tests in the typesetter are
+deliberate: they guard hand-tuned corrections, which keep precedence.
 
 ### 7.5 Testing and export
 

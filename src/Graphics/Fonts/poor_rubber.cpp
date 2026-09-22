@@ -67,7 +67,9 @@ supports_big_operators (string res_name) {
 
 poor_rubber_font_rep::poor_rubber_font_rep (string name, font base2):
   font_rep (name, base2), base (base2),
-  big_flag (supports_big_operators (base2->res_name))
+  // a font with a MATH table has its own big operators, whatever its name;
+  // the name tests below are for the fonts that have none
+  big_flag (base2->ot_math || supports_big_operators (base2->res_name))
 {
   this->copy_math_pars (base);
   initialized << true;
