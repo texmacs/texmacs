@@ -156,6 +156,12 @@ font_rep::copy_math_pars (font fn) {
   script_script_percent        = fn->script_script_percent;
   accent_base_height           = fn->accent_base_height;
   flattened_accent_base_height = fn->flattened_accent_base_height;
+  overbar_vertical_gap         = fn->overbar_vertical_gap;
+  overbar_rule_thickness       = fn->overbar_rule_thickness;
+  overbar_extra_ascender       = fn->overbar_extra_ascender;
+  underbar_vertical_gap        = fn->underbar_vertical_gap;
+  underbar_rule_thickness      = fn->underbar_rule_thickness;
+  underbar_extra_descender     = fn->underbar_extra_descender;
   ot_math                      = fn->ot_math;
 }
 

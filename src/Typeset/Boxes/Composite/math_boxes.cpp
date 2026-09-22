@@ -166,10 +166,15 @@ sqrt_box_rep::sqrt_box_rep (
   SI sep  = fn->sep;
   SI wline= fn->wline;
   SI dx   = -fn->wfn/36, dy= -fn->wfn/36; // correction
+  bool use_open_type= fn->ot_math && (fn->sqrt_degree_rise_percent > 0);
+  // the radical sign is drawn so that its top edge is the rule: the rule
+  // sits half a thickness below the top of the sign instead of at a
+  // guessed offset, which closes the gap that some fonts showed
+  if (use_open_type && fn->sqrt_rule_thickness > 0)
+    dy= -(fn->sqrt_rule_thickness >> 1);
   SI by   = sqrtb->y2+ dy;
   if (sqrtb->x2 - sqrtb->x4 > wline) dx -= (sqrtb->x2 - sqrtb->x4);
-  
-  bool use_open_type= fn->ot_math && (fn->sqrt_degree_rise_percent > 0);
+
   pencil rpen= use_open_type ? pen->set_width (fn->sqrt_rule_thickness)
                              : pen->set_width (wline);
   insert (b1, 0, 0);
@@ -187,16 +192,18 @@ sqrt_box_rep::sqrt_box_rep (
     }
     else if (use_open_type) {
       Y+= fn->sqrt_degree_rise_percent * sqrtb->h () / 100;
-      M  = fn->sqrt_kern_after_degree;
       sep= 0;
-      // we don't use it because it looks out of harmony
-      // b2->x1-= fn->sqrt_kern_before_degree;
     }
     else {
       if (bh < 3*bw) Y += bh >> 1;
       else Y += (bw*3) >> 1;
     }
-    insert (b2, min (X, M- b2->x2), Y- b2->y1+ sep);
+    // the degree is tucked into the radical: radicalKernAfterDegree, a
+    // negative value, separates its right edge from the left edge of the
+    // sign, which sits at X
+    SI degx= min (X, M - b2->x2);
+    if (use_open_type) degx= X - fn->sqrt_kern_after_degree - b2->x2;
+    insert (b2, degx, Y- b2->y1+ sep);
   }
   insert (sqrtb, -sqrtb->x2, 0);
   insert (line_box (decorate_middle (ip), dx, by, b1->x2, by, rpen), 0, 0);
@@ -206,6 +213,8 @@ sqrt_box_rep::sqrt_box_rep (
   y1 -= wline;
   y2+= use_open_type ? fn->sqrt_extra_ascender : wline;
   x2 += sep >> 1;
+  // radicalKernBeforeDegree keeps the degree clear of what precedes it
+  if (use_open_type && !is_nil (b2)) x1 -= fn->sqrt_kern_before_degree;
 
   right_italic_restore (b1);
   finalize ();
@@ -467,6 +476,27 @@ compute_wide_accent (path ip, box b, string s,
       }
     }
   }
+  // Over- and underlines of untuned OpenType math fonts are rules whose
+  // thickness, gap to the base and extra ascender come from the MATH
+  // table; the gap is measured from the ink of the base
+  if (fn->ot_math && !tex_gyre && !stix && s == "<bar>" && (wide || !above) &&
+      (above? fn->overbar_rule_thickness: fn->underbar_rule_thickness) > 0) {
+    SI thick= above? fn->overbar_rule_thickness: fn->underbar_rule_thickness;
+    SI gap  = above? fn->overbar_vertical_gap: fn->underbar_vertical_gap;
+    SI extra= above? fn->overbar_extra_ascender: fn->underbar_extra_descender;
+    pencil bpen= pen->set_width (thick);
+    wideb= line_box (decorate_middle (ip), 0, 0, b->x2 - b->x1, 0, bpen);
+    if (above) {
+      sep  = max (b->y4 - b->y2, 0) + gap + (thick >> 1);
+      wideb= vresize_box (wideb->ip, wideb, wideb->y1, wideb->y2 + extra);
+    }
+    else {
+      sep  = max (b->y1 - b->y3, 0) + gap;
+      wideb= vresize_box (wideb->ip, wideb, wideb->y1 - extra, wideb->y2);
+    }
+    return wide;
+  }
+
   string ot_name;
   bool   ot_wide= false;
   // fonts with hand-tuned wide accents (TeX Gyre, STIX) keep them

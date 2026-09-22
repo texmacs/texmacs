@@ -130,6 +130,12 @@ struct font_rep: rep<font> {
   int script_script_percent= 0;   // scriptScriptPercentScaleDown
   SI  accent_base_height= 0;      // accentBaseHeight
   SI  flattened_accent_base_height= 0; // flattenedAccentBaseHeight
+  SI  overbar_vertical_gap= 0;    // overbarVerticalGap
+  SI  overbar_rule_thickness= 0;  // overbarRuleThickness
+  SI  overbar_extra_ascender= 0;  // overbarExtraAscender
+  SI  underbar_vertical_gap= 0;   // underbarVerticalGap
+  SI  underbar_rule_thickness= 0; // underbarRuleThickness
+  SI  underbar_extra_descender= 0;// underbarExtraDescender
 
   font_rep (string name);
   font_rep (string name, font fn);

@@ -553,6 +553,13 @@ unicode_font_rep::init_ot_math (tt_face face) {
   accent_base_height= design_unit_to_metric (mc[accentBaseHeight]);
   flattened_accent_base_height=
       design_unit_to_metric (mc[flattenedAccentBaseHeight]);
+  // over- and underlines
+  overbar_vertical_gap    = design_unit_to_metric (mc[overbarVerticalGap]);
+  overbar_rule_thickness  = design_unit_to_metric (mc[overbarRuleThickness]);
+  overbar_extra_ascender  = design_unit_to_metric (mc[overbarExtraAscender]);
+  underbar_vertical_gap   = design_unit_to_metric (mc[underbarVerticalGap]);
+  underbar_rule_thickness = design_unit_to_metric (mc[underbarRuleThickness]);
+  underbar_extra_descender= design_unit_to_metric (mc[underbarExtraDescender]);
 }
 
 /******************************************************************************

@@ -300,6 +300,11 @@ prints, the `get_unicode_range` experiment) were dropped.
   Euler, rendered to PNG per revision for side-by-side inspection and pixel
   diffs.
 
+- `tests/opentype/compare-lualatex.sh`: the same formulas through
+  `unicode-math` under LuaLaTeX and through TeXmacs with the same font,
+  stacked in one PNG per formula pair, for eyeball comparison against the
+  reference implementation of the specification.
+
 How to run everything, from the top of the tree after `make`:
 
 ```
@@ -442,21 +447,37 @@ TM_TEST_FONT_DIR=/path/to/fonts tests/opentype/render-samples.sh
   separate boxes and are unaffected, being governed by the MATH cut-in
   kerning instead.
 
+- **Bars and the radical junction (22 September 2026).** Over- and
+  underlines of untuned OpenType math fonts are drawn as rules from
+  `overbarRuleThickness` / `underbarRuleThickness`, at
+  `overbarVerticalGap` / `underbarVerticalGap` above or below the *ink* of
+  the base (so an underline clears a descender instead of touching it),
+  with `overbarExtraAscender` / `underbarExtraDescender` added to the
+  logical box. In `sqrt_box` the rule now sits half its thickness below the
+  top of the radical glyph, which closes the gap Latin Modern Math showed,
+  and the degree is placed by `radicalKernAfterDegree` from the left edge
+  of the sign with `radicalKernBeforeDegree` taken off the box, so it tucks
+  into the notch instead of floating to the left.
+
+- **Cross-check against LuaLaTeX.** `tests/opentype/compare-lualatex.sh`
+  typesets the same formulas twice with the same OpenType font, once with
+  `unicode-math` under LuaLaTeX and once with TeXmacs, and stacks the two
+  renders in one image. Radicals with and without a degree, over- and
+  underlines, scripts, fractions, binomials, integrals and big operators
+  agree up to the differences TeXmacs makes on purpose (its own spacing
+  around relations, upright `d` in `dx`). The formula pairs live in
+  `tests/opentype/compare/`.
+
 ## 6. Known defects still open
 
-1. The radical of Latin Modern Math leaves a gap to its overline and the
-   root index of Asana Math sits too far left: the rule is placed from the
-   box, not from the top of the radical glyph, and
-   `radicalKernBeforeDegree` is loaded but its use in `sqrt_box` is
-   commented out.
-2. `parse_variant` requires exactly three dash-separated tokens, so a
+1. `parse_variant` requires exactly three dash-separated tokens, so a
    rubber name whose root contains a dash would not parse.
-3. `ysup_hi_lim` has no MATH counterpart and is set to
+2. `ysup_hi_lim` has no MATH counterpart and is set to
    `max (superscriptShiftUp, x-height)`.
-4. The glue function `font-database-search` (four arguments) blocks for
+3. The glue function `font-database-search` (four arguments) blocks for
    minutes on some families, waiting on something external rather than
    looping. No Scheme code calls it; it is a debugging entry point.
-5. Assembled glyphs are glued on the measured ink of their parts, corrected
+4. Assembled glyphs are glued on the measured ink of their parts, corrected
    to the advances of the table. The result matches the table within pixel
    rounding, but a font whose parts have unusual side bearings could still
    show a seam.
@@ -478,10 +499,8 @@ about.
 
 | Group | Constants | Where they would apply |
 |---|---|---|
-| Bars | `overbarVerticalGap`, `overbarRuleThickness`, `overbarExtraAscender` and the three `underbar` twins | `<wide-bar>` and `<wide-underline>`, which still use `wline` and `sep` |
 | Stacks | `stackTopShiftUp`, `stackTopDisplayStyleShiftUp`, `stackBottomShiftDown`, `stackBottomDisplayStyleShiftDown`, `stackGapMin`, `stackDisplayStyleGapMin`, `stretchStack*` | `above`, `below` and binomials without a bar; limits already use the limit constants |
 | Delimiters | `delimitedSubFormulaMinHeight` | the minimum size of delimiters around a sub-formula |
-| Radicals | `radicalKernBeforeDegree` | commented out in `sqrt_box`, see defect 1 |
 | Fine positioning | device tables | parsed but never applied; they matter only at small sizes on screen |
 | Assemblies | `GlyphAssembly.italicsCorrection` | ignored |
 | Axis | `mathLeading` | not needed by TeXmacs |
@@ -561,7 +580,10 @@ glyph and the accent, which replaces the slope heuristics; the constants
 `accentBaseHeight` and `flattenedAccentBaseHeight`, with the GSUB feature
 `flac` for the flattened accents used over tall bases; and
 `overbarVerticalGap`, `overbarRuleThickness`, `overbarExtraAscender` and
-their `underbar` twins for bars.
+their `underbar` twins for bars. The bar constants are in use since
+22 September 2026: `<wide-bar>` and `<wide-underline>` of untuned
+OpenType math fonts are rules of the table's thickness, set off from the
+ink of the base by the table's gap.
 
 How to implement:
 
@@ -610,13 +632,13 @@ labels above and below should use `stretchStackTopShiftUp`,
 `sqrt_box` combines a `<large-sqrt-N>` delimiter with a `line_box` for
 the overline. The delimiter now comes from the MATH variants and assembly,
 and the rule thickness, gap, extra ascender and degree placement come from
-the radical constants. What is still hand-made is the junction: the rule is
-drawn at `sqrtb->y2 + dy` independently of the glyph, which in Latin Modern
-leaves a gap because the radical glyph's top does not reach the rule. Per
-the specification the rule starts at the top of the radical glyph and has
-`radicalRuleThickness`; the box should take the rule's vertical position
-from the glyph extents (the assembly's top part is designed to meet the
-rule), and `radicalKernBeforeDegree` should be applied.
+the radical constants. The junction follows the specification as well: the
+rule has `radicalRuleThickness` and is centred half a thickness below the
+top of the radical glyph, where the top part of the assembly is designed to
+meet it, and the degree is offset by `radicalKernAfterDegree` with
+`radicalKernBeforeDegree` removed from the left of the box. Only the
+overline itself is still a `line_box`, which is what the specification
+prescribes; nothing of the construction is guesswork any more.
 
 ### 8.4 Fractions and wide fractions
 

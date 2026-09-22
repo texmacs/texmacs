@@ -346,6 +346,20 @@ TestOpenTypeFont::test_script_parameters () {
   QCOMPARE (lm->space_after_script, du_x (56));
   QCOMPARE (lm->script_percent, 70);
   QCOMPARE (lm->script_script_percent, 50);
+  // over- and underlines, and the radical constants
+  QCOMPARE (lm->overbar_vertical_gap, du_y (120));
+  QCOMPARE (lm->overbar_rule_thickness, du_y (40));
+  QCOMPARE (lm->overbar_extra_ascender, du_y (40));
+  QCOMPARE (lm->underbar_vertical_gap, du_y (120));
+  QCOMPARE (lm->underbar_rule_thickness, du_y (40));
+  QCOMPARE (lm->underbar_extra_descender, du_y (40));
+  QCOMPARE (lm->sqrt_rule_thickness, du_y (40));
+  QCOMPARE (lm->sqrt_kern_before_degree, du_y (278));
+  QCOMPARE (lm->sqrt_kern_after_degree, du_y (-556));
+  QCOMPARE (lm->sqrt_degree_rise_percent, 60);
+  // a font without a MATH table has none of them
+  font rm0= unicode_font ("lmroman10-regular", LM_SIZE, LM_DPI);
+  QCOMPARE (rm0->overbar_rule_thickness, (SI) 0);
   // the standard shifts come from the table as well
   QCOMPARE (lm->ysup_lo_base, du_y (363));
   // integrals and summation signs are extended shapes, letters are not
