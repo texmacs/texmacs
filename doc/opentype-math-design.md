@@ -537,17 +537,21 @@ TM_TEST_FONT_DIR=/path/to/fonts tests/opentype/render-samples.sh
 
 ## 6. Known defects still open
 
-1. `parse_variant` requires exactly three dash-separated tokens, so a
-   rubber name whose root contains a dash would not parse.
-2. `ysup_hi_lim` has no MATH counterpart and is set to
+1. `ysup_hi_lim` has no MATH counterpart and is set to
    `max (superscriptShiftUp, x-height)`.
-3. The glue function `font-database-search` (four arguments) blocks for
-   minutes on some families, waiting on something external rather than
-   looping. No Scheme code calls it; it is a debugging entry point.
-4. Assembled glyphs are glued on the measured ink of their parts, corrected
+2. Assembled glyphs are glued on the measured ink of their parts, corrected
    to the advances of the table. The result matches the table within pixel
    rounding, but a font whose parts have unusual side bearings could still
    show a seam.
+
+Two entries of this list were mistakes and are now closed.
+`parse_variant` takes the last dash-separated token as the size and
+everything between the first and the last as the root, so a root with a
+dash parses. And the glue function `font-database-search` does not block:
+it takes two arguments, a family and a style, and the four-argument C++
+overload is simply not exposed. Calling it with four arguments is an arity
+error, after which `texmacs.bin -x ... -q` keeps running instead of
+exiting, which is what looked like a hang.
 
 ## 7. What is still missing
 

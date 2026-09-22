@@ -202,10 +202,12 @@ parse_variant (string s, string& head, string& root) {
   if (!starts (s, "<") || !ends (s, ">") || N (s) < 3) return 0;
   root = s (1, N(s) - 1);
   array<string> v= tokenize (root, "-");
-  if (N (v) == 3 && is_int (v[2])) {
-    var = as_int (v[2]);
-    root= v[1];
+  // the last token is the size, the first the kind, everything in between
+  // is the root: a root may contain dashes, as in <wide-var-rightarrow-2>
+  if (N (v) >= 3 && is_int (v[N(v) - 1])) {
+    var = as_int (v[N(v) - 1]);
     head= v[0];
+    root= recompose (range (v, 1, N(v) - 1), "-");
   }
   return var;
 }
