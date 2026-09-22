@@ -151,4 +151,7 @@ the shipped TeX Gyre and STIX fonts, and several OpenType math fonts, so the
 effect of a change on each code path can be compared side by side.
 `math-showcase.tm` tours every MATH feature font by font, and
 `math-variants.tm` shows math roman, math sans serif, math typewriter and
-bold mathematics for the profiled fonts.
+bold mathematics for the profiled fonts. `math-symbols-extra.tm`, generated
+by `missing-symbols.py --sample`, shows the 200 symbols of
+`tmuniversaltounicode-extra.scm` in tables: a name the conversion tables
+fail to serve appears there as a box instead of a glyph.

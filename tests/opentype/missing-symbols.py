@@ -443,6 +443,76 @@ def write_table (path, codes, syms, noted, two_way, any_way, declared, cov,
     open (path, 'w', encoding='utf-8').write ("\n".join (kept) + "\n")
     return active, inactive
 
+def write_sample (path, table_path, syms, cov, per_row=3):
+    """a TeXmacs document showing every symbol of a proposal table
+
+    Each one appears in a table next to its name, so a name the conversion
+    tables do not serve shows up as a box or an error instead of a glyph.
+    A last section puts a few of them in formulas, where a symbol without a
+    class in std-symbols.scm betrays itself by having no spacing."""
+    entries, block_of = [], {}
+    current = "Symbols"
+    for line in open (table_path, encoding='utf-8'):
+        t = line.strip ()
+        if t.startswith (";;; "): current = t[4:]; continue
+        m = re.match (r'\("(<[^"]+>)"\s+"#([0-9A-Fa-f]+)"\)', t)
+        if not m: continue
+        entries.append ((current, m.group (1), int (m.group (2), 16)))
+    by_block = collections.OrderedDict ()
+    for b, name, code in entries: by_block.setdefault (b, []).append ((name, code))
+
+    def esc (name): return "\\" + name[0] + name[1:-1] + "\\" + name[-1]
+    out = []
+    w = out.append
+    w ("<TeXmacs|2.1.4>")
+    w ("")
+    w ("<style|generic>")
+    w ("")
+    w ("<\\body>")
+    w ("  <doc-data|<doc-title|Symbols added to the conversion tables>|")
+    w ("  <doc-subtitle|%d names, from the list of unicode-math>>" % len (entries))
+    w ("")
+    w ("  Every symbol below has a name in")
+    w ("  <verbatim|tmuniversaltounicode-extra.scm> and nowhere else. A name")
+    w ("  the tables do not serve shows as a box or an error rather than a")
+    w ("  glyph, so this document is also the test of that table.")
+    w ("")
+    for b, items in by_block.items ():
+        w ("  <section|%s>" % b)
+        w ("")
+        rows = []
+        for i in range (0, len (items), per_row):
+            cells = []
+            for name, code in items[i:i+per_row]:
+                cells.append ("<cell|<math|%s>>" % esc (name))
+                cells.append ("<cell|<verbatim|%s>>" % name[1:-1])
+            while len (cells) < 2 * per_row: cells.append ("<cell|>")
+            rows.append ("<row|" + "|".join (cells) + ">")
+        w ("  <tabular|<tformat|<cwith|1|-1|1|-1|cell-halign|l>|<table|" +
+           "|".join (rows) + ">>>")
+        w ("")
+    w ("  <section|In a formula>")
+    w ("")
+    w ("  A symbol with no class in <verbatim|std-symbols.scm> carries no")
+    w ("  spacing. Compare a named and classed symbol with the new ones:")
+    w ("")
+    wanted = ["<dotminus>", "<Equiv>", "<Colon>", "<QED>", "<vectimes>"]
+    have = set (nm for b, nm, c in entries)
+    demo = [nm for nm in wanted if nm in have]
+    if not demo: demo = [nm for b, nm, c in entries][:5]
+    w ("  <\\equation*>")
+    w ("    a\\<oplus\\>b\\<space\\>%s" %
+       "\\<space\\>".join ("a%sb" % esc (nm) for nm in demo))
+    w ("  </equation*>")
+    w ("")
+    w ("</body>")
+    w ("")
+    w ("<initial|<\\collection>")
+    w ("<associate|page-medium|paper>")
+    w ("</collection>>")
+    open (path, 'w', encoding='utf-8').write ("\n".join (out) + "\n")
+    return len (entries), len (by_block)
+
 KNOWN_DOUBLE = {"<mu>"}   # U+00B5 micro and U+03BC greek mu, on purpose
 
 def run_check (named, two_way, doubles, cov, font_names):
@@ -496,6 +566,8 @@ def main ():
                      help='write a proposal table for langs/encoding there')
     ap.add_argument ('--include-extra', action='store_true',
                      help='count the generated proposal tables as coverage')
+    ap.add_argument ('--sample', metavar='FILE',
+                     help='write a TeXmacs document showing the new symbols')
     ap.add_argument ('--check', action='store_true',
                      help='check the symbol tables and exit non-zero on error')
     ap.add_argument ('fonts', nargs='*', help='fonts to check for the glyphs')
@@ -528,6 +600,13 @@ def main ():
     if a.check:
         sys.exit (1 if run_check (named, two_way, doubles, cov, font_names)
                   else 0)
+
+    if a.sample:
+        table = os.path.join (texmacs, 'langs', 'encoding',
+                              'tmuniversaltounicode-extra.scm')
+        cnt, blocks = write_sample (a.sample, table, syms, cov)
+        print ("%s: %d symbols in %d sections" % (a.sample, cnt, blocks))
+        return
 
     if a.tables:
         floor = a.min_fonts if a.min_fonts is not None else max (
