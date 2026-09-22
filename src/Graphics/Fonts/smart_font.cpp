@@ -658,9 +658,11 @@ stix_fix (string family, string series, string shape) {
 
 // Profiled OpenType math fonts: in math shapes a text family is replaced
 // by its math companion when that font is installed, in text shapes a math
-// family by its text companion
+// family by its text companion. Math sans serif and math typewriter are
+// served by the companions the profile declares, since a math font has no
+// sans or typewriter face of its own.
 string
-profile_fix (string family, string series, string shape) {
+profile_fix (string family, string variant, string series, string shape) {
   (void) series;
   array<string> a= trimmed_tokenize (family, ","), r;
   for (int i= 0; i < N(a); i++) {
@@ -670,6 +672,12 @@ profile_fix (string family, string series, string shape) {
         string m= math_family_for_text (item);
         if (m != "" && tt_font_exists (math_font_profile_attr (m, "file")))
           item= m;
+        string key= (variant == "ss"? string ("sans"):
+                     (variant == "tt"? string ("mono"): string ("")));
+        if (key != "") {
+          string comp= math_font_profile_attr (item, key);
+          if (comp != "" && N (font_database_styles (comp)) > 0) item= comp;
+        }
       }
       else {
         string t= text_family_for_math (item);
@@ -1964,7 +1972,7 @@ smart_font_bis (string family, string variant, string series, string shape,
   family= kepler_fix (family, series, shape);
   //family= stix_fix (family, series, shape);
   family= math_fix (family, series, shape);
-  family= profile_fix (family, series, shape);
+  family= profile_fix (family, variant, series, shape);
   string sh= shape;
   if (shape == "mathitalic" || shape == "mathshape") sh= "right";
   string mfam= main_family (family);
@@ -2006,6 +2014,11 @@ smart_font (string family, string variant, string series, string shape,
     if (variant == "ms") tvar= "ss";
     if (variant == "mt") tvar= "tt";
   }
+  // a math series other than the default overrides the text series, so
+  // that math-font-series reaches the math font: a family with a real bold
+  // math face (New Computer Modern Math, KpMath, XITS Math) then uses it
+  // and the others are emulated as usual
+  if (series != "medium") tser= series;
   if (shape == "right") tsh= "mathupright";
   return smart_font (tfam, tvar, tser, tsh, sz, dpi);
 }

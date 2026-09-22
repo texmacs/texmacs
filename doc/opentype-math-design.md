@@ -488,6 +488,29 @@ TM_TEST_FONT_DIR=/path/to/fonts tests/opentype/render-samples.sh
   `unescape_guile` was asserted to double a backslash, which it has never
   done since it was written in 2012. All nineteen test binaries pass.
 
+- **Math families and bold mathematics.** `math-font-family` set to `ms`
+  or `mt` now reaches the `sans` and `mono` companions of the profile:
+  `profile_fix` knows the variant and replaces a profiled math family by
+  its sans or typewriter companion when that family is installed, since a
+  math font has neither face of its own. Before, math sans serif and math
+  typewriter of a profiled font fell back to the math font itself or, for
+  typewriter, to an unrelated monospaced font.
+
+  `math-font-series` reached nothing at all: the smart font built from the
+  math quadruple and the text quadruple used the *text* series and dropped
+  the math one, so bold mathematics only followed bold text. A math series
+  other than `medium` now overrides the text series, and the font selection
+  finds the Bold style of the math family where there is one. With New
+  Computer Modern Math the bold radical rule measures 20 pixels at 72 pt
+  and 300 dpi against 12 for the regular face, which is the 70 against 40
+  design units of the two MATH tables: bold mathematics really comes from
+  the bold math font. Families without a bold face are emulated as before.
+
+  The new sample `tests/opentype/samples/math-variants.tm` shows math
+  roman, math sans serif, math typewriter and bold mathematics for six
+  profiled fonts side by side, with the text set in each profile's
+  companion.
+
 ## 6. Known defects still open
 
 1. `parse_variant` requires exactly three dash-separated tokens, so a
@@ -535,16 +558,17 @@ samples are compared against them.
 
 ### 7.3 Profile keys declared but not consumed
 
-`fonts-opentype.scm` records `sans`, `mono`, `bold-math` and `group` for
-every font, and nothing reads them yet:
+`sans` and `mono` serve math sans serif and math typewriter since
+22 September 2026, and bold mathematics reaches a real bold math face
+through the font database now that the math series is honored. What is
+left:
 
-- `sans` and `mono` should serve math sans serif and math typewriter,
-  which today fall back to the text families of the document.
-- `bold-math` should select a real bold math font for a bold math series
-  (New Computer Modern Math, KpMath and XITS Math have one) instead of
-  stroking the regular one. Where the bold face sits in the same family,
-  as in New Computer Modern, the database may already find it; nothing
-  makes that deliberate.
+- `bold-math` is not read. In every profile it either repeats the family
+  name, which only records that a real bold face exists, or names a
+  family whose Bold style the database finds anyway. It would be needed
+  for a font whose bold companion is a separate family, and none of the
+  twenty is.
+- `group` only labels the menus.
 - A key for the alphabets a font really provides is still missing, so an
   incomplete alphabet (Latin Modern Math has 18 of 52 script letters) is
   silently mixed with emulated glyphs instead of being declared.

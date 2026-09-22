@@ -96,3 +96,6 @@ tests/opentype/compare-lualatex.sh radicals-bars
 The sample `math-overview.tm` typesets the same formulas with TeX fonts,
 the shipped TeX Gyre and STIX fonts, and several OpenType math fonts, so the
 effect of a change on each code path can be compared side by side.
+`math-showcase.tm` tours every MATH feature font by font, and
+`math-variants.tm` shows math roman, math sans serif, math typewriter and
+bold mathematics for the profiled fonts.

@@ -26,6 +26,7 @@
 #include "file.hpp"
 #include "hashset.hpp"
 
+
 #define LM_UPEM 1000.0
 #define LM_SIZE 10
 #define LM_DPI  600
@@ -58,6 +59,7 @@ private slots:
   void test_feature_font ();
   void test_gpos_kerning ();
   void test_profile_file ();
+  void test_bold_math_font ();
 };
 
 void
@@ -644,6 +646,36 @@ TestOpenTypeFont::test_profile_file () {
     QVERIFY2 (names->contains (boldmaths[i]),
               as_charp ("bold-math " * boldmaths[i] * " has no profile"));
   QVERIFY2 (nr_installed >= 1, "no profiled math font is installed");
+}
+
+void
+TestOpenTypeFont::test_bold_math_font () {
+  // Selecting the bold series of a math family must give the bold face with
+  // the constants of its own MATH table, not the regular one stroked. New
+  // Computer Modern Math is shipped with both faces and its bold radical
+  // rule is 70 design units against 40 for the regular one. (This harness
+  // runs with the smart fonts off, so this is the plain font selection; the
+  // smart font path is covered by the math-variants sample.)
+  if (!tt_font_exists ("NewCMMath-Bold")) QSKIP ("NewCMMath-Bold missing");
+  font reg= smart_font ("NewComputerModernMath", "mr", "medium", "normal",
+                        "roman", "rm", "medium", "mathitalic",
+                        LM_SIZE, LM_DPI);
+  font bld= smart_font ("NewComputerModernMath", "mr", "bold", "normal",
+                        "roman", "rm", "medium", "mathitalic",
+                        LM_SIZE, LM_DPI);
+  QVERIFY (!is_nil (reg) && !is_nil (bld));
+  QVERIFY2 (reg->ot_math, "the regular math font has no MATH table");
+  QVERIFY2 (bld->ot_math, "the bold math font has no MATH table");
+  QCOMPARE (reg->sqrt_rule_thickness, du_y (40));
+  QVERIFY2 (bld->sqrt_rule_thickness == du_y (70),
+            as_charp ("bold radical rule is " *
+                      as_string (bld->sqrt_rule_thickness) *
+                      " instead of " * as_string (du_y (70))));
+  // and the bold glyphs are wider than the regular ones
+  metric ra, ba;
+  reg->get_extents ("a", ra);
+  bld->get_extents ("a", ba);
+  QVERIFY (ba->x2 - ba->x1 > ra->x2 - ra->x1);
 }
 
 QTEST_GUILESS_MAIN(TestOpenTypeFont)
