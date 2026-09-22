@@ -35,8 +35,14 @@ text_to_math () {
 void
 math_font_profile_set (string family, tree profile) {
   profiles () (family)= profile;
+  // Several math fonts may name the same text companion (Asana Math is a
+  // Palladio design and so is TeX Gyre Pagella Math). The reverse map keeps
+  // the first claimant, so the order of the profiles in
+  // TeXmacs/progs/fonts/fonts-opentype.scm decides which math font a text
+  // family pulls in; put the canonical pairing first.
   string text= math_font_profile_attr (family, "text");
-  if (text != "") text_to_math () (text)= family;
+  if (text != "" && !text_to_math ()->contains (text))
+    text_to_math () (text)= family;
 }
 
 tree

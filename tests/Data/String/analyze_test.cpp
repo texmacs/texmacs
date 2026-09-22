@@ -106,7 +106,12 @@ TestAnalyze::test_raw_unquote () {
 
 void
 TestAnalyze::test_unescape_guile () {
-  QCOMPARE (as_charp (unescape_guile ("\\\\")), "\\\\\\\\");
+  // unescape_guile turns \\xHH into the byte HH and leaves everything else
+  // alone; the expectation of four backslashes here was never true
+  QCOMPARE (as_charp (unescape_guile ("\\\\")), "\\\\");
+  QCOMPARE (as_charp (unescape_guile ("a\\x41b")), "aAb");
+  QCOMPARE (as_charp (unescape_guile ("\\xzz")), "\\xzz");
+  QCOMPARE (as_charp (unescape_guile ("abc")), "abc");
 }
 
 void

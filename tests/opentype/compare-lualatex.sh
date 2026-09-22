@@ -5,8 +5,11 @@
 # MATH table, so a disagreement is worth looking at.
 #
 #   tests/opentype/compare-lualatex.sh [-f <math font file>] [-m <TeXmacs family>]
+#                                      [<pair> ...]
 #
-# Defaults to Latin Modern Math. Needs lualatex, mutool and ImageMagick.
+# Without arguments every pair of compare/ is typeset; a pair is the base name
+# of a .tex and .tm file there. Defaults to Latin Modern Math. Needs lualatex,
+# mutool and ImageMagick.
 set -e
 here=$(cd "$(dirname "$0")" && pwd); top=$(cd "$here/.." && pwd); top=$(cd "$top/.." && pwd)
 font="$top/TeXmacs/fonts/truetype/lm/latinmodern-math.otf"
@@ -18,13 +21,22 @@ while getopts "f:m:" opt; do
     *) exit 2 ;;
   esac
 done
+shift $((OPTIND-1))
 out="$top/tests/build/compare"; mkdir -p "$out"
 export TEXMACS_PATH="$top/TeXmacs"
 export TEXMACS_HOME_PATH="${TEXMACS_HOME_PATH:-$top/tests/build/home}"
 [ -n "$TM_TEST_FONT_DIR" ] && export TEXMACS_FONT_PATH="$TM_TEST_FONT_DIR"
 PATH="$PATH:/Library/TeX/texbin"
 
-for tex in "$here"/compare/*.tex; do
+if [ $# -gt 0 ]; then
+  pairs=""
+  for name in "$@"; do pairs="$pairs $here/compare/$name.tex"; done
+else
+  pairs=$(echo "$here"/compare/*.tex)
+fi
+
+for tex in $pairs; do
+  [ -f "$tex" ] || { echo "no $tex"; continue; }
   name=$(basename "$tex" .tex)
   tm="$here/compare/$name.tm"
   [ -f "$tm" ] || { echo "no $tm, skipping"; continue; }
@@ -50,7 +62,13 @@ for tex in "$here"/compare/*.tex; do
     printf '  <\\with|font|%s|font-base-size|12>\n' "$family"
     cat "$tm"
     printf '%s\n' '  </with>'
-    printf '%s\n' '</body>'
+    printf '%s\n\n' '</body>'
+    # no page number and no page breaks in the render
+    printf '%s\n' '<initial|<\collection>'
+    printf '%s\n' '<associate|page-medium|papyrus>'
+    printf '%s\n' '<associate|page-odd-footer|>'
+    printf '%s\n' '<associate|page-even-footer|>'
+    printf '%s\n' '</collection>>'
   } > "$out/$name-ours.tm"
   "$top/TeXmacs/bin/texmacs.bin" -c "$out/$name-ours.tm" "$out/$name-ours.pdf" -q \
      > "$out/$name-ours.log" 2>&1 || true

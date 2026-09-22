@@ -468,6 +468,26 @@ TM_TEST_FONT_DIR=/path/to/fonts tests/opentype/render-samples.sh
   around relations, upright `d` in `dx`). The formula pairs live in
   `tests/opentype/compare/`.
 
+- **Profiles validated, and the test suite actually runs.** A new test
+  reads `TeXmacs/progs/fonts/fonts-opentype.scm` itself and checks every
+  profile: known keys, no empty or repeated key, `file`, `menu` and
+  `group` present, `letters` either `math` or `text`, the accessors of the
+  C++ table returning what the file declares, and, for each font that is
+  installed, that it really carries a MATH table and that the family name
+  of the profile is the name `tt_font_name` gives the file. The last check
+  is the one that matters: a misspelled family is a profile that never
+  applies and nothing else says so. It found that Asana Math and TeX Gyre
+  Pagella Math both claim the text companion `TeX Gyre Pagella`, where the
+  reverse map silently kept the last one; it now keeps the first, so the
+  order of the profiles decides and the canonical pairing comes first.
+  `make -C tests` was building nothing at all, because the rule that
+  regenerates the compiler flags is the first in the makefile and was
+  therefore the default goal; with that fixed, `mac_images_test` no longer
+  compiles under Qt 6 (`mac_images.h` drops its declarations there) and is
+  excluded, and a stale expectation in `analyze_test` came to light:
+  `unescape_guile` was asserted to double a backslash, which it has never
+  done since it was written in 2012. All nineteen test binaries pass.
+
 ## 6. Known defects still open
 
 1. `parse_variant` requires exactly three dash-separated tokens, so a
@@ -500,11 +520,18 @@ about.
 | Group | Constants | Where they would apply |
 |---|---|---|
 | Stacks | `stackTopShiftUp`, `stackTopDisplayStyleShiftUp`, `stackBottomShiftDown`, `stackBottomDisplayStyleShiftDown`, `stackGapMin`, `stackDisplayStyleGapMin`, `stretchStack*` | `above`, `below` and binomials without a bar; limits already use the limit constants |
-| Delimiters | `delimitedSubFormulaMinHeight` | the minimum size of delimiters around a sub-formula |
 | Fine positioning | device tables | parsed but never applied; they matter only at small sizes on screen |
+| Delimiters | `delimitedSubFormulaMinHeight` | deliberately not applied, see below |
 | Assemblies | `GlyphAssembly.italicsCorrection` | ignored |
 | Axis | `mathLeading` | not needed by TeXmacs |
 | Skewed fractions | `skewedFractionHorizontalGap`, `skewedFractionVerticalGap` | no TeXmacs primitive today |
+
+`delimitedSubFormulaMinHeight` is left out on purpose. TeXmacs sizes every
+bracket automatically, so the constant would apply to all of them: in Latin
+Modern Math it is 1300 design units against a plain parenthesis of 996, so
+`(x)` would jump to the third vertical variant, 45 percent taller than the
+glyph TeX uses there. TeX and `unicode-math` ignore the constant, and the
+samples are compared against them.
 
 ### 7.3 Profile keys declared but not consumed
 
@@ -531,9 +558,10 @@ guard hand-tuned corrections, which keep precedence.
 
 ### 7.5 Testing and export
 
-- No test asserts that every installed profile resolves: that its file
-  exists, that the family name matches and that the text companions are
-  found.
+- Nothing checks the text companions of a profile against the font
+  database; the profile test checks the math font itself, its family name
+  and its MATH table, but a companion family that is not installed is only
+  noticed when a document asks for it.
 - The samples are compared against stored reference renders by hand; the
   check script does not fail on a pixel difference, it only reports it.
 - PDF export embeds every TrueType and OpenType font as a Type 3 bitmap

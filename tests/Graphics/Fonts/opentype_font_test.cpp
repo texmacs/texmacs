@@ -21,6 +21,10 @@
 #include "sys_utils.hpp"
 #include "analyze.hpp"
 #include "Freetype/tt_file.hpp"
+#include "Freetype/tt_tools.hpp"
+#include "convert.hpp"
+#include "file.hpp"
+#include "hashset.hpp"
 
 #define LM_UPEM 1000.0
 #define LM_SIZE 10
@@ -53,6 +57,7 @@ private slots:
   void test_profiles ();
   void test_feature_font ();
   void test_gpos_kerning ();
+  void test_profile_file ();
 };
 
 void
@@ -539,6 +544,106 @@ TestOpenTypeFont::test_gpos_kerning () {
   QCOMPARE (xpos[0], (SI) 0);
   QVERIFY (qAbs (xpos[1] - ((a->x2 - a->x1) + expected)) <= PIXEL);
   tm_delete_array (xpos);
+}
+
+void
+TestOpenTypeFont::test_profile_file () {
+  // The profiles shipped in TeXmacs/progs/fonts/fonts-opentype.scm must be
+  // well formed, and their family names must be the names the font database
+  // gives to the files: a misspelled family is a profile that never applies
+  // and nothing else says so.
+  string body;
+  url u= url_system (get_env ("TEXMACS_PATH")) *
+         url ("progs") * url ("fonts") * url ("fonts-opentype.scm");
+  QVERIFY2 (!load_string (u, body, false), "fonts-opentype.scm not readable");
+  scheme_tree forms= block_to_scheme_tree (body);
+  hashset<string> known;
+  known->insert ("file"); known->insert ("text"); known->insert ("sans");
+  known->insert ("mono"); known->insert ("letters");
+  known->insert ("bold-math"); known->insert ("menu"); known->insert ("group");
+  hashset<string> names, texts;
+  array<string> boldmaths;
+  int nr_profiles= 0, nr_installed= 0;
+  for (int i=0; i<N(forms); i++) {
+    scheme_tree f= forms[i];
+    if (is_atomic (f) || N(f) < 2) continue;
+    if (!is_atomic (f[0]) || f[0]->label != "math-font-profile!") continue;
+    QVERIFY (is_atomic (f[1]));
+    string name= scm_unquote (f[1]->label);
+    QVERIFY2 (name != "", "a profile has an empty family name");
+    QVERIFY2 (!names->contains (name),
+              as_charp ("two profiles for " * name));
+    names->insert (name);
+    nr_profiles++;
+    // collect the properties, which the reader gives as (' (key value))
+    tree props (TUPLE);
+    hashmap<string,string> val ("");
+    for (int j=2; j<N(f); j++) {
+      scheme_tree q= f[j];
+      if (!is_atomic (q) && N(q) == 2 && is_atomic (q[0]) && q[0]->label == "'")
+        q= q[1];
+      QVERIFY2 (!is_atomic (q) && N(q) == 2,
+                as_charp ("malformed property in the profile of " * name));
+      string key= scm_unquote (q[0]->label);
+      string value= scm_unquote (q[1]->label);
+      QVERIFY2 (known->contains (key),
+                as_charp ("unknown key " * key * " in the profile of " * name));
+      QVERIFY2 (!val->contains (key),
+                as_charp ("key " * key * " twice in the profile of " * name));
+      QVERIFY2 (value != "",
+                as_charp ("empty " * key * " in the profile of " * name));
+      val (key)= value;
+      props << tuple (key, value);
+    }
+    QVERIFY2 (val->contains ("file"),
+              as_charp ("no file in the profile of " * name));
+    QVERIFY2 (val->contains ("menu"),
+              as_charp ("no menu label in the profile of " * name));
+    QVERIFY2 (val->contains ("group"),
+              as_charp ("no group in the profile of " * name));
+    if (val->contains ("letters"))
+      QVERIFY2 (val["letters"] == "math" || val["letters"] == "text",
+                as_charp ("letters is neither math nor text in " * name));
+    // several math fonts may name the same text companion; the first one
+    // in the file is the one that companion pulls in
+    bool first_claim= false;
+    if (val->contains ("text")) {
+      first_claim= !texts->contains (val["text"]);
+      texts->insert (val["text"]);
+    }
+    if (val->contains ("bold-math")) boldmaths << val["bold-math"];
+    // the table and its accessors must return what the file declares
+    math_font_profile_set (name, props);
+    QCOMPARE (math_font_profile_attr (name, "file"), val["file"]);
+    QCOMPARE (math_font_profile_attr (name, "menu"), val["menu"]);
+    if (val->contains ("text")) {
+      QCOMPARE (text_family_for_math (name), val["text"]);
+      if (first_claim)
+        QCOMPARE (math_family_for_text (val["text"]), name);
+      else
+        QVERIFY (math_family_for_text (val["text"]) != name);
+    }
+    // an installed font must really be an OpenType math font, and the
+    // family name of the profile must be the one the database gives it
+    if (!tt_font_exists (val["file"])) continue;
+    nr_installed++;
+    scheme_tree fn= tt_font_name (tt_font_find (val["file"]));
+    QVERIFY2 (!is_atomic (fn) && N(fn) >= 1, as_charp ("no name table in " *
+                                                       val["file"]));
+    QVERIFY2 (!is_atomic (fn[0]) && N(fn[0]) >= 1, "malformed name table");
+    QCOMPARE (scm_unquote (fn[0][0]->label), name);
+    font mf= unicode_font (val["file"], LM_SIZE, LM_DPI);
+    QVERIFY (!is_nil (mf));
+    QVERIFY2 (mf->ot_math,
+              as_charp (val["file"] * " has no MATH table"));
+  }
+  QVERIFY2 (nr_profiles >= 15,
+            as_charp ("only " * as_string (nr_profiles) * " profiles read"));
+  // a bold math family must be a family of its own or one that is profiled
+  for (int i=0; i<N(boldmaths); i++)
+    QVERIFY2 (names->contains (boldmaths[i]),
+              as_charp ("bold-math " * boldmaths[i] * " has no profile"));
+  QVERIFY2 (nr_installed >= 1, "no profiled math font is installed");
 }
 
 QTEST_GUILESS_MAIN(TestOpenTypeFont)

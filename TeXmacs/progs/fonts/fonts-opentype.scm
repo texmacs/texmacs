@@ -21,6 +21,11 @@
 ;; Keys: text, sans, mono (companion families), file (file name of the
 ;; math font without suffix, to test for its presence), letters (math or
 ;; text), bold-math (family of a bold math font), menu (label), group.
+;;
+;; When two math fonts name the same text companion (Asana Math and TeX Gyre
+;; Pagella Math are both Palladio designs), the first profile below is the
+;; one that companion pulls in for formulas, so canonical pairings come
+;; first.
 
 (define-public (math-font-profile! name . props)
   (math-font-profile-set name props))

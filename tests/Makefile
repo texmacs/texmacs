@@ -18,6 +18,8 @@
 # delete them (or run `make clean` at the top level) before rebuilding.
 ###############################################################################
 
+.DEFAULT_GOAL := all
+
 TOP   := $(abspath ..)
 SRC   := $(TOP)/src
 BUILD := $(abspath build)
@@ -25,7 +27,9 @@ BUILD := $(abspath build)
 TEST_SRC := $(shell find . -name '*_test.cpp' | sort)
 # legacy tests that do not link in this setup (xml_test includes a .cpp file
 # that is already part of the main build)
-EXCLUDE  := xml_test
+# mac_images_test calls mac_supports and mac_image_size, which mac_images.h
+# does not declare in a Qt 6 build
+EXCLUDE  := xml_test mac_images_test
 TESTS    := $(filter-out $(EXCLUDE),$(patsubst %.cpp,%,$(notdir $(TEST_SRC))))
 vpath %_test.cpp $(sort $(dir $(TEST_SRC)))
 
@@ -44,6 +48,8 @@ TEST_LIBS := -framework QtTest
 export TEXMACS_PATH      := $(TOP)/TeXmacs
 export TEXMACS_HOME_PATH := $(BUILD)/home
 export TM_TEST_FONT_DIR
+
+.PHONY: all run build clean check-stale
 
 all: run
 
