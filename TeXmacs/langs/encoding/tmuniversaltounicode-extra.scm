@@ -58,6 +58,8 @@
 
 ("<twoheaduparrow>"	"#219F")	; up two-headed arrow [11 fonts]
 ("<twoheaddownarrow>"	"#21A1")	; down two-headed arrow [11 fonts]
+("<mapsup>"		"#21A5")	; maps to, upward [11 fonts], shape checked
+("<mapsdown>"		"#21A7")	; maps to, downward [11 fonts], shape checked
 ("<Ldsh>"		"#21B2")	; left down angled arrow [10 fonts]
 ("<Rdsh>"		"#21B3")	; right down angled arrow [10 fonts]
 ("<linefeed>"		"#21B4")	; rightwards arrow with corner downwards [10 fonts]
@@ -90,6 +92,7 @@
 ("<ointctrclockwise>"	"#2233")	; contour integral, anticlockwise [11 fonts]
 ("<mathratio>"		"#2236")	; ratio [12 fonts]
 ("<Colon>"		"#2237")	; two colons [12 fonts]
+("<dotminus>"		"#2238")	; minus sign, dot above [11 fonts], shape checked
 ("<dashcolon>"		"#2239")	; excess (-:) [12 fonts]
 ("<dotsminusdots>"	"#223A")	; minus with four dots, geometric properties [11 fonts]
 ("<kernelcontraction>"	"#223B")	; homothetic [11 fonts]
@@ -107,12 +110,15 @@
 ("<measeq>"		"#225E")	; measured by (m over equals) [9 fonts]
 ("<questeq>"		"#225F")	; equal with questionmark [9 fonts]
 ("<Equiv>"		"#2263")	; strict equivalence (4 lines) [11 fonts]
+("<nlesssim>"		"#2274")	; not less, similar [12 fonts], shape checked
+("<ngtrsim>"		"#2275")	; not greater, similar [12 fonts], shape checked
 ("<nlessgtr>"		"#2278")	; not less, greater [12 fonts]
 ("<ngtrless>"		"#2279")	; not greater, less [12 fonts]
 ("<cupleftarrow>"	"#228C")	; multiset [11 fonts]
 ("<cupdot>"		"#228D")	; union, with dot [11 fonts]
 ("<circledequal>"	"#229C")	; equal in circle [11 fonts]
 ("<assert>"		"#22A6")	; assertion (vertical, short dash) [11 fonts]
+("<VDash>"		"#22AB")	; double vert, double dash [11 fonts], shape checked
 ("<origof>"		"#22B6")	; original of [11 fonts]
 ("<imageof>"		"#22B7")	; image of [11 fonts]
 ("<hermitmatrix>"	"#22B9")	; hermitian conjugate matrix [9 fonts]
@@ -122,12 +128,15 @@
 ("<equalparallel>"	"#22D5")	; parallel, equal; equal or parallel [10 fonts]
 ("<eqless>"		"#22DC")	; equal-or-less [11 fonts]
 ("<eqgtr>"		"#22DD")	; equal-or-greater [11 fonts]
+("<sqsubsetneq>"	"#22E4")	; square subset, not equals [11 fonts], shape checked
+("<sqsupsetneq>"	"#22E5")	; square superset, not equals [11 fonts], shape checked
 
 ;;; Miscellaneous technical
 
 ("<turnednot>"		"#2319")	; turned not sign [10 fonts]
 ("<inttop>"		"#2320")	; top half integral [8 fonts]
 ("<intbottom>"		"#2321")	; bottom half integral [8 fonts]
+("<obar>"		"#233D")	; circle with vertical bar [4 fonts], shape checked
 ("<lparenuend>"		"#239B")	; left parenthesis upper hook [11 fonts]
 ("<lparenextender>"	"#239C")	; left parenthesis extension [11 fonts]
 ("<lparenlend>"		"#239D")	; left parenthesis lower hook [11 fonts]
@@ -170,6 +179,7 @@
 ("<bigblacktriangledown>"	"#25BC")	; big down triangle, filled [12 fonts]
 ("<mdlgblkdiamond>"	"#25C6")	; black diamond [7 fonts]
 ("<smwhtcircle>"	"#25E6")	; white bullet [11 fonts]
+("<boxbar>"		"#25EB")	; vertical bar in box [7 fonts], shape checked
 ("<mdwhtsquare>"	"#25FB")	; white medium square [6 fonts]
 ("<mdblksquare>"	"#25FC")	; black medium square [6 fonts]
 ("<varspadesuit>"	"#2664")	; spade, white (card suit) [11 fonts]
@@ -223,7 +233,16 @@
 ("<awint>"		"#2A11")	; anticlockwise integration [9 fonts]
 ("<sqint>"		"#2A16")	; quaternion integral operator [6 fonts]
 ("<vectimes>"		"#2A2F")	; vector or cross product [10 fonts]
+("<dottimes>"		"#2A30")	; multiplication sign with dot above [4 fonts], shape checked
+("<btimes>"		"#2A32")	; semidirect product with bottom closed [4 fonts], shape checked
 ("<Coloneq>"		"#2A74")	; double colon equal [6 fonts]
+("<precneq>"		"#2AB1")	; precedes above single-line not equal to [5 fonts], shape checked
+("<succneq>"		"#2AB2")	; succeeds above single-line not equal to [5 fonts], shape checked
+("<preceqq>"		"#2AB3")	; precedes above equals sign [6 fonts], shape checked
+("<succeqq>"		"#2AB4")	; succeeds above equals sign [6 fonts], shape checked
+("<dashV>"		"#2AE3")	; double vertical bar left turnstile [4 fonts], shape checked
+("<Dashv>"		"#2AE4")	; vertical bar double left turnstile [4 fonts], shape checked
+("<DashV>"		"#2AE5")	; double vertical bar double left turnstile [4 fonts], shape checked
 ("<barV>"		"#2AEA")	; double down tack [6 fonts]
 ("<Vbar>"		"#2AEB")	; double up tack [6 fonts]
 ("<leqqslant>"		"#2AF9")	; double-line slanted less-than or equal to [6 fonts]

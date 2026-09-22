@@ -85,6 +85,7 @@ def load_named (texmacs, include_extra=False):
     noted = {}
     where = {}          # code point -> (file, line number, text)
     two_way = {}        # name -> (code point, file, line number)
+    any_way = {}        # name -> code point, one-way tables included
     doubles = []        # names given two different code points
     for path in sorted (glob.glob (os.path.join (texmacs, 'langs', 'encoding',
                                                  '*.scm'))):
@@ -106,6 +107,7 @@ def load_named (texmacs, include_extra=False):
             if m:
                 code = int (m.group (2), 16)
                 named[code].add (m.group (1))
+                any_way.setdefault (m.group (1), code)
                 if not oneway:
                     prev = two_way.get (m.group (1))
                     if prev and prev[0] != code:
@@ -113,7 +115,7 @@ def load_named (texmacs, include_extra=False):
                     two_way[m.group (1)] = (code, path, nr)
             m = CODE_TO_NAME.match (line)
             if m: named[int (m.group (1), 16)].add (m.group (2))
-    return named, noted, where, two_way, doubles
+    return named, noted, where, two_way, any_way, doubles
 
 # The alphabets smart_font.cpp generates names for. Keep this list in step
 # with init_unicode_substitution; the script prints a warning when the file
@@ -267,7 +269,7 @@ def emit_draft (codes, syms, noted, where, two_way, cov, texmacs):
     for code in codes:
         latex, cls, desc = syms[code]
         name = candidate_name (latex)
-        if name in two_way: taken.append ((code, name, two_way[name][0]))
+        if name in any_way: taken.append ((code, name, any_way[name]))
         else:
             if name in declared: classed.append ((code, name))
             ok.append ((code, name, cls, desc))
@@ -372,8 +374,20 @@ CANDIDATE_HEAD = """;; Conversions between TeXmacs symbols and Unicode: the ones
 ;; so they degrade on export, and the name coming out of unicode-math is
 ;; the same one TeXmacs uses, which is a good sign that the shape agrees."""
 
-def write_table (path, codes, syms, noted, two_way, declared, cov,
-                 font_names, floor, table_name, head, want_active):
+def load_confirmed (here):
+    """names checked by eye against the glyph of the code point"""
+    path = os.path.join (here, 'confirmed-symbols.txt')
+    out = {}
+    if not os.path.exists (path): return out
+    for line in open (path, encoding='utf-8'):
+        line = line.split ('#')[0].strip ()
+        if not line: continue
+        parts = line.split ()
+        if len (parts) >= 2: out[parts[0]] = int (parts[1], 16)
+    return out
+
+def write_table (path, codes, syms, noted, two_way, any_way, declared, cov,
+                 font_names, floor, table_name, head, want_active, confirmed):
     """a proposal table for langs/encoding, in the shape of the others
 
     Symbols are written in code point order and grouped by block. With
@@ -396,9 +410,11 @@ def write_table (path, codes, syms, noted, two_way, declared, cov,
             w (";;; %s" % b)
             w ("")
         reason = None
-        if name in two_way:
-            reason = "the name already means U+%04X" % two_way[name][0]
-        elif name in declared:
+        if name in any_way:
+            reason = "the name already means U+%04X" % any_way[name]
+        elif name in confirmed and confirmed[name] == code:
+            reason = None
+        elif name in declared and name not in confirmed:
             reason = "already a TeXmacs symbol, check that the shape agrees"
         elif cls.replace ("math", "") in NOT_A_SYMBOL:
             reason = "an accent or a radical, not a plain symbol"
@@ -408,6 +424,8 @@ def write_table (path, codes, syms, noted, two_way, declared, cov,
         pad = "\t" * max (1, (31 - len (head)) // 8)
         line = '%s%s"#%04X")' % (head, pad, code)
         tail = "\t; %s [%d fonts]" % (desc, len (cov.get (code, [])))
+        if name in confirmed and confirmed[name] == code:
+            tail += ", shape checked"
         if reason:
             inactive += 1
             if not want_active: w (";%s%s, %s" % (line, tail, reason))
@@ -490,8 +508,8 @@ def main ():
     syms = load_reference (a.table)
     if not syms:
         sys.exit ("no symbols read from %s" % a.table)
-    named, noted, where, two_way, doubles = load_named (texmacs,
-                                                       a.include_extra)
+    named, noted, where, two_way, any_way, doubles = load_named (
+        texmacs, a.include_extra)
     if not named:
         sys.exit ("no encoding tables under %s/langs/encoding" % texmacs)
     alphabet = alphabet_codes ()
@@ -518,13 +536,14 @@ def main ():
         ready = os.path.join (a.tables, 'tmuniversaltounicode-extra.scm')
         cand = os.path.join (a.tables,
                              'tmuniversaltounicode-extra-candidates.scm')
+        confirmed = load_confirmed (here)
         act, inact = write_table (ready, missing, syms, noted, two_way,
-                                  declared, cov, font_names, floor,
+                                  any_way, declared, cov, font_names, floor,
                                   'tmuniversaltounicode-extra', READY_HEAD,
-                                  True)
-        write_table (cand, missing, syms, noted, two_way, declared, cov,
-                     font_names, floor, 'tmuniversaltounicode-extra',
-                     CANDIDATE_HEAD, False)
+                                  True, confirmed)
+        write_table (cand, missing, syms, noted, two_way, any_way, declared,
+                     cov, font_names, floor, 'tmuniversaltounicode-extra',
+                     CANDIDATE_HEAD, False, confirmed)
         print ("%s: %d entries" % (ready, act))
         print ("%s: %d commented out" % (cand, inact))
         return

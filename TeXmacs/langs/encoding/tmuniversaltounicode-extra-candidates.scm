@@ -35,8 +35,6 @@
 
 ;;; Arrows
 
-;("<mapsup>"		"#21A5")	; maps to, upward [11 fonts], already a TeXmacs symbol, check that the shape agrees
-;("<mapsdown>"		"#21A7")	; maps to, downward [11 fonts], already a TeXmacs symbol, check that the shape agrees
 ;("<updownarrowbar>"	"#21A8")	; up down arrow with base (perpendicular) [4 fonts], few fonts draw it
 ;("<barovernorthwestarrow>"	"#21B8")	; north west arrow to long bar [4 fonts], few fonts draw it
 ;("<barleftarrowrightarrowbar>"	"#21B9")	; leftwards arrow to bar over rightwards arrow to bar [4 fonts], few fonts draw it
@@ -61,14 +59,8 @@
 
 ;("<cuberoot>"		"#221B")	; cube root [5 fonts], few fonts draw it
 ;("<fourthroot>"		"#221C")	; fourth root [5 fonts], few fonts draw it
-;("<dotminus>"		"#2238")	; minus sign, dot above [11 fonts], already a TeXmacs symbol, check that the shape agrees
-;("<nlesssim>"		"#2274")	; not less, similar [12 fonts], already a TeXmacs symbol, check that the shape agrees
-;("<ngtrsim>"		"#2275")	; not greater, similar [12 fonts], already a TeXmacs symbol, check that the shape agrees
-;("<VDash>"		"#22AB")	; double vert, double dash [11 fonts], already a TeXmacs symbol, check that the shape agrees
 ;("<prurel>"		"#22B0")	; element precedes under relation [4 fonts], few fonts draw it
 ;("<scurel>"		"#22B1")	; succeeds under relation [4 fonts], few fonts draw it
-;("<sqsubsetneq>"	"#22E4")	; square subset, not equals [11 fonts], already a TeXmacs symbol, check that the shape agrees
-;("<sqsupsetneq>"	"#22E5")	; square superset, not equals [11 fonts], already a TeXmacs symbol, check that the shape agrees
 ;("<disin>"		"#22F2")	; element of with long horizontal stroke [4 fonts], few fonts draw it
 ;("<varisins>"		"#22F3")	; element of with vertical bar at end of horizontal stroke [4 fonts], few fonts draw it
 ;("<isins>"		"#22F4")	; small element of with vertical bar at end of horizontal stroke [4 fonts], few fonts draw it
@@ -94,7 +86,6 @@
 ;("<varhexagonlrbonds>"	"#232C")	; six carbon ring, corner down, double bonds lower right etc [4 fonts], few fonts draw it
 ;("<conictaper>"		"#2332")	; conical taper [4 fonts], few fonts draw it
 ;("<topbot>"		"#2336")	; top and bottom [4 fonts], few fonts draw it
-;("<obar>"		"#233D")	; circle with vertical bar [4 fonts], already a TeXmacs symbol, check that the shape agrees
 ;("<APLnotslash>"	"#233F")	; solidus, bar through (apl functional symbol slash bar) [4 fonts], few fonts draw it
 ;("<APLnotbackslash>"	"#2340")	; apl functional symbol backslash bar [4 fonts], few fonts draw it
 ;("<APLboxupcaret>"	"#2353")	; boxed up caret [4 fonts], few fonts draw it
@@ -174,7 +165,6 @@
 ;("<squarerightblack>"	"#25E8")	; square, filled right half [5 fonts], few fonts draw it
 ;("<squareulblack>"	"#25E9")	; square, filled top left corner [5 fonts], few fonts draw it
 ;("<squarelrblack>"	"#25EA")	; square, filled bottom right corner [5 fonts], few fonts draw it
-;("<boxbar>"		"#25EB")	; vertical bar in box [7 fonts], already a TeXmacs symbol, check that the shape agrees
 ;("<trianglecdot>"	"#25EC")	; triangle with centered dot [4 fonts], few fonts draw it
 ;("<triangleleftblack>"	"#25ED")	; up-pointing triangle with left half black [4 fonts], few fonts draw it
 ;("<trianglerightblack>"	"#25EE")	; up-pointing triangle with right half black [4 fonts], few fonts draw it
@@ -213,7 +203,7 @@
 
 ;("<threedangle>"	"#27C0")	; three dimensional angle [4 fonts], few fonts draw it
 ;("<whiteinwhitetriangle>"	"#27C1")	; white triangle containing small white triangle [4 fonts], few fonts draw it
-;("<perp>"		"#27C2")	; perpendicular [12 fonts], already a TeXmacs symbol, check that the shape agrees
+;("<perp>"		"#27C2")	; perpendicular [12 fonts], the name already means U+22A5
 ;("<subsetcirc>"		"#27C3")	; open subset [4 fonts], few fonts draw it
 ;("<supsetcirc>"		"#27C4")	; open superset [4 fonts], few fonts draw it
 ;("<veedot>"		"#27C7")	; or with dot inside [4 fonts], few fonts draw it
@@ -500,7 +490,7 @@
 ;("<intx>"		"#2A18")	; integral with times sign [4 fonts], few fonts draw it
 ;("<intcap>"		"#2A19")	; integral with intersection [4 fonts], few fonts draw it
 ;("<intcup>"		"#2A1A")	; integral with union [4 fonts], few fonts draw it
-;("<upint>"		"#2A1B")	; integral with overbar [4 fonts], few fonts draw it
+;("<upint>"		"#2A1B")	; integral with overbar [4 fonts], the name already means U+222B
 ;("<lowint>"		"#2A1C")	; integral with underbar [4 fonts], few fonts draw it
 ;("<bigtriangleleft>"	"#2A1E")	; large left triangle operator [4 fonts], few fonts draw it
 ;("<zcmp>"		"#2A1F")	; z notation schema composition [4 fonts], few fonts draw it
@@ -519,9 +509,7 @@
 ;("<minusrdots>"		"#2A2C")	; minus sign with rising dots [4 fonts], few fonts draw it
 ;("<opluslhrim>"		"#2A2D")	; plus sign in left half circle [4 fonts], few fonts draw it
 ;("<oplusrhrim>"		"#2A2E")	; plus sign in right half circle [4 fonts], few fonts draw it
-;("<dottimes>"		"#2A30")	; multiplication sign with dot above [4 fonts], already a TeXmacs symbol, check that the shape agrees
 ;("<timesbar>"		"#2A31")	; multiplication sign with underbar [4 fonts], few fonts draw it
-;("<btimes>"		"#2A32")	; semidirect product with bottom closed [4 fonts], already a TeXmacs symbol, check that the shape agrees
 ;("<smashtimes>"		"#2A33")	; smash product [4 fonts], few fonts draw it
 ;("<otimeslhrim>"	"#2A34")	; multiplication sign in left half circle [4 fonts], few fonts draw it
 ;("<otimesrhrim>"	"#2A35")	; multiplication sign in right half circle [4 fonts], few fonts draw it
@@ -630,10 +618,6 @@
 ;("<smte>"		"#2AAC")	; smaller than or equal to [4 fonts], few fonts draw it
 ;("<late>"		"#2AAD")	; larger than or equal to [4 fonts], few fonts draw it
 ;("<bumpeqq>"		"#2AAE")	; equals sign with bumpy above [4 fonts], few fonts draw it
-;("<precneq>"		"#2AB1")	; precedes above single-line not equal to [5 fonts], already a TeXmacs symbol, check that the shape agrees
-;("<succneq>"		"#2AB2")	; succeeds above single-line not equal to [5 fonts], already a TeXmacs symbol, check that the shape agrees
-;("<preceqq>"		"#2AB3")	; precedes above equals sign [6 fonts], already a TeXmacs symbol, check that the shape agrees
-;("<succeqq>"		"#2AB4")	; succeeds above equals sign [6 fonts], already a TeXmacs symbol, check that the shape agrees
 ;("<Prec>"		"#2ABB")	; double precedes [4 fonts], few fonts draw it
 ;("<Succ>"		"#2ABC")	; double succeeds [4 fonts], few fonts draw it
 ;("<subsetdot>"		"#2ABD")	; subset with dot [4 fonts], few fonts draw it
@@ -670,9 +654,6 @@
 ;("<shortuptack>"	"#2AE0")	; short up tack [4 fonts], few fonts draw it
 ;("<perps>"		"#2AE1")	; perpendicular with s [4 fonts], few fonts draw it
 ;("<vDdash>"		"#2AE2")	; vertical bar triple right turnstile [4 fonts], few fonts draw it
-;("<dashV>"		"#2AE3")	; double vertical bar left turnstile [4 fonts], already a TeXmacs symbol, check that the shape agrees
-;("<Dashv>"		"#2AE4")	; vertical bar double left turnstile [4 fonts], already a TeXmacs symbol, check that the shape agrees
-;("<DashV>"		"#2AE5")	; double vertical bar double left turnstile [4 fonts], already a TeXmacs symbol, check that the shape agrees
 ;("<varVdash>"		"#2AE6")	; long dash from left member of double vertical [4 fonts], few fonts draw it
 ;("<Barv>"		"#2AE7")	; short down tack with overbar [4 fonts], few fonts draw it
 ;("<vBar>"		"#2AE8")	; short up tack with underbar [4 fonts], few fonts draw it

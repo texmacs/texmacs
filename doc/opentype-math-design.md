@@ -776,7 +776,9 @@ spacing, and checks the tables with `--check`, which `check.sh` runs when
 `TM_UNICODE_MATH_TABLE` points at the `unicode-math` list. With `--tables`
 it writes the two proposal tables of `TeXmacs/langs/encoding`,
 `tmuniversaltounicode-extra.scm` and its candidates file, which wait for a
-line in `converter.cpp` to come into service.
+line in `converter.cpp` to come into service;
+`tests/opentype/confirmed-symbols.txt` records the names whose shape was
+compared by eye with the glyph of the code point.
 
 ### How to run everything
 

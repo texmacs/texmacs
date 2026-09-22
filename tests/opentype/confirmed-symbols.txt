@@ -1,0 +1,36 @@
+# Symbols that std-symbols.scm already declares and that no table maps,
+# whose glyph was compared by eye with the glyph of the code point below.
+# missing-symbols.py --tables takes the ones listed here as ready.
+#
+# Checked on 22 September 2026 by typesetting <name> next to <#code> in
+# STIX Two Math and comparing the shapes; see tests/build/probe/shapes.tm.
+#
+# name            code    description
+
+<mapsup>          21A5    maps to, upward
+<mapsdown>        21A7    maps to, downward
+<dotminus>        2238    minus sign, dot above
+<nlesssim>        2274    not less, similar
+<ngtrsim>         2275    not greater, similar
+<VDash>           22AB    double vert, double dash
+<sqsubsetneq>     22E4    square subset, not equals
+<sqsupsetneq>     22E5    square superset, not equals
+<obar>            233D    circle with vertical bar
+<boxbar>          25EB    vertical bar in box
+<dottimes>        2A30    multiplication sign with dot above
+<btimes>          2A32    semidirect product with bottom closed
+<precneq>         2AB1    precedes above single-line not equal to
+<succneq>         2AB2    succeeds above single-line not equal to
+<preceqq>         2AB3    precedes above equals sign
+<succeqq>         2AB4    succeeds above equals sign
+<dashV>           2AE3    double vertical bar left turnstile
+<Dashv>           2AE4    vertical bar double left turnstile
+<DashV>           2AE5    double vertical bar double left turnstile
+
+# Left out after looking at them:
+#
+#   <perp>        27C2    one-way mapped to U+22A5 already, ambiguous
+#   <longdashv>   27DE    same shape, but TeXmacs draws its own length
+#   <subsetplus>  2ABF    TeXmacs puts the plus inside, Unicode below
+#   <supsetplus>  2AC0    the same, mirrored
+#   <jmath>       1D6A5   mapped to the text dotless j, not the math italic

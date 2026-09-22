@@ -138,7 +138,10 @@ With `--tables TeXmacs/langs/encoding` it writes two proposal tables there,
 in the shape of the tables beside them: `tmuniversaltounicode-extra.scm`
 with the entries that are ready, and
 `tmuniversaltounicode-extra-candidates.scm` with the rest, every line
-commented and carrying the reason. Nothing loads them until a
+commented and carrying the reason. `confirmed-symbols.txt` next to the
+script lists the names whose shape was compared by eye with the glyph of
+the code point, which is what moves them from the second file to the
+first. Nothing loads them until a
 `hashtree_from_dictionary` line names the first one in
 `src/Data/String/converter.cpp`.
 
