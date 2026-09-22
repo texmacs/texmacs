@@ -422,11 +422,22 @@ TM_TEST_FONT_DIR=/path/to/fonts tests/opentype/render-samples.sh
   font database when the math family has a Bold style (New Computer Modern
   Math, KpMath); it is not yet selected explicitly.
 
-- **Export check.** In the exported PDFs of the samples every TrueType and
-  OpenType font, tuned or not, is embedded as a Type 3 bitmap font (the TeX
-  fonts as Type 1), so native glyphs and assemblies export like any other
-  glyph. Whether this build should embed outlines for OpenType fonts is a
-  separate question of the PDF writer, not of the math work.
+- **Export check.** The first measurement, that every font came out as a
+  Type 3 bitmap font, was an artefact of the build: `configure` had
+  switched off the native PDF renderer because it did not find `png.h`
+  (Homebrew keeps it in `libpng/include/libpng16`, which the bare
+  compile of the header check does not see). Reconfigured with
+  `CPPFLAGS=-I/opt/homebrew/opt/libpng/include/libpng16 -I/opt/homebrew/include`
+  the renderer is compiled in, and the exported samples embed subsets of
+  the real fonts: `LatinModernMath-Regular`, `NewCMMath-Regular`,
+  `STIXTwoMath-Regular`, `KpSans-Italic` and so on, 78 subsets in the
+  showcase. Delimiter variants and assemblies come out of those subsets and
+  render correctly. Only thirteen small Type 3 bitmap fonts are left, for
+  the glyphs TeXmacs draws itself: emulated blackboard bold and bold, and
+  some glued shapes. Note that a reconfigure also rewrites `TeXmacs/SVNREV`
+  from `svnversion`, which prints "Unversioned directory" in a git
+  checkout; `make SAFE_TEXMACS_REV` puts the expected version back,
+  otherwise the binary refuses its own `TEXMACS_PATH`.
 
 - **Scanning and shipping.** Files already recorded in the font database
   (same name and size) are no longer re-read when scanning, and styles
@@ -601,9 +612,11 @@ guard hand-tuned corrections, which keep precedence.
   noticed when a document asks for it.
 - The samples are compared against stored reference renders by hand; the
   check script does not fail on a pixel difference, it only reports it.
-- PDF export embeds every TrueType and OpenType font as a Type 3 bitmap
-  font, which is a property of this build's PDF writer rather than of the
-  math work, but it means no outline embedding for the math fonts.
+- The glyphs TeXmacs glues together itself still export as Type 3 bitmap
+  fonts (`/ProcSet [ /PDF /ImageB ]`), where the PDF writer could place
+  the parts as vectors; `pdf_hummus_renderer.cpp` has a disused path for
+  that. It concerns emulated alphabets more than the MATH assemblies,
+  which come from the embedded subsets.
 
 ## 8. Hand-made constructions in the typesetter and their MATH counterparts
 

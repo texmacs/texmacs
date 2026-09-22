@@ -61,6 +61,19 @@ Two test sources are left out of this harness: `xml_test`, which includes a
 source file that is already part of the main build, and `mac_images_test`,
 whose functions `mac_images.h` does not declare in a Qt 6 build.
 
+The renders and the pixel diffs depend on the PDF writer of the build. With
+the native (Hummus) PDF renderer the exported fonts are real subsets, and
+without it every glyph becomes a Type 3 bitmap, which changes the
+anti-aliasing of every page. Configure with
+
+```
+CPPFLAGS='-I/opt/homebrew/opt/libpng/include/libpng16 -I/opt/homebrew/include'
+```
+
+on macOS to get the native renderer ("hummus support for native pdf
+exports... enabled"), and rerun `make SAFE_TEXMACS_REV` afterwards, since a
+reconfigure overwrites `TeXmacs/SVNREV` with the output of `svnversion`.
+
 Because dependency tracking may be disabled in the main build, run
 `make -C tests check-stale` after changing a header and remove the listed
 objects before rebuilding.
