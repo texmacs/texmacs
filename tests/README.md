@@ -134,6 +134,14 @@ With `--check` it verifies the tables themselves, that no name is given two
 code points and no code point two two-way names, and exits non-zero on a
 failure. `check.sh` runs it when `TM_UNICODE_MATH_TABLE` points at the list.
 
+With `--tables TeXmacs/langs/encoding` it writes two proposal tables there,
+in the shape of the tables beside them: `tmuniversaltounicode-extra.scm`
+with the entries that are ready, and
+`tmuniversaltounicode-extra-candidates.scm` with the rest, every line
+commented and carrying the reason. Nothing loads them until a
+`hashtree_from_dictionary` line names the first one in
+`src/Data/String/converter.cpp`.
+
 
 The sample `math-overview.tm` typesets the same formulas with TeX fonts,
 the shipped TeX Gyre and STIX fonts, and several OpenType math fonts, so the

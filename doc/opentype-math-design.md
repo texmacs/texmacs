@@ -773,7 +773,10 @@ into `src/opentype-math/`, which is the gallery of `src/OPENTYPEMATH.md`.
 name for. The same script drafts the entries for a family with `--emit`,
 the encoding lines and the `std-symbols.scm` group that gives them their
 spacing, and checks the tables with `--check`, which `check.sh` runs when
-`TM_UNICODE_MATH_TABLE` points at the `unicode-math` list.
+`TM_UNICODE_MATH_TABLE` points at the `unicode-math` list. With `--tables`
+it writes the two proposal tables of `TeXmacs/langs/encoding`,
+`tmuniversaltounicode-extra.scm` and its candidates file, which wait for a
+line in `converter.cpp` to come into service.
 
 ### How to run everything
 
