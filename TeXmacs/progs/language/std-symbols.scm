@@ -181,8 +181,24 @@
     (:limits always)
     "<equallim>" "<longequallim>" "<longequivlim>")
 
+  ;; Relations of the unicode-math list which TeXmacs had no name for
+  ;; before; the names come from langs/encoding/tmuniversaltounicode-extra.scm
+  (define Unicode-relation-symbol
+    (:type infix)
+    (:penalty 20)
+    (:spacing wide wide)
+
+    "<Colon>" "<Coloneq>" "<DashVDash>" "<Equiv>" "<Vbar>" "<approxident>"
+    "<arceq>" "<assert>" "<backcong>" "<barV>" "<dashVdash>" "<dashcolon>"
+    "<dotsminusdots>" "<dualmap>" "<eqcolon>" "<eqdef>" "<eqgtr>"
+    "<eqless>" "<equalparallel>" "<geqqslant>" "<imageof>"
+    "<kernelcontraction>" "<leqqslant>" "<mathratio>" "<measeq>"
+    "<multimapinv>" "<ngtrless>" "<nlessgtr>" "<origof>" "<questeq>"
+    "<simneqq>" "<smallin>" "<smallni>" "<stareq>" "<veeeq>" "<vlongdash>"
+    "<wedgeq>")
+
   (define Relation-symbol
-    Relation-nolim-symbol Relation-lim-symbol)
+    Relation-nolim-symbol Relation-lim-symbol Unicode-relation-symbol)
 
   (define Arrow-nolim-symbol
     (:type infix)
@@ -237,8 +253,20 @@
     "<longleftleftarrowslim>" "<longleftrightarrowslim>"
     "<longrightleftarrowslim>" "<longrightrightarrowslim>")
 
+  ;; Arrows of the unicode-math list
+  (define Unicode-arrow-symbol
+    (:type infix)
+    (:penalty 20)
+    (:spacing default default)
+
+    "<Ldsh>" "<Longmapsfrom>" "<Longmapsto>" "<Mapsfrom>" "<Mapsto>"
+    "<Nearrow>" "<Nwarrow>" "<Rdsh>" "<Searrow>" "<Swarrow>"
+    "<downuparrows>" "<leftthreearrows>" "<longleftsquigarrow>"
+    "<longrightsquigarrow>" "<rightarrowonoplus>" "<rightthreearrows>"
+    "<twoheaddownarrow>" "<twoheaduparrow>" "<updownarrows>")
+
   (define Arrow-symbol
-    Arrow-nolim-symbol Arrow-lim-symbol)
+    Arrow-nolim-symbol Arrow-lim-symbol Unicode-arrow-symbol)
 
   (define Union-symbol
     (:type infix)
@@ -314,8 +342,20 @@
     (:spacing multiply multiply)
     "*")
 
+  ;; Binary operators of the unicode-math list
+  (define Unicode-binary-symbol
+    (:type infix)
+    (:penalty 40)
+    (:spacing default default)
+
+    "<barvee>" "<circledequal>" "<concavediamond>"
+    "<concavediamondtickleft>" "<concavediamondtickright>" "<cupdot>"
+    "<cupleftarrow>" "<divslash>" "<fracslash>" "<invlazys>"
+    "<lozengeminus>" "<ogreaterthan>" "<olessthan>" "<tieconcat>" "<upand>"
+    "<vectimes>" "<vysmblkcircle>")
+
   (define Times-symbol
-    Times-visible-symbol Times-invisible-symbol)
+    Times-visible-symbol Times-invisible-symbol Unicode-binary-symbol)
 
   (define Over-regular-symbol
     (:type infix)
@@ -435,6 +475,7 @@
 
   (define Open-symbol
     (:type opening-bracket)
+    "<lbag>" "<lgroup>"
     "(" "[" "{"
     "<lvert>" "<lVert>"
     "<lfloor>" "<lceil>" "<langle>"
@@ -461,6 +502,7 @@
 
   (define Close-symbol
     (:type closing-bracket)
+    "<rbag>" "<rgroup>"
     "}" "]" ")"
     "<rvert>" "<rVert>"
     "<rfloor>" "<rceil>" "<rangle>"
@@ -488,6 +530,9 @@
 
   (define Letter-symbol
     (:type symbol)
+
+    ;; from the unicode-math list
+    "<Angstrom>" "<BbbGamma>" "<BbbPi>" "<Bbbgamma>"
 
     "<mathe>" "<mathi>" "<mathlambda>" "<mathpi>"
     "<matheuler>" "<mathcatalan>" "<mathGamma>"
@@ -675,7 +720,31 @@
     "<pitchfork>" "<smallfrown>" "<smallsmile>" "<sphericalangle>"
     "<square>" "<thorn>" "<triangledown>"
     "<ulcorner>" "<urcorner>" "<varkappa>"
-    "<varnothing>" "<vartriangle>" "<yen>")
+    "<varnothing>" "<vartriangle>" "<yen>"
+
+    ;; from the unicode-math list
+    "<Eulerconst>" "<Finv>" "<Game>" "<Planckconst>" "<QED>" "<backdprime>"
+    "<backtrprime>" "<bigblacktriangledown>" "<bigblacktriangleup>"
+    "<blanksymbol>" "<blockfull>" "<blockhalfshaded>" "<blockqtrshaded>"
+    "<blockthreeqtrshaded>" "<carriagereturn>" "<diamondcdot>"
+    "<dottedsquare>" "<downwhitearrow>" "<dprime>" "<euro>"
+    "<hermitmatrix>" "<horizbar>" "<hrectangle>" "<hrectangleblack>"
+    "<increment>" "<intbottom>" "<intextender>" "<inttop>" "<lbracelend>"
+    "<lbracemid>" "<lbraceuend>" "<lbrackextender>" "<lbracklend>"
+    "<lbrackuend>" "<leftdasharrow>" "<leftwhitearrow>" "<lgblkcircle>"
+    "<linefeed>" "<lparenextender>" "<lparenlend>" "<lparenuend>"
+    "<mathhyphen>" "<mathvisiblespace>" "<mdblkcircle>" "<mdblkdiamond>"
+    "<mdblksquare>" "<mdlgblkdiamond>" "<mdsmblkcircle>" "<mdsmwhtcircle>"
+    "<mdwhtcircle>" "<mdwhtdiamond>" "<mdwhtlozenge>" "<mdwhtsquare>"
+    "<measuredrightangle>" "<mitBbbD>" "<mitBbbd>" "<mitBbbe>" "<mitBbbi>"
+    "<mitBbbj>" "<obrbrak>" "<qprime>" "<rbracelend>" "<rbracemid>"
+    "<rbraceuend>" "<rbrackextender>" "<rbracklend>" "<rbrackuend>"
+    "<rightangle>" "<rightdasharrow>" "<rightwhitearrow>"
+    "<rparenextender>" "<rparenlend>" "<rparenuend>" "<sinewave>"
+    "<smblksquare>" "<smwhtcircle>" "<smwhtsquare>" "<sqrtbottom>"
+    "<sumbottom>" "<sumtop>" "<trprime>" "<turnednot>" "<twolowline>"
+    "<ubrbrak>" "<upwhitearrow>" "<varclubsuit>" "<varlrtriangle>"
+    "<varspadesuit>" "<vbraceextender>")
 
   (define Spacing-visible-symbol
     (:type infix)
@@ -721,9 +790,20 @@
   ;;  "deg" "det" "dim" "exp" "hom" "ker" "lg" "ln" "log"
   ;;  "Pr" "sec" "sin" "sinh" "tan" "tanh")
 
+  ;; Operators of the unicode-math list, integrals and big operators
+  (define Unicode-operator-symbol
+    (:type unary)
+    (:penalty invalid)
+    (:spacing none none)
+
+    "<Bbbsum>" "<awint>" "<bigbot>" "<bigcupdot>" "<bigtimes>" "<bigtop>"
+    "<fint>" "<intclockwise>" "<ointctrclockwise>" "<sqint>"
+    "<varointclockwise>")
+
   (define Unary-operator-symbol
     Unary-operator-glyph-symbol
-    Unary-operator-textual-symbol)
+    Unary-operator-textual-symbol
+    Unicode-operator-symbol)
 
   (define Binary-operator-symbol
     (:type binary)

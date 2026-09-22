@@ -233,6 +233,47 @@
   Uptau Upupsilon Upphi Upchi Uppsi Upomega)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Symbols of the unicode-math package
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; The names TeXmacs took from unicode-math when its symbol tables were
+;; extended; see langs/encoding/tmuniversaltounicode-extra.scm. A document
+;; that uses one of them exports with \usepackage{unicode-math}, which
+;; needs LuaLaTeX or XeLaTeX; a document that uses none is unaffected.
+
+(logic-group latex-unicodemath-symbol%
+  Angstrom approxident arceq assert awint backcong backdprime backtrprime
+  barV barvee Bbbgamma BbbGamma BbbPi Bbbsum bigblacktriangledown
+  bigblacktriangleup bigbot bigcupdot bigtop blanksymbol blockfull
+  blockhalfshaded blockqtrshaded blockthreeqtrshaded btimes carriagereturn
+  circledequal Colon Coloneq concavediamond concavediamondtickleft
+  concavediamondtickright cupdot cupleftarrow dashcolon dashV Dashv DashV
+  DashVDash dashVdash diamondcdot divslash dotminus dotsminusdots
+  dottedsquare dottimes downuparrows downwhitearrow dprime dualmap eqcolon
+  eqdef eqgtr eqless equalparallel Equiv Eulerconst euro fint fracslash
+  geqqslant hermitmatrix horizbar hrectangle hrectangleblack imageof
+  increment intbottom intclockwise intextender inttop invlazys
+  kernelcontraction lbracelend lbracemid lbraceuend lbrackextender
+  lbracklend lbrackuend Ldsh leftdasharrow leftthreearrows leftwhitearrow
+  leqqslant lgblkcircle lgroup linefeed longleftsquigarrow Longmapsfrom
+  Longmapsto longrightsquigarrow lozengeminus lparenextender lparenlend
+  lparenuend mapsdown Mapsfrom Mapsto mapsup mathhyphen mathratio
+  mathvisiblespace mdblkcircle mdblkdiamond mdblksquare mdlgblkdiamond
+  mdsmblkcircle mdsmwhtcircle mdwhtcircle mdwhtdiamond mdwhtlozenge
+  mdwhtsquare measeq measuredrightangle mitBbbD mitBbbd mitBbbe mitBbbi
+  mitBbbj multimapinv Nearrow ngtrless ngtrsim nlessgtr nlesssim Nwarrow
+  obrbrak ointctrclockwise origof Planckconst preceqq precneq QED qprime
+  questeq rbracelend rbracemid rbraceuend rbrackextender rbracklend
+  rbrackuend Rdsh rgroup rightangle rightarrowonoplus rightdasharrow
+  rightthreearrows rightwhitearrow rparenextender rparenlend rparenuend
+  Searrow simneqq sinewave smallin smallni smblksquare smwhtcircle
+  smwhtsquare sqint sqrtbottom sqsubsetneq sqsupsetneq stareq succeqq
+  succneq sumbottom sumtop Swarrow tieconcat trprime turnednot
+  twoheaddownarrow twoheaduparrow twolowline ubrbrak upand updownarrows
+  upwhitearrow varclubsuit varlrtriangle varointclockwise varspadesuit Vbar
+  vbraceextender VDash vectimes veeeq vlongdash vysmblkcircle wedgeq)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Rules
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -254,4 +295,6 @@
   ((latex-symbol% 'x) (latex-textcomp-symbol% 'x))
   ((latex-needs% 'x "textcomp") (latex-textcomp-symbol% 'x))
   ((latex-symbol% 'x) (latex-upgreek-symbol% 'x))
-  ((latex-needs% 'x "upgreek") (latex-upgreek-symbol% 'x)))
+  ((latex-needs% 'x "upgreek") (latex-upgreek-symbol% 'x))
+  ((latex-symbol% 'x) (latex-unicodemath-symbol% 'x))
+  ((latex-needs% 'x "unicode-math") (latex-unicodemath-symbol% 'x)))

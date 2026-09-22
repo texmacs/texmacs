@@ -6,10 +6,12 @@
   <doc-data|<doc-title|Symbols added to the conversion tables>|
   <doc-subtitle|200 names, from the list of unicode-math>>
 
-  Every symbol below has a name in
-  <verbatim|tmuniversaltounicode-extra.scm> and nowhere else. A name
-  the tables do not serve shows as a box or an error rather than a
-  glyph, so this document is also the test of that table.
+  Every symbol below is named in
+  <verbatim|tmuniversaltounicode-extra.scm>, classed in
+  <verbatim|std-symbols.scm> and exported by
+  <verbatim|latex-symbol-drd.scm> under the name unicode-math gives
+  it. A name the tables fail to serve shows as a box or an error
+  rather than a glyph, so this document tests them as well.
 
   <section|Punctuation>
 
@@ -65,8 +67,9 @@
 
   <section|In a formula>
 
-  A symbol with no class in <verbatim|std-symbols.scm> carries no
-  spacing. Compare a named and classed symbol with the new ones:
+  Each of these symbols has a class in <verbatim|std-symbols.scm>, so
+  it carries the spacing of its kind. Next to an older symbol, a
+  binary operator, two relations, an ordinary symbol and a product:
 
   <\equation*>
     a\<oplus\>b\<space\>a\<dotminus\>b\<space\>a\<Equiv\>b\<space\>a\<Colon\>b\<space\>a\<QED\>b\<space\>a\<vectimes\>b

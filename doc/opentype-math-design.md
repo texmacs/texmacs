@@ -717,13 +717,26 @@ prints, the `get_unicode_range` experiment) were dropped.
   tables fail to serve appears as a box rather than a glyph; it is part of
   the sample renders.
 
-  Two things they do not have yet. A class in `std-symbols.scm`, so they
-  typeset with no spacing, which the last section of that sample
-  demonstrates next to `<oplus>`. And a LaTeX name: export writes
-  `\nonconverted{QED}`, because `latex-symbol%` in
-  `progs/convert/latex/latex-symbol-drd.scm` does not list them. Adding
-  them there is mechanical, since the names come from `unicode-math`, but
-  it is also a decision: the exported document then needs that package.
+- **The extra symbols behave like mathematics.** They have their class in
+  `std-symbols.scm` now, so they carry the spacing of their kind. The
+  placement was made family by family, not mechanically: the relations of
+  the unicode-math list join `Relation-symbol` through a group of their
+  own, the arrows join `Arrow-symbol`, the binary operators `Times-symbol`,
+  the integrals and big operators `Unary-operator-symbol`, the ordinary
+  ones and the letters go into `Miscellaneous-symbol` and `Letter-symbol`,
+  and the four brackets into `Open-symbol` and `Close-symbol`. Arrows were
+  separated from relations by their Unicode block, since unicode-math calls
+  both `\mathrel`. The nineteen names that already had a class keep it.
+
+  They also export. `latex-unicodemath-symbol%` in
+  `progs/convert/latex/latex-symbol-drd.scm` lists the 191 names LaTeX did
+  not know, with the two rules that make them symbols and record that they
+  need `unicode-math`, the package that defines them. A document that uses
+  one exports with `\usepackage{unicode-math}` in its preamble and `\QED`
+  in its text instead of `\nonconverted{QED}`; a document that uses none is
+  unaffected, since TeXmacs declares a package only for the commands that
+  occur. The round trip holds: exported to LaTeX and read back, `\QED`
+  returns as `<QED>`.
 
 ## 5. Tests
 
