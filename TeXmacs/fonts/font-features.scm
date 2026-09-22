@@ -1112,6 +1112,7 @@
 (Wolgast\ Two Wolgast\ Two Italic ArtPen Attached Handwritten)
 (XCharter XCharter)
 (XCharter\ Math XCharter\ Math)
+(XCharter-Math-Bold XCharter\ Math Bold)
 (Xingkai\ SC Xingkai\ SC ArtPen Handwritten)
 (Xits Xits)
 (XITS\ Math XITS\ Math)

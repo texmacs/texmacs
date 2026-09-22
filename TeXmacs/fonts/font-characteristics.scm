@@ -2782,6 +2782,8 @@
 ((XCharter Italic) (Ascii Latin mono=no sans=no slant=19 italic=yes case=mixed regular=yes ex=81 em=172 lvw=16 lhw=8 uvw=19 uhw=9 fillp=31 vcnt=32 lasprat=96 pasprat=90 loasc=151 lodes=144 dides=111))
 ((XCharter Roman) (Ascii Latin mono=no sans=no slant=0 italic=no case=mixed regular=yes ex=80 em=180 lvw=18 lhw=8 uvw=21 uhw=11 fillp=35 vcnt=33 lasprat=102 pasprat=92 loasc=155 lodes=145 dides=111))
 ((XCharter Slanted) (Ascii Latin mono=no sans=no slant=20 italic=no case=mixed regular=yes ex=80 em=185 lvw=18 lhw=8 uvw=21 uhw=11 fillp=31 vcnt=32 lasprat=103 pasprat=101 loasc=155 lodes=145 dides=111))
+((XCharter\ Math Regular) (Ascii Greek MathSymbols MathLetters mono=no sans=no slant=0 italic=no case=mixed regular=yes ex=81 em=177 lvw=19 lhw=8 uvw=22 uhw=11 fillp=35 vcnt=34 lasprat=101 pasprat=93 loasc=153 lodes=145 dides=112))
+((XCharter-Math-Bold Bold) (Ascii Greek MathLetters mono=no sans=no slant=0 italic=no case=mixed regular=yes ex=82 em=179 lvw=28 lhw=10 uvw=30 uhw=12 fillp=45 vcnt=45 lasprat=106 pasprat=100 loasc=151 lodes=146 dides=110))
 ((Xingkai\ SC Bold) (Ascii CJK mono=no sans=no slant=56 italic=yes case=mixed regular=no ex=63 em=220 lvw=15 lhw=17 uvw=22 uhw=12 fillp=37 vcnt=42 lasprat=90 pasprat=98 loasc=171 lodes=168 dides=104))
 ((Xingkai\ SC Light) (Ascii CJK mono=no sans=no slant=56 italic=yes case=mixed regular=yes ex=61 em=262 lvw=8 lhw=11 uvw=11 uhw=9 fillp=23 vcnt=21 lasprat=107 pasprat=101 loasc=178 lodes=177 dides=106))
 ((Xits Bold) (Ascii Latin Greek Cyrillic MathSymbols mono=no sans=no slant=0 italic=no case=mixed regular=yes ex=77 em=203 lvw=32 lhw=6 uvw=37 uhw=7 fillp=45 vcnt=44 lasprat=105 pasprat=98 loasc=149 lodes=145 dides=102))

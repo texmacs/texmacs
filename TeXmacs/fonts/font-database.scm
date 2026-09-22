@@ -2820,6 +2820,8 @@
 ((XCharter Italic) ((XCharter-Italic.otf 0 120748)))
 ((XCharter Roman) ((XCharter-Roman.otf 0 128828)))
 ((XCharter Slanted) ((XCharter-Slanted.otf 0 130712)))
+((XCharter\ Math Regular) ((XCharter-Math.otf 0 366504)))
+((XCharter-Math-Bold Bold) ((XCharter-Math-Bold.otf 0 145908)))
 ((Xingkai\ SC Bold) ((Xingkai.ttc 0 14454688)))
 ((Xingkai\ SC Light) ((Xingkai.ttc 1 14454688)))
 ((Xits Bold) ((XITS-Bold.otf 0 154176)))

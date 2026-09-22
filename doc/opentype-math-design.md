@@ -694,6 +694,18 @@ prints, the `get_unicode_range` experiment) were dropped.
   path. An existing `font_cache.scm` keeps pointing at the old files, so it
   has to be cleared once, from Tools.
 
+- **XCharter Math in the database.** The profile named a font the database
+  did not know, so `<with|font|XCharter Math>` resolved by feature distance
+  to whatever came closest, which was Alegreya. The two faces TeX Live
+  ships are now listed in `font-database.scm` and
+  `font-characteristics.scm`, with the values TeXmacs's own scanner
+  produces, and the bold one is attached to the master `XCharter Math` in
+  `font-features.scm`, so a bold formula in that family uses
+  `XCharter-Math-Bold.otf` instead of an emulated bold. The upstream name
+  table of that face calls its family `XCharter-Math-Bold` rather than
+  `XCharter Math` with subfamily `Bold`, which is why the database entry
+  has that spelling: it is what a user's own scan produces.
+
 ## 5. Tests
 
 ### Unit tests
