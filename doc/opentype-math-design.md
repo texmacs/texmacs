@@ -233,7 +233,7 @@ both the bitmap compiler and the vector `draw_tree` path.
 Each consumer guards with `math_type == MATH_TYPE_OPENTYPE` and a non-zero
 constant, so fonts with a degenerate MATH table fall back to the old code.
 
-## 4. Status (updated 21 September 2026)
+## 4. Status (updated 22 September 2026)
 
 Work done on top of the port, in the order of the plan below:
 
@@ -894,3 +894,26 @@ with no hand-drawn construction and compares well with LuaLaTeX's
 render exactly as before with the switch on; every installed Tier 1 font
 has a profile and passes the profile test; all unit tests and both sample
 renders pass.
+
+### Where this stands, 22 September 2026
+
+Met, with three things worth naming exactly:
+
+- Glyphs still drawn by TeXmacs for an untuned OpenType math font are the
+  ones the specification also prescribes as rules (fraction bars, the
+  radical overline, over- and underlines) and the alphabets a font does
+  not have (blackboard bold and script in most fonts, where the emulation
+  is mixed with the letters the font does provide, silently).
+- The comparison against `unicode-math` under LuaLaTeX covers radicals,
+  bars, scripts, fractions, binomials, integrals and big operators
+  (`tests/opentype/compare-lualatex.sh`), not accents, delimiters at every
+  size or kerning.
+- The profile test checks the math font of every profile, its family name
+  and its MATH table, but not that the text, sans and typewriter
+  companions it names are installed.
+
+Everything under "What is still missing" is either deliberate
+(`delimitedSubFormulaMinHeight`, the device tables, the stack constants
+for `above`) or a small, named gap. The twenty-two tests of
+`opentype_font_test`, the eleven of `tt_tools_test`, the other seventeen
+test binaries and the three samples, tuned and untuned, pass.
