@@ -433,94 +433,82 @@ TM_TEST_FONT_DIR=/path/to/fonts tests/opentype/render-samples.sh
 
 ## 6. Known defects still open
 
-1. The delimiter search still probes `<left-x-N>` for increasing `N` and
-   measures; assemblies grow by one extender per step, so the chosen size
-   can exceed the request by up to one extender. Parts are glued on their
-   ink boxes rather than on their advances.
-2. `parse_variant` requires exactly three dash-separated tokens.
-3. The glue function `font-database-search` (four arguments) blocks for
-   minutes on some families, apparently in an external lookup; no Scheme
-   code calls it, it is a debugging entry point.
-4. `ysup_hi_lim` has no MATH counterpart and is set to
+1. The radical of Latin Modern Math leaves a gap to its overline and the
+   root index of Asana Math sits too far left: the rule is placed from the
+   box, not from the top of the radical glyph, and
+   `radicalKernBeforeDegree` is loaded but its use in `sqrt_box` is
+   commented out.
+2. `parse_variant` requires exactly three dash-separated tokens, so a
+   rubber name whose root contains a dash would not parse.
+3. `ysup_hi_lim` has no MATH counterpart and is set to
    `max (superscriptShiftUp, x-height)`.
-5. Script sizes still come from `script ()` (2/3 per level), not from
-   `scriptPercentScaleDown`; the environment computes them before the font
-   is known.
-6. The radical sign of Latin Modern Math shows a gap to its overline, and
-   the root index of Asana Math sits too far left: the radical constants
-   need a closer look.
+4. The glue function `font-database-search` (four arguments) blocks for
+   minutes on some families, waiting on something external rather than
+   looping. No Scheme code calls it; it is a debugging entry point.
+5. Assembled glyphs are glued on the measured ink of their parts, corrected
+   to the advances of the table. The result matches the table within pixel
+   rounding, but a font whose parts have unusual side bearings could still
+   show a seam.
 
 ## 7. What is still missing
 
-### 7.1 Constants parsed but unused
+### 7.1 The kerning of ordinary letters (the largest gap)
+
+TeXmacs reads kerning through `FT_Get_Kerning`, which only sees the legacy
+`kern` table. Modern OpenType math fonts carry their kerning in GPOS
+instead, and most ship no `kern` table at all, so adjacent letters in a
+formula are set without kerning. The MATH cut-in kerning that we do
+implement applies only between a base and its scripts, not between letters.
+A small GPOS pair-positioning reader, on the model of
+`parse_gsub_feature`, would close this; it is the change with the widest
+visible effect left.
+
+### 7.2 Constants parsed but still unused
 
 | Group | Constants | Where they would apply |
 |---|---|---|
-| Scripts | `superscriptBaselineDropMax`, `subscriptBaselineDropMin`, `subSuperscriptGapMin`, `superscriptBottomMaxWithSubscript`, `spaceAfterScript` | `side_box_rep`: the drop limits for tall bases, the gap between a sub- and a superscript (now `fn->sep`), the space after a script |
+| Bars | `overbarVerticalGap`, `overbarRuleThickness`, `overbarExtraAscender` and the three `underbar` twins | `<wide-bar>` and `<wide-underline>`, which still use `wline` and `sep` |
+| Stacks | `stackTopShiftUp`, `stackTopDisplayStyleShiftUp`, `stackBottomShiftDown`, `stackBottomDisplayStyleShiftDown`, `stackGapMin`, `stackDisplayStyleGapMin`, `stretchStack*` | `above`, `below` and binomials without a bar; limits already use the limit constants |
+| Delimiters | `delimitedSubFormulaMinHeight` | the minimum size of delimiters around a sub-formula |
+| Radicals | `radicalKernBeforeDegree` | commented out in `sqrt_box`, see defect 1 |
+| Fine positioning | device tables | parsed but never applied; they matter only at small sizes on screen |
+| Assemblies | `GlyphAssembly.italicsCorrection` | ignored |
 | Axis | `mathLeading` | not needed by TeXmacs |
-| Accents | `accentBaseHeight`, `flattenedAccentBaseHeight` | `wide_box_rep` accent placement and flattened accent selection |
-| Stacks | `stackTopShiftUp`, `stackTopDisplayStyleShiftUp`, `stackBottomShiftDown`, `stackBottomDisplayStyleShiftDown`, `stackGapMin`, `stackDisplayStyleGapMin`, `stretchStack*` | `stack` / `binom` style constructions and `above`/`below` |
-| Bars | `overbarVerticalGap`, `overbarRuleThickness`, `overbarExtraAscender`, `underbar*` | `<wide-bar>`, `<wide-underline>` |
-| Skewed fractions | `skewedFractionHorizontalGap`, `skewedFractionVerticalGap` | not a TeXmacs primitive today |
-| Radicals | `radicalKernBeforeDegree` | commented out in `sqrt_box` |
-| Sizes | `scriptPercentScaleDown`, `scriptScriptPercentScaleDown` | `get_script_size` in the environment |
-| Operators | `delimitedSubFormulaMinHeight` | minimum delimiter size |
+| Skewed fractions | `skewedFractionHorizontalGap`, `skewedFractionVerticalGap` | no TeXmacs primitive today |
 
-### 7.2 Glyph information not used
+### 7.3 Profile keys declared but not consumed
 
-- **Top accent attachment**: parsed into `top_accent`, never read. Accents
-  are still centered on the ink box with `above_correct` tables.
-- **Extended shape coverage**: parsed, never read. The spec uses it to keep
-  superscripts on tall delimiters from being raised.
-- **Italic correction of assemblies** and the per-variant advance
-  measurements (except for display operators) are ignored.
-- **Device tables** are not applied.
+`fonts-opentype.scm` records `sans`, `mono`, `bold-math` and `group` for
+every font, and nothing reads them yet:
 
-### 7.3 Variants and assemblies
+- `sans` and `mono` should serve math sans serif and math typewriter,
+  which today fall back to the text families of the document.
+- `bold-math` should select a real bold math font for a bold math series
+  (New Computer Modern Math, KpMath and XITS Math have one) instead of
+  stroking the regular one. Where the bold face sits in the same family,
+  as in New Computer Modern, the database may already find it; nothing
+  makes that deliberate.
+- A key for the alphabets a font really provides is still missing, so an
+  incomplete alphabet (Latin Modern Math has 18 of 52 script letters) is
+  silently mixed with emulated glyphs instead of being declared.
 
-- Let `get_delimiter` (`text_boxes.cpp`) ask the font for the smallest
-  variant or assembly reaching a target height instead of probing
-  `<left-x-N>` and measuring; with a target height the connector overlaps
-  can be stretched to fit exactly, as the specification intends.
-- Route horizontal variants through `wide_box` / `get_wide` for wide
-  accents, braces and arrows; today only rubber names reach them.
-- `<big-x-N>` for `N > 2`, and the interplay with `supports_big_operators`
-  (still name based).
+### 7.4 Name-based logic not yet profile-driven
 
-### 7.4 Activation and integration
+`supports_big_operators` in `poor_rubber.cpp` still matches family names
+to decide whether a font's own big operators are usable. The remaining
+`stix` and `agella` name tests in the typesetter are deliberate: they
+guard hand-tuned corrections, which keep precedence.
 
-- `is_math_family` in `smart_font.cpp` is a fixed list (`roman`, `concrete`,
-  `Euler`, `ENR`). For any other family, letters in math mode are routed to
-  the `fast-italic` text font and Unicode math alphanumerics are rewritten,
-  so an OpenType math font never supplies its own italic letters, and their
-  italic corrections and cut-in kerns are lost. Fonts with a MATH table
-  should be treated as math families, with letters mapped to the plane 1
-  code points of the same font.
-- Let STIX and TeX Gyre Math use the MATH table for what their hand-tuned
-  tables do not cover (delimiter variants and assemblies, fraction,
-  radical and limit constants). The hand-tuned tables are better than the
-  font data and keep precedence: MATH activation must happen before the
-  per-family branches of the constructor ladder, and a correction table
-  entry must win over the MATH italic correction and kern for that glyph.
-- Replace the family-name tests in `poor_rubber.cpp`, `concat_math.cpp` and
-  `math_boxes.cpp` with `math_type` checks.
-- A preference to enable or disable MATH-table typesetting for comparison.
+### 7.5 Testing and export
 
-### 7.5 Beyond the MATH table
-
-- GSUB `ssty` script-style alternates and `dtls`.
-- GPOS kerning instead of the legacy `kern` table.
-- Bypass the virtual bold and blackboard-bold emulation for fonts with
-  complete plane 1 alphabets.
-- Verify `<@XXXX>` glyphs and assemblies in PDF, PostScript and SVG export.
-
-### 7.6 Engineering
-
-- Enable dependency tracking in the autotools build, or add a rule that
-  invalidates objects on header changes.
-- Cache assembled glyphs without rebuilding the virtual font.
-- Extend the sample documents (accents, limits in text style, left scripts,
-  primes) and keep reference PNGs for the pixel diff.
+- No test asserts that every installed profile resolves: that its file
+  exists, that the family name matches and that the text companions are
+  found.
+- The samples are compared against stored reference renders by hand; the
+  check script does not fail on a pixel difference, it only reports it.
+- PDF export embeds every TrueType and OpenType font as a Type 3 bitmap
+  font, which is a property of this build's PDF writer rather than of the
+  math work, but it means no outline embedding for the math fonts.
 
 ## 8. Hand-made constructions in the typesetter and their MATH counterparts
 
