@@ -148,7 +148,11 @@ FreeType is loaded dynamically (`free_type.cpp`) or linked; only a small set
 of entry points is used: new memory face, select charmap, set char size, get
 char index, load glyph, render glyph, get kerning.
 
-- `tt_file.cpp`: locates font files. `tt_font_path ()` concatenates
+- `tt_file.cpp`: locates font files. `tt_font_find_sub` tries the sfnt
+  formats first, `.otf`, `.ttf` and `.ttc`, then Type 1 `.pfb` and
+  `.dfont`; a TeX distribution ships many families in both forms and the
+  Type 1 file carries a TeX encoding rather than a Unicode cmap.
+  `tt_font_path ()` concatenates
   `$TEXMACS_FONT_PATH`, the "imported fonts" preference,
   `$TEXMACS_HOME_PATH/fonts/truetype`, `$TEXMACS_PATH/fonts/truetype`, and
   platform system directories. On macOS `texlive_font_dirs` scans

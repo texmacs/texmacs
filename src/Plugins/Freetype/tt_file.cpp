@@ -161,16 +161,19 @@ tt_font_find_sub (string name) {
   //cout << "tt_font_find " << name << "\n";
   url u= tt_unpack (name);
   if (!is_none (u)) return u;
-  u= tt_locate (name * ".pfb");
-  //if (!is_none (u)) cout << name << " -> " << u << "\n";
+  // The sfnt formats come first, and Type 1 last. A TeX distribution ships
+  // many families in both forms, and the Type 1 file carries the encoding
+  // of the TeX world: in XCharter-Roman.pfb the code of 'a' is the pound
+  // sign and the code of 'A' is 'a'. TeXmacs asks for characters by Unicode
+  // and needs the cmap of the sfnt file. The same choice gives the PDF
+  // writer real glyph indices instead of character codes.
+  u= tt_locate (name * ".otf");
   if (!is_none (u)) return u;
   u= tt_locate (name * ".ttf");
-  //if (!is_none (u)) cout << name << " -> " << u << "\n";
-  //else cout << name << " -> ???\n";
   if (!is_none (u)) return u;
   u= tt_locate (name * ".ttc");
   if (!is_none (u)) return u;
-  u= tt_locate (name * ".otf");
+  u= tt_locate (name * ".pfb");
   if (!is_none (u)) return u;
   u= tt_locate (name * ".dfont");
   return u;

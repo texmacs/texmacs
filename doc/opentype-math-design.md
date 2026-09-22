@@ -668,6 +668,32 @@ prints, the `get_unicode_range` experiment) were dropped.
   instead of at every lookup. What is left of the log of a full sample is
   two lines.
 
+- **Type 1 before OpenType (22 September 2026).** XCharter came out as
+  currency signs: `a` as a pound sign, `A` as `a`, `1` as `Q`.
+  `tt_font_find_sub` tried `.pfb` before the sfnt formats, so for the
+  many families a TeX distribution ships in both forms TeXmacs opened the
+  Type 1 file, whose builtin encoding is the one the TeX world uses, and
+  `XCharter-Roman.pfb` maps code 0x61 to `sterling`. Two consequences: the
+  wrong glyphs on screen, since `tt_face_rep` selects that builtin encoding
+  with `ft_select_charmap (face, ft_encoding_adobe_custom)`, which succeeds
+  for Type 1 and fails for OpenType; and wrong glyphs in exported PDF, since
+  `tt_font_glyphs_rep::get` stores the character code in `glyph::index` when
+  the selected charmap is not Unicode, and the PDF writer takes that field
+  for a glyph index.
+
+  The order is now `.otf`, `.ttf`, `.ttc`, `.pfb`, `.dfont`. On this machine
+  1404 font names exist in both forms, all of them inside TeX Live, and 220
+  of their Type 1 files put the letters elsewhere; 21 of those are families
+  of the shipped database, among them XCharter, ETbb, fbb and AlgolRevived.
+  For the others the two files hold the same outlines, so nothing moves, but
+  the sfnt file brings its Unicode cmap, which means fewer fallbacks, and
+  correct glyph indices in the PDF. Fonts that exist only as `.pfb`, the
+  275 shipped with TeXmacs among them, are unaffected. A cold-cache render
+  of the overview sample took 58 seconds against 73 before, because the
+  `.pfb` lookups go through kpathsea while the sfnt lookups walk the font
+  path. An existing `font_cache.scm` keeps pointing at the old files, so it
+  has to be cleared once, from Tools.
+
 ## 5. Tests
 
 ### Unit tests
