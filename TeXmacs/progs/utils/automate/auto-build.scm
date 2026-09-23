@@ -55,7 +55,7 @@
 ;; Scripting
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public auto-safe-mode? #f)
+(tm-define auto-safe-mode? #f)
 (define current-variables (list))
 
 (define (build-variable t)
@@ -68,7 +68,7 @@
          (decls (map (lambda (p) (list (car p) (list 'quote (cdr p))))
                      current-variables))
          (expr* `(let ,decls ,expr)))
-    ;;(display* "Evaluating " expr* "\n")
+    ;;(display* "Evaluating " auto-safe-mode? " " (secure? expr*) " " expr* "\n")
     (and (or auto-safe-mode? (secure? expr*))
          (eval expr*))))
 

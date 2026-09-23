@@ -51,11 +51,7 @@
   `(ahash-remove! ,env ,key))
 
 (tm-define (environment-ref* env key)
-  (let ((h (ahash-get-handle env key)))
-    (if h (cdr h)
-	(begin
-	  (display* "warning: unbound key " key " in environment " env "\n")
-	  ""))))
+  (ahash-ref env key))
 
 (tm-define-macro (environment-ref env key)
   `(environment-ref* ,env (quote ,key)))

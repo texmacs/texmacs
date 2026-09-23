@@ -389,3 +389,23 @@ async_eval_pending () {
     }
     else i++;
 }
+
+/******************************************************************************
+* User information
+******************************************************************************/
+
+string get_user_login () {
+#if OS_MINGW
+  return getenv ("USERNAME");
+#else
+  return unix_get_login ();
+#endif
+}
+
+string get_user_name () {
+#if OS_MINGW
+  return sys_utils::mingw_get_username ();
+#else // Linux and macOS
+  return unix_get_username ();
+#endif
+}

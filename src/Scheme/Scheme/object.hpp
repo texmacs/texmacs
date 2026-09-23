@@ -15,7 +15,8 @@
 
 #include "scheme.hpp" // interface to texmacs
 //#include "../Tiny/tinytmscm_tm.hpp" // interface to TinyScheme
-#include "../Guile/guile_tm.hpp" // interface to guile
+//#include "../Guile/guile_tm.hpp" // interface to guile
+#include "../S7/s7_tm.hpp" // interface to S7
 
 
 

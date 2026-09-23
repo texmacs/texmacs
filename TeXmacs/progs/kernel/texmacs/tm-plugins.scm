@@ -594,7 +594,8 @@
                     "for plugin '" name "'\n")))
 
   (ahash-set! plugin-declared-table name #t)
-  (ahash-ref plugin-data-table name))
+  (or (in? (car cmd) '(:macpath :winpath))
+      (ahash-ref plugin-data-table name)))
 
 (define-public (plugin-configure-cmds name cmds)
   "Helper function for plugin-configure"

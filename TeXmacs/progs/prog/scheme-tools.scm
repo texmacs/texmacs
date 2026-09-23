@@ -99,8 +99,8 @@
 (define (word-at str pos)
   "Returns the word at @pos in @str, delimited by char-set:stopmark"
   (if (<= pos (string-length str))
-      (let* ((beg (string-rindex str char-set:stopmark 0 pos))
-             (end (string-index str char-set:stopmark pos)))
+      (let* ((beg (string-rindex (substring str 0 pos) char-set:stopmark))
+             (end (string-index (substring str pos (string-length str)) char-set:stopmark)))
         (if (== end #f) (set! end (string-length str)))
         (if (== beg #f) (set! beg 0) (set! beg (+ 1 beg)))
         (substring str beg end))

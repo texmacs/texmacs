@@ -32,7 +32,7 @@
            (deps* (map list (map texmacs-mode-pred deps)))
            (l (if (== action #t) deps* (cons action deps*)))
            (test (if (null? l) #t (if (null? (cdr l)) (car l) (cons 'and l))))
-           (defn `(define-public (,pred) ,test))
+           (defn `(varlet *texmacs-module* ',pred (lambda () ,test)))
            (rules (map (lambda (dep) (list dep mode)) deps))
            (logic-cmd `(logic-rules ,@rules))
            (arch1 `(set-symbol-procedure! ',mode ,pred))
@@ -44,14 +44,16 @@
 
 (define-public-macro (texmacs-modes . l)
   `(begin
-     (set! temp-module ,(current-module))
-     (set-current-module texmacs-user)
-     ,@(map texmacs-mode l)
-     (set-current-module temp-module)))
+     ,@(map texmacs-mode l)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Checking modes
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;FIXME: in-active-graphics% and developer-mode%
+; seems to be the only two modes which do not have the associated procedure
+; is the code below meaningful? why we need to do the eval?
+; I want maybe to have the catch inside the eval
 
 (define-public (texmacs-in-mode? mode)
   (with proc (symbol-procedure mode)

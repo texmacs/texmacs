@@ -908,7 +908,7 @@
 	     (cmpx (/ 1 (ahash-ref tmhtml-length-table "px"))))
     (cond ((== unit "px") (number->htmlstring val))
 	  ((in? unit '("par" "pag"))
-	   (string-append (number->htmlstring (* 100 val)) "%"))
+	   (string-append (number->htmlstring (/ (round (* val 10000)) 100)) "%"))
 	  ((and css? (== unit "tmpt"))
 	   (string-append (number->htmlstring (* cmpx val incm)) "px"))
 	  ((and css? (== unit "fn"))

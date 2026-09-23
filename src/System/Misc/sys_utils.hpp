@@ -82,4 +82,7 @@ struct tm_pollfd {
 
 int tm_poll (struct tm_pollfd* fds, int nfds, int timeout_ms);
 
+string get_user_login ();
+string get_user_name ();
+
 #endif // defined SYS_UTILS_H

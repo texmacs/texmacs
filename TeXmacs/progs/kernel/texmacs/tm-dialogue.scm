@@ -185,16 +185,6 @@
         ((== x #t) "true")
         (else x)))
 
-(define-public (procedure-symbol-name fun)
-  (cond ((symbol? fun) fun)
-        ((string? fun) (string->symbol fun))
-        ((and (procedure? fun) (procedure-name fun)) => identity)
-        (else #f)))
-
-(define-public (procedure-string-name fun)
-  (and-with name (procedure-symbol-name fun)
-    (symbol->string name)))
-
 (define-public (learn-interactive fun assoc-t)
   "Learn interactive values for @fun"
   (set! assoc-t (map (lambda (x) (cons (car x) (as-stree (cdr x)))) assoc-t))

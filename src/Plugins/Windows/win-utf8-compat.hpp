@@ -26,7 +26,11 @@
 #include "nowide/args.hpp"
 #include <sys/stat.h>
 
+#ifdef __MINGW64__
+typedef struct _stat64 struct_stat;
+#else
 typedef struct _stat32 struct_stat;
+#endif
 
 #include "nowide/cstdio.hpp"
 #include "nowide/cenv.hpp"

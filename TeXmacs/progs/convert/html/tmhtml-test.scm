@@ -365,7 +365,7 @@
   (define (make-result l) (tmhtml-root `(image ,@l "" "")))
   (define (make-expected l) (if (null? l) '() (apply make-expected-sub l)))
   (define (make-expected-sub f w h)
-    `((h:img (@ (src ,f)
+    `((h:img (@ (class "image") (src ,f)
 		,@(if w `((width ,w)) '())
 		,@(if h `((height ,h)) '())))))
   (regression-test-group
@@ -428,7 +428,7 @@
 	      (regtest-tmhtml-verbatim)
 	      ;; (regtest-tmhtml-table)
 	      ;; (regtest-tmhtml-table-post)
-	      (regtest-tmhtml-picture))))
+	       (regtest-tmhtml-picture))))
 	      ;; (regtest-tmhtml-document-post))))
     (display* "Total: " (object->string n) " tests.\n")
     (display "Test suite of tmhtml: ok\n")))
