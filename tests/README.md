@@ -45,13 +45,21 @@ ctest -R converter_test
 
 The CMake harness above needs a CMake build. With the usual
 `./configure && make` build, `tests/Makefile` compiles the same test sources
-against the objects in `src/Objects` and QtTest:
+against the objects in `src/Objects`:
 
 ```
 make -C tests                      # build and run all tests
-make -C tests run-tt_tools_test    # one test, with QtTest output
+make -C tests run-tt_tools_test    # one test, with its own output
 make -C tests TM_TEST_FONT_DIR=/path/to/fonts
 ```
+
+The tests inherited from the CMake harness are written against QtTest, which
+is what `tests/CMakeLists.txt` expects of them. New tests are written in
+ordinary TeXmacs C++ over `tests/tm_test.hpp`, which brings `CHECK`,
+`CHECK_MSG`, `CHECK_EQ` and `SKIP`, and a `main` which lists its tests with
+`RUN` and returns `test_report ()`: a test then needs no framework, and the
+Qt idioms stay in the Qt port where they belong. `tests/Makefile` builds both
+kinds, and runs `moc` only on the sources which declare a `Q_OBJECT`.
 
 `TM_TEST_FONT_DIR` points to a directory, searched recursively, with the
 fonts the OpenType tests need. Latin Modern Math and STIX Two Math are

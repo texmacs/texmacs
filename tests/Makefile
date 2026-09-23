@@ -66,16 +66,18 @@ run-%: $(BUILD)/%
 	@mkdir -p $(TEXMACS_HOME_PATH)
 	$< $(ARGS)
 
+# only the tests written against QtTest declare a QObject; the others are
+# plain TeXmacs C++ over tests/tm_test.hpp and get an empty stub
 $(BUILD)/%.moc: %.cpp
 	@mkdir -p $(BUILD)
-	$(TM_MOC) $(TM_MOCFLAGS) $(abspath $<) -o $@
+	@if grep -q Q_OBJECT $<; then 	  $(TM_MOC) $(TM_MOCFLAGS) $(abspath $<) -o $@; 	else : > $@; fi
 
 # test objects depend on every header of the main build: a changed vtable
 # in a stale object is a crash, not a compile error
 TM_HEADERS := $(shell find $(SRC) -name '*.hpp' -not -path '*/Objects/*')
 
 $(BUILD)/%.o: %.cpp $(BUILD)/%.moc $(TM_HEADERS)
-	cd $(SRC) && $(TM_CXX) $(TM_INCL) $(TM_CXXFLAGS) -I$(BUILD) \
+	cd $(SRC) && $(TM_CXX) $(TM_INCL) $(TM_CXXFLAGS) -I$(BUILD) -I$(abspath .) \
 	  -c $(abspath $<) -o $@
 
 $(BUILD)/%: $(BUILD)/%.o $(TM_OBJS)
