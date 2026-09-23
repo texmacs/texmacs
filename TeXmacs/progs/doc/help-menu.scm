@@ -99,6 +99,24 @@
 	     (load-help-article "main/styles/styles"))
 	    ("Compatibility with other formats"
 	     (load-help-article "main/convert/man-convert"))))
+  (when (url-exists-in-help? "devel/devel.en.tm")
+	(-> "Developer's guide"
+	    ("Browse" (load-help-buffer "devel/devel"))
+	    ---
+	    ("About the source code"
+	     (load-help-article "devel/source/source"))
+	    ("The TeXmacs document format"
+	     (load-help-article "devel/format/basics/basics"))
+	    ("The Scheme extension language"
+	     (load-help-article "devel/scheme/scheme"))
+	    ("Writing style files and packages"
+	     (load-help-article "devel/style/style"))
+	    ("The plug-in system"
+	     (load-help-article "devel/plugin/plugins"))
+	    ("Interfacing with other programs"
+	     (load-help-article "devel/interface/interface"))
+	    ("Fonts, from selection to glyph"
+	     (load-help-article "devel/fonts/fonts"))))
   (-> "Plug-ins"
       (link help-plugins-menu))
   (when (url-exists-in-help? "about/about.en.tm")
