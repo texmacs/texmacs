@@ -141,6 +141,11 @@ character.
   involved.
 
 **To do:** report the bug to the s7 maintainer, using the reproduction above.
+The same should be done for the loss of internal definitions of macro
+bodies. A reproduction is the original `case-lambda` of `srfi.scm`, loaded
+in a sublet whose `define` is `curried-define`, and used inside a function
+body: `(let ((f (case-lambda ((x) 1) ((x y) 2)))) (f 1))` raises
+`unbound variable alength`.
 
 ### 9. New upstream code needed s7 support (confirmed, **fixed**)
 
@@ -212,9 +217,12 @@ Results after the rebase, on the clean rebuild:
   or redefines a `define-public` variable, modules that already imported it
   keep the old value. There is also no enforcement of `:use`: every module
   can see the whole top-level user environment.
-- **`define-macro` is `define-expansion`.** Such macros expand at read time,
-  so a macro must be defined before any file that uses it is read, and
-  redefinitions do not affect code that was already read.
+- **Macros are run-time macros** (s7 `define-macro`). They are expanded on
+  every evaluation, like the effective behavior on s7 10 (see §2.1).
+- **s7 11 quirks to keep in mind when writing kernel code:**
+  - `varlet` refuses already-bound symbols in non-root lets.
+  - Macro bodies should not define local helper functions; see
+    [03](03-compat-layer.md).
 - **`ahash-get-handle` returns a fresh cons.** A `set-cdr!` on the handle
   does not write through to the table. No caller does this today.
 - **`with-global` is not unwind-safe**: a non-local exit leaves the variable

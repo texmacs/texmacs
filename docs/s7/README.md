@@ -34,9 +34,8 @@ standalone (see [06-open-issues.md](06-open-issues.md)).
 - **Guile builtins are supplied by `compat-s7.scm`.** It defines `1+`, `noop`,
   `delq`, `acons`, `assoc-ref`, `string-index`, `iota`, `while`, records, R7RS
   `delay`/`force`, `hash`, curried `define`, and more. `init-texmacs-s7.scm` also
-  rebinds `define-macro` to s7's `define-expansion`, `symbol?` (keywords are
-  excluded), and `load`/`eval`/`catch` (so they use the TeXmacs environment and
-  Guile's handler signature).
+  rebinds `symbol?` (keywords are excluded) and `load`/`eval`/`catch` (so
+  they use the TeXmacs environment and Guile's handler signature).
 - **The shared kernel modules are now s7-only.** `ahash-table.scm`,
   `abbrevs.scm`, `tm-define.scm`, `tm-modes.scm`, `srfi.scm`, `debug.scm` and
   others were rewritten in place with no guard. Only the Guile init and boot

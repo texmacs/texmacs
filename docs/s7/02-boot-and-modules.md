@@ -11,15 +11,22 @@
    `init-texmacs.scm` is still in the tree, is not used, and has to be kept in
    sync with the s7 file by hand.
 3. **Rebindings.** The top of `init-texmacs-s7.scm` installs these:
-   - **`define-macro` becomes `define-expansion`.** An s7 `define-macro` is a
-     first-class runtime macro, expanded every time the call is evaluated.
-     `define-expansion` expands at **read time**, which is closer to what
-     Guile's memoizing macros did and much faster. The catches:
-     - An expansion must be defined before the code that uses it is read.
-     - Redefining it does not affect forms that were already read. This was
-       checked with the vendored s7: after redefining an expansion, an older
-       caller still returned the old result.
-     - Expansions are global and cannot be shadowed locally.
+   - **`quote` is read as the symbol `quote`.** `start_scheme` in
+     `s7_tm.cpp` sets `(*s7* 'symbol-quote?)` to `#t`. Otherwise s7 11 reads
+     `'x` as `(#_quote x)`, and TeXmacs code that inspects quoted forms, such
+     as `(== (car x) 'quote)` in the logic engine, silently fails.
+   - **`define-macro` is s7's native, run-time macro.** Until September 2026
+     it was aliased to `define-expansion` (read-time macros). That never
+     really worked:
+     - **s7 10.** The reader did not see expansions defined outside the
+       rootlet, which covers almost all TeXmacs macros. So they ran as
+       run-time macros anyway.
+     - **s7 11.** The reader does see them, and then also expands them
+       inside quasiquoted templates, e.g. `` `($texmacs-output ,@l) ``. That
+       breaks the menu code.
+
+     Run-time macros are also what makes loading modules at macro-expansion
+     time safe (see `inherit-modules` below).
    - **`symbol?` excludes keywords.** In s7, `:foo` is a symbol and satisfies
      `symbol?`. In Guile it does not. `primitive-symbol?` keeps the original.
    - **`*current-module*`** is set to the current environment (`user_env`),
@@ -101,11 +108,18 @@ unnoticed (see [06](06-open-issues.md)).
   2. Walk the module's environment. In s7, `map` over a `let` yields
      `(sym . val)` pairs.
   3. Keep the pairs whose symbol is in `*exports*`.
-  4. Build an `inlet` from them.
-  5. `varlet` that into the rootlet's `*current-module*`, which is whichever
-     module is loading at that moment.
-- **`inherit-modules`.** `use-modules` plus `re-export` of the imported
-  module's exports.
+  4. Install them in the rootlet's `*current-module*`, which is whichever
+     module is loading at that moment. `import-bindings!` does this. For a
+     symbol that is already bound there, it updates the existing binding
+     with `let-set!`, and it only `varlet`s new symbols. s7 11 refuses to
+     `varlet` a symbol that is already bound in the target let ("duplicate
+     identifier"). s7 10 used to add a shadowing slot instead.
+- **`inherit-modules`.** `use-modules` plus re-exporting the imported
+  modules' exports. `re-export-modules!` collects those exports when the form
+  is evaluated, not when it is expanded. The old version resolved, and so
+  loaded, the modules at expansion time. With read-time macros on s7 11, a
+  `load` during an expansion silently ended the load of the file being read,
+  and the rest of `init-texmacs-s7.scm` just vanished.
 - **`import-from`.** An alias for `use-modules`.
 
 ### Consequences

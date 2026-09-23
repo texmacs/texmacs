@@ -63,41 +63,73 @@ targets.
 
 ### Version
 
-`s7.h`: `S7_VERSION "10.0"`, `S7_DATE "11-Jan-2022"`.
+`s7.h`: `S7_VERSION "11.9"`, `S7_DATE "21-Sep-2026"`. This is the current
+release from `https://ccrma.stanford.edu/software/s7/s7.tar.gz`, vendored on
+2026-09-24. Before that, the vendored version was 10.0 (11-Jan-2022).
+
+**`s7.c` is compiled as C.** s7 11.9 no longer compiles as C++: in C++ mode
+it disables complex numbers, and its stub `clog` then becomes ambiguous
+under clang++. `src/makefile.in` therefore compiles `src/Scheme/S7/*.c` with
+the C compiler (`cc_incl`). CMake already compiled it as C.
+
+**s7 11 behavior changes that TeXmacs had to adapt to**, all described in
+§2.1–2.2 and [03](03-compat-layer.md):
+
+- `(*s7* 'symbol-quote?)`;
+- `varlet` on already-bound symbols;
+- read-time expansions (no longer used);
+- nested loads during expansions;
+- internal definitions in macro bodies.
 
 ### The patch in use: `s7-lookup_from.patch`
 
-At `s7.c:10113`, while searching a non-global `let`, the lookup counts the
-slots it walks. If the symbol is more than 100 slots deep, its slot moves to
-the front of that `let`:
+In `inline_lookup_from` (about `s7.c:11589` in 11.9), while searching a
+non-global `let`, the lookup counts the slots it walks. If the symbol is more
+than 100 slots deep, its slot moves to the front of that `let`:
 
 ```c
-if (steps > 100) {
-   next_slot(py) = next_slot(y);
-   next_slot(y) = let_slots(e);
-   let_slots(e) = y;
-}
+if ((steps > 100) && (let != sc->rootlet))
+  {
+    slot_set_next(prev, next_slot(slot));
+    slot_set_next(slot, let_slots(let));
+    let_set_slots(let, slot);
+  }
 ```
+
+The 11.9 port has two changes from the 10.0 version:
+
+- It uses s7 11's setter macros, which are checked in s7's debug builds.
+- It never touches the rootlet, whose slot list s7 11 asserts is never set.
+
+Moving slots is only safe in big lets. Those are module environments, never
+the lets of function arguments, which s7 may access by position.
 
 - **Why it is needed.** `*texmacs-user-module*` holds thousands of imported
   bindings (see §2.2).
 - **Effect.** According to `README.md`, it brought manual typesetting down to
-  about 15 s, the same as Guile 1.8, and halved startup time.
+  about 15 s on s7 10, the same as Guile 1.8, and halved startup time. It is
+  still worth it on 11.9. Startup up to the end of the forced delayed loads
+  (the `time:` line printed at boot) takes about 820–850 ms with the patch
+  and about 1290 ms without it. On s7 10 it took 517 ms.
 - **Unused variant.** `s7-lookup_from-version-2.patch` (a reverse diff) moves
-  the slot halfway to the front, with a threshold of 20. It is not applied.
+  the slot halfway to the front, with a threshold of 20. It is not applied,
+  and it is written against s7 10.0.
 
 ### `s7.c.orig` / `s7.h.orig`
 
-These were added in `edc14367b1` to track local changes. They are actually a
-slightly newer upstream snapshot (14-Jan-2022), so `diff s7.c.orig s7.c`
-shows the `lookup_from` patch **plus** upstream drift:
+These are the pristine upstream 11.9 files. `diff s7.c.orig s7.c` shows
+exactly the local patch, and `s7-lookup_from.patch` is that diff.
+`patch -p1 < src/Scheme/S7/s7-lookup_from.patch` from the repository root,
+applied to pristine 11.9, reproduces `s7.c`. `s7.h` is unmodified.
 
-- `FV_BUFSIZE` is different;
-- some `is_pair(cdr(error_body))` guards are missing in the local copy;
-- the `*s7*` fields `major-version` and `minor-version` are missing in the
-  local copy.
+**To upgrade s7 again:**
 
-To upgrade s7, apply `s7-lookup_from.patch` to the new upstream `s7.c`.
+1. Copy the new upstream `s7.c` and `s7.h` over both the working files and
+   the `.orig` files.
+2. Re-apply or port the patch, and regenerate it with
+   `git diff --no-index s7.c.orig s7.c`.
+3. Rebuild.
+4. Run the probe tests from [06](06-open-issues.md).
 
 ## 5.3 History
 

@@ -28,13 +28,33 @@ calling convention. That has not been done.
 
 These are the differences that forced changes elsewhere, or that code
 reviewers should know about. The ones marked ✓ were checked against the
-vendored s7 (10.0, 11-Jan-2022).
+vendored s7: first 10.0 (11-Jan-2022), and again after the update to 11.9
+(21-Sep-2026).
 
 - **Keywords.** In s7, `:foo` is a symbol (and self-evaluating).
   `init-texmacs-s7.scm` rebinds `symbol?` to reject keywords.
-- **Macros.** TeXmacs uses `define-expansion` (read time, global) under the
-  name `define-macro`. Guile's `(define-macro name (lambda args …))` form is
-  not accepted, which is why `graphics-utils.scm` was rewritten.
+- **Macros.** TeXmacs uses s7's native run-time `define-macro` (see §2.1).
+  Guile's `(define-macro name (lambda args …))` form is not accepted, which
+  is why `graphics-utils.scm` was rewritten.
+- **Quote** ✓. By default s7 11 reads `'x` as `(#_quote x)`, where the car is
+  the builtin `quote` object and not the symbol. TeXmacs turns on
+  `(*s7* 'symbol-quote?)` to get standard Scheme reading.
+- **`varlet`** ✓. In s7 11, `varlet` on a symbol already bound in the
+  target (non-root) let raises "duplicate identifier". Use `let-set!` for
+  existing bindings, as `import-bindings!` does. On the rootlet, `varlet`
+  overwrites.
+- **Macros with internal definitions** ✓. In s7 11, a macro whose body
+  defines helper functions can lose them between recursive calls of those
+  helpers. Seen with `case-lambda` used inside a function body with two or
+  more clauses: `unbound variable alength`.
+  - In standalone s7 it reproduces only when the internal `define` is
+    TeXmacs's `curried-define` macro.
+  - Inside TeXmacs it also happened with the builtin `#_define`.
+  - The helpers of `case-lambda` are now module-level functions.
+  - The other macros with internal definitions (`and-let*`,
+    `regression-test-group`, `trace-variables`, `kbd-symbols`,
+    `texmacs-module`) use the builtin `#_define`, so they do not go through
+    `curried-define`.
 - **Multiple values splice** ✓. `(+ 1 (values 2 3))` is `6`, and
   `(values)` disappears from an argument list.
   - `receive` in `srfi.scm` now relies on this:
