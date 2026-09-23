@@ -280,26 +280,25 @@
 ;; A side tool with one group at a time
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define math-symbols-shown "Common")
+;; The group on show is an argument of the tool, so that choosing another one
+;; is asking for the tool again and telling the menus to follow. A variable
+;; of the module in a refreshable widget does not work here: refresh-now
+;; leaves a tool of a dock as it was built, and the list then chooses a
+;; group which is not the one on show.
 
-(tm-widget (math-symbols-tool-body win)
+(tm-tool (math-symbols-tool win group)
+  (:name "Mathematical symbols")
   (padded
     (hlist
       (text "Group:") //
       (enum (begin
-              (set! math-symbols-shown answer)
-              (refresh-now "math-symbols-tool"))
-            math-symbols-groups
-            math-symbols-shown "10em")
+              (tool-select :right (list 'math-symbols-tool answer) win)
+              (update-menus))
+            math-symbols-groups group "10em")
       >>>)
     ===
-    (refreshable "math-symbols-tool"
-      (scrollable
-        (dynamic (math-symbols-group math-symbols-shown 4))))))
-
-(tm-tool (math-symbols-tool win)
-  (:name "Mathematical symbols")
-  (dynamic (math-symbols-tool-body win)))
+    (scrollable
+      (dynamic (math-symbols-group group 4)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Opening them
@@ -307,7 +306,7 @@
 
 (tm-define (open-math-symbols-tool)
   (:synopsis "Show the mathematical symbols in a side tool")
-  (tool-select :right 'math-symbols-tool))
+  (tool-select :right (list 'math-symbols-tool "Common")))
 
 (tm-define (open-math-symbols)
   (:synopsis "Open the window for inserting a mathematical symbol")
