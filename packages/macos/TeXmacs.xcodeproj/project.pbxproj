@@ -167,6 +167,12 @@
 		4964705416F72CB500D95FC4 /* smart_font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4964705016F72CB500D95FC4 /* smart_font.cpp */; };
 		4964705516F72CB500D95FC4 /* smart_font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4964705016F72CB500D95FC4 /* smart_font.cpp */; };
 		4964705616F72CB500D95FC4 /* smart_font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4964705016F72CB500D95FC4 /* smart_font.cpp */; };
+		4964705416F72CB500D9FA02 /* feature_font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4964705016F72CB500D9FA02 /* feature_font.cpp */; };
+		4964705516F72CB500D9FA02 /* feature_font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4964705016F72CB500D9FA02 /* feature_font.cpp */; };
+		4964705616F72CB500D9FA02 /* feature_font.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4964705016F72CB500D9FA02 /* feature_font.cpp */; };
+		4964705416F72CB500D9FA01 /* math_font_profiles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4964705016F72CB500D9FA01 /* math_font_profiles.cpp */; };
+		4964705516F72CB500D9FA01 /* math_font_profiles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4964705016F72CB500D9FA01 /* math_font_profiles.cpp */; };
+		4964705616F72CB500D9FA01 /* math_font_profiles.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4964705016F72CB500D9FA01 /* math_font_profiles.cpp */; };
 		49705A621CA3F4A00081B937 /* env_animate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49705A611CA3F4A00081B937 /* env_animate.cpp */; };
 		49705A631CA3F4A00081B937 /* env_animate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49705A611CA3F4A00081B937 /* env_animate.cpp */; };
 		49705A641CA3F4A00081B937 /* env_animate.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49705A611CA3F4A00081B937 /* env_animate.cpp */; };
@@ -2059,6 +2065,8 @@
 		49630B5A186D6A3600C9268F /* QTMTreeModel.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = QTMTreeModel.hpp; sourceTree = "<group>"; };
 		4964704F16F72CB500D95FC4 /* font_guess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = font_guess.cpp; sourceTree = "<group>"; };
 		4964705016F72CB500D95FC4 /* smart_font.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = smart_font.cpp; sourceTree = "<group>"; };
+		4964705016F72CB500D9FA02 /* feature_font.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = feature_font.cpp; sourceTree = "<group>"; };
+		4964705016F72CB500D9FA01 /* math_font_profiles.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = math_font_profiles.cpp; sourceTree = "<group>"; };
 		49705A611CA3F4A00081B937 /* env_animate.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = env_animate.cpp; sourceTree = "<group>"; };
 		49705A651CA3F4EB0081B937 /* EHummusImageType.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EHummusImageType.h; sourceTree = "<group>"; };
 		49705A661CA3F4EB0081B937 /* IPageEndWritingTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IPageEndWritingTask.h; sourceTree = "<group>"; };
@@ -3829,6 +3837,8 @@
 				49FB1B031CB30D6000B983F3 /* poor_smallcaps.cpp */,
 				4911B17B1CCA191400F0AFFD /* poor_stretched.cpp */,
 				4964705016F72CB500D95FC4 /* smart_font.cpp */,
+				4964705016F72CB500D9FA02 /* feature_font.cpp */,
+				4964705016F72CB500D9FA01 /* math_font_profiles.cpp */,
 				9C0B47E110A8CC100097A335 /* translator.cpp */,
 				9C0B47E210A8CC100097A335 /* translator.hpp */,
 				4911B17C1CCA191400F0AFFD /* virtual_enhance.cpp */,
@@ -6085,6 +6095,8 @@
 				49FDFA6516F0C677002B830A /* metadata-ams.cpp in Sources */,
 				4964705116F72CB500D95FC4 /* font_guess.cpp in Sources */,
 				4964705416F72CB500D95FC4 /* smart_font.cpp in Sources */,
+				4964705416F72CB500D9FA02 /* feature_font.cpp in Sources */,
+				4964705416F72CB500D9FA01 /* math_font_profiles.cpp in Sources */,
 				490A9D2616F8A5EC00EC29D5 /* metadata-revtex.cpp in Sources */,
 				491FC57C16F900140038929C /* font_translate.cpp in Sources */,
 				49BEF71816FDD566004BAE73 /* metadata-springer.cpp in Sources */,
@@ -6507,6 +6519,8 @@
 				9C33F43C2412C20100F73F5A /* recolored_font.cpp in Sources */,
 				499CCC0C1B16242B0094E0A9 /* latex_recover.cpp in Sources */,
 				4964705616F72CB500D95FC4 /* smart_font.cpp in Sources */,
+				4964705516F72CB500D9FA02 /* feature_font.cpp in Sources */,
+				4964705516F72CB500D9FA01 /* math_font_profiles.cpp in Sources */,
 				490A9D2816F8A5EC00EC29D5 /* metadata-revtex.cpp in Sources */,
 				491FC57E16F900140038929C /* font_translate.cpp in Sources */,
 				49BEF71A16FDD566004BAE73 /* metadata-springer.cpp in Sources */,
@@ -6943,6 +6957,8 @@
 				49FDFA6616F0C677002B830A /* metadata-ams.cpp in Sources */,
 				4964705216F72CB500D95FC4 /* font_guess.cpp in Sources */,
 				4964705516F72CB500D95FC4 /* smart_font.cpp in Sources */,
+				4964705616F72CB500D9FA02 /* feature_font.cpp in Sources */,
+				4964705616F72CB500D9FA01 /* math_font_profiles.cpp in Sources */,
 				9CACE31E242BD54F00D0B7CA /* operator_parser.cpp in Sources */,
 				490A9D2716F8A5EC00EC29D5 /* metadata-revtex.cpp in Sources */,
 				491FC57D16F900140038929C /* font_translate.cpp in Sources */,
