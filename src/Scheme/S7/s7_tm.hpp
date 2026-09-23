@@ -63,6 +63,7 @@ tmscm symbol_to_tmscm (string s);
 
 inline bool tmscm_to_bool (tmscm obj) { return s7_boolean (tm_s7, obj); }
 inline int tmscm_to_int (tmscm obj) { return s7_integer (obj); }
+inline unsigned int tmscm_to_uint (tmscm obj) { return (unsigned int) s7_integer (obj); }
 inline double tmscm_to_double (tmscm obj) { return s7_real (obj); }
 string tmscm_to_string (tmscm obj);
 string tmscm_to_symbol (tmscm obj);
