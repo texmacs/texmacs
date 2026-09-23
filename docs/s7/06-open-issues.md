@@ -173,6 +173,24 @@ nothing else. Checked, among others: `hash-ref`, `module-ref`, `ice-9`,
 `getpwnam`, `source-property`, `string-contains`, `procedure-name`,
 `string-join`, `append-map`, `every`, `last`.
 
+### 10. `delay` did not memoize (confirmed, **fixed**, found by the new tests)
+
+The compat `delay` stored `(lambda () expr)` as the value of an
+already-forced promise, and `force` called it. As a result, every `force`
+re-evaluated the expression. The result was still correct, but the work was
+repeated, for example the closest-colour search in `convert/tools/tmcolor.scm`.
+
+**Fixed:** `delay` and `force` now follow the R7RS reference implementation.
+
+### 11. Mode predicates had no name (confirmed, **fixed**, found by the new tests)
+
+Mode predicates such as `in-math?` are installed as anonymous lambdas, so
+`procedure-symbol-name` returned `#f` for them, and
+`(texmacs-mode-mode in-math?)` returned `unknown%`. On Guile it returned
+`in-math%`.
+
+**Fixed:** `texmacs-mode` now registers the name in `tm-defined-name`.
+
 ### How the fixes were tested
 
 The first round (bugs 1–4) ran against the July 2025 binary. After the
@@ -197,6 +215,10 @@ its own `catch`.
 | `(interactive-title system)` | `symbol->string` error | "Interactive command 'system'" |
 | `(property detect-remote-plugins :arguments)` | `#f` | `(where)` |
 | `(texmacs-mode-mode in-math?)` | hangs (infinite recursion; killed after 240 s) | `unknown%` |
+
+Since 2026-09-24, most of these checks are also permanent regression tests
+(see [04](04-progs-changes.md#44-tests-for-the-s7-port)). `run-all-tests` runs
+564 tests in 17 suites and passes on s7 11.9.
 
 Results after the rebase, on the clean rebuild:
 

@@ -63,14 +63,50 @@ can no longer boot on Guile even though `init-texmacs.scm` is still there.
 | `utils/automate/auto-build.scm` | `auto-safe-mode?` is now a `tm-define`, so it is visible from the rootlet. |
 | `convert/{html,tools}/*-test.scm` | Disabled tests that relied on Guile behavior (empty PI symbol, unbound-variable errors). |
 
-## 4.4 Tests added for s7
+## 4.4 Tests for the s7 port
 
-- `kernel/texmacs/tm-define-test.scm`: `procedure-name` and
-  `procedure-symbol-name`, including builtins, tm-defined procedures and
-  anonymous lambdas.
-- `kernel/texmacs/tm-dialogue-test.scm`: `compute-interactive-args` on a glue
-  procedure and on a tm-defined one.
+The regression suites are listed in `check/check-master.scm`, and
+`run-all-tests` runs them in order. The suites specific to the port run first:
 
-Both run through `check/check-master.scm`. To run the whole suite, use
-`texmacs -x "(run-all-tests)" -q`. The C++ tests in `tests/` do not exercise
-Scheme.
+| Suite | Module | Tests | What it checks |
+|---|---|---|---|
+| `regtest-compat-s7` | `kernel/boot/compat-s7-test` | 77 | Guile compatibility layer: lists and alists, `while`, `symbol?`/`list?` rebindings, string search, char-sets (including the s7 closure bug), records, `delay`/`force`, `hash`, `*random-state*`, curried `define` |
+| `regtest-boot-s7` | `kernel/boot/boot-s7-test` | 50 | Reader (`'x` as `(quote x)`, quasiquote, multiple values, NUL in strings), the `catch` adapter, run-time macros (not expanded in quasiquoted templates, helper definitions in macro bodies), the module system (exports, private definitions, repeated `use-modules`, `inherit-modules`), lookup in large lets (the local s7 patch) |
+| `regtest-abbrevs` | `kernel/boot/abbrevs-test` | 60 | Adaptive hash tables, programming constructs (`with`, `with-global`, `for`, …), SRFI macros (`receive`, `case-lambda`, `cut`, `and-let*`), `save-object`/`load-object` |
+| `regtest-logic` | `kernel/logic/logic-engine-test` | 19 | Unification, logic tables with run-time names, dispatchers, groups, rules and queries with free variables |
+| `regtest-tm-glue` | `kernel/texmacs/tm-glue-test` | 39 | C++/Scheme conversions: booleans, integers, doubles, strings with NUL and UTF-8, string arrays, trees, urls, commands from closures, blackboxes across `gc` |
+| `regtest-tm-define` | `kernel/texmacs/tm-define-test` | 34 | Procedure names, overloading with `:require` and `former`, properties, `tm-property`, `compute-interactive-args`, `interactive-title`, `tm-define-macro`, mode predicates |
+| `regtest-tm-dialogue` | `kernel/texmacs/tm-dialogue-test` | 2 | `compute-interactive-args` |
+| `regtest-tm-convert` | `kernel/texmacs/tm-convert-test` | 25 | Format registration (existing suite, now wired in) |
+
+`kernel/logic/logic-test.scm` is not a test suite. It holds Joris van der
+Hoeven's examples of logical programs, which is why the logic tests live in
+`logic-engine-test.scm`.
+
+### Running the tests
+
+```
+TEXMACS_HOME_PATH=<scratch dir> QT_QPA_PLATFORM=offscreen \
+  TeXmacs/bin/texmacs.bin -x '(begin (run-all-tests) (quit-TeXmacs))'
+```
+
+- **One suite:** `(use-modules (kernel boot boot-s7-test))` and then
+  `(regtest-boot-s7)`.
+- **Server integration tests:** `(run-integration-tests)`.
+- **Scratch home directory.** TeXmacs runs its first-start setup in the home
+  directory it is given, so a scratch `TEXMACS_HOME_PATH` keeps your real one
+  untouched.
+- **Failures.** A failing test stops `run-all-tests`. The report shows the
+  expected and actual values.
+
+### Things to know when writing tests
+
+- **Each expression is evaluated twice.** `regression-test-group` evaluates
+  every test expression once for the "Result in" display and once for the
+  comparison. Tests with side effects must be idempotent, e.g. use `gensym`
+  instead of a fixed new symbol.
+- **Test modules run in module environments.** `define` there is
+  `curried-define`, and `tm-define` definitions are global, so prefix their
+  names (e.g. `tmdt-`).
+
+The C++ tests in `tests/` do not exercise Scheme.

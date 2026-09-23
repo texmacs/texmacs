@@ -55,8 +55,10 @@ vendored s7: first 10.0 (11-Jan-2022), and again after the update to 11.9
     `regression-test-group`, `trace-variables`, `kbd-symbols`,
     `texmacs-module`) use the builtin `#_define`, so they do not go through
     `curried-define`.
-- **Multiple values splice** ✓. `(+ 1 (values 2 3))` is `6`, and
-  `(values)` disappears from an argument list.
+- **Multiple values splice** ✓. `(+ 1 (values 2 3))` is `6`. An empty
+  `(values)` used as an argument is `#<unspecified>`, but `map` drops such
+  results: `(map (lambda (x) (if (odd? x) x (values))) '(1 2 3))` is
+  `(1 3)`. This is the same in s7 10 and 11.
   - `receive` in `srfi.scm` now relies on this:
     `((lambda vars body) vals)`.
   - `with-global` in `abbrevs.scm` uses `call-with-values` so that it works
