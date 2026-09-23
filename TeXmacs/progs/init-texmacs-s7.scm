@@ -40,8 +40,11 @@
     
   (set! catch (lambda ( key cl hdl )
     (primitive-catch key cl
-      (lambda args
-        (apply hdl (car args) "[not-implemented]" (caadr args)  (list (cdadr args)))))))
+      (lambda (type . rest)
+        (let ((info (if (pair? rest) (car rest) '())))
+          (if (pair? info)
+              (hdl type "[not-implemented]" (car info) (cdr info))
+              (hdl type "[not-implemented]" "" info)))))))
   )
 
 

@@ -63,7 +63,7 @@
 (define-public (texmacs-mode-mode pred)
   "Get drd predicate name associated to scheme predicate or symbol"
   (if (procedure? pred)
-      (with name (procedure-name pred)
+      (with name (procedure-symbol-name pred)
         (if name (texmacs-mode-mode name) 'unknown%))
       (let* ((pred-str (symbol->string pred))
              (pred-root (substring pred-str 0 (- (string-length pred-str) 1)))

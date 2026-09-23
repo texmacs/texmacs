@@ -294,7 +294,7 @@
 
 (tm-define (interactive-title fun)
   (let* ((val (property fun :synopsis))
-         (name (procedure-name fun))
+         (name (procedure-symbol-name fun))
          (name* (and name (symbol->string name))))
     (or (and (list-1? val) (string? (car val)) (car val))
         (and name (string-append "Interactive command '" name* "'"))

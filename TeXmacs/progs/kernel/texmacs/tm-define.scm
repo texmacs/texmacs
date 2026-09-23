@@ -96,8 +96,12 @@
         ((string? fun) (string->symbol fun))
         ((and (procedure? fun) (ahash-ref tm-defined-name fun))
          (ahash-ref tm-defined-name fun))
-        ((and (procedure? fun) (string-alpha? (object->string fun)))
-         (string->symbol (object->string fun)))
+        ((procedure? fun)
+         ;; s7 prints named procedures as their name, others as #<...>
+         (let ((s (object->string fun)))
+           (and (> (string-length s) 0)
+                (not (char=? (string-ref s 0) #\#))
+                (string->symbol s))))
         (else #f)))
 
 (define-public (procedure-string-name fun)
@@ -162,7 +166,7 @@
 
 (define-public (property var prop)
   "Retrieve a property of a function symbol"
-  (if (procedure? var) (set! var (procedure-name var)))
+  (if (procedure? var) (set! var (procedure-symbol-name var)))
   (let* ((key (cons var prop)))
     (ctx-resolve (ahash-ref cur-props-table key) #f)))
 
@@ -220,7 +224,7 @@
 
 (define-public (procedure-sources about)
   (or (and (procedure? about)
-           (ahash-ref tm-defined-table (procedure-name about)))
+           (ahash-ref tm-defined-table (procedure-symbol-name about)))
       (and (procedure-source about)
            (list (procedure-source about)))))
 
@@ -364,7 +368,7 @@
        ,@(map (lambda (name) (lazy-define-one module opts name)) names))))
 
 (define-public (lazy-define-force name)
-  (if (procedure? name) (set! name (procedure-name name)))
+  (if (procedure? name) (set! name (procedure-symbol-name name)))
   (let* ((im (ahash-ref lazy-define-table name))
          (modules (if im im '())))
     (ahash-remove! lazy-define-table name)
