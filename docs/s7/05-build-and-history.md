@@ -115,6 +115,99 @@ the lets of function arguments, which s7 may access by position.
   the slot halfway to the front, with a threshold of 20. It is not applied,
   and it is written against s7 10.0.
 
+### Why the patch works (measured on 2026-09-24, s7 11.9)
+
+To measure this, `inline_lookup_from` was temporarily instrumented in a
+TeXmacs build. The instrumentation counted lookups, walked slots, moves, and
+per-let and per-symbol totals, and `TM_NOMOVE` turned the move off in the
+same binary. The workload was a boot plus `run-all-tests`.
+
+**How s7 looks up a non-global symbol.**
+
+- **Cached binding.** Each symbol caches one binding: `local_slot`, plus
+  `symbol_id`, the id of the let holding it.
+- **Let ids.** Every let has an id, and ids normally grow from outer lets to
+  inner lets.
+- **Lookup order.**
+  1. O(1) hit if the current let is the cached one.
+  2. Otherwise, skip the lets that are newer than `symbol_id`, and try the
+     same O(1) hit on the first let reached.
+  3. Otherwise, **linear scan** of the slot lists of the remaining lets.
+     Slots are pushed onto the front of a let, so old bindings are at the
+     end.
+
+**What happens in TeXmacs.**
+
+- 73% of the 11 M lookups hit the cache directly.
+- 21% end up in a linear scan. Without the patch these walk 534 M slots in
+  total, and 91% of that (486 M) is spent in a single let: the user module
+  `*texmacs-user-module*`, which grows to about 980 bindings.
+- The symbols being scanned for are the basic kernel API, imported first and
+  therefore at the very end of that list. Positions out of 962: `list?` at
+  955, `for` at 865, `with` at 858, `==` at 813, `ahash-ref` at 755.
+  - `==` alone costs 124 M slot visits: 168 k lookups at about 734 slots each.
+  - Next come `ahash-ref`, `with`, `ahash-set!`, `list?` and `for`.
+
+**Why the cache misses.** Two situations were observed.
+
+1. **The cache points elsewhere** (early in boot, about 1% of the cost). A
+   kernel symbol is defined in its module (e.g. `==` in
+   `(kernel boot abbrevs)`, let id 1334). It is then imported into the
+   *older* user module (let id 35). s7 updates a symbol's cache only when the
+   new binding's let is at least as new
+   (`if (let_id(let) >= symbol_id(symbol))` in `add_slot_checked_with_id`),
+   so the cache keeps pointing into the module, which lookups don't pass
+   through.
+2. **The cache points into the scanned let** (about 90% of the cost).
+   - **Renumbering.** `with-let` and `s7_set_curlet` give the let they enter a
+     fresh, highest id, and `update_symbol_ids` points every symbol bound
+     there at that let. TeXmacs enters the user module constantly: every
+     `eval_scheme`/`call` from C++, `tm-eval`, and `with-module`. So the user
+     module gets renumbered and its symbols get cached correctly.
+   - **Inverted ids.** After renumbering, the user module is *newer* than the
+     module environments and closures created inside it earlier.
+   - **The miss.** Starting from such an inner let, the skip loop stops at
+     that older inner let, whose id doesn't match. s7 then enters the scan
+     loop, which walks all ~950 slots of the user module. It never checks
+     that `let_id(let) == symbol_id(symbol)`, which would give the answer in
+     O(1) through `local_slot`.
+
+**What move-to-front does.** The user module becomes a self-organizing list.
+Only 399 moves happen during the whole run: each hot symbol is moved to the
+front about once. From then on it is found within a few dozen slots, because
+new bindings only slowly push it back. The average scan for `==` drops from
+734 slots to 76. Total slots walked drop from 534 M to 86 M.
+
+| Build (same binary, switches) | Slots walked | Boot, 3 runs (ms) | `run-all-tests`, 3 runs (ms) |
+|---|---|---|---|
+| stock s7 11.9 | 534 M | 1413 / 1484 / 1450 | 334 / 339 / 312 |
+| move-to-front (the patch) | 86 M | 994 / 969 / 961 | 214 / 210 / 240 |
+| id check in the scan loop only | 52 M | 1015 / 1027 / 974 | 242 / 241 / 254 |
+| both | 48 M | 977 / 985 / 992 | 235 / 237 / 223 |
+
+The times include the instrumentation overhead; the uninstrumented patched
+build boots in about 830 ms.
+
+**An alternative fix.** The "id check" rows add one line at the top of the
+scan loop, before walking a let's slots:
+
+```c
+if (let_id(let) == symbol_id(symbol)) return(local_value(symbol));
+```
+
+- **Why it is valid.** This is the same invariant s7 already relies on for
+  its O(1) fast path, applied to every let of the chain instead of only the
+  first one.
+- **What it fixes.** It removes the main cause (case 2) directly and walks
+  even fewer slots than move-to-front.
+- **What it does not change.** It never reorders slots, so let order and
+  functions such as `let->list` behave exactly as in stock s7.
+- **Performance.** It performs about the same as move-to-front, and
+  combining both gains little.
+- **Status.** It looks like a candidate to propose upstream, as a fix of
+  s7's own lookup. It has not been adopted yet; the tree still uses the
+  move-to-front patch.
+
 ### `s7.c.orig` / `s7.h.orig`
 
 These are the pristine upstream 11.9 files. `diff s7.c.orig s7.c` shows
