@@ -91,6 +91,12 @@
   fonts may be replaced by closest matches when opening your document under a
   different operating system.
 
+  The chapter <hlink|<em|Fonts, from selection to
+  glyph>|../../devel/fonts/fonts.en.tm> of the reference guide explains what
+  happens behind this dialog: which variables a font selection sets, how a
+  character is turned into a glyph, which files decide what a font name
+  means, and how the virtual fonts draw the symbols that no font provides.
+
   <tmdoc-copyright|1998--2014|Joris van der Hoeven>
 
   <tmdoc-license|Permission is granted to copy, distribute and/or modify this

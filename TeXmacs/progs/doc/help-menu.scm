@@ -93,6 +93,8 @@
 	     (load-help-article "devel/format/regular/regular"))
 	    ("Stylesheet language"
 	     (load-help-article "devel/format/stylesheet/stylesheet"))
+	    ("Fonts, from selection to glyph"
+	     (load-help-article "devel/fonts/fonts"))
 	    ("Standard TeXmacs styles"
 	     (load-help-article "main/styles/styles"))
 	    ("Compatibility with other formats"

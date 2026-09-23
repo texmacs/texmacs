@@ -14,6 +14,8 @@
 
     <branch|The style-sheet language|../devel/format/stylesheet/stylesheet.en.tm>
 
+    <branch|Fonts, from selection to glyph|../devel/fonts/fonts.en.tm>
+
     <branch|Standard <TeXmacs> styles|styles/styles.en.tm>
 
     <branch|Compatibility with other formats|convert/man-convert.en.tm>
