@@ -49,6 +49,8 @@ test_check (bool ok, string msg, const char* file, int line) {
 // so the values are shown through an overload set of our own
 inline string test_show (bool x) { return x? string ("true"): string ("false"); }
 inline string test_show (int x) { return as_string (x); }
+inline string test_show (unsigned int x) { return as_string (x); }
+inline string test_show (unsigned long int x) { return as_string (x); }
 inline string test_show (long int x) { return as_string (x); }
 inline string test_show (long long int x) { return as_string (x); }
 inline string test_show (double x) { return as_string (x); }
