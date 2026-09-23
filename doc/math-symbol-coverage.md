@@ -355,3 +355,15 @@ says which group it belongs to:
 The font side needs nothing: a named symbol is looked up by code point
 in whatever font serves the formula, and the smart font finds a
 fallback when the math font lacks the glyph.
+
+That fallback goes through the font database, so a stale one shows the
+symbol as its own name in red. Latin Modern Math, the font of the
+default `roman` family, has no U+25FB, U+25FC, U+26AA or U+26AB, and
+the fallback reaches them in KpMath, New Computer Modern Math or the
+STIX fonts only if the database of `$TEXMACS_HOME_PATH/fonts` knows
+those fonts: a database written before they were installed or
+registered leaves `<mdwhtsquare>`, `<mdblksquare>`, `<mdwhtcircle>` and
+`<mdblkcircle>` red, in a document and in the palettes alike. Tools ▸
+Fonts ▸ Clear font cache, and restart, rebuilds it; every symbol named
+in `tmuniversaltounicode-extra.scm` is drawn by a font TeXmacs ships,
+so a fresh installation needs no scan.
