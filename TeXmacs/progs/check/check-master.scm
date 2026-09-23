@@ -13,8 +13,14 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (check check-master)
-  (:use (kernel texmacs tm-define-test)
+  (:use (kernel boot compat-s7-test)
+        (kernel boot boot-s7-test)
+        (kernel boot abbrevs-test)
+        (kernel logic logic-engine-test)
+        (kernel texmacs tm-define-test)
         (kernel texmacs tm-dialogue-test)
+        (kernel texmacs tm-convert-test)
+        (kernel texmacs tm-glue-test)
         (convert html htmltm-test)
         (convert html tmhtml-test)
         (convert tools xmltm-test)
@@ -87,6 +93,12 @@
   (check-latex-export "$TEXMACS_CHECKS/latex-export"))
 
 (tm-define (run-all-tests)
+  (regtest-compat-s7)
+  (regtest-boot-s7)
+  (regtest-abbrevs)
+  (regtest-logic)
+  (regtest-tm-glue)
+  (regtest-tm-convert)
   (regtest-htmltm)
   (regtest-xmltm)
   (regtest-tmlength)
