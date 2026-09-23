@@ -208,6 +208,42 @@ if (let_id(let) == symbol_id(symbol)) return(local_value(symbol));
   s7's own lookup. It has not been adopted yet; the tree still uses the
   move-to-front patch.
 
+<a id="boot-time"></a>
+### Boot time (measured on 2026-09-24)
+
+The measurement is the total process time for booting and quitting
+(`texmacs.bin -x '(quit-TeXmacs)'`) on the offscreen Qt platform. The table
+gives the median of 6 interleaved runs.
+
+| Variant | Median |
+|---|---|
+| committed tree before 2026-09-24, move-to-front patch | 966 ms |
+| same, with a 2M-cell initial heap | 934 ms |
+| id check instead of move-to-front | 998 ms |
+| **without the debug tail of `init-texmacs-s7.scm`** | **663 ms** |
+| without the debug tail, id check | 683 ms |
+
+What the measurements show:
+
+- **The debug tail was a third of the boot.** It consisted of benchmarks and
+  forced loading of all keyboard modules; `lazy-keyboard-force` alone took
+  about 0.27 s. It is now removed.
+- **Symbol lookup no longer matters.** Once either lookup fix is in, the two
+  fixes cannot be told apart.
+- **A larger initial heap helps a little.** s7 starts with 64000 cells. A
+  2M-cell heap gains 10–40 ms but doubles the memory, so it is not used.
+- **What remains.** The whole Scheme init file now takes about 65 ms. A
+  sample of the boot shows the rest in C++ and Qt, under `open_window`:
+  - 233 ms building a `QDockWidget`: the Fusion style loads its standard
+    icons through `QIcon::addFile`;
+  - 178 ms of font database population for the status bar's font metrics,
+    including `populateFamilyAliases` for the missing "Sans Serif" family
+    that Qt warns about;
+  - the rest in creating and typesetting the first buffer.
+
+  These costs do not depend on s7. They were measured on the offscreen
+  platform and may differ with the Cocoa one.
+
 ### `s7.c.orig` / `s7.h.orig`
 
 These are the pristine upstream 11.9 files. `diff s7.c.orig s7.c` shows

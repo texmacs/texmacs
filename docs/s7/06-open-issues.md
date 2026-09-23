@@ -261,13 +261,9 @@ Results after the rebase, on the clean rebuild:
 - **Glue error messages are vague.** Argument errors say
   `"some other thing"` instead of the expected type (`TMSCM_ASSERT`).
 - **`tmscm_install_procedure` ignores its optional and rest argument counts.**
-- **Boot is noisy and has debugging code on by default.**
-  `init-texmacs-s7.scm` does all of this on every start:
-  - runs two fib benchmarks;
-  - prints timings;
-  - forces all lazy keyboard modules;
-  - schedules `benchmark-menu-expand`;
-  - hard-codes `developer-mode? #f`.
+- **`developer-mode?` is hard-coded to `#f`** in `init-texmacs-s7.scm`. The
+  boot-time benchmarks and the forced keyboard loading were removed on
+  2026-09-24.
 
 ## 6.3 Guile leftovers
 
@@ -308,7 +304,9 @@ Results after the rebase, on the clean rebuild:
      `inherit-modules`, with `compat` → `compat-s7`) and the debug tail.
    - A simple approach would be to put the common body in
      `init-texmacs-body.scm` and `load` it from both files.
-5. Put the benchmarks and `lazy-keyboard-force` behind a flag.
+5. **Look at the Qt part of the boot** (see
+   [05](05-build-and-history.md#boot-time)). It now dominates, and a Guile
+   build pays it too.
 6. Refresh the vendored s7, re-applying `s7-lookup_from.patch`, and
    regenerate `s7.c.orig` from the same upstream revision so that the diff
    shows only the local patch.

@@ -37,25 +37,28 @@
      `(key subr message args)`. `subr` is always `"[not-implemented]"`; the
      other values are taken from s7's `(type info)`. See
      [06](06-open-issues.md) for the case where this wrapper fails.
-4. **Benchmark 1.** A `fib 30` benchmark runs and prints its timing on every
-   start.
-5. **Module system.** `kernel/boot/boot-s7.scm` is loaded (see §2.2), then the
+4. **Module system.** `kernel/boot/boot-s7.scm` is loaded (see §2.2), then the
    kernel modules are brought in with `inherit-modules`, starting with
    `(kernel boot compat-s7)` ([03](03-compat-layer.md)).
-6. **The rest of the init file** mirrors `init-texmacs.scm` (`lazy-define`,
+5. **The rest of the init file** mirrors `init-texmacs.scm` (`lazy-define`,
    `lazy-menu`, `lazy-keyboard`, …) with these differences:
    - `developer-mode?` is hard-coded to `#f`. The Guile version reads the
      `developer tool` preference.
    - The Guile reader hook that records source locations of definitions
      (`new-read`, `source-property`, `def-keywords`) is gone.
    - The Guile stack-size settings are gone.
-   - Several debugging and benchmark items were added at the end:
-     - a second fib benchmark, this time through `tm-define`;
-     - `(lazy-keyboard-force #t)`, which forces all lazily declared keyboard
-       modules at boot;
-     - a delayed `benchmark-menu-expand`;
-     - a `benchmark-manual` command, which you can run with
-       `texmacs.bin -x "(benchmark-manual)"`.
+   - Two developer commands are defined but not run:
+     `(benchmark-menu-expand)` and `(benchmark-manual)`. You can run the
+     second with `texmacs.bin -x "(benchmark-manual)"`.
+   - **Until 2026-09-24 the file also did debugging work on every boot.** It
+     ran two fib benchmarks, forced the loading of all lazy keyboard modules
+     with `(lazy-keyboard-force #t)`, and scheduled `benchmark-menu-expand`.
+     This took about 0.3 s, a third of the boot (see
+     [05](05-build-and-history.md#boot-time)).
+     - Forcing the keyboards is not needed: every `lazy-keyboard` form already
+       schedules the module to be loaded at the first idle moment, and key
+       handling loads the modules of the current mode on demand, as in the
+       Guile init.
 
 ## 2.2 Modules as environments (`boot-s7.scm`)
 
