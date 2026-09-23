@@ -18,8 +18,8 @@ standalone (see [06-open-issues.md](06-open-issues.md)).
 ## Summary
 
 - **Selection is compile-time and hard-wired.** `src/Scheme/Scheme/object.hpp:17-19`
-  includes `../S7/s7_tm.hpp` in place of the Guile header, and `src/makefile.in:115-116`
-  compiles `src/Scheme/{Scheme,S7}`. `tm_server.cpp:101` boots
+  includes `../S7/s7_tm.hpp` in place of the Guile header, and `src/makefile.in:123-124`
+  compiles `src/Scheme/{Scheme,S7}`. `tm_server.cpp:138` boots
   `progs/init-texmacs-s7.scm`. There is no `USE_S7` macro, and CMake's
   `SCHEME_IMPL=s7` stops with a fatal error.
 - **The C++ ↔ Scheme boundary barely changed.** TeXmacs already talked to
@@ -50,8 +50,19 @@ standalone (see [06-open-issues.md](06-open-issues.md)).
   and imported by Darcy Shen (沈达). The branch was rebased onto 2025 upstream
   in July 2025. Of the 618 commits in `master..HEAD`, only about 34 are
   unique (`git cherry`).
-- **Four bugs have been fixed on this branch:** `ahash-size`, `property`
-  with procedure arguments, the `check-master` module list, and the `catch`
-  adapter. They were tested against the built binary. One regression test that
-  was already failing (`prog-format`) is still open. See
-  [06-open-issues.md](06-open-issues.md).
+- **The branch is now based on `svn_sync_20260921`.** The port was squashed
+  into one commit, followed by fix and docs commits. The original history is
+  on `wip_s7_pre_rebase_20260924`. See
+  [05-build-and-history.md](05-build-and-history.md).
+- **Bugs fixed, and tested on a clean rebuild:**
+  - `ahash-size`;
+  - `property` with procedure arguments;
+  - the `catch` adapter;
+  - `prog-format`, which failed because the init file had drifted;
+  - three Guile dependencies in new upstream code: uint glue, SRFI-14
+    char-sets and `*random-state*`.
+
+  All regression and integration suites pass.
+- **Open upstream s7 bug.** An s7 optimizer bug can mis-apply closures
+  called from loops. It is still present in s7 11.9 and is worked around in
+  `compat-s7.scm`. See [06-open-issues.md](06-open-issues.md).

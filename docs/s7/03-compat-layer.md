@@ -10,8 +10,9 @@ first module inherited at boot. In addition, `s7_tm.cpp` defines
 |---|---|---|
 | SRFI-1 / Guile list functions | `filter` (only if missing), `delq` (non-destructive), `acons`, `last-pair`, `list-copy` (via generic `copy`), `copy-tree`, `map-in-order` (= `map`), `append!` (= non-destructive `append`) | |
 | Association lists | `assoc-ref`, `assoc-set!` | `assoc-set!` is defined twice (identical copies) and returns the new list. Guile's version mutates in place, so callers must use the return value. |
-| Arithmetic and misc | `1+`, `1-` (as macros), `noop`, `symbol-append`, `seed->random-state`, `force-output`, `iota` (single-argument form only) | |
-| Strings | `string-null?`, `string-split` (char separator), `string-index` / `string-rindex` (char or predicate, no start/end), `char-set-adjoin`, `char-set-complement`, `char-set:whitespace` | Char-sets are just predicates. |
+| Arithmetic and misc | `1+`, `1-` (as macros), `noop`, `symbol-append`, `seed->random-state`, `*random-state*`, `force-output`, `iota` (single-argument form only) | `*random-state*` lives in the rootlet. Its setter reseeds `(*s7* 'default-random-state)`. |
+| Strings | `string-null?`, `string-split` (char separator), `string-index` / `string-rindex` (char, char-set or predicate, no start/end) | |
+| Char-sets (SRFI-14 subset) | `char-set`, `string->char-set`, `char-set-adjoin`, `char-set-complement`, `char-set-intersection`, `char-set-union`, `char-set-contains?`, `char-set-size`, `char-set:whitespace`, `char-set:lower-case`, `char-set:upper-case`, `char-set:digit` | Char-sets are hash tables mapping characters to `#t`. They are applicable, so `(cs ch)` tests membership. Predicates are accepted wherever a char-set is expected. Closures are avoided because of an s7 optimizer bug (06, bug 8). |
 | Sorting | `(sort l op)` = `(sort! (copy l) op)` | s7's `sort!` is destructive. |
 | Errors | `lazy-catch` = `catch` | Guile's `lazy-catch` runs the handler before unwinding; here it unwinds first. |
 | Records | `make-record-type`, `record-constructor`, `record-accessor` (a macro), `record-predicate` | Records are `inlet`s with a `'type` slot. The constructor is built with `eval`. |

@@ -7,7 +7,7 @@
    (see [01](01-cpp-binding.md)).
 2. **Init file.** `tm_server_rep::tm_server_rep` loads
    `$TEXMACS_PATH/progs/init-texmacs-s7.scm` into `user_env`
-   (`src/Texmacs/Server/tm_server.cpp:101`). The Guile file
+   (`src/Texmacs/Server/tm_server.cpp:138`). The Guile file
    `init-texmacs.scm` is still in the tree, is not used, and has to be kept in
    sync with the s7 file by hand.
 3. **Rebindings.** The top of `init-texmacs-s7.scm` installs these:

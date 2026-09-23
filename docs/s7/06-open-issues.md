@@ -58,8 +58,9 @@ before `(utils cite cite-sort-test)`. The `texmacs-module` macro in
 `boot-s7.scm` turns any unknown option into `(noop)` without a warning, so
 `(regtest-cite-sort)` ends up unbound when `run-all-tests` calls it.
 
-**Fixed:** the parenthesis is moved. Not done yet: making `texmacs-module`
-warn about unknown options, so that mistakes like this are reported.
+**Fixed** (upstream fixed it the same way in the meantime). Not done yet:
+making `texmacs-module` warn about unknown options, so that mistakes like
+this are reported.
 
 ### 4. The `catch` wrapper fails when the error has no data (confirmed, **fixed**)
 
@@ -91,18 +92,87 @@ results.
 
 **Fix:** store a sentinel value.
 
-### 7. `prog-format` regression test fails (confirmed, pre-existing, not fixed)
+### 7. `prog-format` regression test fails (confirmed, **fixed**)
 
-`regtest-prog-format` fails on its first case: `*.cpp` is detected as
-`"generic"` instead of `"cpp"`. It also fails without the fixes above.
-Because `run-all-tests` stops at the first error, the suites that come after
-it (`tm-define`, `tm-dialogue` and `cite-sort`) never run. For now, run those
-suites one at a time.
+`regtest-prog-format` failed on its first case: `*.cpp` was detected as
+`"generic"` instead of `"cpp"`.
+
+**Cause:** `init-texmacs-s7.scm` had drifted from `init-texmacs.scm`. It
+still declared `(lazy-format (prog prog-format) cpp scheme scala java python)`,
+while upstream had moved these languages to `code-format`, `python-format`
+and similar modules. Other stale entries had the same origin:
+
+- a broken `(when (url-exists? "") …)` guard around `init-user-shortcuts`;
+- the missing `lazy-tool` declarations;
+- the old `(various …)` module paths.
+
+**Fixed:** during the rebase, the body of `init-texmacs-s7.scm` was
+regenerated from the current `init-texmacs.scm`. Only the s7 prelude and the
+s7 debug tail were kept.
+
+Because `run-all-tests` stops at the first error, one failing suite hides
+all the later ones. The probe script below runs each suite separately.
+
+### 8. s7 optimizer mis-applies closures called from a loop (confirmed, upstream, worked around)
+
+A loop that calls a closure argument can mis-apply a *different* closure
+after it has run once with a closure of another shape. This reproduces with
+the vendored s7 10.0, with the unpatched `s7.c.orig`, and with **s7 11.9
+(21-Sep-2026)**, so it is not caused by the local patch and has not been
+fixed upstream:
+
+```scheme
+(define (mk s) (let ((chars (string->list s))) (lambda (ch) (and (memv ch chars) #t))))
+(define (inter . css) (lambda (ch) (let loop ((cl css)) (or (null? cl) (and ((car cl) ch) (loop (cdr cl)))))))
+(define (count cs) (let loop ((i 0) (n 0)) (if (= i 256) n (loop (+ i 1) (if (cs (integer->char i)) (+ n 1) n)))))
+(count (inter (mk "!?") (mk "aB!")))   ; => 1
+(count (mk "abc"))                     ; => error: memv second argument, #\null, ... should be a list
+```
+
+The error shows that inside the `mk` closure, `chars` evaluates to the loop's
+character.
+
+- **Where it surfaced.** Upstream's `server-strong-password?` was written
+  with SRFI-14 char-sets, and the first compat implementation of those used
+  closures. The same pattern could affect any higher-order code, for example
+  `string-index` with predicate arguments.
+- **Workaround.** In `compat-s7.scm`, char-sets are now hash tables. They
+  are still applicable, so `(cs ch)` works as before, but no closure is
+  involved.
+
+**To do:** report the bug to the s7 maintainer, using the reproduction above.
+
+### 9. New upstream code needed s7 support (confirmed, **fixed**)
+
+The 889 upstream commits pulled in by the rebase brought three new
+Guile dependencies:
+
+- **`TMSCM_ASSERT_UINT`** in `glue.cpp` called Guile's `scm_positive_p`,
+  which broke the build. This affected `gnutls-random-number`.
+- **SRFI-14 char-sets** in `server/server-authentication.scm`:
+  `string->char-set`, `char-set-intersection`, `char-set-size`,
+  `char-set:lower-case`, and others. Because of the failed load,
+  `server-base` never defined `tm-service`, and every `server-*` module
+  failed after it.
+- **`(set! *random-state* …)`** in `server/server-base.scm`.
+
+**Fixed:**
+
+- The uint check is now interpreter-neutral, and `tmscm_to_uint` was added.
+- The char-sets are the hash-table implementation from bug 8.
+- `*random-state*` is a rootlet variable whose setter reseeds
+  `(*s7* 'default-random-state)`.
+
+A scan of the new upstream Scheme code for other Guile-only builtins found
+nothing else. Checked, among others: `hash-ref`, `module-ref`, `ice-9`,
+`getpwnam`, `source-property`, `string-contains`, `procedure-name`,
+`string-join`, `append-map`, `every`, `last`.
 
 ### How the fixes were tested
 
-Everything was run against the existing `TeXmacs/bin/texmacs.bin`. The
-Scheme-only changes need no rebuild. The command was:
+The first round (bugs 1–4) ran against the July 2025 binary. After the
+rebase, everything was rerun against a clean rebuild on
+`svn_sync_20260921`. The command was:
 
 ```
 TEXMACS_HOME_PATH=<scratch> QT_QPA_PLATFORM=offscreen texmacs.bin -x '(load "probe.scm")'
@@ -122,6 +192,19 @@ its own `catch`.
 | `(interactive-title system)` | `symbol->string` error | "Interactive command 'system'" |
 | `(property detect-remote-plugins :arguments)` | `#f` | `(where)` |
 | `(texmacs-mode-mode in-math?)` | hangs (infinite recursion; killed after 240 s) | `unknown%` |
+
+Results after the rebase, on the clean rebuild:
+
+- **Boot:** no Scheme errors.
+- **`run-all-tests`:** all 11 suites pass, run one at a time: htmltm, xmltm,
+  tmlength, environment, mathtm, tmhtml, tmmltm, prog-format, tm-define,
+  tm-dialogue and cite-sort.
+- **`run-integration-tests`:** all four suites pass: deletion-plan,
+  server-notifications, server-backup and server-cache.
+- **Probes:** all nine pass: the ones in the table above, plus
+  `server-strong-password?`, `tm-service` defined, `gnutls-random-number`,
+  `get-user-login` / `get-user-name`, and reseeding through
+  `*random-state*`.
 
 ## 6.2 Fragile or surprising behavior
 
@@ -172,8 +255,8 @@ its own `catch`.
 
 ## 6.4 Suggested next steps
 
-1. Fix the `prog-format` regression (bug 7). Also make `run-all-tests`
-   continue past a failing suite.
+1. Make `run-all-tests` continue past a failing suite, and report the s7
+   optimizer bug (bug 8) upstream.
 2. **Remove the need for Guile in the build.**
    - Add a `--with-scheme=s7|guile` option (and a real CMake `SCHEME_IMPL=s7`)
      that sets a `SCHEME_S7` or `SCHEME_GUILE` macro.
@@ -189,8 +272,12 @@ its own `catch`.
    - The kernel would then work with both interpreters, as the README
      intended.
 4. Generate `init-texmacs-s7.scm` from `init-texmacs.scm`, or share a common
-   body, so the two do not drift apart. Commit `bbe7dfe2b9` exists only to
-   resync them.
+   body, so the two do not drift apart. Drift has already caused one test
+   failure (bug 7).
+   - Today the two differ only in the prelude (up to the kernel
+     `inherit-modules`, with `compat` → `compat-s7`) and the debug tail.
+   - A simple approach would be to put the common body in
+     `init-texmacs-body.scm` and `load` it from both files.
 5. Put the benchmarks and `lazy-keyboard-force` behind a flag.
 6. Refresh the vendored s7, re-applying `s7-lookup_from.patch`, and
    regenerate `s7.c.orig` from the same upstream revision so that the diff

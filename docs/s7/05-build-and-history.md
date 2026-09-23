@@ -7,14 +7,14 @@ three places:
 
 1. `src/Scheme/Scheme/object.hpp:17-19` includes `../S7/s7_tm.hpp`.
 2. The build system compiles `src/Scheme/S7` instead of `src/Scheme/Guile`.
-3. `src/Texmacs/Server/tm_server.cpp:101` loads `init-texmacs-s7.scm`.
+3. `src/Texmacs/Server/tm_server.cpp:138` loads `init-texmacs-s7.scm`.
 
 ### Autotools (the main build here)
 
-- **`src/makefile.in:115-116`:**
+- **`src/makefile.in:123-124`:**
   `scheme_src := $(call findsrc_in,Scheme,Scheme S7)`, with the same pattern
   for `scheme_c_src`.
-- **`s7.c` is compiled with the C++ compiler** (`src/makefile.in:337-338`).
+- **`s7.c` is compiled with the C++ compiler** (`src/makefile.in:346`).
 - **`configure.in` still runs only `LC_GUILE`.** It still requires Guile
   (`configure` stops with "cannot work without Guile"). It still defines
   `GUILE_A`…`GUILE_D` and `GUILE_VERSION`, and still **links** `-lguile`
@@ -30,9 +30,15 @@ So a Guile install (1.8 on `PATH`) is still needed to configure and link,
 even though Guile is never initialized. Guile is also needed to regenerate the
 glue.
 
+**After a rebase onto a new upstream snapshot**, run `make -C src clean`
+before building. Upstream changes function signatures in headers (for example
+`concretize(url)`), and stale objects then fail at link time with undefined
+symbols. `configure` also generates a few untracked files
+(`packages/msix/*.xml`, `packages/android/res/values/`), which are expected.
+
 ### CMake
 
-- **`SCHEME_IMPL=s7` fails.** `CMakeLists.txt:286-307` offers it, but
+- **`SCHEME_IMPL=s7` fails.** `CMakeLists.txt:293-310` offers it, but
   choosing it gives `FATAL_ERROR "…not implemented yet."`.
 - **The working path is `SCHEME_IMPL=default`**, which still runs
   `pkg_search_module(Guile REQUIRED …)`. The Guile include directories and
@@ -95,9 +101,38 @@ To upgrade s7, apply `s7-lookup_from.patch` to the new upstream `s7.c`.
 
 ## 5.3 History
 
-- **Commit count.** `git log master..HEAD` shows 618 commits, but
-  `git cherry master HEAD` finds only about 34 that are not already upstream.
-  The rest came along with the July 2025 rebase.
+### Current branch layout (since 2026-09-24)
+
+`wip_s7` is now the upstream snapshot `svn_sync_20260921` (`fa8da19dd0`,
+2026-09-17) plus a short linear series:
+
+| Commit | What |
+|---|---|
+| `S7 Scheme support (squashed from wip_s7)` | The whole port as one commit: the net difference between the old `wip_s7` and `svn_sync` (`dd84fcf559`). It also includes conflict resolutions against the 889 newer upstream commits and a resync of `init-texmacs-s7.scm` with the current `init-texmacs.scm`. |
+| `S7: fix ahash-size, property on procedures, catch adapter` | Bug fixes (see [06](06-open-issues.md)) |
+| `Add docs/s7: notes on the s7 port` | These notes |
+| `S7: support the uint glue type` | Replaces a direct Guile call in `glue.cpp`; needed by new upstream glue |
+| `S7: char-sets and *random-state* for the new server code` | Compat additions for new upstream Scheme code |
+
+The old history, with all the original commits and their authors, is kept
+on the branch **`wip_s7_pre_rebase_20260924`** (`dd11d3310a`). That history
+did not share commits with `svn_sync`: the July 2025 rebase had replayed
+upstream under different hashes. The squash made it possible to rebase with
+an exact merge base.
+
+**To rebase onto a later snapshot**, run
+`git rebase --onto <new-snapshot> <old-snapshot>`. After that:
+
+1. Re-sync `init-texmacs-s7.scm` with `init-texmacs.scm` (see
+   [06](06-open-issues.md)).
+2. Rebuild from clean.
+3. Run the probe tests.
+
+### Old history
+
+- **Commit count.** Before the squash, `git log master..HEAD` showed 618
+  commits, but `git cherry master HEAD` found only about 34 that were not
+  already upstream.
 
 | Date | Commit | Author | What |
 |---|---|---|---|
@@ -110,6 +145,8 @@ To upgrade s7, apply `s7-lookup_from.patch` to the new upstream `s7.c`.
 | 2022-01-14/15 | `6497fbc93c`, `edc14367b1`, `59763b2975`, `9e2b669de3` | M. Gubinelli | Multiple values in `with-global`, the `.orig` files, `iota`, Guile/s7 compatibility in `abbrevs.scm` |
 | 2022-01 / 2023-01 | `ec43ea0a32`, `0c537926fb` | M. Gubinelli | Merges of master |
 | 2025-07-24 | `b1f6f26c7c`, `61e84acb77`, `65c32e6974`, `bbe7dfe2b9`, `dd11d3310a` | mgubi | Rebase onto current upstream; re-applied `get-user-name` and the `procedure-name` test; synced `init-texmacs-s7.scm` |
+
+| 2026-09-24 | (see above) | mgubi | Squash, then rebase onto `svn_sync_20260921` |
 
 The vendored interpreter has not changed since January 2022. Since then the
 work has been rebasing and keeping `init-texmacs-s7.scm` in step with
