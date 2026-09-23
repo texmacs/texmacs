@@ -36,102 +36,102 @@
 ;; one that companion pulls in for formulas, so canonical pairings come
 ;; first.
 
-(define-public (math-font-profile! name . props)
-  (math-font-profile-set name props))
+(define-public-macro (define-math-font-profile name . props)
+  `(math-font-profile-set ,name ',props))
 
-(math-font-profile! "Latin Modern Math"
-  '(file "latinmodern-math") '(text "Latin Modern Roman")
-  '(sans "Latin Modern Sans") '(mono "Latin Modern Mono")
-  '(letters "math") '(menu "Latin Modern") '(group "OpenType math"))
+(define-math-font-profile "Latin Modern Math"
+  (file "latinmodern-math") (text "Latin Modern Roman")
+  (sans "Latin Modern Sans") (mono "Latin Modern Mono")
+  (letters "math") (menu "Latin Modern") (group "OpenType math"))
 
-(math-font-profile! "NewComputerModernMath"
-  '(file "NewCMMath-Regular") '(text "NewComputerModern10")
-  '(sans "NewComputerModernSans10") '(mono "NewComputerModernMono10")
-  '(letters "math") '(bold-math "NewComputerModernMath")
-  '(menu "New Computer Modern") '(group "OpenType math"))
+(define-math-font-profile "NewComputerModernMath"
+  (file "NewCMMath-Regular") (text "NewComputerModern10")
+  (sans "NewComputerModernSans10") (mono "NewComputerModernMono10")
+  (letters "math") (bold-math "NewComputerModernMath")
+  (menu "New Computer Modern") (group "OpenType math"))
 
-(math-font-profile! "TeX Gyre Pagella Math"
-  '(file "texgyrepagella-math") '(text "TeX Gyre Pagella")
-  '(sans "TeX Gyre Heros") '(mono "TeX Gyre Cursor")
-  '(letters "text") '(menu "Pagella") '(group "TeX Gyre"))
+(define-math-font-profile "TeX Gyre Pagella Math"
+  (file "texgyrepagella-math") (text "TeX Gyre Pagella")
+  (sans "TeX Gyre Heros") (mono "TeX Gyre Cursor")
+  (letters "text") (menu "Pagella") (group "TeX Gyre"))
 
-(math-font-profile! "TeX Gyre Termes Math"
-  '(file "texgyretermes-math") '(text "TeX Gyre Termes")
-  '(sans "TeX Gyre Heros") '(mono "TeX Gyre Cursor")
-  '(letters "text") '(menu "Termes") '(group "TeX Gyre"))
+(define-math-font-profile "TeX Gyre Termes Math"
+  (file "texgyretermes-math") (text "TeX Gyre Termes")
+  (sans "TeX Gyre Heros") (mono "TeX Gyre Cursor")
+  (letters "text") (menu "Termes") (group "TeX Gyre"))
 
-(math-font-profile! "TeX Gyre Bonum Math"
-  '(file "texgyrebonum-math") '(text "TeX Gyre Bonum")
-  '(sans "TeX Gyre Adventor") '(mono "TeX Gyre Cursor")
-  '(letters "text") '(menu "Bonum") '(group "TeX Gyre"))
+(define-math-font-profile "TeX Gyre Bonum Math"
+  (file "texgyrebonum-math") (text "TeX Gyre Bonum")
+  (sans "TeX Gyre Adventor") (mono "TeX Gyre Cursor")
+  (letters "text") (menu "Bonum") (group "TeX Gyre"))
 
-(math-font-profile! "TeX Gyre Schola Math"
-  '(file "texgyreschola-math") '(text "TeX Gyre Schola")
-  '(sans "TeX Gyre Heros") '(mono "TeX Gyre Cursor")
-  '(letters "text") '(menu "Schola") '(group "TeX Gyre"))
+(define-math-font-profile "TeX Gyre Schola Math"
+  (file "texgyreschola-math") (text "TeX Gyre Schola")
+  (sans "TeX Gyre Heros") (mono "TeX Gyre Cursor")
+  (letters "text") (menu "Schola") (group "TeX Gyre"))
 
-(math-font-profile! "TeX Gyre DejaVu Math"
-  '(file "texgyredejavu-math") '(text "DejaVu")
-  '(sans "DejaVu") '(mono "DejaVu")
-  '(letters "math") '(menu "DejaVu") '(group "TeX Gyre"))
+(define-math-font-profile "TeX Gyre DejaVu Math"
+  (file "texgyredejavu-math") (text "DejaVu")
+  (sans "DejaVu") (mono "DejaVu")
+  (letters "math") (menu "DejaVu") (group "TeX Gyre"))
 
-(math-font-profile! "Stix Two Math"
-  '(file "STIXTwoMath-Regular") '(text "Stix Two Text")
-  '(letters "math") '(menu "STIX Two") '(group "OpenType math"))
+(define-math-font-profile "Stix Two Math"
+  (file "STIXTwoMath-Regular") (text "Stix Two Text")
+  (letters "math") (menu "STIX Two") (group "OpenType math"))
 
-(math-font-profile! "XITS Math"
-  '(file "XITSMath-Regular") '(text "Xits")
-  '(letters "math") '(bold-math "XITS Math")
-  '(menu "XITS") '(group "OpenType math"))
+(define-math-font-profile "XITS Math"
+  (file "XITSMath-Regular") (text "Xits")
+  (letters "math") (bold-math "XITS Math")
+  (menu "XITS") (group "OpenType math"))
 
-(math-font-profile! "Libertinus Math"
-  '(file "LibertinusMath-Regular") '(text "Libertinus")
-  '(sans "Libertinus") '(mono "Libertinus")
-  '(letters "math") '(menu "Libertinus") '(group "OpenType math"))
+(define-math-font-profile "Libertinus Math"
+  (file "LibertinusMath-Regular") (text "Libertinus")
+  (sans "Libertinus") (mono "Libertinus")
+  (letters "math") (menu "Libertinus") (group "OpenType math"))
 
-(math-font-profile! "KpMath"
-  '(file "KpMath-Regular") '(text "Kepler")
-  '(sans "Kepler") '(mono "Kepler")
-  '(letters "math") '(bold-math "Kepler Math")
-  '(menu "Kp Fonts") '(group "OpenType math"))
+(define-math-font-profile "KpMath"
+  (file "KpMath-Regular") (text "Kepler")
+  (sans "Kepler") (mono "Kepler")
+  (letters "math") (bold-math "Kepler Math")
+  (menu "Kp Fonts") (group "OpenType math"))
 
-(math-font-profile! "Asana Math"
-  '(file "Asana-Math") '(text "TeX Gyre Pagella")
-  '(letters "math") '(menu "Asana") '(group "OpenType math"))
+(define-math-font-profile "Asana Math"
+  (file "Asana-Math") (text "TeX Gyre Pagella")
+  (letters "math") (menu "Asana") (group "OpenType math"))
 
-(math-font-profile! "Fira Math"
-  '(file "FiraMath-Regular") '(text "Fira")
-  '(sans "Fira") '(mono "Fira")
-  '(letters "math") '(menu "Fira Math") '(group "OpenType math"))
+(define-math-font-profile "Fira Math"
+  (file "FiraMath-Regular") (text "Fira")
+  (sans "Fira") (mono "Fira")
+  (letters "math") (menu "Fira Math") (group "OpenType math"))
 
-(math-font-profile! "Erewhon Math"
-  '(file "Erewhon-Math") '(text "Erewhon")
-  '(letters "math") '(menu "Erewhon") '(group "OpenType math"))
+(define-math-font-profile "Erewhon Math"
+  (file "Erewhon-Math") (text "Erewhon")
+  (letters "math") (menu "Erewhon") (group "OpenType math"))
 
-(math-font-profile! "XCharter Math"
-  '(file "XCharter-Math") '(text "XCharter")
-  '(letters "math") '(menu "XCharter") '(group "OpenType math"))
+(define-math-font-profile "XCharter Math"
+  (file "XCharter-Math") (text "XCharter")
+  (letters "math") (menu "XCharter") (group "OpenType math"))
 
-(math-font-profile! "Concrete Math"
-  '(file "Concrete-Math") '(text "Concrete Math")
-  '(letters "math") '(menu "Concrete Math") '(group "OpenType math"))
+(define-math-font-profile "Concrete Math"
+  (file "Concrete-Math") (text "Concrete Math")
+  (letters "math") (menu "Concrete Math") (group "OpenType math"))
 
-(math-font-profile! "Euler Math"
-  '(file "Euler-Math") '(text "Euler Math")
-  '(letters "math") '(menu "Euler Math") '(group "OpenType math"))
+(define-math-font-profile "Euler Math"
+  (file "Euler-Math") (text "Euler Math")
+  (letters "math") (menu "Euler Math") (group "OpenType math"))
 
-(math-font-profile! "IBM Plex Math"
-  '(file "IBMPlexMath-Regular") '(text "IBM Plex")
-  '(sans "IBM Plex") '(mono "IBM Plex")
-  '(letters "math") '(menu "IBM Plex") '(group "OpenType math"))
+(define-math-font-profile "IBM Plex Math"
+  (file "IBMPlexMath-Regular") (text "IBM Plex")
+  (sans "IBM Plex") (mono "IBM Plex")
+  (letters "math") (menu "IBM Plex") (group "OpenType math"))
 
-(math-font-profile! "Lete Sans Math"
-  '(file "LeteSansMath") '(text "Lete Sans Math")
-  '(letters "math") '(menu "Lete Sans Math") '(group "OpenType math"))
+(define-math-font-profile "Lete Sans Math"
+  (file "LeteSansMath") (text "Lete Sans Math")
+  (letters "math") (menu "Lete Sans Math") (group "OpenType math"))
 
-(math-font-profile! "GFS Neohellenic Math"
-  '(file "GFSNeohellenicMath") '(text "GFS Neohellenic")
-  '(letters "math") '(menu "GFS Neohellenic") '(group "OpenType math"))
+(define-math-font-profile "GFS Neohellenic Math"
+  (file "GFSNeohellenicMath") (text "GFS Neohellenic")
+  (letters "math") (menu "GFS Neohellenic") (group "OpenType math"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Menus: the profiled math fonts which are installed

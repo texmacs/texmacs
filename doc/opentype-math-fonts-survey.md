@@ -253,8 +253,9 @@ what an integration should consolidate:
 ### 5.1 A single table of math font profiles
 
 *Implemented (first version) in `src/Graphics/Fonts/math_font_profiles.cpp`
-and `TeXmacs/progs/fonts/fonts-opentype.scm`: keys `file`, `text`, `sans`,
-`mono`, `letters`, `bold-math`, `menu`, `group`; the text-to-math mapping
+and `TeXmacs/progs/fonts/fonts-opentype.scm`, where a profile is declared
+with `define-math-font-profile` in the shape below: keys `file`, `text`,
+`sans`, `mono`, `letters`, `bold-math`, `menu`, `group`; the text-to-math mapping
 in `smart_font_bis`, the letter routing and the menu. Alphabets, rubber
 policy, display cap and quirks are still to come.*
 

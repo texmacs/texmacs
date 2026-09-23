@@ -569,7 +569,8 @@ TestOpenTypeFont::test_profile_file () {
   for (int i=0; i<N(forms); i++) {
     scheme_tree f= forms[i];
     if (is_atomic (f) || N(f) < 2) continue;
-    if (!is_atomic (f[0]) || f[0]->label != "math-font-profile!") continue;
+    if (!is_atomic (f[0]) ||
+        f[0]->label != "define-math-font-profile") continue;
     QVERIFY (is_atomic (f[1]));
     string name= scm_unquote (f[1]->label);
     QVERIFY2 (name != "", "a profile has an empty family name");
@@ -577,13 +578,10 @@ TestOpenTypeFont::test_profile_file () {
               as_charp ("two profiles for " * name));
     names->insert (name);
     nr_profiles++;
-    // collect the properties, which the reader gives as (' (key value))
     tree props (TUPLE);
     hashmap<string,string> val ("");
     for (int j=2; j<N(f); j++) {
       scheme_tree q= f[j];
-      if (!is_atomic (q) && N(q) == 2 && is_atomic (q[0]) && q[0]->label == "'")
-        q= q[1];
       QVERIFY2 (!is_atomic (q) && N(q) == 2,
                 as_charp ("malformed property in the profile of " * name));
       string key= scm_unquote (q[0]->label);
@@ -654,6 +652,8 @@ TestOpenTypeFont::test_bold_math_font () {
   // rule is 70 design units against 40 for the regular one. (This harness
   // runs with the smart fonts off, so this is the plain font selection; the
   // smart font path is covered by the math-variants sample.)
+  // du_y measures in the units of Latin Modern Math, so this needs it too
+  if (!have_lm) QSKIP ("Latin Modern Math missing");
   if (!tt_font_exists ("NewCMMath-Bold")) QSKIP ("NewCMMath-Bold missing");
   font reg= smart_font ("NewComputerModernMath", "mr", "medium", "normal",
                         "roman", "rm", "medium", "mathitalic",
