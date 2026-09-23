@@ -138,7 +138,7 @@ struct unicode_font_rep: font_rep {
   
   // only for OpenType fonts /////////
 
-  tt_face      math_face;
+  tt_face      ot_face;  // the parsed face: MATH, GSUB and GPOS
   ot_mathtable math_table;
 
   font make_rubber_font (font base);
@@ -311,7 +311,7 @@ unicode_font_rep::unicode_font_rep (string name,
   // hand-tuned customizations below take precedence over the table when
   // both exist, unless the user switched them off (preference
   // "hand tuned math fonts") to compare with the table-only result.
-  tt_face ot_face= tt_face (family);
+  this->ot_face= tt_face (family);
   bool    has_ot  = !is_nil (ot_face) && !is_nil (ot_face->math_table);
   bool    tuned   = hand_tuned_math_fonts || !has_ot;
   if (has_ot) init_ot_math (ot_face);
@@ -477,7 +477,7 @@ unicode_font_rep::unicode_font_rep (string name,
 // override any of these values.
 void
 unicode_font_rep::init_ot_math (tt_face face) {
-  this->math_face = face;
+  this->ot_face   = face;
   this->math_table= face->math_table;
   ot_math= true;
   init_design_unit_factor ();
@@ -1157,7 +1157,7 @@ unicode_font_rep::init_design_unit_factor () {
   // The face is scaled to 'size' points at hdpi x vdpi, so one design unit
   // measures size/units_per_EM points, i.e. size*hpt/units_per_EM vertically
   // and size*wpt/units_per_EM horizontally (in SI units).
-  double upem= (double) math_face->ft_face->units_per_EM;
+  double upem= (double) ot_face->ft_face->units_per_EM;
   if (upem <= 0.0) upem= 1000.0;
   design_unit_to_metric_factor  = ((double) size * (double) hpt) / upem;
   design_unit_to_metric_x_factor= ((double) size * (double) wpt) / upem;
@@ -1182,7 +1182,7 @@ unicode_font_rep::metric_to_design_unit (SI m) {
 font
 unicode_font_rep::make_rubber_font (font base) {
   if (!is_nil (this->math_table)) {
-    return rubber_unicode_font (this, this->math_face);
+    return rubber_unicode_font (this, this->ot_face);
   }
   return font_rep::make_rubber_font (base);
 }
@@ -1201,8 +1201,9 @@ unicode_font_rep::get_glyphID (string s) {
   }
   font_metric fm;
   font_glyphs fg;
+  if (is_nil (ot_face)) return 0;
   int         index= index_glyph (s, fm, fg);
-  return decode_index (math_face->ft_face, index);
+  return decode_index (ot_face->ft_face, index);
 }
 
 inline string
@@ -1277,10 +1278,10 @@ unicode_font_rep::get_top_accent (string s, SI& x) {
 bool
 unicode_font_rep::get_feature_variant (string s, string feature, int alt,
                                        string& r) {
-  if (!ot_math || N(s) == 0 || is_nil (math_face)) return false;
+  if (N(s) == 0 || is_nil (ot_face)) return false;
   unsigned int glyphID= get_glyphID (s);
   if (glyphID == 0) return false;
-  ot_gsub_map& m= math_face->gsub_feature (feature);
+  ot_gsub_map& m= ot_face->gsub_feature (feature);
   if (!m->contains (glyphID)) return false;
   array<unsigned int> alts= m[glyphID];
   if (alt < 0 || alt >= N(alts)) return false;

@@ -228,3 +228,22 @@ feature_font (font base, string feature, int alt) {
   return make (font, name,
                tm_new<feature_font_rep> (name, base, feature, alt));
 }
+
+// The value of the font-features environment variable: a comma separated
+// list of OpenType feature tags, each of them optionally followed by the
+// number of the alternate to take, as in "onum,ss01=1". Tags are applied
+// from left to right, so a later one sees the glyphs the earlier ones chose.
+font
+apply_features (font fn, string features) {
+  array<string> a= trim_spaces (tokenize (features, ","));
+  for (int i=0; i<N(a); i++) {
+    if (N(a[i]) == 0) continue;
+    array<string> b= trim_spaces (tokenize (a[i], "="));
+    string tag= b[0];
+    int    alt= 0;
+    if (N(b) >= 2 && is_int (b[1])) alt= as_int (b[1]);
+    if (N(tag) != 4) continue;  // an OpenType tag is four characters long
+    fn= feature_font (fn, tag, alt);
+  }
+  return fn;
+}

@@ -51,7 +51,8 @@
   <verbatim|italic>, <verbatim|small-caps>, ...>>|<row|<cell|<verbatim|font-base-size>>|<cell|<verbatim|10>>|<cell|the
   base size in points>>|<row|<cell|<verbatim|font-size>>|<cell|<verbatim|1>>|<cell|a
   multiplier of the base size>>|<row|<cell|<verbatim|font-effects>>|<cell|>|<cell|extra
-  effects, such as <verbatim|bold=0.5>>>|<row|<cell|<verbatim|math-font>>|<cell|<verbatim|roman>>|<cell|the
+  effects, such as <verbatim|bold=0.5>>>|<row|<cell|<verbatim|font-features>>|<cell|>|<cell|OpenType
+  features, such as <verbatim|onum>>>|<row|<cell|<verbatim|math-font>>|<cell|<verbatim|roman>>|<cell|the
   font name in math mode>>|<row|<cell|<verbatim|math-font-family>>|<cell|<verbatim|mr>>|<cell|<verbatim|mr>,
   <verbatim|ms> or <verbatim|mt>>>|<row|<cell|<verbatim|math-font-series>>|<cell|<verbatim|medium>>|<cell|as
   in text mode>>|<row|<cell|<verbatim|math-font-shape>>|<cell|<verbatim|normal>>|<cell|<verbatim|normal>
@@ -162,6 +163,39 @@
   installed is simply skipped, and a character which no item claims is
   resolved as usual, so a sequence is a hint and never makes a document
   unreadable elsewhere.
+
+  <paragraph*|Asking for an OpenType feature>
+
+  A font may carry several shapes of the same character and say, in its
+  <name|OpenType> layout tables, under which <em|feature> each of them is to
+  be used: old style figures under <verbatim|onum>, small capitals under
+  <verbatim|smcp>, tabular figures under <verbatim|tnum>, a stylistic set
+  under <verbatim|ss01> and so on. The variable <verbatim|font-features>
+  names the features you want, separated by commas:
+
+  <\tm-fragment>
+    <inactive*|<with|font-features|onum|In 1789, ...>>
+  </tm-fragment>
+
+  A feature which offers several alternates for the same character takes the
+  number of the one you want after an equals sign, as in
+  <verbatim|ss01=1>; the first alternate is taken by default. Features
+  apply from left to right, so <verbatim|onum,tnum> asks for old style
+  figures and then for the tabular form of those.
+
+  The substitution happens when the glyph is drawn, so the text of your
+  document is untouched: it still holds the digits you typed, and a copy,
+  a search, a spell check or an export sees them. A font which does not
+  have the feature you asked for simply ignores it, which means that the
+  variable is safe to set on a whole document.
+
+  Only the features which replace one glyph by another are supported at
+  present. That covers <verbatim|onum>, <verbatim|lnum>, <verbatim|tnum>,
+  <verbatim|pnum>, <verbatim|zero>, <verbatim|smcp>, <verbatim|c2sc>,
+  <verbatim|salt>, <verbatim|swsh>, <verbatim|hist> and the stylistic sets
+  <verbatim|ss01> to <verbatim|ss20> in the fonts shipped with <TeXmacs>.
+  The ligature features, <verbatim|liga>, <verbatim|dlig> and
+  <verbatim|frac>, replace several glyphs by one and are not applied yet.
 
   <paragraph*|In markup>
 

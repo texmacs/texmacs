@@ -40,6 +40,7 @@ initialize_default_var_type () {
   var_type (FONT_SIZE)          = Env_Font_Size;
   var_type (FONT_BASE_SIZE)     = Env_Font_Size;
   var_type (FONT_EFFECTS)       = Env_Font;
+  var_type (FONT_FEATURES)      = Env_Font;
   var_type (MAGNIFICATION)      = Env_Magnification;
   var_type (MAGNIFY)            = Env_Magnify;
   var_type (COLOR)              = Env_Color;
@@ -590,6 +591,8 @@ edit_env_rep::update_font () {
     if (fn->math_type == MATH_TYPE_OPENTYPE)
       fn= feature_font (fn, "ssty", min (index_level, 2) - 1);
   }
+  string feat= get_string (FONT_FEATURES);
+  if (N(feat) != 0) fn= apply_features (fn, feat);
   string eff= get_string (FONT_EFFECTS);
   if (N(eff) != 0) fn= apply_effects (fn, eff);
 }

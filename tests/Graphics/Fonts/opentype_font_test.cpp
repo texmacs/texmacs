@@ -679,6 +679,48 @@ test_stretch_stack_constants () {
   CHECK (st->stretch_stack_gap_above_min < st->upper_limit_gap_min);
 }
 
+static void
+test_text_font_features () {
+  // The GSUB features of an ordinary text font, which has no MATH table:
+  // Latin Modern Roman keeps its old style figures under 'onum' and Linux
+  // Libertine its small capitals under 'smcp', both single substitutions.
+  if (!tt_font_exists ("lmroman10-regular")) SKIP ("Latin Modern Roman missing");
+  font lm= unicode_font ("lmroman10-regular", LM_SIZE, LM_DPI);
+  CHECK (!is_nil (lm));
+  string sub;
+  CHECK (lm->get_feature_variant ("0", "onum", 0, sub));
+  CHECK (sub != "0");
+  CHECK (lm->supports (sub));
+  // a feature the font does not have answers nothing
+  CHECK (!lm->get_feature_variant ("0", "zzzz", 0, sub));
+  // and the font of the feature draws the substitute: an old style zero
+  // reaches no higher than the x-height, a lining one as high as a capital
+  font os= apply_features (lm, "onum");
+  CHECK (!is_nil (os));
+  metric lining, oldstyle, ex_x;
+  lm->get_extents ("0", lining);
+  os->get_extents ("0", oldstyle);
+  lm->get_extents ("x", ex_x);
+  CHECK (oldstyle->y2 < lining->y2);
+  CHECK (si_abs (oldstyle->y2 - ex_x->y2) <= lining->y2 - ex_x->y2);
+  // the string is unchanged for everything else
+  metric la, lb;
+  lm->get_extents ("abc", la);
+  os->get_extents ("abc", lb);
+  CHECK_EQ (lb->x2 - lb->x1, la->x2 - la->x1);
+  // an unknown tag and an empty list leave the font alone
+  CHECK_EQ (apply_features (lm, "")->res_name, lm->res_name);
+  CHECK_EQ (apply_features (lm, "toolong")->res_name, lm->res_name);
+  if (!tt_font_exists ("LinLibertine_R")) return;
+  font lib= unicode_font ("LinLibertine_R", LM_SIZE, LM_DPI);
+  CHECK (lib->get_feature_variant ("a", "smcp", 0, sub));
+  CHECK (sub != "a");
+  metric small, cap;
+  apply_features (lib, "smcp")->get_extents ("a", small);
+  lib->get_extents ("A", cap);
+  CHECK (small->y2 < cap->y2);
+}
+
 int
 main () {
   test_setup ();
@@ -699,6 +741,7 @@ main () {
   RUN (test_profiles);
   RUN (test_feature_font);
   RUN (test_gpos_kerning);
+  RUN (test_text_font_features);
   RUN (test_profile_file);
   RUN (test_bold_math_font);
   RUN (test_stretch_stack_constants);

@@ -791,6 +791,25 @@ prints, the `get_unicode_range` experiment) were dropped.
   profiles moved to a macro at the same time, `define-math-font-profile`,
   the way `define-table` declares data elsewhere in TeXmacs.
 
+- **The GSUB reader serves ordinary text fonts too.** The face was kept
+  only for fonts with a MATH table, and `get_feature_variant` refused to
+  answer for any other, although `tt_face (family)` is built for every
+  font in the constructor and the feature tables are read from the same
+  buffer. The face is now a member of every `unicode_font_rep`, under the
+  name it deserves, and a feature is a property of the face rather than of
+  the MATH table. A new environment variable `font-features` names the
+  features a document wants, comma separated, each with the number of the
+  alternate after an equals sign when it offers several, and
+  `apply_features` wraps the font in one `feature_font` decorator per tag,
+  where `font-effects` is applied. Old style figures (`onum`), small
+  capitals (`smcp`) and the stylistic sets are single substitutions, which
+  is what the reader understands: they work in Latin Modern, Libertine,
+  Fira Sans and KpRoman, and 77 of the shipped fonts carry one of them.
+  The ligature features are many to one, a lookup type the reader skips,
+  so `liga` and `frac` are still ignored. The substitution happens when the
+  glyph is drawn, so the text of the document is untouched and an exported
+  PDF still yields the digits that were typed.
+
 ## 5. Tests
 
 ### Unit tests
