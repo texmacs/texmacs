@@ -153,11 +153,12 @@
   `(make-promise #f (lambda () ,expr)))
 
 (define-public-macro (delay expr) ; "delay" is taken damn it
-  (list 'delay-force (list 'make-promise #t (list 'lambda () expr))))
+  (list 'delay-force (list 'make-promise #t expr)))
 
+;; a promise is ((done? . value)) if done? and ((done? . thunk)) otherwise
 (define-public (force promise)
   (if (caar promise)
-      ((cdar promise))
+      (cdar promise)
       (let ((promise* ((cdar promise))))
         (if (not (caar promise))
             (begin
