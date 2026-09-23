@@ -72,7 +72,8 @@ of them was set with no kerning at all.
 `TeXmacs/progs/fonts/fonts-opentype.scm`). What the MATH table cannot say:
 the text, sans serif and typewriter companions of a math font, whether math
 letters come from the math font or from the text italic, the menu label.
-Twenty fonts are profiled, and a companion is named by its master, the way
+Twenty fonts are profiled, each declared with `define-math-font-profile`,
+and a companion is named by its master, the way
 the `font` environment variable names a font, not by its family. A text family typesets its formulas in its math
 companion and the other way round, math sans serif and math typewriter use
 the declared companions, and the "Mathematical font" menu lists the profiled
@@ -83,6 +84,28 @@ Math, KpMath and Fira Math are shipped with text companions and registered in
 the global database, so they work in a fresh installation without a scan.
 Rescanning a complete database went from minutes to about two seconds by
 skipping files already recorded.
+
+**Finding the fonts** (`Plugins/Freetype/tt_file.cpp`,
+`Graphics/Fonts/font_database.cpp`). A font is looked for in its sfnt form
+before its Type 1 form: a TeX distribution ships many families in both, and
+the Type 1 file carries the encoding of the TeX world, which turned the text
+of XCharter into nonsense. The local database of `$TEXMACS_HOME_PATH` is
+merged with the shipped one whenever the latter has changed, which
+`fonts/shipped-stamp.scm` records; without that, a home directory written
+before a version registered new fonts never saw them, and a character only
+those fonts draw came out as its own name in red.
+
+**Symbols** (`TeXmacs/langs/encoding/tmuniversaltounicode-extra.scm`,
+`TeXmacs/progs/math/math-symbol-tools.scm`). Two hundred symbols of the
+`unicode-math` list which TeXmacs could not name are named, with the class
+that gives them their spacing in `std-symbols.scm` and the LaTeX name that
+carries them through conversion in `latex-symbol-drd.scm`. They are reachable
+from the palettes, from a window of all the symbols (Insert ▸ All symbols…)
+and from a side tool (Insert ▸ Symbols in a side tool), whose groups are
+declared once with `define-math-symbols-group` and laid out for the width of
+each. Every symbol button draws with the smart font, so a palette can show a
+symbol which lives in no TeX font, and says its markup in a balloon.
+`doc/math-symbol-coverage.md` counts what is still unnamed.
 
 ### Where the code is
 
@@ -101,6 +124,10 @@ skipping files already recorded.
 | `Typeset/Boxes/Composite/script_boxes.cpp` | scripts, limits, stretch stacks |
 | `Typeset/Concat/concat_math.cpp` | delimiters, big operators, arrows |
 | `Typeset/Env/env_semantics.cpp` | script sizes, `ssty` at script levels |
+| `Plugins/Freetype/tt_file.cpp` | the order the font files are looked for |
+| `Graphics/Fonts/font_database.cpp` | the local database and the shipped one |
+| `Texmacs/Window/tm_button.cpp` | the font a symbol button is drawn with |
+| `Plugins/Qt/qt_ui_element.cpp` | a symbol button outside a menu |
 
 ## Building and testing
 
@@ -117,7 +144,7 @@ make SAFE_TEXMACS_REV && make
 Then, from the top of the tree:
 
 ```
-make -C tests                                   # 18 binaries, 142 tests
+make -C tests                                   # 18 binaries, 138 tests
 TM_TEST_FONT_DIR=/path/to/fonts tests/opentype/check.sh    # tests + renders
 tests/opentype/compare-lualatex.sh              # against unicode-math
 tests/opentype/font-gallery.sh                  # the specimens below

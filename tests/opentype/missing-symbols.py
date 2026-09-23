@@ -72,9 +72,10 @@ NOTED = re.compile (r';\s*(.+?)\s+"#([0-9A-Fa-f]+)"')
 
 # The proposal tables this script writes live in the same directory but are
 # not loaded by TeXmacs until a line in converter.cpp names them, so they do
-# not count as coverage; pass --include-extra once they are wired in.
-GENERATED = ('tmuniversaltounicode-extra.scm',
-             'tmuniversaltounicode-extra-candidates.scm')
+# not count as coverage; pass --include-extra to count them as well.
+# tmuniversaltounicode-extra.scm is no longer one of them: converter.cpp
+# loads it, so its symbols are named like any other.
+GENERATED = ('tmuniversaltounicode-extra-candidates.scm',)
 
 def load_named (texmacs, include_extra=False):
     """code point -> set of TeXmacs names, from langs/encoding
@@ -727,23 +728,41 @@ def main ():
 
     w ("## Filling a gap")
     w ("")
-    w ("Giving a symbol a name touches five places, and the class column above")
+    w ("Giving a symbol a name touches six places, and the class column above")
     w ("says which group it belongs to:")
     w ("")
     w ("1. `TeXmacs/langs/encoding/tmuniversaltounicode.scm`: replace the")
     w ("   comment by `(\"<name>\" \"#XXXX\")`, keeping the Unicode order.")
+    w ("   `tmuniversaltounicode-extra.scm` holds the names this report")
+    w ("   proposed, and converter.cpp loads both.")
     w ("2. `TeXmacs/progs/language/std-symbols.scm`: declare the symbol in the")
     w ("   group that matches its class, which is what gives it its spacing.")
     w ("3. `TeXmacs/progs/math/math-menu.scm`: add `(symbol \"<name>\")` to the")
     w ("   palette where a reader would look for it.")
-    w ("4. `TeXmacs/progs/math/math-kbd.scm`: a keyboard sequence, if the")
+    w ("4. `TeXmacs/progs/math/math-symbol-tools.scm`: add it to the group of")
+    w ("   the window of all the symbols and of the side tool, which are")
+    w ("   declared together with `define-math-symbols-group`.")
+    w ("5. `TeXmacs/progs/math/math-kbd.scm`: a keyboard sequence, if the")
     w ("   symbol deserves one.")
-    w ("5. `TeXmacs/progs/convert/latex/latex-symbol-drd.scm`: the LaTeX name,")
-    w ("   so that import and export keep it.")
+    w ("6. `TeXmacs/progs/convert/latex/latex-symbol-drd.scm`: the LaTeX name,")
+    w ("   so that import and export keep it; a symbol which only")
+    w ("   unicode-math knows goes in the group which declares that package.")
     w ("")
     w ("The font side needs nothing: a named symbol is looked up by code point")
     w ("in whatever font serves the formula, and the smart font finds a")
     w ("fallback when the math font lacks the glyph.")
+    w ("")
+    w ("That fallback goes through the font database, so a stale one shows the")
+    w ("symbol as its own name in red. Latin Modern Math, the font of the")
+    w ("default `roman` family, has no U+25FB, U+25FC, U+26AA or U+26AB, and")
+    w ("the fallback reaches them in KpMath, New Computer Modern Math or the")
+    w ("STIX fonts only if the database of `$TEXMACS_HOME_PATH/fonts` knows")
+    w ("those fonts. TeXmacs merges the shipped database whenever it has")
+    w ("changed, which `shipped-stamp.scm` records, so an existing home")
+    w ("directory catches up by itself at the first start after an upgrade;")
+    w ("Tools > Fonts > Clear font cache starts the whole thing over. Every")
+    w ("symbol named in `tmuniversaltounicode-extra.scm` is drawn by a font")
+    w ("TeXmacs ships, so a fresh installation needs no scan.")
     w ("")
 
     text = "\n".join (out)

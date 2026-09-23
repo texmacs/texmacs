@@ -218,6 +218,16 @@ lazy, and the global database is loaded as a fallback when a family is
 missing; on this branch `font_database_master` answers the same question for
 one family without printing a warning.
 
+The local database also has to follow the shipped one, which grows with the
+fonts a new version registers. Its own date says nothing, since it is saved
+again on every scan, so `font_database_load` keeps a stamp in
+`$TEXMACS_HOME_PATH/fonts/shipped-stamp.scm` — the date and the size of the
+three shipped files — and merges the shipped entries, filtered against the
+files really present, whenever the stamp differs. An old home directory
+otherwise hides a new font for good, and the fallback search of the smart
+font then finds no font at all for a character only that font draws, which
+the error font shows as the name of the character in red.
+
 ### 4.2 Logical fonts and features (`font_select.cpp`, `font_guess.cpp`)
 
 TeXmacs describes a requested font as a *logical font*: an array of strings
@@ -315,6 +325,21 @@ created with `rubber_font (fn)`.
 
 A loop detector fails hard when a substitution resolves to the smart font
 itself.
+
+### 5.3 Outside the typesetter: menus and widgets
+
+The typesetter is not the only thing that draws text. A menu label, a
+toolbar and the buttons of a palette are laid out by the GUI, and they take
+their font from `find_font (family, class, series, shape, sz, dpi)` in
+`find_font.cpp`, the selection that predates the smart fonts: the rules of
+`TeXmacs/progs/fonts/*.scm` turn the request into a tuple such as
+`(math-std ecrm cmr cmmi 10 600)` and the result is a compound of TeX
+fonts. `box_widget` in `src/Texmacs/Window/tm_button.cpp` builds the box a
+symbol button shows this way, with `roman`, `mr` as its default family and
+class, so a palette could only ever show what the TeX fonts happen to
+carry, and a symbol that lives in a Unicode font alone came out blank. On
+this branch that call goes to the smart font for the mathematical classes,
+which is the same font the typesetter would use for the symbol.
 
 ## 6. Virtual fonts (`virtual_font.cpp`, `TeXmacs/fonts/virtual/*.vfn`)
 

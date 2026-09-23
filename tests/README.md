@@ -149,9 +149,11 @@ with the entries that are ready, and
 commented and carrying the reason. `confirmed-symbols.txt` next to the
 script lists the names whose shape was compared by eye with the glyph of
 the code point, which is what moves them from the second file to the
-first. Nothing loads them until a
-`hashtree_from_dictionary` line names the first one in
-`src/Data/String/converter.cpp`.
+first. `src/Data/String/converter.cpp` names the first one in every
+`hashtree_from_dictionary` chain that reads `tmuniversaltounicode`, so its
+two hundred symbols are converted like any other; the candidates wait for
+the same treatment, and `--include-extra` counts them as covered to see
+what would remain.
 
 
 The sample `math-overview.tm` typesets the same formulas with TeX fonts,

@@ -18,11 +18,11 @@ gamma of U+213D decomposes to an ordinary gamma.
 | | Symbols |
 |---|---|
 | In the reference list | 2435 |
-| Named in `langs/encoding` | 883 |
+| Named in `langs/encoding` | 1083 |
 | Named as a math alphanumeric | 597 |
 | Text characters, typed as themselves | 23 |
 | Combining marks of the accent constructs | 40 |
-| **Symbols without a name** | **892** |
+| **Symbols without a name** | **692** |
 
 Glyph availability is counted over 12 font(s): FiraMath-Regular, KpMath-Bold, KpMath-Regular, latinmodern-math, NewCMMath-Bold, NewCMMath-Regular, STIXMath-Regular, STIXTwoMath-Regular, texgyrebonum-math, texgyrepagella-math, texgyreschola-math, texgyretermes-math.
 
@@ -30,19 +30,18 @@ Glyph availability is counted over 12 font(s): FiraMath-Regular, KpMath-Bold, Kp
 
 | Unicode block | Missing | Drawn by at least 6 fonts |
 |---|---|---|
-| Punctuation | 16 | 10 |
-| Currency | 1 | 1 |
-| Letterlike | 20 | 15 |
-| Arrows | 40 | 23 |
-| Mathematical operators | 68 | 50 |
-| Miscellaneous technical | 62 | 34 |
-| Miscellaneous symbols | 106 | 28 |
-| Miscellaneous mathematical A | 37 | 17 |
-| Supplemental arrows A | 8 | 4 |
-| Supplemental arrows B | 126 | 2 |
-| Miscellaneous mathematical B | 117 | 5 |
-| Supplemental operators | 219 | 14 |
-| Miscellaneous symbols and arrows | 64 | 7 |
+| Punctuation | 6 | 0 |
+| Letterlike | 5 | 0 |
+| Arrows | 19 | 2 |
+| Mathematical operators | 18 | 0 |
+| Miscellaneous technical | 33 | 6 |
+| Miscellaneous symbols | 84 | 6 |
+| Miscellaneous mathematical A | 22 | 2 |
+| Supplemental arrows A | 4 | 0 |
+| Supplemental arrows B | 124 | 0 |
+| Miscellaneous mathematical B | 113 | 1 |
+| Supplemental operators | 199 | 1 |
+| Miscellaneous symbols and arrows | 57 | 0 |
 | Mathematical alphanumerics | 4 | 2 |
 | Arabic mathematical | 2 | 0 |
 | Other | 2 | 0 |
@@ -54,280 +53,53 @@ since a symbol almost no font has is not worth a name; pass
 `--all` for the complete list.
 
 
-### Punctuation
-
-| Code | Char | unicode-math | Class | Description | Noted in the table as | Fonts |
-|---|---|---|---|---|---|---|
-| U+2010 | ‐ | `\mathhyphen` | alpha | hyphen |  | 12 |
-| U+2015 | ― | `\horizbar` | ord | horizontal bar |  | 10 |
-| U+2017 | ‗ | `\twolowline` | ord | double low line (spacing) |  | 9 |
-| U+2033 | ″ | `\dprime` | ord | double prime or second, not superscripted |  | 10 |
-| U+2034 | ‴ | `\trprime` | ord | triple prime (not superscripted) |  | 10 |
-| U+2036 | ‶ | `\backdprime` | ord | double reverse prime, not superscripted |  | 9 |
-| U+2037 | ‷ | `\backtrprime` | ord | triple reverse prime, not superscripted |  | 9 |
-| U+2040 | ⁀ | `\tieconcat` | bin | character tie, z notation sequence concatenation |  | 6 |
-| U+2044 | ⁄ | `\fracslash` | bin | fraction slash |  | 12 |
-| U+2057 | ⁗ | `\qprime` | ord | quadruple prime, not superscripted |  | 9 |
-
-### Currency
-
-| Code | Char | unicode-math | Class | Description | Noted in the table as | Fonts |
-|---|---|---|---|---|---|---|
-| U+20AC | € | `\euro` | ord | euro sign |  | 12 |
-
-### Letterlike
-
-| Code | Char | unicode-math | Class | Description | Noted in the table as | Fonts |
-|---|---|---|---|---|---|---|
-| U+2107 | ℇ | `\Eulerconst` | ord | euler constant | euler constant | 10 |
-| U+210E | ℎ | `\Planckconst` | ord | planck constant | planck constant | 12 |
-| U+212B | Å | `\Angstrom` | alpha | angstrom capital a, ring | Angstrom sign | 10 |
-| U+2132 | Ⅎ | `\Finv` | ord | turned capital f | turned capital f | 6 |
-| U+213D | ℽ | `\Bbbgamma` | alpha | double-struck small gamma | decomposes to `<gamma>`, U+03B3 | 9 |
-| U+213E | ℾ | `\BbbGamma` | alpha | double-struck capital gamma | decomposes to `<Gamma>`, U+0393 | 9 |
-| U+213F | ℿ | `\BbbPi` | alpha | double-struck capital pi | decomposes to `<Pi>`, U+03A0 | 9 |
-| U+2140 | ⅀ | `\Bbbsum` | op | double-struck n-ary summation | decomposes to `<big-sum-1>`, U+2211 | 10 |
-| U+2141 | ⅁ | `\Game` | ord | turned sans-serif capital g |  | 6 |
-| U+2145 | ⅅ | `\mitBbbD` | ord | double-struck italic capital d | decomposes to `<mathD>`, U+0044 | 9 |
-| U+2146 | ⅆ | `\mitBbbd` | ord | double-struck italic small d | decomposes to `<mathd>`, U+0064 | 9 |
-| U+2147 | ⅇ | `\mitBbbe` | ord | double-struck italic small e | decomposes to `<mathe>`, U+0065 | 9 |
-| U+2148 | ⅈ | `\mitBbbi` | ord | double-struck italic small i | decomposes to `<mathi>`, U+0069 | 9 |
-| U+2149 | ⅉ | `\mitBbbj` | ord | double-struck italic small j | decomposes to `<mathj>`, U+006A | 9 |
-| U+214B | ⅋ | `\upand` | bin | turned ampersand |  | 6 |
-
 ### Arrows
 
 | Code | Char | unicode-math | Class | Description | Noted in the table as | Fonts |
 |---|---|---|---|---|---|---|
-| U+219F | ↟ | `\twoheaduparrow` | rel | up two-headed arrow | <twoheaduparrow> | 11 |
-| U+21A1 | ↡ | `\twoheaddownarrow` | rel | down two-headed arrow | <twoheaddownarrow> | 11 |
-| U+21A5 | ↥ | `\mapsup` | rel | maps to, upward | upwards arrow from bar | 11 |
-| U+21A7 | ↧ | `\mapsdown` | rel | maps to, downward | downwards arrow from bar | 11 |
-| U+21B2 | ↲ | `\Ldsh` | rel | left down angled arrow | downwards arrow with tip leftwards | 10 |
-| U+21B3 | ↳ | `\Rdsh` | rel | right down angled arrow | downwards arrow with tip rightwards | 10 |
-| U+21B4 | ↴ | `\linefeed` | ord | rightwards arrow with corner downwards | rightwards arrow with corner downwards | 10 |
-| U+21B5 | ↵ | `\carriagereturn` | ord | downwards arrow with corner leftward = carriage return | downwards arrow with corner leftwards | 10 |
-| U+21C5 | ⇅ | `\updownarrows` | rel | up arrow, down arrow | <updownarrows> | 11 |
-| U+21D6 | ⇖ | `\Nwarrow` | rel | nw pointing double arrow | <Nwarrow> | 12 |
-| U+21D7 | ⇗ | `\Nearrow` | rel | ne pointing double arrow | <Nearrow> | 12 |
-| U+21D8 | ⇘ | `\Searrow` | rel | se pointing double arrow | <Searrow> | 12 |
-| U+21D9 | ⇙ | `\Swarrow` | rel | sw pointing double arrow | <Swarrow> | 12 |
 | U+21DC | ⇜ | `\leftsquigarrow` | rel | leftwards squiggle arrow | leftwards squiggle arrow | 11 |
 | U+21DD | ⇝ | `\rightsquigarrow` | rel | rightwards squiggle arrow | rigthwards squiggle arrow | 11 |
-| U+21E0 | ⇠ | `\leftdasharrow` | ord | leftwards dashed arrow |  | 6 |
-| U+21E2 | ⇢ | `\rightdasharrow` | ord | rightwards dashed arrow |  | 6 |
-| U+21E6 | ⇦ | `\leftwhitearrow` | ord | leftwards white arrow |  | 10 |
-| U+21E7 | ⇧ | `\upwhitearrow` | ord | upwards white arrow |  | 10 |
-| U+21E8 | ⇨ | `\rightwhitearrow` | ord | rightwards white arrow |  | 10 |
-| U+21E9 | ⇩ | `\downwhitearrow` | ord | downwards white arrow |  | 10 |
-| U+21F5 | ⇵ | `\downuparrows` | rel | downwards arrow leftwards of upwards arrow |  | 11 |
-| U+21F6 | ⇶ | `\rightthreearrows` | rel | three rightwards arrows |  | 11 |
-
-### Mathematical operators
-
-| Code | Char | unicode-math | Class | Description | Noted in the table as | Fonts |
-|---|---|---|---|---|---|---|
-| U+2206 | ∆ | `\increment` | ord | laplacian (delta; nabla\string^2) | increment | 12 |
-| U+220A | ∊ | `\smallin` | rel | set membership (small set membership) | small element of | 10 |
-| U+220D | ∍ | `\smallni` | rel | /ni /owns r: contains (small contains as member) | smallmath contains as member | 10 |
-| U+220E | ∎ | `\QED` | ord | end of proof | end of proof | 12 |
-| U+2215 | ∕ | `\divslash` | bin | division slash | division slash | 12 |
-| U+2219 | ∙ | `\vysmblkcircle` | bin | bullet operator | bullet operator | 12 |
-| U+221F | ∟ | `\rightangle` | ord | right (90 degree) angle | right angle | 11 |
-| U+2231 | ∱ | `\intclockwise` | op | clockwise integral | clockwise integral | 10 |
-| U+2232 | ∲ | `\varointclockwise` | op | contour integral, clockwise | clockwise contour integral | 11 |
-| U+2233 | ∳ | `\ointctrclockwise` | op | contour integral, anticlockwise | anticlockwise contour integral | 11 |
-| U+2236 | ∶ | `\mathratio` | rel | ratio | ratio | 12 |
-| U+2237 | ∷ | `\Colon` | rel | two colons | proportion | 12 |
-| U+2238 | ∸ | `\dotminus` | bin | minus sign, dot above | dot minus | 11 |
-| U+2239 | ∹ | `\dashcolon` | rel | excess (-:) | excess | 12 |
-| U+223A | ∺ | `\dotsminusdots` | rel | minus with four dots, geometric properties | geometric proportion | 11 |
-| U+223B | ∻ | `\kernelcontraction` | rel | homothetic | homothetic | 11 |
-| U+223E | ∾ | `\invlazys` | bin | most positive [inverted lazy s] | inverted lazy s | 10 |
-| U+223F | ∿ | `\sinewave` | ord | sine wave | sine wave | 10 |
-| U+2246 | ≆ | `\simneqq` | rel | similar, not equals [vert only for 9573 entity] | approximately but not actually equal to | 11 |
-| U+224B | ≋ | `\approxident` | rel | approximately identical to |  | 11 |
-| U+224C | ≌ | `\backcong` | rel | all equal to |  | 11 |
-| U+2255 | ≕ | `\eqcolon` | rel | equals, colon | equals colon | 12 |
-| U+2258 | ≘ | `\arceq` | rel | arc, equals; corresponds to | corresponds to | 9 |
-| U+2259 | ≙ | `\wedgeq` | rel | corresponds to (wedge, equals) | estimates | 9 |
-| U+225A | ≚ | `\veeeq` | rel | logical or, equals | equiangular to | 9 |
-| U+225B | ≛ | `\stareq` | rel | star equals | triple tilde | 9 |
-| U+225D | ≝ | `\eqdef` | rel | equals by definition | equal to by definition | 9 |
-| U+225E | ≞ | `\measeq` | rel | measured by (m over equals) | measured by | 9 |
-| U+225F | ≟ | `\questeq` | rel | equal with questionmark | questioned equal to | 9 |
-| U+2263 | ≣ | `\Equiv` | rel | strict equivalence (4 lines) | strictly equivalent to | 11 |
-| U+2274 | ≴ | `\nlesssim` | rel | not less, similar | <nlesssim> | 12 |
-| U+2275 | ≵ | `\ngtrsim` | rel | not greater, similar | <ngtrsim> | 12 |
-| U+2278 | ≸ | `\nlessgtr` | rel | not less, greater | <nlessgtr> | 12 |
-| U+2279 | ≹ | `\ngtrless` | rel | not greater, less | <ngtrless> | 12 |
-| U+228C | ⊌ | `\cupleftarrow` | bin | multiset | multiset (<uleftarrow>) | 11 |
-| U+228D | ⊍ | `\cupdot` | bin | union, with dot | MULTISET MULTIPLICATION (<udot> | 11 |
-| U+229C | ⊜ | `\circledequal` | bin | equal in circle | circled equals | 11 |
-| U+22A6 | ⊦ | `\assert` | rel | assertion (vertical, short dash) | ("<vdash>" | 11 |
-| U+22AB | ⊫ | `\VDash` | rel | double vert, double dash | ; <VDash> | 11 |
-| U+22B6 | ⊶ | `\origof` | rel | original of | original of | 11 |
-| U+22B7 | ⊷ | `\imageof` | rel | image of | image of | 11 |
-| U+22B9 | ⊹ | `\hermitmatrix` | ord | hermitian conjugate matrix | hermitian conjugate matrix | 9 |
-| U+22BD | ⊽ | `\barvee` | bin | bar, vee (large vee) | <barvee> | 10 |
-| U+22BE | ⊾ | `\measuredrightangle` | ord | right angle-measured [with arc] | right angle with arc | 9 |
-| U+22BF | ⊿ | `\varlrtriangle` | ord | right triangle | right triangle | 9 |
-| U+22D5 | ⋕ | `\equalparallel` | rel | parallel, equal; equal or parallel | equal and parallel to | 10 |
-| U+22DC | ⋜ | `\eqless` | rel | equal-or-less | <eqless> | 11 |
-| U+22DD | ⋝ | `\eqgtr` | rel | equal-or-greater | <eqgtr> | 11 |
-| U+22E4 | ⋤ | `\sqsubsetneq` | rel | square subset, not equals | <sqsubsetneq> | 11 |
-| U+22E5 | ⋥ | `\sqsupsetneq` | rel | square superset, not equals | <sqsupsetneq> | 11 |
 
 ### Miscellaneous technical
 
 | Code | Char | unicode-math | Class | Description | Noted in the table as | Fonts |
 |---|---|---|---|---|---|---|
-| U+2319 | ⌙ | `\turnednot` | ord | turned not sign | turned not sign | 10 |
-| U+2320 | ⌠ | `\inttop` | ord | top half integral |  | 8 |
-| U+2321 | ⌡ | `\intbottom` | ord | bottom half integral |  | 8 |
-| U+239B | ⎛ | `\lparenuend` | ord | left parenthesis upper hook |  | 11 |
-| U+239C | ⎜ | `\lparenextender` | ord | left parenthesis extension |  | 11 |
-| U+239D | ⎝ | `\lparenlend` | ord | left parenthesis lower hook |  | 11 |
-| U+239E | ⎞ | `\rparenuend` | ord | right parenthesis upper hook |  | 11 |
-| U+239F | ⎟ | `\rparenextender` | ord | right parenthesis extension |  | 11 |
-| U+23A0 | ⎠ | `\rparenlend` | ord | right parenthesis lower hook |  | 11 |
-| U+23A1 | ⎡ | `\lbrackuend` | ord | left square bracket upper corner |  | 11 |
-| U+23A2 | ⎢ | `\lbrackextender` | ord | left square bracket extension |  | 11 |
-| U+23A3 | ⎣ | `\lbracklend` | ord | left square bracket lower corner |  | 11 |
-| U+23A4 | ⎤ | `\rbrackuend` | ord | right square bracket upper corner |  | 11 |
-| U+23A5 | ⎥ | `\rbrackextender` | ord | right square bracket extension |  | 11 |
-| U+23A6 | ⎦ | `\rbracklend` | ord | right square bracket lower corner |  | 11 |
-| U+23A7 | ⎧ | `\lbraceuend` | ord | left curly bracket upper hook |  | 11 |
-| U+23A8 | ⎨ | `\lbracemid` | ord | left curly bracket middle piece |  | 11 |
-| U+23A9 | ⎩ | `\lbracelend` | ord | left curly bracket lower hook |  | 11 |
-| U+23AA | ⎪ | `\vbraceextender` | ord | curly bracket extension |  | 11 |
-| U+23AB | ⎫ | `\rbraceuend` | ord | right curly bracket upper hook |  | 11 |
-| U+23AC | ⎬ | `\rbracemid` | ord | right curly bracket middle piece |  | 11 |
-| U+23AD | ⎭ | `\rbracelend` | ord | right curly bracket lower hook |  | 11 |
-| U+23AE | ⎮ | `\intextender` | ord | integral extension |  | 7 |
-| U+23B2 | ⎲ | `\sumtop` | ord | summation top |  | 8 |
-| U+23B3 | ⎳ | `\sumbottom` | ord | summation bottom |  | 8 |
 | U+23B4 | ⎴ | `\overbracket` | over | top square bracket |  | 11 |
 | U+23B5 | ⎵ | `\underbracket` | under | bottom square bracket |  | 11 |
-| U+23B7 | ⎷ | `\sqrtbottom` | ord | radical symbol bottom |  | 8 |
 | U+23DC | ⏜ | `\overparen` | over | top parenthesis (mathematical use) |  | 12 |
 | U+23DD | ⏝ | `\underparen` | under | bottom parenthesis (mathematical use) |  | 12 |
 | U+23DE | ⏞ | `\overbrace` | over | top curly bracket (mathematical use) |  | 12 |
 | U+23DF | ⏟ | `\underbrace` | under | bottom curly bracket (mathematical use) |  | 12 |
-| U+23E0 | ⏠ | `\obrbrak` | ord | top tortoise shell bracket (mathematical use) |  | 9 |
-| U+23E1 | ⏡ | `\ubrbrak` | ord | bottom tortoise shell bracket (mathematical use) |  | 9 |
 
 ### Miscellaneous symbols
 
 | Code | Char | unicode-math | Class | Description | Noted in the table as | Fonts |
 |---|---|---|---|---|---|---|
-| U+2422 | ␢ | `\blanksymbol` | ord | blank symbol |  | 8 |
-| U+2423 | ␣ | `\mathvisiblespace` | ord | open box |  | 9 |
-| U+2588 | █ | `\blockfull` | ord | full block |  | 10 |
-| U+2591 | ░ | `\blockqtrshaded` | ord | 25\% shaded block |  | 9 |
-| U+2592 | ▒ | `\blockhalfshaded` | ord | 50\% shaded block |  | 9 |
-| U+2593 | ▓ | `\blockthreeqtrshaded` | ord | 75\% shaded block |  | 9 |
-| U+25AA | ▪ | `\smblksquare` | ord | /blacksquare - sq bullet, filled | black small square | 12 |
-| U+25AB | ▫ | `\smwhtsquare` | ord | white small square | white small square | 12 |
-| U+25AC | ▬ | `\hrectangleblack` | ord | black rectangle | black rectangle | 12 |
-| U+25AD | ▭ | `\hrectangle` | ord | horizontal rectangle, open | white rectangle | 10 |
-| U+25B2 | ▲ | `\bigblacktriangleup` | ord | black up-pointing triangle | black up-pointing triangle | 12 |
 | U+25B6 | ▶ | `\blacktriangleright` | ord | (large) right triangle, filled | black right-pointing triangle | 12 |
 | U+25B7 | ▷ | `\triangleright` | bin | (large) right triangle, open; z notation range restriction | white right-pointing triangle | 11 |
-| U+25BC | ▼ | `\bigblacktriangledown` | ord | big down triangle, filled | black down-pointing triangle | 12 |
 | U+25C0 | ◀ | `\blacktriangleleft` | ord | (large) left triangle, filled | black left-pointing triangle | 12 |
 | U+25C1 | ◁ | `\triangleleft` | bin | (large) left triangle, open; z notation domain restriction | white left-pointing triangle | 11 |
-| U+25C6 | ◆ | `\mdlgblkdiamond` | ord | black diamond | black diamond | 7 |
-| U+25E6 | ◦ | `\smwhtcircle` | ord | white bullet | white bullet | 11 |
-| U+25EB | ◫ | `\boxbar` | bin | vertical bar in box | white square with vertical bisecting line | 7 |
-| U+25FB | ◻ | `\mdwhtsquare` | ord | white medium square | white medium square | 6 |
-| U+25FC | ◼ | `\mdblksquare` | ord | black medium square | black medium square | 6 |
 | U+2661 | ♡ | `\heartsuit` | ord | heart suit symbol | white heart suit | 11 |
 | U+2662 | ♢ | `\diamondsuit` | ord | diamond suit symbol | white diamond suit | 11 |
-| U+2664 | ♤ | `\varspadesuit` | ord | spade, white (card suit) | white spade suit | 11 |
-| U+2667 | ♧ | `\varclubsuit` | ord | club, white (card suit) |  | 11 |
-| U+26AA | ⚪ | `\mdwhtcircle` | ord | medium white circle |  | 6 |
-| U+26AB | ⚫ | `\mdblkcircle` | ord | medium black circle |  | 6 |
-| U+26AC | ⚬ | `\mdsmwhtcircle` | ord | medium small white circle |  | 6 |
 
 ### Miscellaneous mathematical A
 
 | Code | Char | unicode-math | Class | Description | Noted in the table as | Fonts |
 |---|---|---|---|---|---|---|
 | U+27C2 | ⟂ | `\perp` | rel | perpendicular |  | 12 |
-| U+27C5 | ⟅ | `\lbag` | open | left s-shaped bag delimiter |  | 6 |
-| U+27C6 | ⟆ | `\rbag` | close | right s-shaped bag delimiter |  | 6 |
-| U+27D0 | ⟐ | `\diamondcdot` | ord | white diamond with centred dot |  | 6 |
-| U+27D8 | ⟘ | `\bigbot` | op | large up tack |  | 9 |
-| U+27D9 | ⟙ | `\bigtop` | op | large down tack |  | 9 |
-| U+27DA | ⟚ | `\DashVDash` | rel | left and right double turnstile |  | 10 |
-| U+27DB | ⟛ | `\dashVdash` | rel | left and right tack |  | 10 |
-| U+27DC | ⟜ | `\multimapinv` | rel | left multimap |  | 11 |
-| U+27DD | ⟝ | `\vlongdash` | rel | long left tack |  | 10 |
 | U+27DE | ⟞ | `\longdashv` | rel | long right tack |  | 10 |
-| U+27E0 | ⟠ | `\lozengeminus` | bin | lozenge divided by horizontal rule |  | 9 |
-| U+27E1 | ⟡ | `\concavediamond` | bin | white concave-sided diamond |  | 9 |
-| U+27E2 | ⟢ | `\concavediamondtickleft` | bin | white concave-sided diamond with leftwards tick |  | 9 |
-| U+27E3 | ⟣ | `\concavediamondtickright` | bin | white concave-sided diamond with rightwards tick |  | 9 |
-| U+27EE | ⟮ | `\lgroup` | open | mathematical left flattened parenthesis |  | 10 |
-| U+27EF | ⟯ | `\rgroup` | close | mathematical right flattened parenthesis |  | 10 |
-
-### Supplemental arrows A
-
-| Code | Char | unicode-math | Class | Description | Noted in the table as | Fonts |
-|---|---|---|---|---|---|---|
-| U+27F4 | ⟴ | `\rightarrowonoplus` | rel | right arrow with circled plus | right arrow with circled plus | 10 |
-| U+27FD | ⟽ | `\Longmapsfrom` | rel | long leftwards double arrow from bar | long leftwards double arrow from bar | 12 |
-| U+27FE | ⟾ | `\Longmapsto` | rel | long rightwards double arrow from bar | long rightwards double arrow from bar | 12 |
-| U+27FF | ⟿ | `\longrightsquigarrow` | rel | long rightwards squiggle arrow | long rightwards squiggle arrow | 10 |
-
-### Supplemental arrows B
-
-| Code | Char | unicode-math | Class | Description | Noted in the table as | Fonts |
-|---|---|---|---|---|---|---|
-| U+2906 | ⤆ | `\Mapsfrom` | rel | leftwards double arrow from bar |  | 12 |
-| U+2907 | ⤇ | `\Mapsto` | rel | rightwards double arrow from bar |  | 12 |
 
 ### Miscellaneous mathematical B
 
 | Code | Char | unicode-math | Class | Description | Noted in the table as | Fonts |
 |---|---|---|---|---|---|---|
-| U+2981 | ⦁ | `\mdsmblkcircle` | ord | z notation spot | z notation spot | 6 |
-| U+29C0 | ⧀ | `\olessthan` | bin | circled less-than | circled less-than | 6 |
-| U+29C1 | ⧁ | `\ogreaterthan` | bin | circled greater-than | circled greater-than | 6 |
-| U+29DF | ⧟ | `\dualmap` | rel | double-ended multimap |  | 6 |
 | U+29F5 | ⧵ | `\setminus` | bin | reverse solidus operator |  | 6 |
 
 ### Supplemental operators
 
 | Code | Char | unicode-math | Class | Description | Noted in the table as | Fonts |
 |---|---|---|---|---|---|---|
-| U+2A03 | ⨃ | `\bigcupdot` | op | n-ary union operator with dot |  | 10 |
-| U+2A09 | ⨉ | `\bigtimes` | op | n-ary times operator |  | 11 |
-| U+2A0F | ⨏ | `\fint` | op | integral average with slash |  | 6 |
-| U+2A11 | ⨑ | `\awint` | op | anticlockwise integration |  | 9 |
-| U+2A16 | ⨖ | `\sqint` | op | quaternion integral operator |  | 6 |
-| U+2A2F | ⨯ | `\vectimes` | bin | vector or cross product |  | 10 |
 | U+2A5E | ⩞ | `\doublebarwedge` | bin | logical and with double overbar |  | 6 |
-| U+2A74 | ⩴ | `\Coloneq` | rel | double colon equal |  | 6 |
-| U+2AB3 | ⪳ | `\preceqq` | rel | precedes above equals sign |  | 6 |
-| U+2AB4 | ⪴ | `\succeqq` | rel | succeeds above equals sign |  | 6 |
-| U+2AEA | ⫪ | `\barV` | rel | double down tack |  | 6 |
-| U+2AEB | ⫫ | `\Vbar` | rel | double up tack |  | 6 |
-| U+2AF9 | ⫹ | `\leqqslant` | rel | double-line slanted less-than or equal to |  | 6 |
-| U+2AFA | ⫺ | `\geqqslant` | rel | double-line slanted greater-than or equal to |  | 6 |
-
-### Miscellaneous symbols and arrows
-
-| Code | Char | unicode-math | Class | Description | Noted in the table as | Fonts |
-|---|---|---|---|---|---|---|
-| U+2B1A | ⬚ | `\dottedsquare` | ord | dotted square |  | 9 |
-| U+2B24 | ⬤ | `\lgblkcircle` | ord | black large circle |  | 6 |
-| U+2B25 | ⬥ | `\mdblkdiamond` | ord | black medium diamond |  | 6 |
-| U+2B26 | ⬦ | `\mdwhtdiamond` | ord | white medium diamond |  | 6 |
-| U+2B28 | ⬨ | `\mdwhtlozenge` | ord | white medium lozenge |  | 6 |
-| U+2B31 | ⬱ | `\leftthreearrows` | rel | three leftwards arrows |  | 11 |
-| U+2B33 | ⬳ | `\longleftsquigarrow` | rel | long leftwards squiggle arrow |  | 10 |
 
 ### Mathematical alphanumerics
 
@@ -338,19 +110,25 @@ since a symbol almost no font has is not worth a name; pass
 
 ## Filling a gap
 
-Giving a symbol a name touches five places, and the class column above
+Giving a symbol a name touches six places, and the class column above
 says which group it belongs to:
 
 1. `TeXmacs/langs/encoding/tmuniversaltounicode.scm`: replace the
    comment by `("<name>" "#XXXX")`, keeping the Unicode order.
+   `tmuniversaltounicode-extra.scm` holds the names this report
+   proposed, and converter.cpp loads both.
 2. `TeXmacs/progs/language/std-symbols.scm`: declare the symbol in the
    group that matches its class, which is what gives it its spacing.
 3. `TeXmacs/progs/math/math-menu.scm`: add `(symbol "<name>")` to the
    palette where a reader would look for it.
-4. `TeXmacs/progs/math/math-kbd.scm`: a keyboard sequence, if the
+4. `TeXmacs/progs/math/math-symbol-tools.scm`: add it to the group of
+   the window of all the symbols and of the side tool, which are
+   declared together with `define-math-symbols-group`.
+5. `TeXmacs/progs/math/math-kbd.scm`: a keyboard sequence, if the
    symbol deserves one.
-5. `TeXmacs/progs/convert/latex/latex-symbol-drd.scm`: the LaTeX name,
-   so that import and export keep it.
+6. `TeXmacs/progs/convert/latex/latex-symbol-drd.scm`: the LaTeX name,
+   so that import and export keep it; a symbol which only
+   unicode-math knows goes in the group which declares that package.
 
 The font side needs nothing: a named symbol is looked up by code point
 in whatever font serves the formula, and the smart font finds a
@@ -361,13 +139,9 @@ symbol as its own name in red. Latin Modern Math, the font of the
 default `roman` family, has no U+25FB, U+25FC, U+26AA or U+26AB, and
 the fallback reaches them in KpMath, New Computer Modern Math or the
 STIX fonts only if the database of `$TEXMACS_HOME_PATH/fonts` knows
-those fonts: a database written before they were installed or
-registered leaves `<mdwhtsquare>`, `<mdblksquare>`, `<mdwhtcircle>` and
-`<mdblkcircle>` red, in a document and in the palettes alike. TeXmacs
-now merges the shipped database whenever it has changed, which
-`$TEXMACS_HOME_PATH/fonts/shipped-stamp.scm` records, so an existing
-home directory catches up by itself at the first start after an
-upgrade, at the cost of about a second; Tools ▸ Fonts ▸ Clear font
-cache still starts the whole thing over. Every symbol named in
-`tmuniversaltounicode-extra.scm` is drawn by a font TeXmacs ships, so a
-fresh installation needs no scan.
+those fonts. TeXmacs merges the shipped database whenever it has
+changed, which `shipped-stamp.scm` records, so an existing home
+directory catches up by itself at the first start after an upgrade;
+Tools > Fonts > Clear font cache starts the whole thing over. Every
+symbol named in `tmuniversaltounicode-extra.scm` is drawn by a font
+TeXmacs ships, so a fresh installation needs no scan.

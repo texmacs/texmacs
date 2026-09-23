@@ -8,11 +8,13 @@ it can be considered complete.
 ## 1. Provenance
 
 The work originates from Ke Shi's OSPP 2024 project for Mogan, the TeXmacs
-fork. It was ported to this tree in commit `68d690e0f` ("Port the OSPP24 work
-of Ke Shi on OpenType support from Mogan") and adjusted in three follow-up
-commits (`efae32ac9`, `7ab9eb58d`, `59a641a84`). The branch adds roughly 1300
-lines, nearly all in `src/Plugins/Freetype/` and
-`src/Typeset/Boxes/Composite/`.
+fork. It was ported to this tree in the commit "Port the OSPP24 work of Ke
+Shi on OpenType support from Mogan" (`569a9062f` since the branch was
+rebased) and adjusted in three follow-up commits. The port itself adds
+roughly 1300 lines, nearly all in `src/Plugins/Freetype/` and
+`src/Typeset/Boxes/Composite/`; the branch as a whole is 61 commits, which
+on 23 September 2026 were replayed onto the SVN mirror so that they form a
+linear series on top of it.
 
 Reference: the MATH table specification at
 <https://learn.microsoft.com/en-gb/typography/opentype/spec/math>.
@@ -362,7 +364,7 @@ levels. The other two features are applied at the call site: `dtls` for
 dotless letters under an accent, and `flac` for the flattened accent over a
 tall base.
 
-## 4. Status (updated 22 September 2026)
+## 4. Status (updated 23 September 2026)
 
 This is a log, in the order the work was done. Later entries correct earlier
 ones: a sentence saying that something is missing or implicit is history if a
@@ -738,12 +740,64 @@ prints, the `get_unicode_range` experiment) were dropped.
   occur. The round trip holds: exported to LaTeX and read back, `\QED`
   returns as `<QED>`.
 
+- **A window and a side tool for the symbols.** The palettes of
+  `math-menu.scm` are arranged in eight groups — common, Greek, letters,
+  operators, relations, arrows, brackets, miscellaneous — each declared
+  once with `define-math-symbols-group` in
+  `progs/math/math-symbol-tools.scm` and laid out for every width its
+  callers ask for, since the column count of a `tile` has to be known when
+  the widget is built. The window (Insert ▸ All symbols…) shows the groups
+  in tabs, sixteen symbols a row; the side tool (Insert ▸ Symbols in a side
+  tool) shows one group at a time, four a row, chosen from a drop-down
+  list. The group on show is an argument of the tool: a variable of the
+  module in a `refreshable` widget does not work, because `refresh-now`
+  leaves a tool of a dock as it was built.
+
+- **A symbol button had never been drawn outside a menu.** In a menu, Qt
+  renders a `(symbol …)` item as the icon of an action; in a window the
+  same item became a `QPushButton` whose contents are set only for a text
+  widget, so every button of the new window came out empty. A box widget
+  becomes a tool button carrying the box as its icon now
+  (`qt_ui_element.cpp`), and it keeps the popup mode of a toolbar button
+  only when it has a menu: `InstantPopup` pops up a menu instead of
+  triggering the action, which made the first version of the buttons insert
+  nothing. The box itself was drawn with `find_font ("roman", "mr", …)`,
+  the compound of the TeX fonts, which has no glyph for a symbol that lives
+  in a Unicode font alone; `box_widget` in `tm_button.cpp` uses the smart
+  font for the mathematical classes now, so a palette can show what the
+  typesetter can set. Every symbol button carries a balloon with its
+  markup, `<pm>` and not the sign, which needs the angle brackets quoted as
+  `<less>` and `<gtr>`, since what reaches Qt is `cork_to_utf8` of the
+  label.
+
+- **The local font database follows the shipped one.** The database of
+  `$TEXMACS_HOME_PATH` is derived from the shipped one once and saved again
+  whenever fonts are scanned, so its date says nothing about which shipped
+  database it comes from. `font_database_load` compares a stamp in
+  `fonts/shipped-stamp.scm` — the date and the size of the three shipped
+  files — and merges the shipped entries when they differ, which costs
+  about a second at the first start after an upgrade and nothing
+  afterwards. Without it, a home directory written before a version
+  registered new fonts never saw them: four geometric shapes which only
+  KpMath, New Computer Modern Math and the STIX fonts carry came out as
+  their own names in red, in the palettes and in documents alike.
+
+- **The tests of this work left QtTest.** `tests/tm_test.hpp` is a harness
+  of eighty lines in the language of the kernel — `CHECK`, `CHECK_MSG`,
+  `CHECK_EQ`, `SKIP` and a `main` which lists its tests with `RUN` — and
+  the two binaries of this work use it, so the Qt idioms stay in the Qt
+  port. `tests/Makefile` runs `moc` only on the sources which declare a
+  `Q_OBJECT`, which are the tests inherited from the CMake harness. The
+  profiles moved to a macro at the same time, `define-math-font-profile`,
+  the way `define-table` declares data elsewhere in TeXmacs.
+
 ## 5. Tests
 
 ### Unit tests
 
-`make -C tests` builds and runs eighteen binaries, 142 test functions in
-all, counting the setup and teardown that QtTest reports as tests. Two
+`make -C tests` builds and runs eighteen binaries, 138 tests in all with
+`TM_TEST_FONT_DIR` set, counting the setup and teardown that QtTest reports
+as tests in the binaries which still use it. Two
 sources of the tree are left out: `xml_test`, which includes a file that is
 already part of the main build, and `mac_images_test`, whose functions
 `mac_images.h` does not declare in a Qt 6 build. Two of the binaries are
