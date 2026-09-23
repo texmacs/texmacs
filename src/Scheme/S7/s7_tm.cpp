@@ -34,6 +34,10 @@ start_scheme (int argc, char** argv, void (*call_back) (int, char**)) {
   
   tm_s7 = s7_init ();
 
+  // read 'x as (quote x) and not as (#_quote x): the TeXmacs code inspects
+  // quoted forms, e.g. (== (car x) 'quote), as in standard Scheme
+  s7_eval_c_string (tm_s7, "(set! (*s7* 'symbol-quote?) #t)");
+
   // make a new user environment (used in evaluation)
   user_env = s7_inlet (tm_s7, s7_nil (tm_s7));
   s7_gc_protect (tm_s7, user_env);

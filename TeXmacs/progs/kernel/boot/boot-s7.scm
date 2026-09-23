@@ -118,13 +118,21 @@
   (module-provide module)
     (hash-table-ref *modules* module))
 
+;; s7 (since version 11) refuses to varlet a symbol which is already bound
+;; in the target let, so we update existing bindings in place
+(define (import-bindings! target entries)
+  (for-each (lambda (entry)
+              (if (defined? (car entry) target #t)
+                  (let-set! target (car entry) (cdr entry))
+                  (varlet target (car entry) (cdr entry))))
+            entries))
+
 (define-macro (use-modules . modules)
   `(map (lambda (module)
     (let* ((m (resolve-module module))
            (ex (m '*exports*))
-           (exx (map (lambda (entry) (if (member (car entry) ex) entry (values))) m))
-           (en (apply inlet exx)))
-        (varlet (*texmacs-module* '*current-module*) en)))
+           (exx (map (lambda (entry) (if (member (car entry) ex) entry (values))) m)))
+        (import-bindings! (*texmacs-module* '*current-module*) exx)))
       ',modules))
 
 (define-macro (import-from . modules)
@@ -133,17 +141,24 @@
 (define-macro (re-export . symbols)
   `(export ,@symbols))
 
+;; The exports of the inherited modules are collected when the form is
+;; evaluated, not when it is expanded: macros are expanded at read time, and
+;; since s7 11 loading a file during the expansion silently ends the load of
+;; the file being read
+(define (re-export-modules! which-list)
+  (let ((cur (*texmacs-module* '*current-module*))
+        (l (apply append
+                  (map (lambda (which) ((resolve-module which) '*exports*))
+                       which-list))))
+    (let-set! cur '*exports* (append l (cur '*exports*)))))
+
 (define-macro (inherit-modules . which-list)
-  (define (module-exports which)
-    (let* ((m (resolve-module which)))
-        (m '*exports*)))
-  (let ((l (apply append (map module-exports which-list))))
-    `(begin
-       (use-modules ,@which-list)
-       (re-export ,@l))))
+  `(begin
+     (use-modules ,@which-list)
+     (re-export-modules! ',which-list)))
 
 (define-macro (texmacs-module name . options)
-  (define (transform action)
+  (#_define (transform action)
     (cond ((not (pair? action)) (noop))
 	  ((equal? (car action) :use) (cons 'use-modules (cdr action)))
 	  ((equal? (car action) :inherit) (cons 'inherit-modules (cdr action)))

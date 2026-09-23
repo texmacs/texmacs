@@ -175,7 +175,7 @@
 	 (make-expected (make-command expected-cmd))
 	 (tests
 	  (let rec ((n 1) (l body))	; process body items
-	    (define (check-test)
+	    (#_define (check-test)
 	      (let ((t (first l)))
 		(if (null? (cdr t))
 		    (error "empty test in group " group-id))
@@ -344,7 +344,7 @@
 
 (define-public-macro (trace-variables . vars)
   ;; Use trace-display to show the name and value of some variables.
-  (define (trace-one-variable v)
+  (#_define (trace-one-variable v)
     `(trace-display (string-append ,(symbol->string v) ": "
 				   (object->string ,v))))
   `(begin ,@(map trace-one-variable vars)))

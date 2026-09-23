@@ -12,8 +12,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
-;; S7 macros are not usual macros...
-(define define-macro define-expansion)
+;; We use s7's native (run-time) define-macro.  We used to alias it to
+;; define-expansion (read-time macros), but s7 10 did not find expansions
+;; defined outside the rootlet at read time, so TeXmacs macros effectively
+;; ran as run-time macros anyway.  s7 11 does find them, and then also
+;; expands them inside quasiquoted templates like `($texmacs-output ,@l).
 
 (define primitive-symbol? symbol?)
 (set! symbol? (lambda (s) (and (not (keyword? s)) (primitive-symbol? s))))

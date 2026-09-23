@@ -289,7 +289,7 @@
 
 (tm-define-macro (kbd-symbols . l)
   (:synopsis "Add symbols in @l to keyboard mapping")
-  (define (fun s)
+  (#_define (fun s)
     (list s (string-append "insert#<" s ">")
 	  (list 'kbd-insert (string-append "<" s ">"))))
   `(kbd-commands ,@(map fun l)))

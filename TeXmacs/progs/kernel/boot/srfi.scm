@@ -38,7 +38,7 @@
 	 (result (cons 'and '()))
 	 (growth-point result))
 
-    (define (andjoin! clause)
+    (#_define (andjoin! clause)
       (let ((prev-point growth-point)
 	    (clause-cell (cons clause '())))
         (set-cdr! growth-point clause-cell)
@@ -87,73 +87,76 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Copied from guile-1.6.0. Author: Martin Grabmueller
 
+;; Helpers for case-lambda.  They are module-level functions and not internal
+;; definitions of the macro: s7 11 can lose internal definitions of a macro
+;; body between recursive calls when the macro is used inside a function.
+
+;; Return the length of the list @var{l}, but allow dotted list.
+(define (case-lambda:alength l)
+  (cond ((null? l) 0)
+	((pair? l) (+ 1 (case-lambda:alength (cdr l))))
+	(else 0)))
+
+;; Return @code{#t} if @var{l} is a dotted list, @code{#f} if it is a normal
+;; list.
+(define (case-lambda:dotted? l)
+  (cond ((null? l) #f)
+	((pair? l) (case-lambda:dotted? (cdr l)))
+	(else #t)))
+
+;; Return the expression for accessing the @var{index}th element of the list
+;; called @var{args-name}. If @var{tail?} is true, code for accessing the
+;; list-tail is generated, otherwise for accessing the list element itself.
+(define (case-lambda:accessor args-name index tail?)
+  (if tail?
+      (case index
+	((0) `,args-name)
+	((1) `(cdr ,args-name))
+	((2) `(cddr ,args-name))
+	((3) `(cdddr ,args-name))
+	((4) `(cddddr ,args-name))
+	(else `(list-tail ,args-name ,index)))
+      (case index
+	((0) `(car ,args-name))
+	((1) `(cadr ,args-name))
+	((2) `(caddr ,args-name))
+	((3) `(cadddr ,args-name))
+	(else `(list-ref ,args-name ,index)))))
+
+;; Generate the binding lists of the variables of one case-lambda clause.
+;; @var{vars} is the (possibly dotted) list of variables and @var{args-name}
+;; is the generated name used for the argument list.
+(define (case-lambda:gen-temps vars args-name)
+  (let lp ((v vars) (i 0))
+    (cond ((null? v) '())
+	  ((pair? v) 
+	   (cons `(,(car v) ,(case-lambda:accessor args-name i #f))
+		 (lp (cdr v) (+ i 1))))
+	  (else `((,v ,(case-lambda:accessor args-name i #t)))))))
+
+;; Generate the cond clauses for each of the clauses of case-lambda,
+;; including the parameter count check, binding of the parameters and the
+;; code of the corresponding body.
+(define (case-lambda:gen-clauses l length-name args-name)
+  (cond ((null? l) (list '(else (error "too few arguments"))))
+	(else
+	 (cons
+	  `((,(if (case-lambda:dotted? (caar l)) '>= '=)
+	     ,length-name ,(case-lambda:alength (caar l)))
+	    (let ,(case-lambda:gen-temps (caar l) args-name)
+	    ,@(cdar l)))
+	  (case-lambda:gen-clauses (cdr l) length-name args-name)))))
+
 (define-public-macro (case-lambda . clauses)
-
-  ;; Return the length of the list @var{l}, but allow dotted list.
-  (define (alength l)
-    (cond ((null? l) 0)
-	  ((pair? l) (+ 1 (alength (cdr l))))
-	  (else 0)))
-
-  ;; Return @code{#t} if @var{l} is a dotted list, @code{#f} if it is a normal
-  ;; list.
-  (define (dotted? l)
-    (cond ((null? l) #f)
-	  ((pair? l) (dotted? (cdr l)))
-	  (else #t)))
-
-  ;; Return the expression for accessing the @var{index}th element of the list
-  ;; called @var{args-name}. If @var{tail?} is true, code for accessing the
-  ;; list-tail is generated, otherwise for accessing the list element itself.
-  (define (accessor args-name index tail?)
-    (if tail?
-	(case index
-	  ((0) `,args-name)
-	  ((1) `(cdr ,args-name))
-	  ((2) `(cddr ,args-name))
-	  ((3) `(cdddr ,args-name))
-	  ((4) `(cddddr ,args-name))
-	  (else `(list-tail ,args-name ,index)))
-	(case index
-	  ((0) `(car ,args-name))
-	  ((1) `(cadr ,args-name))
-	  ((2) `(caddr ,args-name))
-	  ((3) `(cadddr ,args-name))
-	  (else `(list-ref ,args-name ,index)))))
-
-  ;; Generate the binding lists of the variables of one case-lambda clause.
-  ;; @var{vars} is the (possibly dotted) list of variables and @var{args-name}
-  ;; is the generated name used for the argument list.
-  (define (gen-temps vars args-name)
-    (let lp ((v vars) (i 0))
-      (cond ((null? v) '())
-	    ((pair? v) 
-	     (cons `(,(car v) ,(accessor args-name i #f))
-		   (lp (cdr v) (+ i 1))))
-	    (else `((,v ,(accessor args-name i #t)))))))
-
-  ;; Generate the cond clauses for each of the clauses of case-lambda,
-  ;; including the parameter count check, binding of the parameters and the
-  ;; code of the corresponding body.
-  (define (gen-clauses l length-name args-name)
-    (cond ((null? l) (list '(else (error "too few arguments"))))
-	  (else
-	   (cons
-	    `((,(if (dotted? (caar l)) '>= '=)
-	       ,length-name ,(alength (caar l)))
-	      (let ,(gen-temps (caar l) args-name)
-	      ,@(cdar l)))
-	    (gen-clauses (cdr l) length-name args-name)))))
-
   (let ((args-name (gensym))
 	(length-name (gensym)))
     (let ((proc
 	   `(lambda ,args-name
 	      (let ((,length-name (length ,args-name)))
-		(cond ,@(gen-clauses clauses length-name args-name))))))
+		(cond ,@(case-lambda:gen-clauses clauses length-name args-name))))))
       proc)))
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; SECTION : curry which is not curry (SRFI-26)
 ;; COPYRIGHT : 2000, Free Software Foundation, Inc.
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
