@@ -999,7 +999,10 @@ qt_ui_element_rep::as_qwidget (QWidget* parent_widget) {
           sw->handle_get_size_hint (bw, bh);
           b->setIconSize (to_qsize (bw, bh));
         }
-        b->setPopupMode (QToolButton::InstantPopup);
+        // InstantPopup drops the click of a button which carries no menu,
+        // which is every symbol of a palette
+        if (qtw->type == xpm_widget)
+          b->setPopupMode (QToolButton::InstantPopup);
         b->setAutoRaise (true);
         b->setDefaultAction (a);
         a->setParent (b);
