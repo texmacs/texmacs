@@ -506,6 +506,16 @@
                             (make-menu-command (insert sym))
                             "" "" style))))
 
+(define (symbol-balloon-text symstring sh)
+  ;; what the balloon of a symbol button says: the name of the symbol, its
+  ;; code point and its Unicode name when it has one, and the keyboard
+  ;; equivalent when there is one
+  (let* ((uni (unicode-symbol-name symstring))
+         (txt (if (== uni "") symstring
+                  (string-append symstring "  " uni))))
+    (if (== sh "") txt
+        (string-append txt ",  keyboard equivalent: " sh))))
+
 (define (make-menu-symbol p style)
   "Make @(symbol :string? :*) menu item."
   ;; Possibilities for p:
@@ -516,12 +526,9 @@
           (make-menu-error "invalid symbol command in " p)
           (let* ((source (and opt-cmd (promise-source opt-cmd)))
                  (sh (kbd-find-shortcut (if source source symstring) #f)))
-            (if (== sh "")
-                (make-menu-symbol-button style symstring opt-cmd)
-                (widget-balloon
-                 (make-menu-symbol-button style symstring opt-cmd)
-                 (make-menu-label (string-append "Keyboard equivalent: " sh)
-                                  style))))))))
+            (widget-balloon
+             (make-menu-symbol-button style symstring opt-cmd)
+             (make-menu-label (symbol-balloon-text symstring sh) style)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Composite menus and submenus
