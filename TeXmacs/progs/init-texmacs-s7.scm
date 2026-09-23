@@ -51,14 +51,6 @@
   )
 
 
-(let ()
-  (display "Benchmark 1\n")
-  (define start (texmacs-time))
-  (define (fib n) (if (< n 2) n (+ (fib (- n 1)) (fib (- n 2)))))
-  (display (fib 30))
-  (newline)
-  (display "Time: ") (display (- (texmacs-time) start)) (newline)
-)
 
 (define developer-mode? #f)
 (define boot-start (texmacs-time))
@@ -535,26 +527,8 @@
 (texmacs-banner)
 (display "Initialization done\n")
 
-(let ()
-  (display "------------------------------------------------------\n")
-  (display "Benchmark 2\n")
-  (define start (texmacs-time))
-  (tm-define (tm-fib n) (if (< n 2) n (+ (tm-fib (- n 1)) (tm-fib (- n 2)))))
-  (display (tm-fib 30))
-  (newline)
-  (display "Time: ") (display (- (texmacs-time) start)) (newline)
-  (display "------------------------------------------------------\n")
-)
-
-(display "------------------------------------------------------\n")
-(display "Forcing delayed loads\n")
-
-(lazy-keyboard-force #t)
-(display* "time: " (- (texmacs-time) boot-start) "\n")
-(display* "memory: " (texmacs-memory) " bytes\n")
-(display "------------------------------------------------------\n")
-
-
+;; Benchmarks for developers (not run at boot):
+;;   (benchmark-menu-expand), or texmacs.bin -x "(benchmark-manual)"
 
 (tm-define (benchmark-menu-expand)
   (display "------------------------------------------------------\n")
@@ -566,11 +540,6 @@
   (display "------------------------------------------------------\n")
 )
 
-(delayed (:idle 1000) (benchmark-menu-expand))
-
-;; you can run
-;;   texmacs.bin -x "(benchmark-manual)"
-;; to run this test
 
 (tm-define (benchmark-manual)
 (exec-delayed (lambda ()
