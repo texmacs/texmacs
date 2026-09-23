@@ -68,6 +68,101 @@
   <em|requests>: if the font you asked for has no bold italic, <TeXmacs>
   takes the closest match it can find, or emulates it.
 
+  <paragraph*|A different font for part of the characters>
+
+  The value of <verbatim|font>, and of <verbatim|math-font> and
+  <verbatim|prog-font> as well, need not be a single family: it is a
+  <em|font sequence>, a comma separated list of items which are tried in
+  order for every character. An item is either a family name, or a family
+  name preceded by conditions, written
+  <verbatim|<var|conditions>=<var|family>>. The first item whose conditions
+  hold and whose family has the character at hand is the one which draws it,
+  so
+
+  <\verbatim-code>
+    digit=Fira Sans,roman
+  </verbatim-code>
+
+  sets the figures in <name|Fira Sans> and everything else in the roman
+  family.
+
+  Several conditions are separated by spaces and all of them have to hold;
+  alternatives inside one condition are separated by a vertical bar, as in
+  <verbatim|greek\|cyrillic=DejaVu Serif>. A condition is one of the
+  following.
+
+  <\description>
+    <item*|a Unicode range><verbatim|ascii>, <verbatim|latin>,
+    <verbatim|greek>, <verbatim|cyrillic>, <verbatim|cjk>,
+    <verbatim|hiragana>, <verbatim|hangul>, <verbatim|mathsymbols>,
+    <verbatim|mathextra> or <verbatim|mathletters>. The ranges are those of
+    the code point: <verbatim|mathsymbols> is U+2000 to U+23FF,
+    <verbatim|mathextra> is U+2900 to U+2E7F, and <verbatim|mathletters> is
+    the mathematical alphanumerics of the first plane.
+
+    <item*|a class of mathematical characters><verbatim|mathbigop> for the
+    big operators, <verbatim|mathrubber> for the stretchable characters,
+    the brackets, the wide accents and the long arrows, and
+    <verbatim|mathlarge> for both.
+
+    <item*|a mathematical alphabet><verbatim|bold-math>,
+    <verbatim|italic-math>, <verbatim|bold-italic-math>, <verbatim|cal>,
+    <verbatim|bold-cal>, <verbatim|frak>, <verbatim|bold-frak>,
+    <verbatim|bbb>, <verbatim|ss>, <verbatim|bold-ss>,
+    <verbatim|italic-ss>, <verbatim|bold-italic-ss> or <verbatim|tt>. The
+    condition holds for the letters of that alphabet, which is how the
+    script or the double-struck letters of your formulas can be taken from
+    a font of their own.
+
+    <item*|a collection of characters><verbatim|digit>, <verbatim|latin>,
+    <verbatim|greek>, <verbatim|lowercase-latin>,
+    <verbatim|uppercase-latin>, <verbatim|lowercase-greek>,
+    <verbatim|uppercase-greek>, their <verbatim|-bold> variants, and
+    <verbatim|basic-letters> for all of them together. A name preceded by
+    an exclamation mark holds for the characters which are <em|not> in the
+    collection.
+
+    <item*|a character or a range of characters>A single character stands
+    for itself, and two characters separated by a colon stand for every
+    code point between them, as in <verbatim|a:z> or <verbatim|0:9>.
+
+    <item*|a feature of the request>Any feature of the font being asked
+    for, such as <verbatim|bold>, <verbatim|italic> or
+    <verbatim|sansserif>. The condition holds when the current request has
+    it, which is how a family can be replaced in the bold series only.
+
+    <item*|<verbatim|math>>The item applies in formulas and is ignored in
+    text, whatever the character.
+  </description>
+
+  A few sequences worth knowing:
+
+  <\description>
+    <item*|<verbatim|cjk=Songti SC,roman>>Chinese characters from
+    <name|Songti SC> and the rest from the roman family. The shorthands
+    <verbatim|sys-chinese>, <verbatim|sys-japanese> and
+    <verbatim|sys-korean> expand into sequences of this shape, with the
+    default font of your system.
+
+    <item*|<verbatim|math=TeX Gyre Pagella Math,Linux Libertine>>A
+    mathematical font used in formulas only, and <name|Linux Libertine>
+    everywhere else.
+
+    <item*|<verbatim|cal=Zapf Chancery,roman>>The script letters of
+    formulas from <name|Zapf Chancery>.
+
+    <item*|<verbatim|mathrubber=stix,pagella>>The stretchable brackets and
+    accents from the <name|Stix> fonts, the rest of the document from
+    <name|Pagella>.
+  </description>
+
+  A sequence is written like any other value: the dialogs propose one
+  family at a time, so this is one of the places where you set the variable
+  yourself, in markup or from <scheme>. An item whose family is not
+  installed is simply skipped, and a character which no item claims is
+  resolved as usual, so a sequence is a hint and never makes a document
+  unreadable elsewhere.
+
   <paragraph*|In markup>
 
   Setting a variable on a piece of text is what the <markup|with> tag does:
