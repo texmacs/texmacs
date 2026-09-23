@@ -98,6 +98,17 @@ tt_face_rep::gsub_feature (string tag) {
   return gsub_features (tag);
 }
 
+array<string>
+tt_face_rep::gsub_tags () {
+  if (!gsub_tags_ready) {
+    if (buffer != nullptr)
+      gsub_tag_list=
+        parse_gsub_tags (string ((const char*) buffer, buffer_size));
+    gsub_tags_ready= true;
+  }
+  return gsub_tag_list;
+}
+
 ot_gpos_kern
 tt_face_rep::gpos_kern () {
   if (!gpos_kern_ready) {

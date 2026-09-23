@@ -184,6 +184,7 @@
   (-> "Transform" (link transform-menu))
   (-> "Specific" (link specific-menu))
   (-> "Font effects" (link text-font-effects-menu))
+  (-> "Font features" (link text-font-features-menu))
   (assuming (== (get-preference "bitmap effects") "on")
     (-> "Graphical effects" (link text-effects-menu))))
 
@@ -195,6 +196,7 @@
   (-> "Transform" (link transform-menu))
   (-> "Specific" (link specific-menu))
   (-> "Font effects" (link text-font-effects-menu))
+  (-> "Font features" (link text-font-features-menu))
   (assuming (== (get-preference "bitmap effects") "on")
     (-> "Graphical effects" (link text-effects-menu))))
 

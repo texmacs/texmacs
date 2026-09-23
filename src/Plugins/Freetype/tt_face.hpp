@@ -27,8 +27,11 @@ struct tt_face_rep: rep<tt_face> {
   int buffer_size = 0;
   ot_mathtable math_table;
   hashmap<string,ot_gsub_map> gsub_features;
+  array<string> gsub_tag_list;
+  bool          gsub_tags_ready= false;
   // the single and alternate substitutions of a GSUB feature (cached)
   ot_gsub_map& gsub_feature (string tag);
+  array<string> gsub_tags ();
   ot_gpos_kern gpos_kern_table;
   bool         gpos_kern_ready= false;
   // the pair kerning of the GPOS 'kern' feature (cached)

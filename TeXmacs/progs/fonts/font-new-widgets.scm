@@ -15,6 +15,7 @@
 
 (texmacs-module (fonts font-new-widgets)
   (:use (kernel gui menu-widget)
+        (fonts font-features)
         (fonts font-sample)
         (generic format-edit)
         (generic document-edit)
@@ -88,6 +89,7 @@
       (cond ((== var :family) (car (initial-font-data specs)))
             ((== var :style) (cadr (initial-font-data specs)))
             ((== var :size) (caddr (initial-font-data specs)))
+            ((== var :features) (font-features-of-document specs))
             ((in? var filter-vars) "Any")
             ((in? var customize-vars) (initial-customize-get specs var))
             (else #f))))
@@ -106,7 +108,7 @@
   (when global? ;; NOTE: non global => ':default' values not yet implemented
     (with vars (list "font" "font-base-size" "math-font" "prog-font"
                      "font-family" "font-series" "font-shape"
-                     "font-effects")
+                     "font-effects" "font-features")
       (with (getter setter . other) specs
         (for (var all-vars)
           (ahash-remove! selector-table (selkey specs var)))
@@ -269,6 +271,8 @@
         (with l '()
           (when (!= (selector-font-effects specs) (getter "font-effects"))
             (set! l (cons* "font-effects" (selector-font-effects specs) l)))
+          (when (!= (selector-features specs) (getter "font-features"))
+            (set! l (cons* "font-features" (selector-features specs) l)))
           (when (!= (selector-get specs :size) (getter "font-base-size"))
             (set! l (cons* "font-base-size" (selector-get specs :size) l)))
           (when (!= (logical-font-shape fn) (getter "font-shape"))
@@ -328,6 +332,7 @@
          "font-shape" ,(logical-font-shape fn)
          "font-base-size" ,(selector-get specs :size)
          "font-effects" ,(selector-font-effects specs)
+         "font-features" ,(selector-features specs)
          ,sample-text))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -404,6 +409,32 @@
         ((== val "TeX Gyre Schola") (set! val "schola"))
         ((== val "TeX Gyre Termes") (set! val "termes")))
   (selector-customize-set! specs which val))
+
+(define (font-features-of-document specs)
+  ;; what the document asks for, which is where the dialog starts
+  (with getter (car specs)
+    (or (getter "font-features") "")))
+
+(tm-define (selector-features specs)
+  (:synopsis "The OpenType features the dialog asks for, comma separated")
+  (or (selector-get specs :features) ""))
+
+(tm-define (selector-feature-on? specs tag)
+  (in? tag (string-tokenize-comma (selector-features specs))))
+
+(tm-define (selector-feature-set! specs tag on?)
+  (let* ((l (list-difference (string-tokenize-comma (selector-features specs))
+                             (list tag)))
+         (n (if on? (rcons l tag) l)))
+    (selector-set specs :features
+                  (string-recompose (list-filter n (lambda (x) (!= x ""))) ","))
+    (refresh-now "font-selector-demo")))
+
+(tm-define (selector-font-features-available specs)
+  (:synopsis "The features of the font the dialog selected, if it declares any")
+  (with l (font-database-search (selector-get specs :family)
+                                (selector-get specs :style))
+    (if (null? l) (list) (font-features-of-file (car l)))))
 
 (define (initial-customize-get specs var)
   (let* ((getter (car specs))
@@ -692,6 +723,22 @@
         (dynamic (subfont-selector specs "frak"))))
     (horizontal (glue #f #t 0 0))))
 
+(tm-widget (font-feature-toggle specs tag)
+  (hlist
+    (toggle (selector-feature-set! specs tag answer)
+            (selector-feature-on? specs tag))
+    // (text (eval (font-feature-name tag)))
+    >>>))
+
+(tm-widget (font-features-selector specs)
+  (vertical
+    (with l (selector-font-features-available specs)
+      (assuming (null? l)
+        (text "This font declares no feature"))
+      (for (tag l)
+        (dynamic (font-feature-toggle specs tag))))
+    (horizontal (glue #f #t 0 0))))
+
 (tm-widget (font-customized-selector specs)
   (assuming (selector-customize?)
     === === ===
@@ -704,7 +751,9 @@
       >>>
       (dynamic (font-variant-selector specs))
       >>>
-      (dynamic (font-math-selector specs)))
+      (dynamic (font-math-selector specs))
+      >>>
+      (dynamic (font-features-selector specs)))
     === === ===)
   (assuming (not (selector-customize?))
     === === ===))
@@ -822,6 +871,8 @@
             (centered (dynamic (font-variant-selector specs))))
           (section-tab "Mathematics"
             (centered (dynamic (font-math-selector specs))))
+          (section-tab "Features"
+            (centered (dynamic (font-features-selector specs))))
           (section-tab "More"
             (division "plain"
               (padded

@@ -261,6 +261,7 @@
           ---
           (group "OpenType math fonts")
           (link opentype-math-font-menu)))
+  (-> "Features" (link document-font-features-menu))
   (-> "Program font"
       ("Default" (init-default "prog-font"))
       ---

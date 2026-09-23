@@ -189,6 +189,14 @@
   have the feature you asked for simply ignores it, which means that the
   variable is safe to set on a whole document.
 
+  The menus propose the features of the font at the cursor, and nothing
+  else: <menu|Format|Font features> applies one to the selection,
+  <menu|Document|Font|Features> to the whole document, and a tick shows
+  which are in force. The font browser has them too, in its
+  <menu|Font customization> area and under its <menu|Features> tab, where
+  the list follows the font the dialog has selected and the sample text
+  shows the effect.
+
   Only the features which replace one glyph by another are supported at
   present. That covers <verbatim|onum>, <verbatim|lnum>, <verbatim|tnum>,
   <verbatim|pnum>, <verbatim|zero>, <verbatim|smcp>, <verbatim|c2sc>,

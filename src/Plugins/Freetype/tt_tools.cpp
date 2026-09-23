@@ -836,6 +836,23 @@ parse_gsub_subtable (const string& gsub, int type, int off, ot_gsub_map& m) {
   }
 }
 
+// Every feature tag the GSUB table offers, in the order of the table and
+// without repetitions: what a font is able to do, for a menu to propose.
+array<string>
+parse_gsub_tags (const string& buf) {
+  array<string> r;
+  if ((N (buf) == 0) || (!tt_correct_version (buf, 0))) return r;
+  string gsub= tt_table (buf, 0, "GSUB");
+  if (N (gsub) < 10) return r;
+  int feature_list= get_U16 (gsub, 6);
+  int feature_count= get_U16 (gsub, feature_list);
+  for (int f= 0; f < feature_count; f++) {
+    string tag= get_tag (gsub, feature_list + 2 + 6*f);
+    if (N (tag) == 4 && !contains (tag, r)) r << tag;
+  }
+  return r;
+}
+
 ot_gsub_map
 parse_gsub_feature (const string& buf, string feature) {
   ot_gsub_map m;

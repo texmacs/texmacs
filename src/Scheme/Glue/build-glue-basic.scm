@@ -171,6 +171,8 @@
   (font-database-delta-families font_database_delta_families (array_string))
   (font-database-styles font_database_styles (array_string string))
   (font-database-search font_database_search (array_string string string))
+  (font-available-features ot_font_features (array_string string))
+  (font-logical-search font_database_search (array_string string string string string))
   (font-database-characteristics
    font_database_characteristics (array_string string string))
   (font-database-substitutions

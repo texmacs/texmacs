@@ -540,6 +540,10 @@
              (fonts fonts-opentype))
 (lazy-define (fonts font-old-menu)
 	     text-font-menu math-font-menu prog-font-menu)
+(lazy-menu (fonts font-features)
+           text-font-features-menu document-font-features-menu)
+(lazy-define (fonts font-features)
+             font-features-here font-feature-on? font-features-toggle)
 (lazy-define (fonts font-new-widgets)
              open-font-selector open-document-font-selector
              open-document-other-font-selector)

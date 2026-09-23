@@ -228,6 +228,7 @@ ot_mathtable parse_mathtable (const string& buf);
 // order for alternate substitutions), for all lookups of the feature tag
 typedef hashmap<unsigned int, array<unsigned int> > ot_gsub_map;
 ot_gsub_map parse_gsub_feature (const string& buf, string feature);
+array<string> parse_gsub_tags (const string& buf);
 
 /******************************************************************************
  * OpenType GPOS: pair kerning

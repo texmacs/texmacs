@@ -297,6 +297,21 @@ test_gpos_kern () {
   CHECK (is_nil (k3) || k3->empty ());
 }
 
+static void
+test_gsub_tags () {
+  // the feature tags a font offers, which a menu asks for before proposing
+  string buf;
+  CHECK (!load_string (shipped_font ("lm/lmroman10-regular.otf"), buf, false));
+  array<string> tags= parse_gsub_tags (buf);
+  CHECK (N (tags) > 0);
+  CHECK (contains (string ("onum"), tags));
+  CHECK (contains (string ("liga"), tags));
+  CHECK (!contains (string ("zzzz"), tags));
+  // a font without GSUB gives nothing, and so does a broken buffer
+  CHECK_EQ (N (parse_gsub_tags (string (""))), 0);
+  CHECK_EQ (N (parse_gsub_tags (string ("this is not a font"))), 0);
+}
+
 int
 main () {
   RUN (test_no_math_table);
@@ -308,5 +323,6 @@ main () {
   RUN (test_pagella_no_kerning);
   RUN (test_stixtwo_kerning);
   RUN (test_gpos_kern);
+  RUN (test_gsub_tags);
   return test_report ();
 }

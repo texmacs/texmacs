@@ -1289,6 +1289,23 @@ unicode_font_rep::get_feature_variant (string s, string feature, int alt,
   return true;
 }
 
+// The OpenType features a font file offers, for a menu or a dialog to
+// propose only what the font is able to do. The name is the one a font
+// rule gives to the file, as in "lmroman10-regular".
+array<string>
+ot_font_features (string name) {
+  array<string> r;
+  // the database gives a file name, a font rule gives the name without
+  // its extension; accept both
+  if (ends (name, ".otf") || ends (name, ".ttf") || ends (name, ".ttc") ||
+      ends (name, ".pfb"))
+    name= name (0, N(name) - 4);
+  if (!tt_font_exists (name)) return r;
+  tt_face face= load_tt_face (name);
+  if (is_nil (face) || face->bad_face) return r;
+  return face->gsub_tags ();
+}
+
 bool
 unicode_font_rep::is_ot_integral (string s) {
   if (!ot_math) return false;
