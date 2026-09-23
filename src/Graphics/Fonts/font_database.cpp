@@ -14,6 +14,7 @@
 #include "hashset.hpp"
 #include "file.hpp"
 #include "convert.hpp"
+#include "analyze.hpp"
 #include "merge_sort.hpp"
 #include "Freetype/tt_file.hpp"
 #include "Freetype/tt_tools.hpp"
@@ -33,6 +34,7 @@ static array<string> font_database_families (hashmap<tree,tree> ftab);
 #define LOCAL_FEATURES "$TEXMACS_HOME_PATH/fonts/font-features.scm"
 #define LOCAL_CHARACTERISTICS \
   "$TEXMACS_HOME_PATH/fonts/font-characteristics.scm"
+#define SHIPPED_STAMP "$TEXMACS_HOME_PATH/fonts/shipped-stamp.scm"
 #define DELTA_DATABASE "$TEXMACS_HOME_PATH/fonts/delta-database.scm"
 #define DELTA_FEATURES "$TEXMACS_HOME_PATH/fonts/delta-features.scm"
 #define DELTA_CHARACTERISTICS \
@@ -220,28 +222,60 @@ font_database_load_substitutions (url u) {
   }
 }
 
+// The database TeXmacs ships grows with every version, with the fonts that
+// version registers. The local database is derived from it once and saved
+// again whenever fonts are scanned, so its date says nothing about which
+// shipped database it comes from: a stamp records that, and the entries of
+// a newer one are merged in. Without this, a font a new version registers
+// stays invisible to an old home directory, and a character which only that
+// font draws is not found at all and comes out as its name in red.
+
+static string
+shipped_fonts_stamp () {
+  return
+    as_string (last_modified (GLOBAL_DATABASE, false)) * " " *
+    as_string (file_size (GLOBAL_DATABASE)) * " " *
+    as_string (last_modified (GLOBAL_FEATURES, false)) * " " *
+    as_string (file_size (GLOBAL_FEATURES)) * " " *
+    as_string (last_modified (GLOBAL_CHARACTERISTICS, false)) * " " *
+    as_string (file_size (GLOBAL_CHARACTERISTICS));
+}
+
+static bool
+shipped_fonts_changed () {
+  if (!exists (url (GLOBAL_DATABASE))) return false;
+  if (!exists (url (SHIPPED_STAMP))) return true;
+  string stamp;
+  if (load_string (SHIPPED_STAMP, stamp, false)) return true;
+  return trim_spaces (stamp) != shipped_fonts_stamp ();
+}
+
 void
 font_database_load () {
   if (fonts_loaded) return;
+  bool renew= shipped_fonts_changed ();
   font_database_load_database (LOCAL_DATABASE);
-  if (N (font_table) == 0) {
+  if (renew && N (font_table) != 0)
+    cout << "TeXmacs] the shipped font database changed, merging it\n";
+  if (N (font_table) == 0 || renew) {
     font_database_load_database (GLOBAL_DATABASE);
     font_database_filter ();
     font_database_save_database (LOCAL_DATABASE);
   }
   font_database_load_features (LOCAL_FEATURES);
-  if (N (font_features) == 0) {
+  if (N (font_features) == 0 || renew) {
     font_database_load_features (GLOBAL_FEATURES);
     font_database_filter_features ();
     font_database_save_features (LOCAL_FEATURES);
   }
   font_database_load_characteristics (LOCAL_CHARACTERISTICS);
-  if (N (font_characteristics) == 0) {
+  if (N (font_characteristics) == 0 || renew) {
     font_database_load_characteristics (GLOBAL_CHARACTERISTICS);
     font_database_filter_characteristics ();
     font_database_save_characteristics (LOCAL_CHARACTERISTICS);
   }
   font_database_load_substitutions (GLOBAL_SUBSTITUTIONS);
+  if (renew) save_string (SHIPPED_STAMP, shipped_fonts_stamp ());
   fonts_loaded= true;
 }
 

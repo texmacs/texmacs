@@ -73,7 +73,8 @@
       "$TEXMACS_HOME_PATH/system/cache/font_cache.scm"
       "$TEXMACS_HOME_PATH/fonts/font-database.scm"
       "$TEXMACS_HOME_PATH/fonts/font-features.scm"
-      "$TEXMACS_HOME_PATH/fonts/font-characteristics.scm")))
+      "$TEXMACS_HOME_PATH/fonts/font-characteristics.scm"
+      "$TEXMACS_HOME_PATH/fonts/shipped-stamp.scm")))
 
 (tm-define (scan-disk-for-fonts)
   (:interactive #t)

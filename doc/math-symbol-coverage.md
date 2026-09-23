@@ -363,7 +363,11 @@ the fallback reaches them in KpMath, New Computer Modern Math or the
 STIX fonts only if the database of `$TEXMACS_HOME_PATH/fonts` knows
 those fonts: a database written before they were installed or
 registered leaves `<mdwhtsquare>`, `<mdblksquare>`, `<mdwhtcircle>` and
-`<mdblkcircle>` red, in a document and in the palettes alike. Tools ▸
-Fonts ▸ Clear font cache, and restart, rebuilds it; every symbol named
-in `tmuniversaltounicode-extra.scm` is drawn by a font TeXmacs ships,
-so a fresh installation needs no scan.
+`<mdblkcircle>` red, in a document and in the palettes alike. TeXmacs
+now merges the shipped database whenever it has changed, which
+`$TEXMACS_HOME_PATH/fonts/shipped-stamp.scm` records, so an existing
+home directory catches up by itself at the first start after an
+upgrade, at the cost of about a second; Tools ▸ Fonts ▸ Clear font
+cache still starts the whole thing over. Every symbol named in
+`tmuniversaltounicode-extra.scm` is drawn by a font TeXmacs ships, so a
+fresh installation needs no scan.
