@@ -506,13 +506,20 @@
                             (make-menu-command (insert sym))
                             "" "" style))))
 
+(define (quote-angles s)
+  ;; "<pm>" becomes "<less>pm<gtr>", which is shown as <pm> and not drawn
+  ;; as the symbol itself
+  (apply string-append
+         (map (lambda (c)
+                (cond ((== c #\<) "<less>")
+                      ((== c #\>) "<gtr>")
+                      (else (string c))))
+              (string->list s))))
+
 (define (symbol-balloon-text symstring sh)
-  ;; what the balloon of a symbol button says: the name of the symbol, its
-  ;; code point and its Unicode name when it has one, and the keyboard
-  ;; equivalent when there is one
-  (let* ((uni (unicode-symbol-name symstring))
-         (txt (if (== uni "") symstring
-                  (string-append symstring "  " uni))))
+  ;; what the balloon of a symbol button says: the markup of the symbol,
+  ;; and the keyboard equivalent after it when there is one
+  (with txt (quote-angles symstring)
     (if (== sh "") txt
         (string-append txt ",  keyboard equivalent: " sh))))
 

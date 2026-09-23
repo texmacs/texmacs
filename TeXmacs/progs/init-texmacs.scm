@@ -268,7 +268,6 @@
            context-preferences-menu insert-math-menu)
 (lazy-initialize (math math-menu) (in-math?))
 (lazy-define (math math-edit) brackets-refresh)
-(lazy-define (language unicode-names) unicode-symbol-name)
 (lazy-define (math math-symbol-tools)
              open-math-symbols open-math-symbols-tool)
 (lazy-tool (math math-symbol-tools) math-symbols-tool)
