@@ -344,7 +344,7 @@ $(edit_obj): Objects/%.o: %.cpp
 $(scheme_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(scheme_incl) $(CXXGUILE) $(CXXGUI))
 $(scheme_c_obj): Objects/%.o: %.c
-	$(call cxx_incl,$(scheme_incl) $(CXXGUILE) $(CXXGUI))
+	$(call cc_incl,$(scheme_incl))
 $(graphics_obj): Objects/%.o: %.cpp
 	$(call cxx_incl,$(graphics_incl))
 $(plugins_obj): Objects/%.o: %.cpp

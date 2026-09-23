@@ -1,29 +1,32 @@
-diff --git a/src/src/Scheme/S7/s7.c b/src/src/Scheme/S7/s7.c
-index ed5965591..f0c3488dd 100644
---- a/src/src/Scheme/S7/s7.c
-+++ b/src/src/Scheme/S7/s7.c
-@@ -10124,10 +10124,20 @@ static inline s7_pointer lookup_from(s7_scheme *sc, const s7_pointer symbol, s7_
+diff --git a/src/Scheme/S7/s7.c b/src/Scheme/S7/s7.c
+index 1a8049430e..cc74d62555 100644
+--- a/src/Scheme/S7/s7.c
++++ b/src/Scheme/S7/s7.c
+@@ -11587,9 +11587,24 @@ static Inline s7_pointer inline_lookup_from(s7_scheme *sc, const s7_pointer symb
+ 	return(local_value(symbol));
      }
-   for (; is_let(e); e = let_outlet(e))
-     {
--      s7_pointer y;
--      for (y = let_slots(e); tis_slot(y); y = next_slot(y))
--	if (slot_symbol(y) == symbol)
--	  return(slot_value(y));
-+      s7_pointer y, py;
-+      int steps = 0;
-+      for (y = let_slots(e); tis_slot(y); py = y, y = next_slot(y), steps++)
-+  if (slot_symbol(y) == symbol) {
-+    /* (TeXmacs) We try to bring back symbols which are used frequently to the
-+       beginning of the list. This improves the lookup in TeXmacs.
-+       The threshold is chosen heuristically.*/
-+    if (steps > 100) {
-+       next_slot(py) = next_slot(y);
-+       next_slot(y) = let_slots(e);
-+       let_slots(e) = y;
+   for (; let; let = let_outlet(let))
+-    for (s7_pointer slot = let_slots(let); is_slot_checked(slot); slot = next_slot(slot))
+-      if (slot_symbol(slot) == symbol)
+-	return(slot_value(slot));
++    {
++      s7_pointer prev = NULL;
++      int32_t steps = 0;
++      for (s7_pointer slot = let_slots(let); is_slot_checked(slot); prev = slot, slot = next_slot(slot), steps++)
++	if (slot_symbol(slot) == symbol)
++	  {
++	    /* (TeXmacs) We try to bring back symbols which are used frequently to the
++	       beginning of the list. This improves the lookup in TeXmacs.
++	       The threshold is chosen heuristically.*/
++	    if ((steps > 100) && (let != sc->rootlet))
++	      {
++		slot_set_next(prev, next_slot(slot));
++		slot_set_next(slot, let_slots(let));
++		let_set_slots(let, slot);
++	      }
++	    return(slot_value(slot));
++	  }
 +    }
-+    return(slot_value(y));
-+  }
-     }
+ 
    if (is_slot(global_slot(symbol)))
-     return(slot_value(global_slot(symbol)));
+     return(global_value(symbol));
