@@ -55,6 +55,12 @@
 
 (define-public (seed->random-state seed) (random-state seed))
 
+;; Guile's *random-state* is the default state used by 'random';
+;; setting it reseeds s7's default random state
+(varlet (rootlet) '*random-state* (*s7* 'default-random-state))
+(set! (setter '*random-state* (rootlet))
+      (lambda (sym val) (set! (*s7* 'default-random-state) val) val))
+
 (define-public (list-copy lst)
   (copy lst)) ;; S7 has generic functions. copy do a shallow copy
   
@@ -185,17 +191,71 @@
 
 ;; string search and charsets
 
-; we implement char-sets via predicates
+; Char-sets are hash tables from characters to #t.  Hash tables are
+; applicable, so (cs ch) works as a membership test, like for the predicates
+; which are also accepted wherever a char-set is expected.  We avoid closures
+; on purpose: s7 (at least up to 11.9) can mis-apply a closure called from a
+; loop after that loop was run with a closure of a different shape.
+; s7 characters are bytes, so every char-set is a subset of 256 characters.
+
+(define (char-set-from-predicate pred)
+  (let ((cs (make-hash-table 256)))
+    (do ((i 0 (+ i 1))) ((= i 256) cs)
+      (let ((ch (integer->char i)))
+        (if (pred ch) (hash-table-set! cs ch #t))))))
+
+(define (->char-set cs)
+  (if (hash-table? cs) cs (char-set-from-predicate cs)))
+
+(define-public (char-set . l)
+  (let ((cs (make-hash-table 256)))
+    (for-each (lambda (ch) (hash-table-set! cs ch #t)) l)
+    cs))
+
+(define-public (string->char-set s)
+  (apply char-set (string->list s)))
 
 (define-public (char-set-adjoin cs . l)
-   (lambda (ch) (or (cs ch) (memq ch l))))
-   
-(define-public (char-set-complement cs)
-  (lambda (ch) (not (cs ch))))
+  (let ((r (copy (->char-set cs))))
+    (for-each (lambda (ch) (hash-table-set! r ch #t)) l)
+    r))
 
-(define-public (char-set:whitespace ch)
-  (memq ch '(#\space #\tab #\newline)))
-  
+(define-public (char-set-complement cs)
+  (let ((cs (->char-set cs)) (r (make-hash-table 256)))
+    (do ((i 0 (+ i 1))) ((= i 256) r)
+      (let ((ch (integer->char i)))
+        (if (not (hash-table-ref cs ch)) (hash-table-set! r ch #t))))))
+
+(define-public (char-set-intersection cs . l)
+  (let ((r (copy (->char-set cs))) (l (map ->char-set l)))
+    (for-each (lambda (entry)
+                (let ((ch (car entry)))
+                  (if (not (let loop ((l l))
+                             (or (null? l)
+                                 (and (hash-table-ref (car l) ch)
+                                      (loop (cdr l))))))
+                      (hash-table-set! r ch #f))))
+              (copy r))
+    r))
+
+(define-public (char-set-union . l)
+  (let ((r (make-hash-table 256)))
+    (for-each (lambda (cs)
+                (for-each (lambda (entry) (hash-table-set! r (car entry) #t))
+                          (->char-set cs)))
+              l)
+    r))
+
+(define-public (char-set-contains? cs ch)
+  (if (hash-table? cs) (hash-table-ref cs ch) (and (cs ch) #t)))
+
+(define-public (char-set-size cs)
+  (hash-table-entries (->char-set cs)))
+
+(define-public char-set:whitespace (char-set #\space #\tab #\newline))
+(define-public char-set:lower-case (char-set-from-predicate char-lower-case?))
+(define-public char-set:upper-case (char-set-from-predicate char-upper-case?))
+(define-public char-set:digit (char-set-from-predicate char-numeric?))
 
 ; string-index and string-rindex accepts char-sets
 
