@@ -48,6 +48,10 @@
          (assoc-set! (list (cons 'a 1)) 'a 2) '((a . 2)))
    (test "assoc-set!, new key"
          (assoc-set! (list (cons 'a 1)) 'b 2) '((b . 2) (a . 1)))
+   (test "stable-sort is stable"
+         (stable-sort '((1 . a) (0 . b) (1 . c) (0 . d)) (lambda (x y) (< (car x) (car y))))
+         '((0 . b) (0 . d) (1 . a) (1 . c)))
+   (test "stable-sort of a vector" (stable-sort (vector 3 1 2) <) (vector 1 2 3))
    (test "sort is not destructive"
          (let* ((l (list 3 1 2)) (s (sort l <))) (list l s))
          '((3 1 2) (1 2 3)))))
@@ -108,7 +112,27 @@
          (string-index "abc def" char-set:whitespace) 3)
    (test "string-rindex, complement of a char-set"
          (string-rindex "ab  " (char-set-complement char-set:whitespace)) 1)
-   (test "string-index, empty string" (string-index "" #\a) #f)))
+   (test "string-index, empty string" (string-index "" #\a) #f)
+   (test "string-prefix?" (list (string-prefix? "ab" "abc") (string-prefix? "b" "abc")
+                                (string-prefix? "abcd" "abc"))
+         '(#t #f #f))
+   (test "string-suffix?" (list (string-suffix? "bc" "abc") (string-suffix? "b" "abc"))
+         '(#t #f))
+   (test "string-count, char" (string-count "a$b$c" #\$) 2)
+   (test "string-count, predicate" (string-count "aBcD" char-upper-case?) 2)
+   (test "string-count, range" (string-count "aaaa" #\a 1 3) 2)
+   (test "string-skip" (string-skip "  (x" char-set:whitespace) 2)
+   (test "string-skip, nothing left" (string-skip "   " #\space) #f)
+   (test "string-skip, start" (string-skip "ab  c" #\space 2) 4)
+   (test "string-trim-right" (string-trim-right "abc  \n") "abc")
+   (test "string-trim-right, char" (string-trim-right "abc\n\n" #\newline) "abc")
+   (test "string-trim-right, all" (string-trim-right "   ") "")
+   (test "hash-map->list"
+         (sort (hash-map->list (lambda (k v) (+ k v))
+                               (let ((h (make-hash-table)))
+                                 (hash-table-set! h 1 10) (hash-table-set! h 2 20) h))
+               <)
+         '(11 22))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Char-sets

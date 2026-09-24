@@ -88,6 +88,64 @@
 
 (define-public (sort l op) (sort! (copy l) op))
 
+;; SRFI-13 string functions which Guile provides and s7 does not
+;; (character arguments may be a char, a predicate or a char-set)
+
+(define (char-matcher x)
+  (if (char? x) (lambda (c) (char=? c x)) x))
+
+(define-public (string-prefix? s1 s2)
+  (let ((n1 (string-length s1)))
+    (and (<= n1 (string-length s2)) (string=? s1 (substring s2 0 n1)))))
+
+(define-public (string-suffix? s1 s2)
+  (let ((n1 (string-length s1)) (n2 (string-length s2)))
+    (and (<= n1 n2) (string=? s1 (substring s2 (- n2 n1) n2)))))
+
+(define-public (string-count s x . range)
+  (let ((m (char-matcher x))
+        (start (if (pair? range) (car range) 0))
+        (end (if (and (pair? range) (pair? (cdr range)))
+                 (cadr range) (string-length s))))
+    (do ((i start (+ i 1))
+         (n 0 (if (m (string-ref s i)) (+ n 1) n)))
+        ((>= i end) n))))
+
+(define-public (string-skip s x . range)
+  (let ((m (char-matcher x))
+        (start (if (pair? range) (car range) 0))
+        (end (if (and (pair? range) (pair? (cdr range)))
+                 (cadr range) (string-length s))))
+    (do ((i start (+ i 1)))
+        ((or (>= i end) (not (m (string-ref s i))))
+         (and (< i end) i)))))
+
+(define-public (string-trim-right s . opt)
+  (let ((m (if (pair? opt) (char-matcher (car opt)) char-whitespace?)))
+    (do ((end (string-length s) (- end 1)))
+        ((or (= end 0) (not (m (string-ref s (- end 1)))))
+         (substring s 0 end)))))
+
+;; Guile's stable-sort (a merge sort on lists, also accepting vectors)
+(define-public (stable-sort seq less?)
+  (define (merge a b)
+    (cond ((null? a) b)
+          ((null? b) a)
+          ((less? (car b) (car a)) (cons (car b) (merge a (cdr b))))
+          (else (cons (car a) (merge (cdr a) b)))))
+  (define (msort l n)
+    (if (<= n 1)
+        (if (= n 1) (list (car l)) '())
+        (let ((h (quotient n 2)))
+          (merge (msort l h) (msort (list-tail l h) (- n h))))))
+  (if (vector? seq)
+      (list->vector (stable-sort (vector->list seq) less?))
+      (msort seq (length seq))))
+
+;; Guile's hash-map->list; iterating over an s7 hash table gives (key . value)
+(define-public (hash-map->list proc h)
+  (map (lambda (entry) (proc (car entry) (cdr entry))) h))
+
 (define-public (force-output) (flush-output-port *stdout*))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
