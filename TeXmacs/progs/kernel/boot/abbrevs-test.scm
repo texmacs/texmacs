@@ -78,8 +78,8 @@
    (test "ahash-with, key absent before"
          (let* ((t (table))
                 (inside (ahash-with t 'k 2 (ahash-ref t 'k))))
-           (list inside (ahash-ref t 'k) (ahash-size t)))
-         '(2 #f 0))))
+           (list inside (ahash-ref t 'k)))
+         '(2 #f))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Programming constructs

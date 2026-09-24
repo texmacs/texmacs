@@ -36,13 +36,14 @@
 (define-public-macro (and-let* claws . body)
   (let* ((new-vars '())
 	 (result (cons 'and '()))
-	 (growth-point result))
-
-    (#_define (andjoin! clause)
-      (let ((prev-point growth-point)
-	    (clause-cell (cons clause '())))
-        (set-cdr! growth-point clause-cell)
-        (set! growth-point clause-cell)))
+	 (growth-point result)
+         ;; a let-bound helper and not an internal definition: works with
+         ;; Guile and avoids an s7 11 problem with definitions in macro bodies
+	 (andjoin! (lambda (clause)
+                     (let ((prev-point growth-point)
+                           (clause-cell (cons clause '())))
+                       (set-cdr! growth-point clause-cell)
+                       (set! growth-point clause-cell)))))
 
     (if (not (list? claws))
 	(syntax-error "and-let*" "Bindings are not a list: ~A" claws))
@@ -79,7 +80,8 @@
 ;; Copied from guile-1.6.0.
 
 (define-public-macro (receive vars vals . body)
-  `((lambda ,vars ,@body) ,vals))
+  `(call-with-values (lambda () ,vals)
+     (lambda ,vars ,@body)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; SECTION : case-lambda special form (SRFI-16)

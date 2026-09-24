@@ -134,17 +134,17 @@
 ;; Extraction of sublists
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define-public (list-head lis k)
-;  (check-arg integer? k take)
-  (let recur ((lis lis) (k k))
-    (if (zero? k) '()
-    (cons (car lis)
-          (recur (cdr lis) (- k 1))))))
+(if (s7-scheme?) ;; Guile has list-head and list-tail
+    (begin
+      (define-public (list-head lis k)
+        (let recur ((lis lis) (k k))
+          (if (zero? k) '()
+              (cons (car lis)
+                    (recur (cdr lis) (- k 1))))))
 
-(define-public (list-tail lis k)
-;  (check-arg integer? k drop)
-  (let iter ((lis lis) (k k))
-    (if (zero? k) lis (iter (cdr lis) (- k 1)))))
+      (define-public (list-tail lis k)
+        (let iter ((lis lis) (k k))
+          (if (zero? k) lis (iter (cdr lis) (- k 1)))))))
 
 
 (define-public list-take list-head) ;; SRFI-1

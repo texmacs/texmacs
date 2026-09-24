@@ -32,10 +32,12 @@
            (deps* (map list (map texmacs-mode-pred deps)))
            (l (if (== action #t) deps* (cons action deps*)))
            (test (if (null? l) #t (if (null? (cdr l)) (car l) (cons 'and l))))
-           ;; register the name: s7 procedures do not know their name
-           (defn `(begin
-                    (varlet *texmacs-module* ',pred (lambda () ,test))
-                    (ahash-set! tm-defined-name ,pred ',pred)))
+           (defn (if (s7-scheme?)
+                     ;; register the name: s7 procedures do not know their name
+                     `(begin
+                        (varlet *texmacs-module* ',pred (lambda () ,test))
+                        (ahash-set! tm-defined-name ,pred ',pred))
+                     `(define-public (,pred) ,test)))
            (rules (map (lambda (dep) (list dep mode)) deps))
            (logic-cmd `(logic-rules ,@rules))
            (arch1 `(set-symbol-procedure! ',mode ,pred))
@@ -46,8 +48,14 @@
           (list 'begin defn arch1 arch2 logic-cmd)))))
 
 (define-public-macro (texmacs-modes . l)
-  `(begin
-     ,@(map texmacs-mode l)))
+  (if (s7-scheme?)
+      `(begin
+         ,@(map texmacs-mode l))
+      `(begin
+         (set! temp-module ,(current-module))
+         (set-current-module texmacs-user)
+         ,@(map texmacs-mode l)
+         (set-current-module temp-module))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Checking modes

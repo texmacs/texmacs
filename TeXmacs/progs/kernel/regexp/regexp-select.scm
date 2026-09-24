@@ -270,7 +270,19 @@
     ;; (display* "sols= " sols "\n")
     (map cadr sols)))
 
-(varlet *texmacs-module* 'select tm-select)
+(cond ((s7-scheme?)
+       (varlet *texmacs-module* 'select tm-select))
+      ((os-mingw?) ;; mingw guile does not define select
+       (with-module texmacs-user
+         (define-public (select . args) (apply tm-select args))))
+      (else
+       (with-module texmacs-user
+         (begin (define-public guile-select select)
+                (define-public (select . args)
+                  (import-from (kernel regexp regexp-select))
+                  (if (= (length args) 2)
+                      (apply tm-select args)
+                      (apply guile-select args)))))))
 
 (define-public (tm-ref t . l)
   (and (tm? t)

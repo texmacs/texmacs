@@ -41,6 +41,9 @@
 (define-public (exec-file . args)
   (noop))
 
+;;; evaluation in the user module, as used by the C++ eval (object)
+(define-public (tm-eval form) (eval form))
+
 ;;; certain Guile versions do not define 'filter'
 (if (not (defined? 'filter))
     (define-public (filter pred? l)

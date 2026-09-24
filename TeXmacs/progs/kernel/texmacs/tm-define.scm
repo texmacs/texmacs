@@ -88,14 +88,24 @@
 (define (begin* conds)
   (if (list-1? conds) (car conds) `(begin ,@conds)))
 
-(define-public (procedure-name fun) 
-  (if (procedure? fun) fun #f))
+(if (s7-scheme?)
+    ;; s7 procedures do not know their names; see procedure-symbol-name
+    (define-public (procedure-name fun)
+      (if (procedure? fun) fun #f))
+    (let ((old-procedure-name procedure-name))
+      (set! procedure-name
+            (lambda (fun)
+              (and (procedure? fun)
+                   (or (old-procedure-name fun)
+                       (ahash-ref tm-defined-name fun)))))))
 
 (define-public (procedure-symbol-name fun)
   (cond ((symbol? fun) fun)
         ((string? fun) (string->symbol fun))
         ((and (procedure? fun) (ahash-ref tm-defined-name fun))
          (ahash-ref tm-defined-name fun))
+        ((and (procedure? fun) (not (s7-scheme?)))
+         (procedure-name fun))
         ((procedure? fun)
          ;; s7 prints named procedures as their name, others as #<...>
          (let ((s (object->string fun)))
@@ -251,6 +261,10 @@
             ,(begin* body)
             ,(apply* 'former head)))))
 
+(define (tm-defining-module-name)
+  ;; expression for the name of the module in which a tm-define is expanded
+  (if (s7-scheme?) '*module-name* '(module-name temp-module)))
+
 (define-public-macro (tm-define-overloaded head . body)
   (let* ((var (ca*r head))
          (nbody (tm-add-condition var head body))
@@ -261,12 +275,18 @@
            ;;    (display* "Overloaded " ',var "\n"))
            ;;(display* "Overloaded " ',var "\n")
            ;;(display* "   " ',nval "\n")
-           (set! ,var ,nval)
+           ,@(if (s7-scheme?)
+                 `((set! ,var ,nval))
+                 `((set! temp-module ,(current-module))
+                   (set! temp-value ,nval)
+                   (set-current-module texmacs-user)
+                   (set! ,var temp-value)
+                   (set-current-module temp-module)))
            (ahash-set! tm-defined-table ',var
                        (cons ',nval (ahash-ref tm-defined-table ',var)))
            (ahash-set! tm-defined-name ,var ',var)
 	   (ahash-set! tm-defined-module ',var
-		       (cons *module-name*
+		       (cons ,(tm-defining-module-name)
 			     (ahash-ref tm-defined-module ',var)))
            ,@(map property-rewrite cur-props))
         `(begin
@@ -275,13 +295,21 @@
              (display* "   " ',nval "\n"))
            ;;(display* "Defined " ',var "\n")
            ;;(if (nnull? cur-conds) (display* "   " ',nval "\n"))
-           (varlet (rootlet) ',var
-                 (if (null? cur-conds) ,nval
-                     ,(list 'let '((former (lambda args (noop)))) nval)))
+           ,@(if (s7-scheme?)
+                 `((varlet (rootlet) ',var
+                     (if (null? cur-conds) ,nval
+                         ,(list 'let '((former (lambda args (noop)))) nval))))
+                 `((set! temp-module ,(current-module))
+                   (set! temp-value
+                         (if (null? cur-conds) ,nval
+                             ,(list 'let '((former (lambda args (noop)))) nval)))
+                   (set-current-module texmacs-user)
+                   (define-public ,var temp-value)
+                   (set-current-module temp-module)))
            (ahash-set! tm-defined-table ',var (list ',nval))
            (ahash-set! tm-defined-name ,var ',var)
 	   (ahash-set! tm-defined-module ',var
-                       (list *module-name*))
+                       (list ,(tm-defining-module-name)))
            ,@(map property-rewrite cur-props)))))
 
 (define-public (tm-define-sub head body)
@@ -312,11 +340,19 @@
     ;;(display* "   " `(tm-define ,macro-head ,@body) "\n")
     ;;(display* "   " `(define-public-macro ,head
     ;;                   ,(apply* (ca*r macro-head) head)) "\n")
-    `(begin
-       (tm-define ,macro-head ,@body)
-       (with-module *texmacs-user-module*
-         (define-public-macro ,head
-           ,(apply* (ca*r macro-head) head))))))
+    (if (s7-scheme?)
+        `(begin
+           (tm-define ,macro-head ,@body)
+           (with-module *texmacs-user-module*
+             (define-public-macro ,head
+               ,(apply* (ca*r macro-head) head))))
+        `(begin
+           (tm-define ,macro-head ,@body)
+           (set! temp-module ,(current-module))
+           (set-current-module texmacs-user)
+           (define-public-macro ,head
+             ,(apply* (ca*r macro-head) head))
+           (set-current-module temp-module)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Associating extra properties to existing function symbols
@@ -355,7 +391,11 @@
        (tm-define (,name . args)
          ,@opts
          (let* ((m (resolve-module ',module))
-                (r (m ',name)))
+                (r ,(if (s7-scheme?)
+                        `(m ',name)
+                        `(module-ref (module-ref texmacs-user
+                                                 '%module-public-interface)
+                                     ',name #f))))
            (if (not r)
                (texmacs-error "lazy-define"
                               ,(string-append "Could not retrieve "

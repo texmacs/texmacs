@@ -20,6 +20,7 @@
 (define (guile-b?) (equal? (scheme-dialect) "guile-b"))
 (define (guile-c?) (equal? (scheme-dialect) "guile-c"))
 (define (guile-b-c?) (or (guile-b?) (guile-c?)))
+(define (s7-scheme?) #f)
 (if (guile-c?) (use-modules (ice-9 rdelim) (ice-9 pretty-print)))
 (define has-look-and-feel? (lambda (x) (== x "emacs")))
 

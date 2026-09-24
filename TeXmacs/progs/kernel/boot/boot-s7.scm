@@ -13,6 +13,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
+(define (s7-scheme?) #t)
 (define has-look-and-feel? (lambda (x) (== x "emacs")))
 
 (define list? proper-list?)

@@ -92,8 +92,24 @@
 ;; TeXmacs errors and assertions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define old-format?
+  (and (not (s7-scheme?))
+       (catch 'wrong-number-of-args
+              (lambda () (car))
+              (lambda (type caller message opts extra)
+                (let next ((l (string->list message)))
+                  (cond ((null? l) #f)
+                        ((char=? #\% (car l)) #t)
+                        (else (next (cdr l)))))))))
+
 (define (scm-error* type caller message . opt)
-  (apply error type caller message opt))
+  (cond ((s7-scheme?)
+         (apply error type caller message opt))
+        (else
+         (if old-format?
+             (begin (set! message (string-replace message "~S" "%S"))
+                    (set! message (string-replace message "~A" "%s"))))
+         (apply scm-error type caller message opt))))
 
 (define-public (texmacs-error where message . args)
   (scm-error* 'texmacs-error where message args #f))
@@ -175,38 +191,42 @@
 	 (make-expected (make-command expected-cmd))
 	 (tests
 	  (let rec ((n 1) (l body))	; process body items
-	    (#_define (check-test)
-	      (let ((t (first l)))
-		(if (null? (cdr t))
-		    (error "empty test in group " group-id))
-		(let ((test-desc (second t)))
-		  (check-arg-type string? test-desc group-id)
-		  (check-arg-number (lambda (x) (equal? 4 x)) (length t)
-				    (string-append group-id "/" test-desc)))))
-	    (define (make-test e?)
-	      (check-test)
-	      (let* ((t (first l))
-		     (test-desc (second t))
-		     (result-in (third t))
-		     (expected-in (fourth t))
-		     (result (make-result result-in))
-		     (expected (make-expected expected-in)))
-		;; Display messages and run test.
-		`((display ,(string-append "  -- " test-desc "\n"))
-		  (,(if e? 'regression-test-equal 'regression-test-nequal)
-		   ,group-id ,test-desc
-		   ,result-in ,result ,expected-in ,expected)
-		  ,@(rec (1+ n) (cdr l))))) ; rest of the body
-	    (cond ((null? l) `(,(1- n))) ; evaluate to number of tests
-		  ;; Improper list or unexpect atom. Nevermind.
-		  ((not (pair? l)) l)
-		  ((not (pair? (car l)))
-		   (cons (car l) (rec n (cdr l))))
-		  ;; Test case.
-		  ((equal? 'test (caar l)) (make-test #t))
-		  ((equal? 'test-fails (caar l)) (make-test #f))
-		  ;; Non-test form, preserve.
-		  (else (cons (car l) (rec n (cdr l))))))))
+	    ;; let-bound helpers and not internal definitions: works with Guile
+	    ;; and avoids an s7 11 problem with definitions in macro bodies
+	    (let* ((check-test
+		    (lambda ()
+		      (let ((t (first l)))
+			(if (null? (cdr t))
+			    (error "empty test in group " group-id))
+			(let ((test-desc (second t)))
+			  (check-arg-type string? test-desc group-id)
+			  (check-arg-number (lambda (x) (equal? 4 x)) (length t)
+					    (string-append group-id "/" test-desc))))))
+		   (make-test
+		    (lambda (e?)
+		      (check-test)
+		      (let* ((t (first l))
+			     (test-desc (second t))
+			     (result-in (third t))
+			     (expected-in (fourth t))
+			     (result (make-result result-in))
+			     (expected (make-expected expected-in)))
+			;; Display messages and run test.
+			`((display ,(string-append "  -- " test-desc "\n"))
+			  (,(if e? 'regression-test-equal 'regression-test-nequal)
+			   ,group-id ,test-desc
+			   ,result-in ,result ,expected-in ,expected)
+			  ,@(rec (1+ n) (cdr l))))))) ; rest of the body
+	      (cond ((null? l) `(,(1- n))) ; evaluate to number of tests
+		    ;; Improper list or unexpect atom. Nevermind.
+		    ((not (pair? l)) l)
+		    ((not (pair? (car l)))
+		     (cons (car l) (rec n (cdr l))))
+		    ;; Test case.
+		    ((equal? 'test (caar l)) (make-test #t))
+		    ((equal? 'test-fails (caar l)) (make-test #f))
+		    ;; Non-test form, preserve.
+		    (else (cons (car l) (rec n (cdr l)))))))))
     `(begin
        (display ,(string-append "Test group: " group-desc " [" group-id "]\n"))
        ,@tests)))
@@ -344,10 +364,11 @@
 
 (define-public-macro (trace-variables . vars)
   ;; Use trace-display to show the name and value of some variables.
-  (#_define (trace-one-variable v)
-    `(trace-display (string-append ,(symbol->string v) ": "
-				   (object->string ,v))))
-  `(begin ,@(map trace-one-variable vars)))
+  (let ((trace-one-variable
+         (lambda (v)
+           `(trace-display (string-append ,(symbol->string v) ": "
+                                          (object->string ,v))))))
+    `(begin ,@(map trace-one-variable vars))))
 				     
 
 ;;   Trace levels

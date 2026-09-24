@@ -69,9 +69,16 @@
 (define-public (number->keyword x)
   (symbol->keyword (string->symbol (string-append "%" (number->string x)))))
 
-(define-public (save-object file value)
-  (call-with-output-file (url-materialize file "") (lambda (port)
-    (let-temporarily (((*s7* 'print-length) 9223372036854775807)) (write value port)))))
+(if (s7-scheme?)
+    ;; s7 truncates long vectors when printing, unless print-length is raised
+    (define-public (save-object file value)
+      (call-with-output-file (url-materialize file "")
+        (lambda (port)
+          (let-temporarily (((*s7* 'print-length) 9223372036854775807))
+            (write value port)))))
+    (define-public (save-object file value)
+      (call-with-output-file (url-materialize file "")
+        (lambda (port) (write value port)))))
 
 (define-public (load-object file)
   (let ((r (catch #t
@@ -97,6 +104,13 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Common programming constructs
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(if (not (s7-scheme?)) ;; built into s7
+    (begin
+      (define-public-macro (when cond? . body)
+        `(if ,cond? (begin ,@body)))
+      (define-public-macro (unless cond? . body)
+        `(if (not ,cond?) (begin ,@body)))))
 
 (define-public-macro (with var val . body)
   (if (or (pair? var) (null? var))

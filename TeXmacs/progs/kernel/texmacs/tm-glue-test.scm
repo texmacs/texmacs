@@ -24,7 +24,10 @@
   (regression-test-group
    "glue, basic types" "basic"
    :none :none
-   (test "scheme dialect" (scheme-dialect) "s7")
+   (test "scheme dialect"
+         (list (string? (scheme-dialect))
+               (eq? (s7-scheme?) (string=? (scheme-dialect) "s7")))
+         '(#t #t))
    (test "booleans" (list (boolean? (os-macos?)) (boolean? (url-exists? "/")))
          '(#t #t))
    (test "integers" (integer? (texmacs-time)) #t)
