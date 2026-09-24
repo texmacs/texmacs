@@ -432,9 +432,15 @@
 
 (tm-define (selector-font-features-available specs)
   (:synopsis "The features of the font the dialog selected, if it declares any")
-  (with l (font-database-search (selector-get specs :family)
-                                (selector-get specs :style))
-    (if (null? l) (list) (font-features-of-file (car l)))))
+  ;; through the logical font, which is what the sample text is set in:
+  ;; a lookup by family and style alone misses the substitutions the font
+  ;; selection makes, and answers nothing for a style it does not know
+  (with fn (selector-get-font specs)
+    (with l (font-logical-search (logical-font-family* specs fn)
+                                 (logical-font-variant fn)
+                                 (logical-font-series fn)
+                                 (logical-font-shape fn))
+      (if (null? l) (list) (font-features-of-file (car l))))))
 
 (define (initial-customize-get specs var)
   (let* ((getter (car specs))
