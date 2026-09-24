@@ -196,6 +196,42 @@
       (if (= k rounds) s
           (loop (+ k 1) (+ s boot-test-v0 boot-test-v250 boot-test-v499))))))
 
+(define (boot-test-sym i)
+  (string->symbol (string-append "boot-test-v" (number->string i))))
+
+(define (renumbered-big-let n)
+  ;; a big let with a closure created before the let is renumbered by
+  ;; with-let: its lookups of deep symbols then miss s7's O(1) fast path
+  (let* ((e (big-let n))
+         (child (sublet e))
+         (probe (with-let child
+                  (lambda () (+ boot-test-v0 boot-test-v1 boot-test-v2)))))
+    (with-let e 1)
+    (cons e probe)))
+
+(define (iterate-while-looking-up n)
+  ;; lookups must not reorder the let that is being iterated over
+  (let* ((ep (renumbered-big-let n))
+         (e (car ep)) (probe (cdr ep))
+         (seen (make-ahash-table)))
+    (for-each (lambda (entry) (ahash-set! seen (car entry) #t) (probe)) e)
+    (ahash-size seen)))
+
+(define (boot-test-helper boot-test-v149) boot-test-v149)
+
+;; s7 reuses the argument let of safe closures and fills it by position,
+;; so lookups must not reorder it either
+(define boot-test-many
+  (eval `(lambda ,(map boot-test-sym (iota 150))
+           (boot-test-helper 7)
+           (list boot-test-v0 boot-test-v1 boot-test-v149))
+        (curlet)))
+(define boot-test-call-many
+  (eval `(lambda () (boot-test-many ,@(iota 150))) (curlet)))
+
+(define (many-parameters-calls)
+  (list (boot-test-call-many) (boot-test-call-many) (boot-test-call-many)))
+
 (define (regtest-boot-lookup)
   (let ((e (big-let 500)))
     (regression-test-group
@@ -218,6 +254,10 @@
      (test "let-set! after moving slots"
            (begin (let-set! e 'boot-test-v250 -1) (big-let-sum e 1))
            (+ 0 -1 499))
+     (test "iteration over a let while looking up its symbols"
+           (iterate-while-looking-up 500) 500)
+     (test "repeated calls of a function with many parameters"
+           (many-parameters-calls) '((0 1 149) (0 1 149) (0 1 149)))
      ;; note: regression-test-group evaluates each test expression twice
      (test "varlet of a new symbol after moving slots"
            (let ((sym (gensym))) (varlet e sym 1) (e sym))

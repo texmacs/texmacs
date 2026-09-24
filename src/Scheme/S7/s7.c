@@ -11588,22 +11588,14 @@ static Inline s7_pointer inline_lookup_from(s7_scheme *sc, const s7_pointer symb
     }
   for (; let; let = let_outlet(let))
     {
-      s7_pointer prev = NULL;
-      int32_t steps = 0;
-      for (s7_pointer slot = let_slots(let); is_slot_checked(slot); prev = slot, slot = next_slot(slot), steps++)
+      /* (TeXmacs) let ids need not decrease along the outlet chain (with-let
+         renumbers the let it enters), so the symbol's cached slot may be in
+         any let of the chain, not only in the first one */
+      if (let_id(let) == symbol_id(symbol))
+	return(local_value(symbol));
+      for (s7_pointer slot = let_slots(let); is_slot_checked(slot); slot = next_slot(slot))
 	if (slot_symbol(slot) == symbol)
-	  {
-	    /* (TeXmacs) We try to bring back symbols which are used frequently to the
-	       beginning of the list. This improves the lookup in TeXmacs.
-	       The threshold is chosen heuristically.*/
-	    if ((steps > 100) && (let != sc->rootlet))
-	      {
-		slot_set_next(prev, next_slot(slot));
-		slot_set_next(slot, let_slots(let));
-		let_set_slots(let, slot);
-	      }
-	    return(slot_value(slot));
-	  }
+	  return(slot_value(slot));
     }
 
   if (is_slot(global_slot(symbol)))
