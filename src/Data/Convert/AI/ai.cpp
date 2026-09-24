@@ -146,8 +146,9 @@ replace_tikz_by_pdf (string s) {
   save_string (tex, r);
   if (!run_pdflatex (tex)) return s;
   url pdf= temp * (as_string (counter) * ".pdf");
+  string pdf_str= replace (as_string (pdf), "\\", "/");
   string aux= s (0, beg_tikz_pos) *
-    string ("\n") * "\\includegraphics{" * sys_concretize (pdf) * "}\n" *
+    string ("\n") * "\\includegraphics{" * pdf_str * "}\n" *
     s (end_tikz_pos + N(end_tikz_tag), N(s));
   return replace_tikz_by_pdf (aux);
 }
@@ -155,12 +156,21 @@ replace_tikz_by_pdf (string s) {
 static string
 extract_svg (string s) {
   //cout << s << LF;
-  const string beg_file_tag ("\\begin{filecontents*}");
-  const string end_file_tag ("\\end{filecontents*}");
+  string beg_file_tag ("\\begin{filecontents*}");
+  string end_file_tag ("\\end{filecontents*}");
   int beg_file_pos= search_forwards (beg_file_tag, s);
   int end_file_pos= search_forwards (end_file_tag, s);
+  if (beg_file_pos < 0 || end_file_pos < 0) {
+    beg_file_tag= "\\begin{filecontent*}";
+    end_file_tag= "\\end{filecontent*}";
+    beg_file_pos= search_forwards (beg_file_tag, s);
+    end_file_pos= search_forwards (end_file_tag, s);
+  }
   if (beg_file_pos < 0 || end_file_pos < 0) return s;
-  int beg_name_pos= beg_file_pos + N(beg_file_tag) + 1;
+  int beg_name_pos= beg_file_pos + N(beg_file_tag);
+  while (beg_name_pos < N(s) && s[beg_name_pos] != '{') beg_name_pos++;
+  if (beg_name_pos >= N(s)) return s;
+  beg_name_pos++;
   int end_name_pos= search_forwards ("}", beg_name_pos, s);
   if (beg_name_pos < 0 || end_name_pos < 0) return s;
   string file= trim_spaces (s (end_name_pos+1, end_file_pos));
@@ -174,7 +184,12 @@ extract_svg (string s) {
   string ret= s(0, beg_file_pos)
     * s (end_file_pos + N(end_file_tag), N(s));
   ret= replace (ret, "\\includesvg", "\\includegraphics");
-  ret= replace (ret, "{" * name * "}", "{" * as_string (f) * "}");
+  string f_str= replace (as_string (f), "\\", "/");
+  ret= replace (ret, "{" * name * "}", "{" * f_str * "}");
+  if (ends (name, ".svg")) {
+    string b= name (0, N(name) - 4);
+    ret= replace (ret, "{" * b * "}", "{" * f_str * "}");
+  }
   //cout << "---\n" << ret <<"\n---\n";
   return extract_svg (ret);
 }
@@ -650,12 +665,16 @@ embed_images (tree t) {
   if (is_atomic (t)) return t;
   if (is_func (t, IMAGE, 5)) {
     array<tree> a= A(t);
-    url image= cork_to_utf8 (as_string (a[0]));
+    if (is_func (a[0], TUPLE)) return t;
+    string im_name= cork_to_utf8 (as_string (a[0]));
+    url image= url_system (im_name);
+    if (!exists (image)) image= url (im_name);
+    if (!exists (image)) image= url_temp_dir () * (im_name * ".svg");
     string type= "", data;
     tree s (IMAGE);
     load_string (image, data, false);
     if (data == "") {
-      std_error << "ai.cpp, cannot embed image\n";
+      std_error << "ai.cpp, cannot embed image: " << im_name << LF;
       return t;
     }
     s << tuple (tree (RAW_DATA, data), as_string (tail (image)));
