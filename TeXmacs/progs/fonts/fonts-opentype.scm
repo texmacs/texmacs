@@ -129,6 +129,14 @@
   (file "LeteSansMath") (text "Lete Sans Math")
   (letters "math") (menu "Lete Sans Math") (group "OpenType math"))
 
+(define-math-font-profile "Garamond-Math"
+  (file "Garamond-Math") (text "EB Garamond")
+  (letters "math") (menu "Garamond") (group "OpenType math"))
+
+(define-math-font-profile "OldStandard-Math"
+  (file "OldStandard-Math") (text "Old Standard")
+  (letters "math") (menu "Old Standard") (group "OpenType math"))
+
 (define-math-font-profile "GFS Neohellenic Math"
   (file "GFSNeohellenicMath") (text "GFS Neohellenic")
   (letters "math") (menu "GFS Neohellenic") (group "OpenType math"))
@@ -148,7 +156,12 @@
                       (list (math-font-profile-attr name "menu") name
                             (math-font-profile-attr name "text")))
                     l)
-               (lambda (a b) (string<? (car a) (car b))))))
+               (lambda (a b) (string<=? (locase-all (car a))
+                                        (locase-all (car b)))))))
+
+(tm-define (opentype-math-companions)
+  (:synopsis "The text fonts which the installed math fonts bring along")
+  (map caddr (opentype-math-font-list)))
 
 (tm-menu (opentype-math-font-menu)
   (for (p (opentype-math-font-list))
