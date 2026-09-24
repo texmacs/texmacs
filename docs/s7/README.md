@@ -41,10 +41,14 @@ standalone (see [06-open-issues.md](06-open-issues.md)).
   others were rewritten in place with no guard. Only the Guile init and boot
   files (`init-texmacs.scm`, `boot.scm`) remain, so the tree no longer boots
   under Guile. Nothing uses `cond-expand` or feature tests.
-- **s7 carries one real local patch.** In `lookup_from`, a slot found more
-  than 100 slots deep moves to the front of its environment. TeXmacs keeps
-  very large environments, and according to `README.md` this cut startup
-  time in half and brought manual typesetting down to Guile speed.
+- **s7 carries one real local patch.** In `lookup_from`, before scanning an
+  environment, it checks whether that environment holds the symbol's cached
+  binding. Without it, s7 scans hundreds of slots of TeXmacs's very large
+  user environment for answers it already has, which makes boot ~40% slower.
+  - This replaces, since 2026-09-24, the original move-to-front patch.
+    That patch was as fast but unsound: it reorders environments that s7
+    iterates over or fills by position.
+  - See [05-build-and-history.md](05-build-and-history.md#s7-version-and-local-patch).
 - **The port is mostly 2021–2022 work.** It was mainly done by M. Gubinelli
   and imported by Darcy Shen (沈达). The branch was rebased onto 2025 upstream
   in July 2025. Of the 618 commits in `master..HEAD`, only about 34 are

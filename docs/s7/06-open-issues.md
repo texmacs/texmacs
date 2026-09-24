@@ -191,6 +191,13 @@ Mode predicates such as `in-math?` are installed as anonymous lambdas, so
 
 **Fixed:** `texmacs-mode` now registers the name in `tm-defined-name`.
 
+### 12. The move-to-front lookup patch was unsound (confirmed, **fixed**)
+
+The local s7 patch reordered environments during lookups. That breaks
+iteration over an environment, and possibly the positional refill of reused
+argument lets. The patch is now an id check that never mutates. See
+[05](05-build-and-history.md#s7-version-and-local-patch).
+
 ### How the fixes were tested
 
 The first round (bugs 1–4) ran against the July 2025 binary. After the

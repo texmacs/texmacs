@@ -140,9 +140,9 @@ unnoticed (see [06](06-open-issues.md)).
   therefore not detected.
 - **The top-level environment is very large.** Modules loaded from
   `init-texmacs-s7.scm` add their exports to `*texmacs-user-module*` itself.
-  It ends up holding thousands of slots in one linked list, and s7 looks
-  symbols up in a non-global `let` by linear search. This is the reason for
-  the local `lookup_from` patch in s7 (see
+  It ends up holding about a thousand slots in one linked list, and s7 looks
+  symbols up in a non-global `let` by linear search when its per-symbol cache
+  misses. This is the reason for the local `lookup_from` patch in s7 (see
   [05](05-build-and-history.md#s7-version-and-local-patch)).
 
 ### Other definitions

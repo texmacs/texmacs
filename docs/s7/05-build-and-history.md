@@ -81,41 +81,59 @@ the C compiler (`cc_incl`). CMake already compiled it as C.
 - nested loads during expansions;
 - internal definitions in macro bodies.
 
-### The patch in use: `s7-lookup_from.patch`
+### The patch in use: `s7-lookup_from.patch` (id check, since 2026-09-24)
 
-In `inline_lookup_from` (about `s7.c:11589` in 11.9), while searching a
-non-global `let`, the lookup counts the slots it walks. If the symbol is more
-than 100 slots deep, its slot moves to the front of that `let`:
+In `inline_lookup_from` (about `s7.c:11589` in 11.9), the scan over the
+outlet chain now checks, before walking a let's slot list, whether that let
+holds the symbol's cached binding:
 
 ```c
-if ((steps > 100) && (let != sc->rootlet))
+for (; let; let = let_outlet(let))
   {
-    slot_set_next(prev, next_slot(slot));
-    slot_set_next(slot, let_slots(let));
-    let_set_slots(let, slot);
+    if (let_id(let) == symbol_id(symbol))
+      return(local_value(symbol));
+    for (s7_pointer slot = let_slots(let); ...)  /* unchanged linear scan */
   }
 ```
 
-The 11.9 port has two changes from the 10.0 version:
+- **Why it is needed.** `with-let` renumbers the let it enters, so let ids
+  need not decrease along the outlet chain. s7 only compares the ids for the
+  first let it reaches, so it can scan hundreds of slots of a let for which
+  it already has the answer. TeXmacs hits this constantly in
+  `*texmacs-user-module*` (see below).
+- **Why it is valid.** A matching id means `local_slot` is the symbol's slot
+  in that let, the same invariant the O(1) fast path at the top of the
+  function relies on.
+- **What it does not change.** It is read-only: slot order is untouched.
 
-- It uses s7 11's setter macros, which are checked in s7's debug builds.
-- It never touches the rootlet, whose slot list s7 11 asserts is never set.
+### The previous patch: move-to-front (2020–2026, unsound)
 
-Moving slots is only safe in big lets. Those are module environments, never
-the lets of function arguments, which s7 may access by position.
+Until 2026-09-24 the patch moved a slot found more than 100 slots deep to the
+front of its let. It was ported to 11.9 with s7 11's setter macros and
+excluded the rootlet.
 
-- **Why it is needed.** `*texmacs-user-module*` holds thousands of imported
-  bindings (see §2.2).
-- **Effect.** According to `README.md`, it brought manual typesetting down to
-  about 15 s on s7 10, the same as Guile 1.8, and halved startup time. It is
-  still worth it on 11.9. Startup up to the end of the forced delayed loads
-  (the `time:` line printed at boot) takes about 820–850 ms with the patch
-  and about 1290 ms without it. On s7 10 it took 517 ms.
-- **Unused variant.** `s7-lookup_from-version-2.patch` (a reverse diff) moves
-  the slot halfway to the front, with a threshold of 20. It is not applied,
-  and it is written against s7 10.0.
+- **Effect.** It gave the same speed-up as the id check: boot 966 vs 998 ms
+  median, the same within noise.
+- **Why it is unsound.** A lookup is normally read-only, and the patch made
+  it reorder a let. Two parts of s7 depend on that order:
+  - **Iteration.** `map`/`for-each` over a let follow the slot list, so a
+    slot moved during the iteration is skipped or revisited. Reproduced:
+    iterating over a 500-slot let while looking up its symbols visits 490
+    entries standalone and 497 inside TeXmacs.
+  - **Reused argument lets.** s7 reuses the argument let of safe closures
+    and fills it by position. In standalone s7, a 150-parameter function
+    returned `(1 2 0)` instead of `(0 1 149)` from its second call on.
+    Inside TeXmacs this particular case did not reproduce, probably because
+    TeXmacs's `define` is a macro and s7 does not optimize those closures the
+    same way, but nothing guarantees that.
 
-### Why the patch works (measured on 2026-09-24, s7 11.9)
+  Both cases are now regression tests in `kernel/boot/boot-s7-test.scm`
+  (group `lookup`). The iteration test fails with the old patch.
+- **Unused variant.** `s7-lookup_from-version-2.patch` is an older
+  move-to-front variant for s7 10.0 (threshold 20, halfway to the front). It
+  has the same problem and is kept only for reference.
+
+### Why a lookup patch is needed (measured on 2026-09-24, s7 11.9)
 
 To measure this, `inline_lookup_from` was temporarily instrumented in a
 TeXmacs build. The instrumentation counted lookups, walked slots, moves, and
@@ -204,9 +222,9 @@ if (let_id(let) == symbol_id(symbol)) return(local_value(symbol));
   functions such as `let->list` behave exactly as in stock s7.
 - **Performance.** It performs about the same as move-to-front, and
   combining both gains little.
-- **Status.** It looks like a candidate to propose upstream, as a fix of
-  s7's own lookup. It has not been adopted yet; the tree still uses the
-  move-to-front patch.
+- **Status.** Adopted on 2026-09-24, replacing move-to-front, which turned
+  out to be unsound (see above). It is a candidate to propose upstream, as a
+  fix of s7's own lookup.
 
 <a id="boot-time"></a>
 ### Boot time (measured on 2026-09-24)
