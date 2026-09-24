@@ -22,8 +22,8 @@ standalone (see [06-open-issues.md](06-open-issues.md)).
   - The option sets `USE_S7` or `USE_GUILE` and the backend directory.
   - An s7 build needs no Guile: nothing to install or link, and glue
     regeneration uses a small `s7-run`.
-  - A Guile build compiles, but the Scheme kernel on this branch is s7-only,
-    so it does not boot yet.
+  - A Guile build (checked with Guile 1.8.7) builds, boots and passes the
+    regression tests, except the two suites that test s7 specifically.
   - See [05-build-and-history.md](05-build-and-history.md).
 - **The C++ ↔ Scheme boundary barely changed.** TeXmacs already talked to
   Scheme through the `tmscm_*` layer. `s7_tm.hpp/.cpp` (about 600 lines)
@@ -39,11 +39,14 @@ standalone (see [06-open-issues.md](06-open-issues.md)).
   `delay`/`force`, `hash`, curried `define`, and more. `init-texmacs-s7.scm` also
   rebinds `symbol?` (keywords are excluded) and `load`/`eval`/`catch` (so
   they use the TeXmacs environment and Guile's handler signature).
-- **The shared kernel modules are now s7-only.** `ahash-table.scm`,
-  `abbrevs.scm`, `tm-define.scm`, `tm-modes.scm`, `srfi.scm`, `debug.scm` and
-  others were rewritten in place with no guard. Only the Guile init and boot
-  files (`init-texmacs.scm`, `boot.scm`) remain, so the tree no longer boots
-  under Guile. Nothing uses `cond-expand` or feature tests.
+- **One Scheme kernel serves both interpreters.** Shared files test
+  `(s7-scheme?)`:
+  - at expansion time in the definition macros (`tm-define`,
+    `texmacs-modes`, …);
+  - or at load time around the few dialect-specific definitions.
+
+  Each interpreter runs the code it ran before. See
+  [04-progs-changes.md](04-progs-changes.md).
 - **s7 carries one real local patch.** In `lookup_from`, before scanning an
   environment, it checks whether that environment holds the symbol's cached
   binding. Without it, s7 scans hundreds of slots of TeXmacs's very large

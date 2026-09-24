@@ -27,15 +27,16 @@ The option drives everything else:
 - **Packaging.** The packaging rules of the top-level `Makefile.in` copy
   Guile's `ice-9` directory only when there is one.
 
-**What is not done.** The Scheme kernel on this branch is s7-only (see
-[06](06-open-issues.md) and §4.2). A Guile build compiles and links against
-`libguile`; checked on 2026-09-24 with Guile 1.8.7 and autotools. But it does
-not boot yet:
-- The C++ startup completes and `init-texmacs.scm` is loaded.
-- Guile's reader then stops at the first s7-only construct, `#_define` in
-  `kernel/boot/debug.scm`.
-- Everything that depends on the kernel fails after that: `when`, removed
-  from `abbrevs.scm`, is unbound, and so are the menu functions.
+**Both interpreters work.** Checked on 2026-09-24 with autotools and Guile
+1.8.7:
+
+| Build | Boot | Regression tests | Integration tests |
+|---|---|---|---|
+| s7 | clean | all 17 suites | all 4 suites |
+| Guile | clean | 15 suites (all but the two s7-specific ones) | all 4 suites |
+
+In total, 566 tests on s7 and 437 on Guile. The Scheme kernel is shared; see
+[04](04-progs-changes.md), §4.2.
 
 **CMake notes.** Upstream's CMake build had gaps that were hidden whenever an
 autotools `config.h` was left in the source tree, because the source tree's

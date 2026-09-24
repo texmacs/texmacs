@@ -19,21 +19,46 @@ The s7 changes to shared files come mostly from `29481b3441` ("S7 support
 imported from mgubi/texmacs") and a few follow-up commits (see
 [05](05-build-and-history.md)).
 
-## 4.2 The kernel is now s7-only
+## 4.2 One kernel for both interpreters (since 2026-09-24)
 
-**Nothing detects the interpreter at the Scheme level**: there is no
-`cond-expand`, no `*features*` check and no `(provided? 's7)`. The places
-where dialect-dependent code remains are:
+The shared Scheme kernel runs on both s7 and Guile. Each boot file defines
+`(s7-scheme?)`: `boot-s7.scm` returns `#t`, and Guile's `boot.scm` returns
+`#f`. Code that differs tests it, in one of three ways:
 
-- `kernel/boot/boot.scm:19-23`: `guile-a?`, `guile-b?` and `guile-c?`.
-  This file is loaded only by the Guile boot.
-- `init-texmacs.scm:63`: Guile-only.
-- `doc/apidoc-funcs.scm:70`: a `(guile?)` helper that nothing calls.
-- `convert/images/tmimage.scm:42`: an upstream feature test,
-  `(if (not (defined? 'string-contains)) …) ; for s7`.
+- **At expansion time, in macros that generate definitions.** `tm-define`,
+  `tm-define-macro`, `lazy-define` (`tm-define.scm`) and `texmacs-modes`
+  (`tm-modes.scm`) emit the s7 code (`varlet (rootlet)`, `with-module`,
+  environment lookup) or upstream's original Guile code (the
+  `set-current-module texmacs-user` sequence, `module-ref`). Each interpreter
+  runs exactly the code it ran before.
+- **At load time, around definitions.** These keep an s7 variant and
+  upstream's Guile variant side by side:
+  - `ahash-table.scm`: the hash-table primitives;
+  - `abbrevs.scm`: `when`/`unless` for Guile, and `save-object`;
+  - `prologue.scm`: `module-load` for Guile;
+  - `list.scm`: `list-head`/`list-tail` for s7;
+  - `regexp-select.scm`: `select`;
+  - `debug.scm`: `scm-error*`;
+  - `tm-define.scm`: `procedure-name`;
+  - `tm-file-system.scm`: `object->tmstring`;
+  - `environment.scm`, `scheme-autocomplete.scm`.
+- **Code that works in both directly:**
+  - `receive` is back to `call-with-values`;
+  - the helpers of `case-lambda`, `and-let*`, `regression-test-group`,
+    `trace-variables` and `kbd-symbols` are module-level functions or
+    `let`-bound lambdas instead of internal `define`s.
 
-The kernel modules below were rewritten in place with no guard, so the tree
-can no longer boot on Guile even though `init-texmacs.scm` is still there.
+Some pieces stay single-dialect:
+
+- **Files loaded by only one boot:** `boot-s7.scm`, `compat-s7.scm` and
+  `init-texmacs-s7.scm` for s7; `boot.scm`, `compat.scm` and
+  `init-texmacs.scm` for Guile. `compat.scm` now also defines `tm-eval`,
+  which the C++ `eval (object)` calls.
+- **Tests:** `check-master.scm` loads and runs `compat-s7-test` and
+  `boot-s7-test` only with s7.
+
+The files must stay readable by both readers. In particular, s7 reader
+syntax such as `#_define` cannot appear in shared files.
 
 ## 4.3 Catalogue of s7-motivated edits
 

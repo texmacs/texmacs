@@ -292,17 +292,10 @@ Results after the rebase, on the clean rebuild:
 
 1. Make `run-all-tests` continue past a failing suite, and report the s7
    optimizer bug (bug 8) upstream.
-2. **Make the Guile build boot again** ("level 2"). The build option exists,
-   and a Guile build compiles, but the shared kernel files use s7-only code.
-   - Give each dialect-specific operation a neutral name, for example a
-     global definition, a print-length override, and a `%define` for the
-     builtin `define`.
-   - Implement those names in `compat-s7.scm` and `compat-guile.scm`. This
-     means moving s7-only idioms (`varlet`, `rootlet`, `hash-table-*`,
-     `*s7*`, `#_define`) out of `ahash-table.scm`, `tm-define.scm`,
-     `tm-modes.scm`, `abbrevs.scm`, `srfi.scm`, `debug.scm` and
-     `kbd-define.scm`.
-   - Run the regression suites with both interpreters.
+2. **Test both interpreters routinely.** The Guile build boots and passes
+   the tests (see [04](04-progs-changes.md), §4.2). New shared code, and
+   future upstream syncs, should be checked with both builds, in particular
+   for s7 reader syntax in shared files.
 3. Generate `init-texmacs-s7.scm` from `init-texmacs.scm`, or share a common
    body, so the two do not drift apart. Drift has already caused one test
    failure (bug 7).
