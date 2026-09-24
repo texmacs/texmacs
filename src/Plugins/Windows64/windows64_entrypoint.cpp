@@ -62,9 +62,9 @@ void setup_texmacs_path () {
   url exedir = texmacs_get_application_directory ();
   cout << "Executable directory is: " 
        << exedir << LF;
-    if (test_texmacs_path (exedir * "TeXmacs")) {
-      cout << "TEXMACS_PATH is autoset to: " 
-           << exedir * "TeXmacs" << LF;
+  if (test_texmacs_path (exedir * "TeXmacs")) {
+    cout << "TEXMACS_PATH is autoset to: " 
+         << exedir * "TeXmacs" << LF;
     return;
   }
   if (test_texmacs_path (exedir * "..")) {

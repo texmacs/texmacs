@@ -20,7 +20,7 @@ endif (NOT WIN32)
 file(GLOB PLUGIN_DIRS LIST_DIRECTORIES true *)
 foreach(PLUGIN ${PLUGIN_DIRS})
   if (EXISTS ${PLUGIN}/bin/)
-    file(RELATIVE_PATH PLUGIN_NAME ${TEXMACS_SOURCE_DIR}/plugins ${PLUGIN})
+    file(RELATIVE_PATH PLUGIN_NAME ${CMAKE_CURRENT_SOURCE_DIR} ${PLUGIN})
     if (WIN32)
       install(DIRECTORY ${PLUGIN}/bin/ DESTINATION plugins/${PLUGIN_NAME}/bin
         PATTERN "*"
@@ -32,3 +32,13 @@ foreach(PLUGIN ${PLUGIN_DIRS})
     endif (WIN32)
   endif(EXISTS ${PLUGIN}/bin/)
 endforeach(PLUGIN)
+
+# Deploy plugins to TeXmacs/plugins layout matching autoconf
+file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/" DESTINATION "${TEXMACS_TARGET_DIR}/plugins")
+
+add_custom_target (texmacs_plugins ALL
+  COMMAND ${CMAKE_COMMAND} -E copy_directory
+    "${CMAKE_CURRENT_SOURCE_DIR}"
+    "${TEXMACS_TARGET_DIR}/plugins"
+  COMMENT "Deploying plugins to ${TEXMACS_TARGET_DIR}/plugins"
+)
