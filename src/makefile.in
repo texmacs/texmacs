@@ -68,7 +68,16 @@ ARFLAGS = -r
 RM = rm -f
 CP = @CONFIG_CP@
 GUILE_BIN = @GUILE_BIN@
+SCHEME_DIR = @SCHEME_DIR@
 GLUE = cd Scheme/Glue; ./build-glue
+ifeq ($(SCHEME_DIR),S7)
+# the glue generators run on a small S7 interpreter, see Scheme/Glue/s7-run.c
+GLUE_BIN = $(CURDIR)/Objects/s7-run
+GLUE_DEPS = Objects/s7-run
+else
+GLUE_BIN = $(GUILE_BIN)
+GLUE_DEPS =
+endif
 TOUCH = touch
 MOC = @MOC@
 MOCFLAGS = @QT_CPPFLAGS@
@@ -120,8 +129,8 @@ style_src    := $(call findsrc_in,Style,@CONFIG_EXPERIMENTAL@)
 typeset_src  := $(call findsrc,Typeset)
 edit_src     := $(call findsrc,Edit)
 texmacs_src  := $(call findsrc,Texmacs)
-scheme_src   := $(call findsrc_in,Scheme,Scheme S7)
-scheme_c_src := $(call findc_in,Scheme,Scheme S7)
+scheme_src   := $(call findsrc_in,Scheme,Scheme @SCHEME_DIR@)
+scheme_c_src := $(call findc_in,Scheme,Scheme @SCHEME_DIR@)
 pdf_src      := $(call findsrc_in,Plugins,@CONFIG_PDF@)
 pdf_c_src    := $(call findc_in,Plugins,@CONFIG_PDF@/LibAesgm)
 freetype_src := $(call findsrc_in,Plugins,Freetype)
@@ -495,6 +504,9 @@ Scheme/Glue/glue_%.cpp: Scheme/Glue/build-glue-%.scm
 
 gluesrc = Scheme/Glue
 
+Objects/s7-run: Scheme/Glue/s7-run.c Scheme/S7/s7.c Scheme/S7/s7.h
+	$(CC) -O1 -DWITH_C_LOADER=0 -IScheme/S7 Scheme/Glue/s7-run.c Scheme/S7/s7.c -lm -o $@
+
 GLUE: $(gluesrc)/glue_basic.cpp $(gluesrc)/glue_editor.cpp $(gluesrc)/glue_server.cpp
 	$(RM) Objects/glue.o
 
@@ -504,14 +516,14 @@ $(gluesrc)/glue_basic.cpp: $(gluesrc)/build-glue.scm
 $(gluesrc)/glue_editor.cpp: $(gluesrc)/build-glue.scm 
 $(gluesrc)/glue_server.cpp: $(gluesrc)/build-glue.scm
 
-$(gluesrc)/glue_basic.cpp: $(gluesrc)/build-glue-basic.scm
-	$(GLUE) build-glue-basic.scm glue_basic.cpp "$(GUILE_BIN)"
+$(gluesrc)/glue_basic.cpp: $(gluesrc)/build-glue-basic.scm $(GLUE_DEPS)
+	$(GLUE) build-glue-basic.scm glue_basic.cpp "$(GLUE_BIN)"
 
-$(gluesrc)/glue_editor.cpp: $(gluesrc)/build-glue-editor.scm
-	$(GLUE) build-glue-editor.scm glue_editor.cpp "$(GUILE_BIN)"
+$(gluesrc)/glue_editor.cpp: $(gluesrc)/build-glue-editor.scm $(GLUE_DEPS)
+	$(GLUE) build-glue-editor.scm glue_editor.cpp "$(GLUE_BIN)"
 
-$(gluesrc)/glue_server.cpp: $(gluesrc)/build-glue-server.scm
-	$(GLUE) build-glue-server.scm glue_server.cpp "$(GUILE_BIN)"
+$(gluesrc)/glue_server.cpp: $(gluesrc)/build-glue-server.scm $(GLUE_DEPS)
+	$(GLUE) build-glue-server.scm glue_server.cpp "$(GLUE_BIN)"
 
 ###############################################################################
 # Cleaning and backup

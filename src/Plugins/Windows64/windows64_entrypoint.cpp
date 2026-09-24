@@ -30,7 +30,9 @@
 #include <QDebug>
 #include <iostream>
 
+#ifdef USE_GUILE
 #include "Scheme/Guile/guile_tm.hpp"
+#endif
 
 /*
  * Qt can replace the main with qMain by doing a #define main qMain.

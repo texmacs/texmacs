@@ -36,6 +36,12 @@
 /* gs lib path relative to TEXMACS_PATH */
 #undef GS_LIB
 
+/* Use the Guile Scheme interpreter */
+#undef USE_GUILE
+
+/* Use the S7 Scheme interpreter */
+#undef USE_S7
+
 /* Guile version */
 #undef GUILE_A
 

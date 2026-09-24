@@ -62,6 +62,16 @@ set (STABLE_VERSION ${TEXMACS_VERSION})
 set (STABLE_RELEASE "1")
 set (TEXMACS_REVISION ${TEXMACS_VERSION})
 
+# ALTERNATIVE_VERSION as computed by misc/m4/tm_subversion.m4:
+# MAJOR.MINOR.<leading digits of the revision in SVNREV, after any ':'>
+set (_svnrev "")
+if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/SVNREV)
+  file (STRINGS ${CMAKE_CURRENT_SOURCE_DIR}/SVNREV _svnrev LIMIT_COUNT 1)
+endif ()
+string (REGEX REPLACE "^[^:]*:" "" _svnint "${_svnrev}")
+string (REGEX MATCH "^[0-9]*" _svnint "${_svnint}")
+set (ALTERNATIVE_VERSION "${VERSION_MAJOR}.${VERSION_MINOR}.${_svnint}")
+
 
 ### --------------------------------------------------------------------
 ### Options
@@ -147,6 +157,11 @@ include (FindX11)
 check_type_size (FILE HAVE_FILE)
 check_type_size (intptr_t HAVE_INTPTR_T)
 check_type_size (time_t HAVE_TIME_T)
+# integer sizes, used by src/Kernel/Abstractions/basic.hpp
+check_type_size (short SIZEOF_SHORT)
+check_type_size (int SIZEOF_INT)
+check_type_size (long SIZEOF_LONG)
+check_type_size ("long long" SIZEOF_LONG_LONG)
 check_include_file (inttypes.h HAVE_INTTYPES_H)
 check_include_file (memory.h HAVE_MEMORY_H)
 check_include_file (stdlib.h HAVE_STDLIB_H)
@@ -290,59 +305,68 @@ find_package (JPEG)
 ### --------------------------------------------------------------------
 
 # Allow for selection of Scheme implementation
-set(SCHEME_IMPL "default" CACHE STRING "Implementation of Scheme to compile for.")
-set_property(CACHE SCHEME_IMPL PROPERTY STRINGS default guile-1.8 guile-2.0 guile-2.2 guile-3.0 chez s7)
+set(SCHEME_IMPL "s7" CACHE STRING "Implementation of Scheme to compile for.")
+set_property(CACHE SCHEME_IMPL PROPERTY STRINGS s7 guile guile-1.8 guile-2.0 guile-2.2 guile-3.0)
 message(STATUS "Looking for Scheme implementation: " ${SCHEME_IMPL})
 
-if (${SCHEME_IMPL} STREQUAL "default")
-  # Find Guile and determine which version we are using.
-  # Look for guile versions in this order: 1.8 > 3.0 > 2.2 > 2.0
-  pkg_search_module (Guile REQUIRED guile-1.8 guile-3.0 guile-2.2 guile-2.0)
-  if (NOT Guile_FOUND)
-    message(FATAL_ERROR "Guile not installed or pkg-config cannot detect it.")
+if ((${SCHEME_IMPL} STREQUAL "s7") OR (${SCHEME_IMPL} STREQUAL "default"))
+  # S7 is vendored in src/Scheme/S7
+  set (SCHEME_DIR "S7")
+  set (USE_S7 1)
+  set (guile_str_size_t size_t)
+  message (STATUS "Using the S7 Scheme interpreter")
+else ()
+  if (${SCHEME_IMPL} STREQUAL "guile")
+    # Look for guile versions in this order: 1.8 > 3.0 > 2.2 > 2.0
+    pkg_search_module (Guile REQUIRED guile-1.8 guile-3.0 guile-2.2 guile-2.0)
+    if (NOT Guile_FOUND)
+      message(FATAL_ERROR "Guile not installed or pkg-config cannot detect it.")
+    endif ()
+  elseif ( (${SCHEME_IMPL} STREQUAL "guile-1.8")
+           OR (${SCHEME_IMPL} STREQUAL "guile-2.0")
+           OR (${SCHEME_IMPL} STREQUAL "guile-2.2")
+           OR (${SCHEME_IMPL} STREQUAL "guile-3.0") )
+    pkg_check_modules (Guile REQUIRED ${SCHEME_IMPL})
+  else ()
+    message(FATAL_ERROR "Incorrect scheme implementation selected.")
+  endif()
+  set (SCHEME_DIR "Guile")
+  set (USE_GUILE 1)
+
+  if (Guile_VERSION VERSION_LESS 2.0)
+    set (CONFIG_GUILE_SERIAL "C")
+    option (GUILE_C "Using Guile 1.8.x" ON)
+    message (STATUS "Using GUILE_C: " ${Guile_VERSION})
+  else ()
+    set (CONFIG_GUILE_SERIAL "D")
+    option (GUILE_D "Using Guile 2.x or 3.x" ON)
+    set (SCM_SIZET size_t)
+    message (STATUS "Using GUILE_D: " ${Guile_VERSION})
   endif ()
-elseif ( (${SCHEME_IMPL} STREQUAL "guile-1.8")
-         OR (${SCHEME_IMPL} STREQUAL "guile-2.0")
-         OR (${SCHEME_IMPL} STREQUAL "guile-2.2")
-         OR (${SCHEME_IMPL} STREQUAL "guile-3.0") )
-  pkg_check_modules (Guile REQUIRED ${SCHEME_IMPL})
-elseif ((${SCHEME_IMPL} STREQUAL "chez") OR (${SCHEME_IMPL} STREQUAL "s7"))
-  message(FATAL_ERROR "Selected Scheme implementation not implemented yet.")
-else ()
-  message(FATAL_ERROR "Incorrect scheme implementation selected.")
-endif()
 
-if (Guile_VERSION VERSION_LESS 2.0)
-  set (CONFIG_GUILE_SERIAL "C")
-  option (GUILE_C "Using Guile 1.8.x" ON)
-  message (STATUS "Using GUILE_C: " ${Guile_VERSION})
-else ()
-  set (CONFIG_GUILE_SERIAL "D")
-  option (GUILE_D "Using Guile 2.x or 3.x" ON)
-  set (SCM_SIZET size_t)
-  message (STATUS "Using GUILE_D: " ${Guile_VERSION})
+  # Guile_CFLAGS is a list, CMAKE_REQUIRED_FLAGS a space separated string
+  string (REPLACE ";" " " _guile_cflags "${Guile_CFLAGS}")
+  set (CMAKE_REQUIRED_FLAGS "-Werror ${_guile_cflags}")
+  set (CMAKE_REQUIRED_INCLUDES ${Guile_INCLUDE_DIRS})
+  set (guile_str_size_t size_t)
+
+  message (STATUS "Checking whether ... arguments behave correctly")
+
+  check_c_source_compiles ("
+  #include <guile/gh.h>
+  #include <libguile.h>
+  typedef SCM (*FN)(...);
+  static SCM identity (SCM x) { return x; }
+  void declare () { gh_new_procedure (\"identity\", (FN) identity, 1, 0, 0); }
+  int main() { return 0; }
+  " _guile_dots_test)
+
+  if (_guile_dots_test)
+    set (DOTS_OK 1)
+  else (_guile_dots_test)
+    set (DOTS_OK)
+  endif (_guile_dots_test)
 endif ()
-
-set (CMAKE_REQUIRED_FLAGS "-Werror ${Guile_CFLAGS}")
-set (CMAKE_REQUIRED_INCLUDES ${Guile_INCLUDE_DIRS})
-set (guile_str_size_t size_t)
-
-message (STATUS "Checking whether ... arguments behave correctly")
-
-check_c_source_compiles ("
-#include <guile/gh.h>
-#include <libguile.h>
-typedef SCM (*FN)(...);
-static SCM identity (SCM x) { return x; }
-void declare () { gh_new_procedure (\"identity\", (FN) identity, 1, 0, 0); }
-int main() { return 0; }
-" _guile_dots_test)
-
-if (_guile_dots_test)
-  set (DOTS_OK 1)
-else (_guile_dots_test)
-  set (DOTS_OK)
-endif (_guile_dots_test)
 
 ### --------------------------------------------------------------------
 ### Generate configure headers
@@ -397,6 +421,9 @@ set (CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -include ${TEXMACS_BINARY_DIR}/src/Sys
 ### the include dirs
 ### --------------------------------------------------------------------
 set (TeXmacs_Include_Dirs
+  # first, so that #include "config.h" finds the generated header, and not a
+  # config.h left in the source tree by an autotools build
+  ${TEXMACS_BINARY_DIR}/src/System/
   ${TEXMACS_SOURCE_DIR}/src/Data/Convert
   ${TEXMACS_SOURCE_DIR}/src/Data/Document
   ${TEXMACS_SOURCE_DIR}/src/Data/Drd
@@ -428,8 +455,7 @@ set (TeXmacs_Include_Dirs
   ${TEXMACS_SOURCE_DIR}/src/Plugins/Pdf/LibAesgm
   ${TEXMACS_SOURCE_DIR}/src/Plugins/Gnutls
   ${TEXMACS_SOURCE_DIR}/src/Scheme
-#  ${TEXMACS_SOURCE_DIR}/src/Scheme/Guile
-  ${TEXMACS_SOURCE_DIR}/src/Scheme/S7
+  ${TEXMACS_SOURCE_DIR}/src/Scheme/${SCHEME_DIR}
   ${TEXMACS_SOURCE_DIR}/src/Scheme/Scheme
   ${TEXMACS_SOURCE_DIR}/src/Style/Environment
   ${TEXMACS_SOURCE_DIR}/src/Style/Evaluate
@@ -460,7 +486,7 @@ else (WIN32)
 endif (WIN32)
 
 set (TeXmacs_Include_Dirs ${TeXmacs_Include_Dirs}
-  # ${Guile_INCLUDE_DIRS}
+  ${Guile_INCLUDE_DIRS}
   ${FREETYPE_INCLUDE_DIRS} ${Cairo_INCLUDE_DIRS}
   ${IMLIB2_INCLUDE_DIR} ${GMP_INCLUDES} ${GNUTLS_INCLUDE_DIRS}
 )
@@ -474,9 +500,8 @@ file (GLOB_RECURSE TeXmacs_Base_SRCS
   "${TEXMACS_SOURCE_DIR}/src/Graphics/*.cpp"
   "${TEXMACS_SOURCE_DIR}/src/Kernel/*.cpp"
   "${TEXMACS_SOURCE_DIR}/src/Scheme/Scheme/*.cpp"
-#  "${TEXMACS_SOURCE_DIR}/src/Scheme/Guile/*.cpp"
-  "${TEXMACS_SOURCE_DIR}/src/Scheme/S7/*.cpp"
-  "${TEXMACS_SOURCE_DIR}/src/Scheme/S7/*.c"
+  "${TEXMACS_SOURCE_DIR}/src/Scheme/${SCHEME_DIR}/*.cpp"
+  "${TEXMACS_SOURCE_DIR}/src/Scheme/${SCHEME_DIR}/*.c"
   "${TEXMACS_SOURCE_DIR}/src/System/*.cpp"
   "${TEXMACS_SOURCE_DIR}/src/Texmacs/Data/*.cpp"
   "${TEXMACS_SOURCE_DIR}/src/Texmacs/Server/*.cpp"
@@ -564,7 +589,7 @@ if (APPLE AND EXISTS /opt/homebrew/lib)
 endif ()
 
 set (TeXmacs_Libraries
-  # ${Guile_LIBRARIES}
+  ${Guile_LIBRARIES}
   ${ZLIB_LIBRARIES}
   ${JPEG_LIBRARIES}
   ${PNG_LIBRARIES}

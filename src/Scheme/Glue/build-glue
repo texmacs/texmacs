@@ -1,19 +1,23 @@
 #!/bin/sh
-# Program to make Guile interface to TeXmacs
-
-GUILE_BIN=${GUILE_BIN:-guile}
-if test $# = 3; then
-  GUILE_BIN=$3
-fi
-
-./build-auto-doc "$GUILE_BIN"
+# Program to make the Scheme interface to TeXmacs
+#
+#   build-glue <input.scm> <output.cpp> [scheme-bin]
+#
+# scheme-bin is a Scheme interpreter accepting Guile's -l and -c options:
+# guile, or the s7-run helper when TeXmacs is built with S7 (default: guile)
 
 if test $# -ne 2 -a $# -ne 3; then
-  echo "Usage: build-glue <input.scm> <output.cpp> [guile-bin]"
+  echo "Usage: build-glue <input.scm> <output.cpp> [scheme-bin]"
   exit 1
 fi
 
-$GUILE_BIN -l build-glue.scm -l $1 -c "(quit)" | cat > $2
-$GUILE_BIN -l build-glue.scm -l $1 -c "(quit)" | cat > $2
-$GUILE_BIN -l build-glue.scm -l $1 -c "(quit)" | cat > $2
-$GUILE_BIN -l build-glue.scm -l $1 -c "(quit)" | cat > $2
+SCHEME_BIN=${GUILE_BIN:-guile}
+if test $# = 3 -a -n "$3"; then
+  SCHEME_BIN=$3
+fi
+
+./build-auto-doc "$SCHEME_BIN" || exit 1
+
+# only replace the output when the generator succeeded
+$SCHEME_BIN -l build-glue.scm -l $1 -c "(quit)" > $2.tmp && test -s $2.tmp \
+  && mv $2.tmp $2 || { rm -f $2.tmp; echo "build-glue: failed to generate $2"; exit 1; }

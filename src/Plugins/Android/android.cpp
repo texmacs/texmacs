@@ -30,7 +30,9 @@
 #include <QTimer>
 #include <QJniObject>
 
+#ifdef USE_GUILE
 #include <libguile.h>
+#endif
 
 void android_extract_from_asset(QString asset_path)
 {

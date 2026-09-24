@@ -1,13 +1,18 @@
 #!/bin/sh
-# Program to make Guile interface to TeXmacs
+# Program to make the documentation of the Scheme interface to TeXmacs
+#
+#   build-auto-doc [scheme-bin]      (see build-glue)
 
-GUILE_BIN=${GUILE_BIN:-guile}
-if test $# = 1; then
-  GUILE_BIN=$1
+SCHEME_BIN=${GUILE_BIN:-guile}
+if test $# = 1 -a -n "$1"; then
+  SCHEME_BIN=$1
 fi
 
-# update documentation of glue 
-$GUILE_BIN -l make-apidoc-module.scm  -c "(quit)" | cat > ../../../TeXmacs/progs/prog/glue-symbols.scm
+generate () {
+  # only replace the output when the generator succeeded
+  $SCHEME_BIN -l $1 -c "(quit)" > $2.tmp && test -s $2.tmp \
+    && mv $2.tmp $2 || { rm -f $2.tmp; echo "build-auto-doc: failed to generate $2"; exit 1; }
+}
 
-$GUILE_BIN -l make-apidoc-doc.scm  -c "(quit)" | cat > ../../../TeXmacs/doc/devel/scheme/api/glue-auto-doc.en.tm
-
+generate make-apidoc-module.scm ../../../TeXmacs/progs/prog/glue-symbols.scm
+generate make-apidoc-doc.scm ../../../TeXmacs/doc/devel/scheme/api/glue-auto-doc.en.tm

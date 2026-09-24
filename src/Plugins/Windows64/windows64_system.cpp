@@ -34,9 +34,11 @@
 #include "windows64_encoding.hpp"
 #include "windows64_spawn.hpp"
 
+#ifdef USE_GUILE
 #include "Scheme/Guile/guile_tm.hpp"
 #ifdef SCM_HAVE_HOOKS
 #include "libguile/system.h"
+#endif
 #endif
 
 #ifdef QTTEXMACS

@@ -278,11 +278,13 @@ COPY_SOURCES_TGZ: COPY_SOURCES COPY_GUILE
 	cd ../distr/build; tar -czf $(tm_devel).tar.gz $(tm_devel) 
 
 COPY_GUILE:
-	GUILE_LOAD_PATH=`find @GUILE_DATA_PATH@ -type d | grep ice-9`; \
-	export GUILE_LOAD_PATH; \
-	for I in $$GUILE_LOAD_PATH ; \
-	do $(CP) $$I $(BUILD_DIR)/TeXmacs/progs/ ; done
-	$(CHMOD) -R go=rX $(BUILD_DIR)/TeXmacs/progs/ice-9
+	if test -n "@GUILE_DATA_PATH@"; then \
+	  GUILE_LOAD_PATH=`find @GUILE_DATA_PATH@ -type d | grep ice-9`; \
+	  export GUILE_LOAD_PATH; \
+	  for I in $$GUILE_LOAD_PATH ; \
+	  do $(CP) $$I $(BUILD_DIR)/TeXmacs/progs/ ; done; \
+	  $(CHMOD) -R go=rX $(BUILD_DIR)/TeXmacs/progs/ice-9; \
+	fi
 
 ###############################################################################
 # Make a source package
@@ -315,7 +317,7 @@ STATIC_X11 = $(tm_devel)-x11-$(tm_suffix)
 
 GENERIC_PACKAGE: TEXMACS STRIP
 	$(MKDIR) $(GENERIC_PACKAGE_DIR)
-	-find @GUILE_DATA_PATH@ -type d -name ice-9 -exec $(CP) {} $(tmdir)/progs \; && \
+	-(test -z "@GUILE_DATA_PATH@" || find @GUILE_DATA_PATH@ -type d -name ice-9 -exec $(CP) {} $(tmdir)/progs \;) && \
 		 $(CP) $(tmdir) $(STATIC_QT) && \
 		 tar --exclude .svn --mode go=rX -czhf $(GENERIC_PACKAGE_DIR)/$(STATIC_QT)-@CONFIG_STYPE@.tar.gz $(STATIC_QT)
 	$(RM) -r $(tmdir)/progs/ice-9 $(STATIC_QT)
@@ -491,8 +493,10 @@ MACOS_BUNDLE: TEXMACS
 	$(CP) TeXmacs $(MACOS_PACKAGE_RESOURCES)/share
 	$(RM) $(MACOS_PACKAGE_TEXMACS)/bin/texmacs.bin
 	if test -n "@GS_EXE@";then  $(CP) @GS_EXE@ $(MACOS_PACKAGE_TEXMACS)/bin/;fi
-	find @GUILE_DATA_PATH@ -type d -name ice-9 -exec $(CP) {} $(MACOS_PACKAGE_TEXMACS)/progs/ \;
-	$(CHMOD) -R go=rX $(MACOS_PACKAGE_TEXMACS)/progs/ice-9
+	if test -n "@GUILE_DATA_PATH@"; then \
+	  find @GUILE_DATA_PATH@ -type d -name ice-9 -exec $(CP) {} $(MACOS_PACKAGE_TEXMACS)/progs/ \; ; \
+	  $(CHMOD) -R go=rX $(MACOS_PACKAGE_TEXMACS)/progs/ice-9; \
+	fi
 	find -d $(MACOS_PACKAGE_TEXMACS) -name .svn -exec rm -rf {} \;
 
 	@echo Deploying libraries into application bundle.
@@ -552,7 +556,7 @@ WINDOWS_BUNDLE: TEXMACS WINDOWS_PDB
 	if test -x "@GS_EXE@"; then $(CP) @GS_EXE@ $(WINDOWS_BUILD_BIN_DIR)/;fi
 	for f in $(WINDOWS_BUILD_BIN_DIR)/*.exe;do $(WINDOWS_PACKAGE_SRC)/copydll.sh $$f;done
 	$(CP) misc/admin/texmacs_updates_dsa_pub.pem $(WINDOWS_BUILD_DIR)/bin
-	find @GUILE_DATA_PATH@ -type d -name ice-9 -exec $(CP) {} $(WINDOWS_BUILD_DIR)/progs/ \;
+	if test -n "@GUILE_DATA_PATH@"; then find @GUILE_DATA_PATH@ -type d -name ice-9 -exec $(CP) {} $(WINDOWS_BUILD_DIR)/progs/ \; ; fi
 	if test -d "$(QT_PLUGINS_PATH)";then $(CP) -u $$(cygpath -u $(QT_PLUGINS_PATH)/*) $(WINDOWS_BUILD_BIN_DIR);fi
 
 WINDOWS_PACKAGE: WINDOWS_BUNDLE
@@ -725,7 +729,7 @@ APPIMAGE: TEXMACS
 	$(MAKE) INSTALL_INCLUDE DESTDIR=../distr/TeXmacs.AppDir/usr/include
 	
 	# Copy ice-9 files inside the TeXmacs progs folder
-	$(CP) -r `find @GUILE_DATA_PATH@ -type d | grep ice-9` ../distr/TeXmacs.AppDir/usr/share/TeXmacs/progs
+	if test -n "@GUILE_DATA_PATH@"; then $(CP) -r `find @GUILE_DATA_PATH@ -type d | grep ice-9` ../distr/TeXmacs.AppDir/usr/share/TeXmacs/progs; fi
 	
 	# Copy the AppImage specific files
 	$(CP) TeXmacs/misc/mime/metainfo.xml ../distr/TeXmacs.AppDir/usr/share/metainfo/org.texmacs.texmacs.metainfo.xml

@@ -135,7 +135,11 @@ tm_server_rep::tm_server_rep ()
   gui_interpose (texmacs_interpose_handler);
   set_wait_handler (texmacs_wait_handler);
   if (is_none (tm_init_file))
+#ifdef USE_S7
     tm_init_file= "$TEXMACS_PATH/progs/init-texmacs-s7.scm";
+#else
+    tm_init_file= "$TEXMACS_PATH/progs/init-texmacs.scm";
+#endif
   if (is_none (my_init_file))
     my_init_file= "$TEXMACS_HOME_PATH/progs/my-init-texmacs.scm";
   bench_start ("initialize scheme");

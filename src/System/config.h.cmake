@@ -1,5 +1,8 @@
 /* src/System/config.h.cmake */
 
+/* Alternative version number */
+#define ALTERNATIVE_VERSION "@ALTERNATIVE_VERSION@"
+
 /* check assertions in code */
 #cmakedefine DEBUG_ASSERT 1
 
@@ -17,6 +20,10 @@
 
 /* gs lib */
 #cmakedefine GS_LIB "@GS_LIB@"
+
+/* Scheme interpreter */
+#cmakedefine USE_S7 1
+#cmakedefine USE_GUILE 1
 
 /* Guile version */
 #cmakedefine GUILE_A 1
@@ -135,6 +142,10 @@
 #cmakedefine QTPIPES 1
 
 #cmakedefine SIZEOF_VOID_P @SIZEOF_VOID_P@ 
+#cmakedefine SIZEOF_SHORT @SIZEOF_SHORT@
+#cmakedefine SIZEOF_INT @SIZEOF_INT@
+#cmakedefine SIZEOF_LONG @SIZEOF_LONG@
+#cmakedefine SIZEOF_LONG_LONG @SIZEOF_LONG_LONG@
 
 /* Define to 1 if you have the ANSI C header files. */
 #cmakedefine STDC_HEADERS 1

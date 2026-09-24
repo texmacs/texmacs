@@ -33,7 +33,7 @@
 
 
 (define (output-copyright from)
-  noop)
+  #t)
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -60,8 +60,8 @@
 (define (build-main l)
    (build-routines (cddr l)))
 
-(define-macro build
-  (lambda l (build-main l)))
+(define-macro (build . l)
+  (build-main l))
 
 
 (begin
