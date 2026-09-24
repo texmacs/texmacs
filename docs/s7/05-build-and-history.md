@@ -1,34 +1,66 @@
 # 5. Build integration, the vendored s7, and history
 
-## 5.1 How s7 is built and selected
+## 5.1 How the interpreter is selected
 
-There is **no preprocessor switch or configure option**. s7 is selected in
-three places:
+Since 2026-09-24 the interpreter is a build option. **s7 is the default**,
+and an s7 build needs no Guile at all: nothing to install, nothing linked,
+and glue regeneration runs on s7 too.
 
-1. `src/Scheme/Scheme/object.hpp:17-19` includes `../S7/s7_tm.hpp`.
-2. The build system compiles `src/Scheme/S7` instead of `src/Scheme/Guile`.
-3. `src/Texmacs/Server/tm_server.cpp:138` loads `init-texmacs-s7.scm`.
+| Build system | s7 (default) | Guile |
+|---|---|---|
+| autotools | `./configure` or `./configure --with-scheme=s7` | `./configure --with-scheme=guile` |
+| CMake | `-DSCHEME_IMPL=s7` | `-DSCHEME_IMPL=guile` (any version) or `guile-1.8`, `guile-2.0`, `guile-2.2`, `guile-3.0` |
 
-### Autotools (the main build here)
+The option drives everything else:
 
-- **`src/makefile.in:123-124`:**
-  `scheme_src := $(call findsrc_in,Scheme,Scheme S7)`, with the same pattern
-  for `scheme_c_src`.
-- **`s7.c` is compiled with the C++ compiler** (`src/makefile.in:346`).
-- **`configure.in` still runs only `LC_GUILE`.** It still requires Guile
-  (`configure` stops with "cannot work without Guile"). It still defines
-  `GUILE_A`…`GUILE_D` and `GUILE_VERSION`, and still **links** `-lguile`
-  through `LIBS`.
-- **Some platform files still include `Guile/guile_tm.hpp`** and call Guile
-  hooks: `Plugins/Unix/unix_system.cpp` and `unix_entrypoint.cpp`, and the
-  Windows64 and Android equivalents.
-- **`init_texmacs.cpp:init_guile`** still sets `GUILE_LOAD_PATH` and checks
-  that `init-texmacs.scm` exists. `boot-s7.scm` reuses `$GUILE_LOAD_PATH`
-  to resolve module files.
+- **Macros.** It defines `USE_S7` or `USE_GUILE` in `config.h` (from
+  `misc/m4/scheme.m4` and `config.h.cmake`).
+- **Sources.** It picks the backend directory, `SCHEME_DIR=S7` or `Guile`:
+  `src/makefile.in` compiles `src/Scheme/{Scheme,$(SCHEME_DIR)}`, and CMake
+  globs the same directory.
+- **C++ selection.** `object.hpp` includes `s7_tm.hpp` or `guile_tm.hpp`, and
+  `tm_server.cpp` boots `init-texmacs-s7.scm` or `init-texmacs.scm`.
+- **Guile detection.** `LC_GUILE` (Guile detection, flags, `-lguile`) only
+  runs for Guile.
+- **Platform code.** The Guile hooks in the platform files (Unix, Windows64,
+  Android) are compiled only with `USE_GUILE`.
+- **Packaging.** The packaging rules of the top-level `Makefile.in` copy
+  Guile's `ice-9` directory only when there is one.
 
-So a Guile install (1.8 on `PATH`) is still needed to configure and link,
-even though Guile is never initialized. Guile is also needed to regenerate the
-glue.
+**What is not done.** The Scheme kernel on this branch is s7-only (see
+[06](06-open-issues.md) and §4.2). A Guile build compiles and links against
+`libguile`; checked on 2026-09-24 with Guile 1.8.7 and autotools. But it does
+not boot yet:
+- The C++ startup completes and `init-texmacs.scm` is loaded.
+- Guile's reader then stops at the first s7-only construct, `#_define` in
+  `kernel/boot/debug.scm`.
+- Everything that depends on the kernel fails after that: `when`, removed
+  from `abbrevs.scm`, is unbound, and so are the menu functions.
+
+**CMake notes.** Upstream's CMake build had gaps that were hidden whenever an
+autotools `config.h` was left in the source tree, because the source tree's
+`src/System` came first in the include path. Three were fixed along the way:
+- the generated `config.h` now comes first in the include path;
+- `config.h.cmake` now defines `SIZEOF_{SHORT,INT,LONG,LONG_LONG}` and
+  `ALTERNATIVE_VERSION`;
+- the Guile checks now pass `Guile_CFLAGS` as a space-separated string.
+
+Out of tree, the CMake build still stops at `System/Files/web_files.cpp`. It
+includes the Qt header `qt_utilities.hpp`, which is not in the core library's
+include path. That upstream problem is independent of the Scheme choice.
+
+### Glue regeneration
+
+The generated `glue_*.cpp` files work with either interpreter. The generators
+(`build-glue.scm`, `make-apidoc-*.scm`) now run on both. In s7 builds,
+`make -C src GLUE` first builds `Objects/s7-run`, a small command-line s7
+from `src/Scheme/Glue/s7-run.c` and the vendored `s7.c` that accepts Guile's
+`-l FILE -c EXPR` options. Its output is byte-identical to the committed
+files.
+
+`build-glue` and `build-auto-doc` now write to a temporary file and replace
+their output only when the generator succeeds. Before, a missing or failing
+interpreter silently truncated the committed glue.
 
 **After a rebase onto a new upstream snapshot**, run `make -C src clean`
 before building. Upstream changes function signatures in headers (for example
@@ -36,14 +68,9 @@ before building. Upstream changes function signatures in headers (for example
 symbols. `configure` also generates a few untracked files
 (`packages/msix/*.xml`, `packages/android/res/values/`), which are expected.
 
-### CMake
-
-- **`SCHEME_IMPL=s7` fails.** `CMakeLists.txt:293-310` offers it, but
-  choosing it gives `FATAL_ERROR "…not implemented yet."`.
-- **The working path is `SCHEME_IMPL=default`**, which still runs
-  `pkg_search_module(Guile REQUIRED …)`. The Guile include directories and
-  libraries are commented out, and `src/Scheme/S7/*.{c,cpp}` are added
-  (`:423-472`, `:559`). From commit `be5e8ad233`.
+**Note on `configure`.** The committed `configure` was regenerated with
+Autoconf 2.73; the previous one was made with 2.72. Most of its diff is
+version noise.
 
 ### Xcode
 

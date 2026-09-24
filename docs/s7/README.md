@@ -17,11 +17,14 @@ standalone (see [06-open-issues.md](06-open-issues.md)).
 
 ## Summary
 
-- **Selection is compile-time and hard-wired.** `src/Scheme/Scheme/object.hpp:17-19`
-  includes `../S7/s7_tm.hpp` in place of the Guile header, and `src/makefile.in:123-124`
-  compiles `src/Scheme/{Scheme,S7}`. `tm_server.cpp:138` boots
-  `progs/init-texmacs-s7.scm`. There is no `USE_S7` macro, and CMake's
-  `SCHEME_IMPL=s7` stops with a fatal error.
+- **The interpreter is a build option, and s7 is the default.** Use
+  `./configure --with-scheme=s7|guile` or CMake `-DSCHEME_IMPL=s7|guile…`.
+  - The option sets `USE_S7` or `USE_GUILE` and the backend directory.
+  - An s7 build needs no Guile: nothing to install or link, and glue
+    regeneration uses a small `s7-run`.
+  - A Guile build compiles, but the Scheme kernel on this branch is s7-only,
+    so it does not boot yet.
+  - See [05-build-and-history.md](05-build-and-history.md).
 - **The C++ ↔ Scheme boundary barely changed.** TeXmacs already talked to
   Scheme through the `tmscm_*` layer. `s7_tm.hpp/.cpp` (about 600 lines)
   re-implements that layer on the s7 C API. The generated glue

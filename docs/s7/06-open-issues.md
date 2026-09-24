@@ -274,10 +274,12 @@ Results after the rebase, on the clean rebuild:
 
 ## 6.3 Guile leftovers
 
-- **Build.** Guile is still required and linked. `init_guile` in
-  `init_texmacs.cpp`, and `texmacs_init_guile_hooks` in the Unix, Windows64
-  and Android entry points, still include Guile headers. CMake
-  `SCHEME_IMPL=s7` is a stub. The glue generator runs under `guile`.
+- **Build.** Fixed on 2026-09-24. The interpreter is a configure or CMake
+  option, and an s7 build neither needs nor links Guile (see
+  [05](05-build-and-history.md)). What remains are Guile-flavoured names: the
+  function `init_guile` in `init_texmacs.cpp`, the empty
+  `texmacs_init_guile_hooks` in s7 builds, and `$GUILE_LOAD_PATH` as the
+  module search path.
 - **Scheme files that only work under Guile:**
   - `init-texmacs.scm`, `kernel/boot/boot.scm` and `kernel/boot/compat.scm`
     (only the Guile boot loads them);
@@ -290,30 +292,28 @@ Results after the rebase, on the clean rebuild:
 
 1. Make `run-all-tests` continue past a failing suite, and report the s7
    optimizer bug (bug 8) upstream.
-2. **Remove the need for Guile in the build.**
-   - Add a `--with-scheme=s7|guile` option (and a real CMake `SCHEME_IMPL=s7`)
-     that sets a `SCHEME_S7` or `SCHEME_GUILE` macro.
-   - Use that macro in `object.hpp` and around the Guile hooks in the
-     platform entry points.
-   - Stop linking `-lguile`.
-   - Port `build-glue` so it runs under s7. For example, add a small
-     standalone s7 driver built from the vendored `s7.c`.
-3. **Put the s7-specific code in one place again.**
-   - Move s7-only idioms (`varlet`, `rootlet`, `hash-table-*`, `*s7*`) out of
-     `ahash-table.scm`, `tm-define.scm` and `tm-modes.scm`.
-   - Put them in `compat-s7.scm`, or in a matching `compat-guile.scm`.
-   - The kernel would then work with both interpreters, as the README
-     intended.
-4. Generate `init-texmacs-s7.scm` from `init-texmacs.scm`, or share a common
+2. **Make the Guile build boot again** ("level 2"). The build option exists,
+   and a Guile build compiles, but the shared kernel files use s7-only code.
+   - Give each dialect-specific operation a neutral name, for example a
+     global definition, a print-length override, and a `%define` for the
+     builtin `define`.
+   - Implement those names in `compat-s7.scm` and `compat-guile.scm`. This
+     means moving s7-only idioms (`varlet`, `rootlet`, `hash-table-*`,
+     `*s7*`, `#_define`) out of `ahash-table.scm`, `tm-define.scm`,
+     `tm-modes.scm`, `abbrevs.scm`, `srfi.scm`, `debug.scm` and
+     `kbd-define.scm`.
+   - Run the regression suites with both interpreters.
+3. Generate `init-texmacs-s7.scm` from `init-texmacs.scm`, or share a common
    body, so the two do not drift apart. Drift has already caused one test
    failure (bug 7).
    - Today the two differ only in the prelude (up to the kernel
-     `inherit-modules`, with `compat` → `compat-s7`) and the debug tail.
+     `inherit-modules`, with `compat` → `compat-s7`) and in the two developer
+     benchmark commands at the end of the s7 file.
    - A simple approach would be to put the common body in
      `init-texmacs-body.scm` and `load` it from both files.
-5. **Look at the Qt part of the boot** (see
+4. **Look at the Qt part of the boot** (see
    [05](05-build-and-history.md#boot-time)). It now dominates, and a Guile
    build pays it too.
-6. Refresh the vendored s7, re-applying `s7-lookup_from.patch`, and
+5. Refresh the vendored s7, re-applying `s7-lookup_from.patch`, and
    regenerate `s7.c.orig` from the same upstream revision so that the diff
    shows only the local patch.
