@@ -52,7 +52,9 @@
     (ahash-set! selector-table (selkey specs var) val)
     (selector-notify specs)
     (refresh-now "font-style-selector")
-    (refresh-now "font-selector-demo")))    
+    (refresh-now "font-customized-selector")
+    (refresh-now "font-features-selector")
+    (refresh-now "font-selector-demo")))
 
 (tm-define (selector-reset* specs var)
   ;;(display* "Reset " specs ", " var "\n")
@@ -121,6 +123,7 @@
         (refresh-now "font-style-selector")
         (refresh-now "font-size-selector")
         (refresh-now "font-customized-selector")
+        (refresh-now "font-features-selector")
         (refresh-now "font-selector-demo")))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -815,7 +818,7 @@
       ///
       (dynamic (font-properties-selector specs)))
     (refreshable "font-customized-selector"
-      (dynamic (font-customized-selector specs)))
+      (promise (menu-dynamic (dynamic (font-customized-selector specs)))))
     (refreshable "font-selector-demo"
       (promise (menu-dynamic (dynamic (font-selector-demo specs)))))
     === ===
@@ -878,7 +881,9 @@
           (section-tab "Mathematics"
             (centered (dynamic (font-math-selector specs))))
           (section-tab "Features"
-            (centered (dynamic (font-features-selector specs))))
+            (refreshable "font-features-selector"
+              (promise (menu-dynamic
+                         (centered (dynamic (font-features-selector specs)))))))
           (section-tab "More"
             (division "plain"
               (padded
