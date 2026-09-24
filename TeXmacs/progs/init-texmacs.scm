@@ -519,7 +519,9 @@
 (lazy-define (tools theme theme-edit) current-basic-theme)
 (lazy-define (tools theme theme-menu) basic-theme-name)
 (lazy-define (tools spell spell-edit) spell-user-words continuous-spell-check)
-(lazy-define (tools spell spell-lantool) lantool-server supports-lantool? lantool-check)
+(lazy-define (tools spell spell-lantool) lantool-server supports-lantool?
+	     lantool-check)
+(lazy-define (tools spell correct-widgets) open-correct)
 (use-modules (tools ai ai-batch))
 (lazy-define (tools ai ai-translate) ai-translate* ai-abort-translate)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")

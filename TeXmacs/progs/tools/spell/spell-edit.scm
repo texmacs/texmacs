@@ -3,7 +3,7 @@
 ;;
 ;; MODULE      : spell-edit.scm
 ;; DESCRIPTION : editing routines for spell checking
-;; COPYRIGHT   : (C) 2026  Joris van der Hoeven
+;; COPYRIGHT   : (C) 2026  Joris van der Hoeven, Gregoire Lecerf
 ;;
 ;; This software falls under the GNU general public license version 3 or later.
 ;; It comes WITHOUT ANY WARRANTY WHATSOEVER. For details, see the file LICENSE
@@ -42,6 +42,21 @@
   (in-spell% (inside-spell?)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Hooks
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define spell-hooks (list))
+
+(tm-define (spell-register-hook h)
+  (set! spell-hooks (cons h spell-hooks)))
+
+(tm-define (spell-cancel-hook h)
+  (set! spell-hooks (list-remove spell-hooks h)))
+
+(define (spell-run-hooks)
+  (for (f spell-hooks) (f)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Moving across the differences between both versions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -51,10 +66,12 @@
 
 (tm-define (spell-go-to-previous)
   (go-to-previous-tag-argument (group-resolve 'spell-tag) 0)
+  (spell-run-hooks)
   (recenter-window))
 
 (tm-define (spell-go-to-next)
   (go-to-next-tag-argument (group-resolve 'spell-tag) 0)
+  (spell-run-hooks)
   (recenter-window))
 
 (tm-define (spell-go-to-last)
@@ -67,23 +84,32 @@
 
 (define spell-replace-cache (make-ahash-table))
 
-(tm-define (spell-go-to-first*)
+(tm-define (spell-go-to-first* . cb)
   (go-start)
-  (delayed
-    (:idle 10)
-    (spell-go-to-next*)))
+  (if toolbar-correct-active?
+      (spell-go-to-next*)
+      (delayed
+	(:idle 10)
+	(if (list-1? cb)
+	    (spell-go-to-next* (car cb))
+	    (spell-go-to-next*)))))
 
-(tm-define (spell-go-to-next*)
+(tm-define (spell-go-to-next* . cb)
   (go-to-next-tag-argument (group-resolve 'spell-tag) 0)
   (when (not (tree-innermost spell-context?))
     (go-to-previous-tag-argument (group-resolve 'spell-tag) 0))
   (let* ((t (tree-innermost spell-context?))
          (i (and t (ahash-ref spell-replace-cache (tm->stree t)))))
     (if i
-        (spell-retain i :recurse)
-        (recenter-window))))
+	(if (list-1? cb)
+	    (spell-retain i :recurse (car cb))
+	    (spell-retain i :recurse))
+        (begin
+	  (spell-run-hooks)
+	  (recenter-window)
+	  (when (and (list-1? cb) (procedure? (car cb))) ((car cb)))))))
 
-(tm-define (spell-retain i mode)
+(tm-define (spell-retain i mode . cb)
   (with-innermost t spell-context?
     (and-with r (tm-ref t (if (== i 0) i (+ i 1)))
       (when (== mode #t)
@@ -92,9 +118,29 @@
       (insert r)
       (when (!= mode :recurse)
         (refresh-tooltips))
-      (delayed
-        (:idle 10)
-        (spell-go-to-next*)))))
+      (if toolbar-correct-active?
+	(spell-go-to-next*)
+	(delayed
+	  (:idle 10)
+	  (if (list-1? cb)
+	      (spell-go-to-next* (car cb))
+	      (spell-go-to-next*)))))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Replacing text
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-define (spell-replace r . cb)
+  (with-innermost t spell-context?
+    (tree-cut t)
+    (insert r)
+    (if toolbar-correct-active?
+	(spell-go-to-next*)
+	(delayed
+	  (:idle 10)
+	  (if (list-1? cb)
+	      (spell-go-to-next* (car cb))
+	      (spell-go-to-next*))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Personal dictionaries
@@ -123,7 +169,7 @@
     (and-with l (ahash-ref spell-dictionaries lan)
       (save-object dic l))))
 
-(tm-define (spell-retain-permanent)
+(tm-define (spell-retain-permanent . cb)
   (with-innermost t spell-context?
     (with lan (tree-get-env t "language")
       (spell-load-dictionary lan)
@@ -133,7 +179,9 @@
           (ahash-set! spell-accepted-words (list lan w) #t)
           (when (string? w) (spell-notify-insert lan w))
           (spell-save-dictionary lan)))
-      (spell-retain 0 #t))))
+      (if (list-1? cb)
+	  (spell-retain 0 #t (car cb))
+	  (spell-retain 0 #t)))))
 
 (tm-define (spell-replace-cached t)
   (let* ((i (ahash-ref spell-replace-cache (tm->stree t)))

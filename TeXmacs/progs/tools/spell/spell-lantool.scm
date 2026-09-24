@@ -15,16 +15,6 @@
   (version version-compare)
   (tools spell spell-edit))
 
-(define-preferences
-  ("languagetool server" "http://localhost:8081"
-   (lambda (var val) (noop)))
-  ("languagetool premium" "off"
-   (lambda (var val) (noop)))
-  ("languagetool username" ""
-   (lambda (var val) (noop)))
-  ("languagetool API key" ""
-   (lambda (var val) (noop))))
-
 (tm-define (lantool-server)
   (string-append (get-preference "languagetool server") "/v2/check"))
 
