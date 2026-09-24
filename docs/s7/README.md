@@ -14,6 +14,7 @@ standalone (see [06-open-issues.md](06-open-issues.md)).
 | [04-progs-changes.md](04-progs-changes.md) | Changes to shared Scheme modules under `TeXmacs/progs` |
 | [05-build-and-history.md](05-build-and-history.md) | How s7 is built and selected, the local s7 patch, the commit timeline |
 | [06-open-issues.md](06-open-issues.md) | Verified bugs, fragile spots, leftover Guile-isms, suggested next steps |
+| [07-benchmark.md](07-benchmark.md) | s7 versus Guile 1.8.7 on boot, regression suites and document conversions |
 
 ## Summary
 
@@ -72,6 +73,13 @@ standalone (see [06-open-issues.md](06-open-issues.md)).
     char-sets and `*random-state*`.
 
   All regression and integration suites pass.
+- **s7 is faster than Guile 1.8.7 wherever code is loaded:**
+  - boot takes 0.63 s instead of about 1.6 s;
+  - the regression suites run 1.4× faster.
+
+  Warm document conversions are at parity. The exception is the warm LaTeX
+  export, which is 20–25% slower on s7 because of environment lookups and GC.
+  See [07-benchmark.md](07-benchmark.md).
 - **Open upstream s7 bug.** An s7 optimizer bug can mis-apply closures
   called from loops. It is still present in s7 11.9 and is worked around in
   `compat-s7.scm`. See [06-open-issues.md](06-open-issues.md).
