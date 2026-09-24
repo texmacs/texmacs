@@ -740,13 +740,15 @@
     >>>))
 
 (tm-widget (font-features-selector specs)
-  (vertical
-    (with l (selector-font-features-available specs)
-      (assuming (null? l)
-        (text "This font declares no feature"))
-      (for (tag l)
-        (dynamic (font-feature-toggle specs tag))))
-    (horizontal (glue #f #t 0 0))))
+  (resize "220px" "200px"
+    (scrollable
+      (vertical
+        (with l (selector-font-features-available specs)
+          (assuming (null? l)
+            (text "This font declares no feature"))
+          (for (tag l)
+            (dynamic (font-feature-toggle specs tag))))
+        (horizontal (glue #f #t 0 0))))))
 
 (tm-widget (font-customized-selector specs)
   (assuming (selector-customize?)
