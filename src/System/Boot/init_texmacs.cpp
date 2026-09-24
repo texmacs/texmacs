@@ -559,8 +559,9 @@ test_texmacs_path (url path, bool set_environment) {
   if (!exists (rev_file)) return false;
   string rev;
   if (load_string (rev_file, rev, false)) return false;
-  // remove \n at the end of rev
-  if (N(rev) > 0 && rev[N(rev)-1] == '\n') rev= rev (0, N(rev)-1);
+  // remove \r\n or \n at the end of rev
+  while (N(rev) > 0 && (rev[N(rev)-1] == '\n' || rev[N(rev)-1] == '\r'))
+    rev= rev (0, N(rev)-1);
   if (rev != ALTERNATIVE_VERSION) {
     cout << "The directory " << path << " contains an incompatible version of TeXmacs.\n";
     cout << "Expected version: " << ALTERNATIVE_VERSION << ", found version: " << rev << ".\n";
