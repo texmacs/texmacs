@@ -42,7 +42,7 @@
     <item>bold: <math|<with|math-font-series|bold|a b c+x y z+<frac|a+b|c>+<sqrt|x>>>
     </itemize-dot>>
 
-  <with|font|KpRoman|math-font|KpMath|<\itemize-dot>
+  <with|font|Kepler|math-font|KpMath|<\itemize-dot>
     <item>KpMath: <math|a b c+x y z+<big|sum><rsub|k=1><rsup|n>a<rsub|k>>
 
     <item>sans serif: <math|<with|math-font-family|ms|a b c+x y z>>

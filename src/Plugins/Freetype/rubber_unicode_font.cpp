@@ -49,6 +49,9 @@ struct rubber_unicode_font_rep: font_rep {
 
   rubber_unicode_font_rep (string name, font base, tt_face face= nullptr);
   font   get_font (int nr);
+  array<GlyphPartRecord> part_records (GlyphAssembly gass, bool ver,
+                                       double du, int min_overlap,
+                                       array<SI>& ink);
   int    search_font_sub (string s, string& rew);
   int    search_font_sub_opentype (string s, string& rew);
   bool   get_rubber_variant (string s, SI height, string& r);
@@ -57,7 +60,6 @@ struct rubber_unicode_font_rep: font_rep {
   bool   is_extended_shape (string s);
   bool   variant_glyph (string head, string root, unsigned int& glyphID);
   void   add_virtual_glyph (string name, string def);
-  array<SI> part_lengths (GlyphAssembly gass, bool ver);
   int    search_font_cached (string s, string& rew);
   font   search_font (string& s);
 
@@ -212,30 +214,13 @@ parse_variant (string s, string& head, string& root) {
   return var;
 }
 
-// Glue a list of glyph parts, listed bottom to top (vertical) or left to
-// right (horizontal), with the given overlaps between consecutive parts.
-// Overlaps are expressed as fractions of the em of the base font, which is
-// the unit of the third argument of glue-above and glue*.
-static string
-glue (array<string> glyphs, array<double> overlap, bool ver) {
-  string gluer= ver ? "glue-above" : "glue*";
-  int    g_N  = N (glyphs);
-  if (g_N == 0) return "";
-  string result= glyphs[g_N - 1];
-  for (int i= g_N - 2; i >= 0; --i) {
-    result= "(" * gluer * " " * glyphs[i] * " " * result * " " *
-            as_string (-overlap[i]) * ")";
-  }
-  return result;
-}
-
 // Length (in design units) of an assembly whose extenders are repeated
 // 'reps' times, following the connector arithmetic of the specification.
 static int
-assembled_length (GlyphAssembly gass, int reps, int min_overlap) {
+assembled_length (array<GlyphPartRecord> prs, int reps, int min_overlap) {
   int total= 0, prev_end= -1;
-  for (int i= 0; i < N (gass.partRecords); i++) {
-    GlyphPartRecord pr= gass.partRecords[i];
+  for (int i= 0; i < N (prs); i++) {
+    GlyphPartRecord pr= prs[i];
     int n= ((pr.partFlags & 1) != 0)? reps: 1;
     for (int k= 0; k < n; k++) {
       total += (int) pr.fullAdvance;
@@ -252,23 +237,32 @@ assembled_length (GlyphAssembly gass, int reps, int min_overlap) {
 // consecutive parts overlap by at least minConnectorOverlap, limited by the
 // connector lengths of the two parts. When target > 0, the overlaps are
 // enlarged uniformly so that the assembly shrinks towards the target length
-// (in design units). Parts are stacked bottom to top or glued left to
-// right. The separations handed to glue-above / glue* are computed from
-// the advances of the parts (du is the size in SI of a design unit, em the
-// size of the em) and from their measured lengths in the rendered font
-// (ink, one entry per part record), so that the assembly has the length
-// prescribed by the table whatever the rounding of the rendered parts.
+// (in design units). Parts are stacked bottom to top or left to right.
+//
+// The parts are placed one by one, at the distance the table prescribes
+// between the near edges of their ink (du is the size in SI of a design
+// unit, em the size of the em, ink the measured bottom or left of every
+// part record in the rendered font), and joined. Gluing them to each other
+// instead, as this routine used to do, measures the ink of the whole stack
+// built so far, and answers the ink of its tallest part rather than of the
+// part which is to receive the next one: the parts of the Latin Modern,
+// TeX Gyre, DejaVu and Fira families all sit at the origin, so the two
+// agree there, but KpMath, XCharter, Old Standard, Concrete, Euler,
+// Erewhon, Garamond, Asana, STIX, XITS and New Computer Modern draw their
+// parts at offsets which differ from one part to the next, by more than an
+// em in some of them, and their assembled delimiters came out broken.
 static string
-assemble (GlyphAssembly gass, int reps, int min_overlap, int target,
-          double du, double em, array<SI> ink, bool ver) {
+assemble (array<GlyphPartRecord> prs, array<SI> ink, int reps, int min_overlap,
+          int target, double du, double em, bool ver) {
   array<GlyphPartRecord> parts;
-  array<SI> len;
-  for (int i= 0; i < N (gass.partRecords); i++) {
-    GlyphPartRecord pr= gass.partRecords[i];
+  array<SI>              base;
+  for (int i= 0; i < N (prs); i++) {
+    GlyphPartRecord pr= prs[i];
     int n= ((pr.partFlags & 1) != 0)? reps: 1;
-    for (int k= 0; k < n; k++) { parts << pr; len << ink[i]; }
+    for (int k= 0; k < n; k++) { parts << pr; base << ink[i]; }
   }
   int n= N (parts);
+  if (n == 0) return "";
   array<int> max_o (max (n - 1, 0));
   int total= 0;
   for (int i= 0; i < n; i++) {
@@ -283,19 +277,21 @@ assemble (GlyphAssembly gass, int reps, int min_overlap, int target,
   int extra= 0;
   if (target > 0 && n > 1 && total > target)
     extra= (total - target + n - 2) / (n - 1);
-  array<string> glyphs;
-  array<double> overlap;
+  if (em <= 0.0) em= 1.0;
+  string r= "(join";
+  double off= 0.0; // where the origin of the current part goes, in SI
   for (int i= 0; i < n; i++) {
-    glyphs << ("@" * as_hexadecimal (parts[i].glyphID, 4));
+    string d= as_string (off / em);
+    r << " (" << (ver? string ("0"): d) << " " << (ver? d: string ("0"))
+      << " @" << as_hexadecimal (parts[i].glyphID, 4) << ")";
     if (i + 1 < n) {
       int o= min (min_overlap + extra, max_o[i]);
-      // the next part must start (fullAdvance - o) design units after the
-      // start of this one, i.e. sep after its measured end
-      double sep= ((int) parts[i].fullAdvance - o) * du - (double) len[i];
-      overlap << (-sep / em);
+      off += ((double) ((int) parts[i].fullAdvance - o)) * du +
+             ((double) (base[i] - base[i+1]));
     }
   }
-  return glue (glyphs, overlap, ver);
+  r << ")";
+  return r;
 }
 
 int
@@ -391,22 +387,25 @@ rubber_unicode_font_rep::search_font_sub_opentype (string s, string& rew) {
         int    shift = starts (s, "<big-")? 1: 0; // there is no <big-x-0>
         // sizes must grow with the variant number: start with the smallest
         // number of repetitions which exceeds the largest pre-drawn variant
+        double pt= using_vertical? (double) base->hpt: (double) base->wpt;
+        double du= ((double) base->size * pt) / upem;
+        double em= (double) base->size * pt;
+        array<SI> ink;
+        array<GlyphPartRecord> prs=
+          part_records (gass, using_vertical, du, min_overlap, ink);
         int k0= 1;
         if (nvar > 0) {
           auto& adv= using_vertical? math_table->ver_glyph_variants_adv (glyphID)
                                    : math_table->hor_glyph_variants_adv (glyphID);
           int largest= (N (adv) == nvar)? (int) adv[nvar - 1]: 0;
           while (k0 < MAX_ASSEMBLY_REPS &&
-                 assembled_length (gass, k0, min_overlap) <= largest) k0++;
+                 assembled_length (prs, k0, min_overlap) <= largest) k0++;
         }
-        double du= ((double) base->size * (double) base->hpt) / upem;
-        double em= (double) base->size * (double) base->hpt;
-        array<SI> ink= part_lengths (gass, using_vertical);
         for (int k= k0; k < k0 + MAX_ASSEMBLY_REPS; k++) {
           string name= prefix * as_string (nvar + k - k0 + shift) * ">";
           if (virt->dict->contains (name)) continue;
-          add_virtual_glyph (name, assemble (gass, k, min_overlap, 0,
-                                             du, em, ink, using_vertical));
+          add_virtual_glyph (name, assemble (prs, ink, k, min_overlap, 0,
+                                             du, em, using_vertical));
         }
       }
       return 6;
@@ -473,13 +472,15 @@ rubber_unicode_font_rep::get_wide_variant (string s, SI width, string& r) {
   }
   GlyphAssembly gass= mt->hor_glyph_assembly (glyphID);
   int min_overlap= (int) mt->minConnectorOverlap;
+  array<SI> ink;
+  array<GlyphPartRecord> prs= part_records (gass, false, du, min_overlap, ink);
   int k= 1;
   while (k < MAX_ASSEMBLY_REPS &&
-         assembled_length (gass, k, min_overlap) < target) k++;
+         assembled_length (prs, k, min_overlap) < target) k++;
   r= prefix * "w" * as_string (width / PIXEL) * ">";
   if (!virt->dict->contains (r))
-    add_virtual_glyph (r, assemble (gass, k, min_overlap, target, du, em,
-                                    part_lengths (gass, false), false));
+    add_virtual_glyph (r, assemble (prs, ink, k, min_overlap, target,
+                                    du, em, false));
   return true;
 }
 
@@ -501,16 +502,44 @@ rubber_unicode_font_rep::is_extended_shape (string s) {
   return get_font (nr)->is_extended_shape (rew);
 }
 
-// Measured lengths (heights or widths) of the parts of an assembly in the
-// base font, one entry per part record
-array<SI>
-rubber_unicode_font_rep::part_lengths (GlyphAssembly gass, bool ver) {
-  array<SI> r;
+// The part records of an assembly, together with the near edge of the ink
+// of every part in the base font (the bottom of a vertical part, the left
+// of a horizontal one, relative to the origin of the part).
+//
+// A part whose full advance the font leaves at zero is repaired with the
+// length of its ink: KpMath 0.35, which TeXmacs distributes, declares no
+// advance and no connectors for the bottom part of its right parenthesis,
+// and every right parenthesis tall enough to be assembled came out with a
+// detached foot.
+array<GlyphPartRecord>
+rubber_unicode_font_rep::part_records (GlyphAssembly gass, bool ver, double du,
+                                       int min_overlap, array<SI>& ink) {
+  // the connector to lend to a part which declares none: the shortest one
+  // of the parts which are properly declared
+  int conn= 0;
   for (int i= 0; i < N (gass.partRecords); i++) {
+    GlyphPartRecord pr= gass.partRecords[i];
+    if (pr.fullAdvance == 0) continue;
+    int c= min ((int) pr.startConnectorLength, (int) pr.endConnectorLength);
+    conn= (conn == 0)? c: min (conn, c);
+  }
+  conn= max (conn, min_overlap);
+  array<GlyphPartRecord> r;
+  ink= array<SI> ();
+  for (int i= 0; i < N (gass.partRecords); i++) {
+    GlyphPartRecord pr= gass.partRecords[i];
     metric ex;
-    base->get_extents ("<@" * as_hexadecimal (gass.partRecords[i].glyphID, 4)
-                       * ">", ex);
-    r << (ver? ex->y2 - ex->y1: ex->x2 - ex->x1);
+    base->get_extents ("<@" * as_hexadecimal (pr.glyphID, 4) * ">", ex);
+    ink << (ver? ex->y1: ex->x1);
+    if (pr.fullAdvance == 0 && du > 0.0) {
+      SI len= ver? (ex->y2 - ex->y1): (ex->x2 - ex->x1);
+      pr.fullAdvance= (unsigned short) max (0.0, tm_round (len / du));
+      if (pr.startConnectorLength == 0)
+        pr.startConnectorLength= (unsigned short) conn;
+      if (pr.endConnectorLength == 0)
+        pr.endConnectorLength= (unsigned short) conn;
+    }
+    r << pr;
   }
   return r;
 }
@@ -573,14 +602,16 @@ rubber_unicode_font_rep::get_rubber_variant (string s, SI height, string& r) {
   }
   GlyphAssembly gass= mt->ver_glyph_assembly (glyphID);
   int min_overlap= (int) mt->minConnectorOverlap;
+  array<SI> ink;
+  array<GlyphPartRecord> prs= part_records (gass, true, du, min_overlap, ink);
   int k= 1;
   while (k < MAX_ASSEMBLY_REPS &&
-         assembled_length (gass, k, min_overlap) < target) k++;
+         assembled_length (prs, k, min_overlap) < target) k++;
   r= prefix * "h" * as_string (height / PIXEL) * ">";
   if (!virt->dict->contains (r)) {
     double em= (double) base->size * (double) base->hpt;
-    add_virtual_glyph (r, assemble (gass, k, min_overlap, target, du, em,
-                                    part_lengths (gass, true), true));
+    add_virtual_glyph (r, assemble (prs, ink, k, min_overlap, target,
+                                    du, em, true));
   }
   return true;
 }

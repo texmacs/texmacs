@@ -721,6 +721,101 @@ test_text_font_features () {
   CHECK (small->y2 < cap->y2);
 }
 
+// Assemblies of every font, not only of the ones whose parts sit at the
+// origin. The parts are placed by the near edge of their ink, at the
+// distance the MATH table prescribes between them, so the left and the
+// right half of a pair of delimiters, whose assemblies are mirror images,
+// must come out with the same height, and no delimiter may come out
+// shorter than it was asked for. Two things used to spoil this: gluing
+// every part to the stack built so far, which measures the tallest part of
+// the stack instead of the one which is to receive the next part, and a
+// font which declares no advance for a part, as KpMath 0.35 does for the
+// bottom of its right parenthesis, which then came out an em too tall.
+static void
+test_assembled_delimiters () {
+  if (get_env ("TM_TEST_FONT_DIR") == "") SKIP ("no TM_TEST_FONT_DIR");
+  array<string> files;
+  files << string ("latinmodern-math") << string ("KpMath-Regular")
+        << string ("STIXTwoMath-Regular") << string ("texgyrepagella-math")
+        << string ("XCharter-Math") << string ("Erewhon-Math")
+        << string ("Asana-Math") << string ("LibertinusMath-Regular")
+        << string ("NewCMMath-Regular");
+  array<string> left, right;
+  left  << string ("<left-(>") << string ("<left-{>") << string ("<left-|>");
+  right << string ("<right-)>") << string ("<right-}>") << string ("<right-|>");
+  int nr= 0, nr_assembled= 0;
+  for (int i= 0; i < N (files); i++) {
+    if (!tt_font_exists (files[i])) continue;
+    font fn= unicode_font (files[i], LM_SIZE, LM_DPI);
+    if (is_nil (fn) || !fn->ot_math) continue;
+    font rf= rubber_font (fn);
+    nr++;
+    for (int j= 0; j < N (left); j++)
+      for (int du= 3000; du <= 6000; du+= 1500) {
+        SI     h  = (SI) tm_round (du * LM_SIZE * fn->hpt / LM_UPEM);
+        SI     tol= (SI) tm_round (40 * LM_SIZE * fn->hpt / LM_UPEM);
+        string rl, rr;
+        if (!rf->get_rubber_variant (left[j], h, rl)) continue;
+        if (!rf->get_rubber_variant (right[j], h, rr)) continue;
+        // only the glyphs made to measure are assembled from parts
+        if (!occurs ("-h", rl) || !occurs ("-h", rr)) continue;
+        nr_assembled++;
+        metric el, er;
+        rf->get_extents (rl, el);
+        rf->get_extents (rr, er);
+        SI hl= el->y2 - el->y1, hr= er->y2 - er->y1;
+        // the parts must join: the ink of an assembled delimiter is one
+        // connected piece, whatever the offsets at which the font draws
+        // the parts
+        for (int side= 0; side < 2; side++) {
+          string nm= side? rr: rl;
+          glyph  gl= rf->get_glyph (nm);
+          if (is_nil (gl) || gl->width <= 0 || gl->height <= 0) continue;
+          int w= gl->width, ht= gl->height, total= 0, seen= 0, start= -1;
+          array<bool> ink (w * ht), done (w * ht);
+          for (int y= 0; y < ht; y++)
+            for (int x= 0; x < w; x++) {
+              bool b= (gl->get_x (x, y) != 0);
+              ink[y*w + x]= b;
+              done[y*w + x]= false;
+              if (b) { total++; if (start < 0) start= y*w + x; }
+            }
+          if (total == 0) continue;
+          (void) start;
+          // the largest connected piece of ink must be the whole delimiter
+          for (int c0= 0; c0 < w * ht; c0++) {
+            if (!ink[c0] || done[c0]) continue;
+            int        size= 0;
+            array<int> todo;
+            todo << c0;
+            done[c0]= true;
+            while (N (todo) > 0) {
+              int c= todo[N(todo) - 1];
+              todo->resize (N(todo) - 1);
+              size++;
+              int x= c % w, y= c / w;
+              for (int d= 0; d < 4; d++) {
+                int nx= x + ((d == 0)? -1: ((d == 1)? 1: 0));
+                int ny= y + ((d == 2)? -1: ((d == 3)? 1: 0));
+                if (nx < 0 || ny < 0 || nx >= w || ny >= ht) continue;
+                int nc= ny*w + nx;
+                if (ink[nc] && !done[nc]) { done[nc]= true; todo << nc; }
+              }
+            }
+            seen= max (seen, size);
+          }
+          CHECK_MSG (seen * 20 >= total * 19,
+                    as_charp (files[i] * " " * nm * ": the parts do not join, "
+                              * as_string (total - seen) * " of "
+                              * as_string (total) *
+                              " pixels of ink are detached"));
+        }
+      }
+  }
+  if (nr == 0) SKIP ("no math font in TM_TEST_FONT_DIR");
+  CHECK_MSG (nr_assembled >= 4, "no delimiter was assembled from parts");
+}
+
 int
 main () {
   test_setup ();
@@ -730,6 +825,7 @@ main () {
   RUN (test_italic_correction);
   RUN (test_rubber_variants);
   RUN (test_rubber_assembly);
+  RUN (test_assembled_delimiters);
   RUN (test_big_operators);
   RUN (test_kerning_at_height);
   RUN (test_assembly_monotone);
