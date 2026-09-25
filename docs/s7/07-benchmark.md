@@ -20,7 +20,7 @@ session on 2026-09-25, alternating builds.
 |---|---:|---:|---:|
 | Boot (launch → quit, 5 runs) | 0.63 s | 0.64 s | 1.54–1.64 s |
 | 15 portable regression suites | 187–189 ms | 190–200 ms | 269–276 ms |
-| 8 warm LaTeX exports of the change log | 9.2–9.3 s | 4.9–5.1 s | 7.7–7.8 s |
+| 8 warm LaTeX exports of the change log | 9.2–9.3 s | 4.9–5.1 s (3.0 s with the `latex-needs?` cache) | 7.7–7.8 s |
 | `fib 25` (pure interpreter) | < 1 ms | < 1 ms | 60–84 ms |
 
 The conversion benchmark uses four documents: the change log, `env-page`,
@@ -172,6 +172,76 @@ Setting `(*s7* 'gc-resize-heap-by-4-fraction)` to 0.3 keeps the heap at 2 M
 cells and the peak at about 290 MB. The loop then takes 5.6 s instead of
 4.9 s, because the smaller heap needs more collections. This trade-off is
 not applied.
+
+## Where the export time goes (2026-09-26)
+
+After the lookup fix, a sampling profile of the 8-export loop (4.9 s) shows:
+
+- **90% of the main thread is inside `tree_to_latex_document`,** the C++
+  entry point that runs the Scheme converter.
+- **By self time:**
+  - s7's `eval` (the interpreter, lookups inlined) takes 45%;
+  - the GC takes about 20%;
+  - C++ work (the LaTeX preamble, strings, buffer switching) takes a few
+    percent.
+- **Lookup has become a minor share.** The lookup fix saved 4.3 s for 5.1 G
+  slot comparisons, about 0.84 ns each. The 0.69 G comparisons left are
+  therefore worth about 0.6 s, or 12%.
+
+s7's own profiler (`(*s7* 'profile)` switched on at boot, `profile.scm` from
+the s7 distribution) names the Scheme functions:
+
+- **Serializing the result (`texout-file`) dominated,** not the conversion
+  proper (`tmtex-file`, about 19%).
+- **Inside it, `latex-macro-defs-sub` → `latex-needs?` → the logic engine**
+  (`query`, `logic-prove`, `unify`, …) took about two thirds of the profiled
+  time.
+- The profiler inflates functions that are called very often with little
+  work each, as in the logic engine. So these shares only rank the costs.
+
+### Why `latex-needs?` was expensive
+
+- `latex-needs?` is `(logic-ref latex-needs% x)`: a query of the logic
+  engine.
+- `latex-symbol-drd.scm` adds rules such as
+  `((latex-needs% 'x "amssymb") (latex-ams-symbol% 'x))`. Their head has a
+  free variable, so every query tries all of them, searching several symbol
+  tables.
+- `latex-macro-defs-sub` asks the question for every node of the document,
+  often twice. For 8 exports of the change log that is 42 562 calls, but
+  only 71 distinct keys.
+- The answers depend only on the logic rules: the engine never calls back
+  into Scheme.
+
+### The cache (`48e8c6b76a`)
+
+- **Cache:** `latex-needs?` keeps its answers in an `ahash` table.
+- **Invalidation:** the table is dropped whenever rules are added.
+  `logic-rules.scm` counts the rules added through `logic-add-rule`, and
+  exposes the count as `(logic-rules-version)`. It is a function because
+  imported variables are copies on s7.
+
+**Output:** the LaTeX exported from 21 documents is byte-identical with and
+without the cache, on both interpreters.
+
+**Speed:**
+
+| 8 warm LaTeX exports of the change log | Before the cache | With the cache |
+|---|---:|---:|
+| s7 | 4.6–4.8 s | 3.0 s |
+| Guile 1.8.7 | 8.6–9.5 s | 8.2–8.4 s |
+
+- Guile gains less: the logic engine was a smaller share of its time.
+- 21 cold exports on s7, boot and typesetting included, take 18 s instead
+  of 20 s.
+- Memory is unchanged.
+
+### What remains on s7
+
+- the `tmtex` conversion itself;
+- a few other logic-table lookups of the same kind (`latex-texmacs-arity`,
+  `latex-texmacs-option?`, the catcode definitions);
+- the GC, about a fifth of the time.
 
 ## Portability gaps found by the benchmark
 

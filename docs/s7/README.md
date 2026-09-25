@@ -81,7 +81,11 @@ standalone (see [06-open-issues.md](06-open-issues.md)).
   Repeated LaTeX export used to be 20–25% slower on s7. `tm-define-macro`
   renumbered the user module, which made every kernel lookup from older
   modules scan their whole environment. Since this was fixed, it is about
-  35% faster than on Guile. See [07-benchmark.md](07-benchmark.md).
+  35% faster than on Guile.
+- **Most of the LaTeX export time was one repeated logic-engine query.**
+  `latex-needs?` was asked about 5 000 times per export for about 70
+  distinct keys. It is now cached until logic rules are added, and s7
+  exports about 2.7× faster than Guile. See [07-benchmark.md](07-benchmark.md).
 - **Open upstream s7 bug.** An s7 optimizer bug can mis-apply closures
   called from loops. It is still present in s7 11.9 and is worked around in
   `compat-s7.scm`. See [06-open-issues.md](06-open-issues.md).
