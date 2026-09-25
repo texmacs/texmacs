@@ -740,11 +740,9 @@
     >>>))
 
 (tm-widget (font-features-selector specs)
-  (vertical
-    (hlist (bold (text "OpenType features")) >>>)
-    ===
-    (resize "220px" "175px"
-      (scrollable
+  (resize "235px" "180px"
+    (scrollable
+      (padded
         (vertical
           (with l (selector-font-features-available specs)
             (assuming (null? l)
@@ -753,21 +751,30 @@
               (dynamic (font-feature-toggle specs tag))))
           (horizontal (glue #f #t 0 0)))))))
 
+;; the features are offered beside the other customizations, with their
+;; title on the line of theirs
+(tm-widget (font-features-column specs)
+  (vertical
+    (hlist (bold (text "OpenType features")) >>>)
+    ===
+    (refreshable "font-features-selector"
+      (promise (menu-dynamic (dynamic (font-features-selector specs)))))))
+
 (tm-widget (font-customized-selector specs)
   (assuming (selector-customize?)
     === === ===
-    (hlist
-      (bold (text "Font customization"))
-      >>>)
-    ===
     (horizontal
-      (dynamic (font-effects-selector specs))
+      (vertical
+        (hlist (bold (text "Font customization")) >>>)
+        ===
+        (horizontal
+          (dynamic (font-effects-selector specs))
+          >>>
+          (dynamic (font-variant-selector specs))
+          >>>
+          (dynamic (font-math-selector specs))))
       >>>
-      (dynamic (font-variant-selector specs))
-      >>>
-      (dynamic (font-math-selector specs))
-      >>>
-      (dynamic (font-features-selector specs)))
+      (dynamic (font-features-column specs)))
     === === ===)
   (assuming (not (selector-customize?))
     === === ===))
@@ -775,19 +782,18 @@
 (tm-widget ((font-customization-dialog specs) quit)
   (padded
     === === ===
-    (hlist
-      (bold (text "Font customization"))
-      >>>)
-    ===
     (horizontal
-      (dynamic (font-effects-selector specs))
+      (vertical
+        (hlist (bold (text "Font customization")) >>>)
+        ===
+        (horizontal
+          (dynamic (font-effects-selector specs))
+          >>>
+          (dynamic (font-variant-selector specs))
+          >>>
+          (dynamic (font-math-selector specs))))
       >>>
-      (dynamic (font-variant-selector specs))
-      >>>
-      (dynamic (font-math-selector specs))
-      >>>
-      (refreshable "font-features-selector"
-        (promise (menu-dynamic (dynamic (font-features-selector specs))))))
+      (dynamic (font-features-column specs)))
     === === ===
     (explicit-buttons (hlist >>> ("Done" (quit))))))
 
