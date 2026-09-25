@@ -740,15 +740,18 @@
     >>>))
 
 (tm-widget (font-features-selector specs)
-  (resize "220px" "200px"
-    (scrollable
-      (vertical
-        (with l (selector-font-features-available specs)
-          (assuming (null? l)
-            (text "This font declares no feature"))
-          (for (tag l)
-            (dynamic (font-feature-toggle specs tag))))
-        (horizontal (glue #f #t 0 0))))))
+  (vertical
+    (hlist (bold (text "OpenType features")) >>>)
+    ===
+    (resize "220px" "175px"
+      (scrollable
+        (vertical
+          (with l (selector-font-features-available specs)
+            (assuming (null? l)
+              (text "This font declares no feature"))
+            (for (tag l)
+              (dynamic (font-feature-toggle specs tag))))
+          (horizontal (glue #f #t 0 0)))))))
 
 (tm-widget (font-customized-selector specs)
   (assuming (selector-customize?)
@@ -781,7 +784,10 @@
       >>>
       (dynamic (font-variant-selector specs))
       >>>
-      (dynamic (font-math-selector specs)))
+      (dynamic (font-math-selector specs))
+      >>>
+      (refreshable "font-features-selector"
+        (promise (menu-dynamic (dynamic (font-features-selector specs))))))
     === === ===
     (explicit-buttons (hlist >>> ("Done" (quit))))))
 
