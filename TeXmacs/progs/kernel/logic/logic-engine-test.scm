@@ -106,7 +106,18 @@
          '(((g . "Abe"))))
    (test "logic-query macro"
          (logic-query (logic-test-father% 'p "Homer"))
-         '(((p . "Abe"))))))
+         '(((p . "Abe"))))
+   (test "adding rules changes logic-rules-version"
+         (let ((before (logic-rules-version)))
+           (logic-rules ((logic-test-father% "Bart" "Maggie-junior")))
+           (list (> (logic-rules-version) before)
+                 (pair? (query '(logic-test-father% "Bart" "Maggie-junior")))))
+         '(#t #t))
+   (test "queries do not change logic-rules-version"
+         (let ((before (logic-rules-version)))
+           (query '(logic-test-father% "Homer" 'c))
+           (= (logic-rules-version) before))
+         #t)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Test suite

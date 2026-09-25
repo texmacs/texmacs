@@ -51,6 +51,12 @@
 
 (define logic-rules-table (make-ahash-table))
 
+;; Number of rules added so far. Code which caches the results of queries
+;; can compare it with the value at caching time. It is read through a
+;; function, since imported variables are copies on s7.
+(define logic-rules-changes 0)
+(define-public (logic-rules-version) logic-rules-changes)
+
 (define (logic-add-rule-advance table symb todo rule)
   (if (not (ahash-ref table symb))
       (ahash-set! table symb (make-ahash-table)))
@@ -72,6 +78,7 @@
 
 (define (logic-add-rule rule)
   "Add the rule @rule to the global database."
+  (set! logic-rules-changes (+ logic-rules-changes 1))
   (logic-add-rule-sub logic-rules-table (list (car rule)) rule))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
