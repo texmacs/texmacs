@@ -50,7 +50,15 @@
    (test "cpp-string-number?"
          (list (cpp-string-number? "1.5") (cpp-string-number? "x")) '(#t #f))
    (test "string-search-forwards"
-         (string-search-forwards "lo" 0 "hello") 3)))
+         (string-search-forwards "lo" 0 "hello") 3)
+   ;; object->tmstring undoes the printer's escapes of control characters,
+   ;; "\xHH;" on s7 and "\xHH" on Guile, without eating what follows
+   (test "object->tmstring, escape followed by a letter"
+         (string->list (object->tmstring (string (integer->char 127) #\a)))
+         (list #\" (integer->char 127) #\a #\"))
+   (test "object->tmstring, escape followed by a semicolon"
+         (string->list (object->tmstring (string (integer->char 1) #\; #\x)))
+         (list #\" (integer->char 1) #\; #\x #\"))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Trees

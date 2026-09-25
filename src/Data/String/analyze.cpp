@@ -9,6 +9,7 @@
 * in the root directory or <http://www.gnu.org/licenses/gpl-3.0.html>.
 ******************************************************************************/
 
+#include "config.h"
 #include "analyze.hpp"
 #include "merge_sort.hpp"
 #include "converter.hpp"
@@ -907,9 +908,11 @@ unescape_guile (string s) {
           && is_hex_digit (s[i+2]) && is_hex_digit (s[i+3])) {
         string e= s(i+2, i+4);
         r << (unsigned char) from_hexadecimal (e);
-        i+=4;
-        //NOTE: format is "\xHH;" in S7
-        //In Guile it is  "\xHH"
+        i+=3;
+#ifdef USE_S7
+        // s7 prints the escape as "\xHH;" and Guile as "\xHH"
+        if (i+1 < n && s[i+1] == ';') i++;
+#endif
       }
       else
         r << s[i];
