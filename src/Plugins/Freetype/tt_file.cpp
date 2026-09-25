@@ -181,7 +181,13 @@ tt_font_find_sub (string name) {
 
 url
 tt_font_find (string name) {
-  string s= "ttf:" * name;
+  // The prefix of the key records which files this routine prefers. The
+  // answers are cached in the home directory, which outlives an upgrade
+  // and is shared by every installation, so a cache written when Type 1
+  // came first still named the .pfb file of a family whose .otf TeXmacs
+  // now wants; the font then had no OpenType feature and no MATH table.
+  // Change the prefix whenever tt_font_find_sub changes its order.
+  string s= "sfnt:" * name;
   if (is_cached ("font_cache.scm", s)) {
     string r= cache_get ("font_cache.scm", s) -> label;
     if (r == "") return url_none ();
