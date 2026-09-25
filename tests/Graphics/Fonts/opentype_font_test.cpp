@@ -816,6 +816,40 @@ test_assembled_delimiters () {
   CHECK_MSG (nr_assembled >= 4, "no delimiter was assembled from parts");
 }
 
+// The screen draws with a copy of the font made for the resolution of the
+// display, and such a copy starts with an empty virtual font. A delimiter
+// made to measure must therefore be rebuilt from its name, and at the size
+// the name says, whatever the resolution the copy was made for: the name
+// carries the size in thousandths of an em for that reason. It used to
+// carry it in pixels, and a delimiter which needed an assembly was drawn
+// in its base size on the screen, while paper had it right.
+static void
+test_magnified_assembly () {
+  if (!have_lm) SKIP ("no Latin Modern Math");
+  font   rf= rubber_font (lm);
+  string r;
+  SI     h= du_y (9000);
+  CHECK (rf->get_rubber_variant ("<left-(>", h, r));
+  CHECK_MSG (occurs ("-h", r), as_charp (r));
+  metric ex;
+  rf->get_extents (r, ex);
+  CHECK (ex->y2 - ex->y1 > 0);
+  double zooms[3]= {2.0, 0.5, 1.5};
+  for (int i= 0; i < 3; i++) {
+    font mg= rubber_font (lm)->magnify (zooms[i]);
+    CHECK (!is_nil (mg));
+    CHECK_MSG (mg->supports (r), as_charp (r));
+    metric ey;
+    mg->get_extents (r, ey);
+    SI got = ey->y2 - ey->y1;
+    SI want= (SI) tm_round (zooms[i] * (ex->y2 - ex->y1));
+    CHECK_MSG (si_abs (got - want) <= du_y (100),
+              as_charp (r * " magnified by " * as_string (zooms[i]) * ": " *
+                        as_string (got / PIXEL) * " pixels instead of " *
+                        as_string (want / PIXEL)));
+  }
+}
+
 int
 main () {
   test_setup ();
@@ -826,6 +860,7 @@ main () {
   RUN (test_rubber_variants);
   RUN (test_rubber_assembly);
   RUN (test_assembled_delimiters);
+  RUN (test_magnified_assembly);
   RUN (test_big_operators);
   RUN (test_kerning_at_height);
   RUN (test_assembly_monotone);

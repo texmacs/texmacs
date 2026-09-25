@@ -55,6 +55,7 @@ struct rubber_unicode_font_rep: font_rep {
   int    search_font_sub (string s, string& rew);
   int    search_font_sub_opentype (string s, string& rew);
   bool   get_rubber_variant (string s, SI height, string& r);
+  bool   make_measured (string s);
   bool   get_wide_variant (string s, SI width, string& r);
   bool   get_top_accent (string s, SI& x);
   bool   is_extended_shape (string s);
@@ -214,6 +215,16 @@ parse_variant (string s, string& head, string& root) {
   return var;
 }
 
+// The size of a made to measure glyph, in thousandths of an em, which is
+// what its name carries: a name must mean the same thing to every copy of
+// the font, and the pixels in which the typesetter measures depend on the
+// resolution the copy was made for.
+static int
+per_em (SI len, double em) {
+  if (em <= 0.0) return 0;
+  return (int) tm_round ((1000.0 * len) / em);
+}
+
 // Length (in design units) of an assembly whose extenders are repeated
 // 'reps' times, following the connector arithmetic of the specification.
 static int
@@ -341,8 +352,9 @@ rubber_unicode_font_rep::search_font_sub_opentype (string s, string& rew) {
                            ? math_face->math_table->ver_glyph_assembly
                            : math_face->math_table->hor_glyph_assembly;
 
-  // names of made to measure assemblies (see get_rubber_variant)
-  if (virt->dict->contains (s)) return 6;
+  // names of made to measure assemblies (see make_measured), which a
+  // magnified copy of this font has to build again
+  if (make_measured (s)) return 6;
 
   // turn a number to a 4-digit hexadecimal string "@XXXX"
   auto hex4= [] (int x) { return "@" * as_hexadecimal (x, 4); };
@@ -455,7 +467,6 @@ rubber_unicode_font_rep::get_wide_variant (string s, SI width, string& r) {
   double upem= (double) math_face->ft_face->units_per_EM;
   if (upem <= 0.0) upem= 1000.0;
   double du= ((double) base->size * (double) base->wpt) / upem;
-  double em= (double) base->size * (double) base->wpt;
   int target= (int) ceil (width / du);
   string prefix= "<" * head * "-" * root * "-";
 
@@ -470,18 +481,9 @@ rubber_unicode_font_rep::get_wide_variant (string s, SI width, string& r) {
     r= prefix * as_string (N(gv) - 1) * ">";
     return N(gv) > 0;
   }
-  GlyphAssembly gass= mt->hor_glyph_assembly (glyphID);
-  int min_overlap= (int) mt->minConnectorOverlap;
-  array<SI> ink;
-  array<GlyphPartRecord> prs= part_records (gass, false, du, min_overlap, ink);
-  int k= 1;
-  while (k < MAX_ASSEMBLY_REPS &&
-         assembled_length (prs, k, min_overlap) < target) k++;
-  r= prefix * "w" * as_string (width / PIXEL) * ">";
-  if (!virt->dict->contains (r))
-    add_virtual_glyph (r, assemble (prs, ink, k, min_overlap, target,
-                                    du, em, false));
-  return true;
+  double em= (double) base->size * (double) base->wpt;
+  r= prefix * "w" * as_string (per_em (width, em)) * ">";
+  return make_measured (r);
 }
 
 bool
@@ -583,8 +585,9 @@ rubber_unicode_font_rep::get_rubber_variant (string s, SI height, string& r) {
 
   double upem= (double) math_face->ft_face->units_per_EM;
   if (upem <= 0.0) upem= 1000.0;
-  // size in SI of one design unit (vertical)
+  // size in SI of one design unit (vertical) and of the em
   double du= ((double) base->size * (double) base->hpt) / upem;
+  double em= (double) base->size * (double) base->hpt;
   int target= (int) ceil (height / du);
   string prefix= "<" * head * "-" * root * "-";
 
@@ -600,19 +603,55 @@ rubber_unicode_font_rep::get_rubber_variant (string s, SI height, string& r) {
     r= prefix * as_string (N(gv) - 1) * ">";
     return N(gv) > 0;
   }
-  GlyphAssembly gass= mt->ver_glyph_assembly (glyphID);
+  r= prefix * "h" * as_string (per_em (height, em)) * ">";
+  return make_measured (r);
+}
+
+// Build the assembly named <head-root-hN> (a height of N pixels) or
+// <head-root-wN> (a width of N pixels), if it is not in the virtual font
+// of this rubber font yet.
+//
+// The name carries the size because the definition has to be rebuilt on
+// demand: a magnified copy of this font, which is what the screen draws
+// with, starts with an empty virtual font, and the typesetter asks it for
+// the name which the unmagnified font answered. Without this the delimiter
+// was drawn in its base size on the screen, and correctly on paper.
+bool
+rubber_unicode_font_rep::make_measured (string s) {
+  if (virt->dict->contains (s)) return true;
+  if (is_nil (math_face) || is_nil (math_face->math_table)) return false;
+  if (!starts (s, "<") || !ends (s, ">") || N(s) < 3) return false;
+  array<string> v= tokenize (s (1, N(s) - 1), "-");
+  if (N(v) < 3) return false;
+  string last= v[N(v) - 1];
+  if (N(last) < 2 || (last[0] != 'h' && last[0] != 'w')) return false;
+  if (!is_int (last (1, N(last)))) return false;
+  bool   ver= (last[0] == 'h');
+  int    mil= as_int (last (1, N(last)));
+  string head= v[0];
+  string root= recompose (range (v, 1, N(v) - 1), "-");
+  unsigned int glyphID;
+  if (!variant_glyph (head, root, glyphID)) return false;
+  ot_mathtable mt= math_face->math_table;
+  if (ver? !mt->ver_glyph_assembly->contains (glyphID)
+         : !mt->hor_glyph_assembly->contains (glyphID)) return false;
+  double upem= (double) math_face->ft_face->units_per_EM;
+  if (upem <= 0.0) upem= 1000.0;
+  double pt= ver? (double) base->hpt: (double) base->wpt;
+  double du= ((double) base->size * pt) / upem;
+  double em= (double) base->size * pt;
+  if (du <= 0.0) return false;
+  int target= (int) tm_round ((mil * upem) / 1000.0);
+  GlyphAssembly gass= ver? mt->ver_glyph_assembly (glyphID)
+                         : mt->hor_glyph_assembly (glyphID);
   int min_overlap= (int) mt->minConnectorOverlap;
   array<SI> ink;
-  array<GlyphPartRecord> prs= part_records (gass, true, du, min_overlap, ink);
+  array<GlyphPartRecord> prs= part_records (gass, ver, du, min_overlap, ink);
   int k= 1;
   while (k < MAX_ASSEMBLY_REPS &&
          assembled_length (prs, k, min_overlap) < target) k++;
-  r= prefix * "h" * as_string (height / PIXEL) * ">";
-  if (!virt->dict->contains (r)) {
-    double em= (double) base->size * (double) base->hpt;
-    add_virtual_glyph (r, assemble (prs, ink, k, min_overlap, target,
-                                    du, em, true));
-  }
+  add_virtual_glyph (s, assemble (prs, ink, k, min_overlap, target,
+                                  du, em, ver));
   return true;
 }
 
