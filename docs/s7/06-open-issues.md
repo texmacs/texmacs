@@ -198,6 +198,21 @@ iteration over an environment, and possibly the positional refill of reused
 argument lets. The patch is now an id check that never mutates. See
 [05](05-build-and-history.md#s7-version-and-local-patch).
 
+### 13. Regressions in shared C++ code (confirmed, **fixed**)
+
+Found on 2026-09-26 by reviewing the port's changes outside `src/Scheme`:
+
+- **`unescape_guile` broke Guile builds.** `analyze.cpp` skipped four
+  characters after every `\xHH` escape, to fit s7's `\xHH;` format. On
+  Guile, which prints `\xHH`, that dropped the character after each
+  escape, in `object->tmstring`. The `;` is now skipped only on s7, and only
+  when it is there. Two tests in `tm-glue-test.scm` cover both formats.
+- **`qt_gui.cpp` reverted an upstream change.** The squashed port had turned
+  the computation of the update delay back into an older `int` version.
+  Upstream's `time_t` version is restored.
+- **`windows64_system.cpp` lost its CRLF line endings,** which made a
+  two-line change look like 1568. The line endings are restored.
+
 ### How the fixes were tested
 
 The first round (bugs 1–4) ran against the July 2025 binary. After the
