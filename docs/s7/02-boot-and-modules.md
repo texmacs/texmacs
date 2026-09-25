@@ -39,7 +39,9 @@
      [06](06-open-issues.md) for the case where this wrapper fails.
 4. **Module system.** `kernel/boot/boot-s7.scm` is loaded (see §2.2), then the
    kernel modules are brought in with `inherit-modules`, starting with
-   `(kernel boot compat-s7)` ([03](03-compat-layer.md)).
+   `(kernel boot compat-s7)` ([03](03-compat-layer.md)). Right after the
+   kernel, `(renumber-user-module!)` is called, once (see
+   [Lookup caching](#lookup-caching)).
 5. **The rest of the init file** mirrors `init-texmacs.scm` (`lazy-define`,
    `lazy-menu`, `lazy-keyboard`, …) with these differences:
    - `developer-mode?` is hard-coded to `#f`. The Guile version reads the
@@ -112,11 +114,18 @@ unnoticed (see [06](06-open-issues.md)).
      `(sym . val)` pairs.
   3. Keep the pairs whose symbol is in `*exports*`.
   4. Install them in the rootlet's `*current-module*`, which is whichever
-     module is loading at that moment. `import-bindings!` does this. For a
-     symbol that is already bound there, it updates the existing binding
-     with `let-set!`, and it only `varlet`s new symbols. s7 11 refuses to
-     `varlet` a symbol that is already bound in the target let ("duplicate
-     identifier"). s7 10 used to add a shadowing slot instead.
+     module is loading at that moment. `import-bindings!` does this, in one
+     of three ways:
+     - **Already bound in the target:** it updates the existing binding with
+       `let-set!`. s7 11 refuses to `varlet` a symbol that is already bound
+       in the target let ("duplicate identifier"). s7 10 used to add a
+       shadowing slot instead.
+     - **Already visible with the same value** (`eq?`) through the target's
+       outlets, typically a kernel symbol imported into the user module: it
+       does nothing. The copy would not change what lookups return, but it
+       would move the symbol's lookup cache into the target (see
+       [Lookup caching](#lookup-caching)).
+     - **Otherwise:** it `varlet`s the new symbol.
 - **`inherit-modules`.** `use-modules` plus re-exporting the imported
   modules' exports. `re-export-modules!` collects those exports when the form
   is evaluated, not when it is expanded. The old version resolved, and so
@@ -131,6 +140,9 @@ unnoticed (see [06](06-open-issues.md)).
   exported binding into the importer. If the exporting module later does a
   `set!` or redefines a `define-public` variable, importers keep the old
   value. Guile modules share the variable instead.
+  - The exception is a binding that the importer already sees with the same
+    value through the user module. It is not copied, so the importer shares
+    the user module's binding.
   - This matters little in practice, because the definitions most often
     overridden are made with `tm-define`, and those live in the rootlet
     (§2.3).
@@ -144,6 +156,43 @@ unnoticed (see [06](06-open-issues.md)).
   symbols up in a non-global `let` by linear search when its per-symbol cache
   misses. This is the reason for the local `lookup_from` patch in s7 (see
   [05](05-build-and-history.md#s7-version-and-local-patch)).
+
+<a id="lookup-caching"></a>
+### Lookup caching and the user module
+
+s7 caches, for each symbol, its most recent binding and the id of the let
+that holds it. Lets get increasing ids when they are created, and a lookup
+skips the lets that are newer than the symbol's cached binding. Two
+operations change the picture:
+
+- **Entering a let with `with-let`** (and so `with-module`) gives it a
+  fresh, highest id, and points the cache of each of its symbols into it.
+- **Adding a binding to a newer let** (`varlet`, `define`) moves the
+  symbol's cache into that let.
+
+For modules, lookups of kernel symbols are fast when two things hold:
+
+- the kernel symbols are cached in the user module;
+- every module is newer than the user module, so that its environment is
+  skipped on the way.
+
+The s7 kernel keeps this invariant with three rules:
+
+- **`renumber-user-module!`** (`boot-s7.scm`) enters the user module once,
+  right after the kernel is imported (`init-texmacs-s7.scm`), which caches
+  the kernel symbols there.
+- **Nothing enters the user module afterwards.** A later `with-let` on it
+  would make it newer than every module loaded so far, and each lookup of a
+  kernel symbol from their code would scan their whole environment.
+  `tm-define-macro` therefore uses `eval`, which sets the current let
+  without renumbering it (§2.3). `eval_scheme` and `call_scheme` from C++
+  use `s7_eval` and `s7_call`, which don't renumber either.
+- **`import-bindings!`** does not copy a binding that a module already sees
+  with the same value (above).
+
+Breaking the invariant used to make repeated LaTeX export about twice as
+slow. See [07](07-benchmark.md#why-the-warm-latex-export-was-slow) for the
+measurements.
 
 ### Other definitions
 
@@ -168,7 +217,9 @@ The Guile version switched to the `texmacs-user` module, did a
 - **`tm-defined-module` records `*module-name*`.** Guile used
   `(module-name temp-module)`.
 - **`tm-define-macro`** defines the public macro with
-  `(with-module *texmacs-user-module* (define-public-macro …))`.
+  `(eval '(define-public-macro …) *texmacs-user-module*)`. Until 2026-09-25 it
+  used `with-module`, which renumbered the user module each time (see
+  [Lookup caching](#lookup-caching)).
 - **`lazy-define`** looks the symbol up with `((resolve-module 'm) 'name)`.
   An s7 `let` applied to a symbol returns its value.
 - **Curried property constructors.** `(define ((define-property which) opt decl) …)`

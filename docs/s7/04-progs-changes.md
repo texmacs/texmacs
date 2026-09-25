@@ -27,8 +27,8 @@ The shared Scheme kernel runs on both s7 and Guile. Each boot file defines
 
 - **At expansion time, in macros that generate definitions.** `tm-define`,
   `tm-define-macro`, `lazy-define` (`tm-define.scm`) and `texmacs-modes`
-  (`tm-modes.scm`) emit the s7 code (`varlet (rootlet)`, `with-module`,
-  environment lookup) or upstream's original Guile code (the
+  (`tm-modes.scm`) emit the s7 code (`varlet (rootlet)`, `eval` in the user
+  module, environment lookup) or upstream's original Guile code (the
   `set-current-module texmacs-user` sequence, `module-ref`). Each interpreter
   runs exactly the code it ran before.
 - **At load time, around definitions.** These keep an s7 variant and

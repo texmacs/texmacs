@@ -42,7 +42,9 @@ vendored s7: first 10.0 (11-Jan-2022), and again after the update to 11.9
 - **`varlet`** ✓. In s7 11, `varlet` on a symbol already bound in the
   target (non-root) let raises "duplicate identifier". Use `let-set!` for
   existing bindings, as `import-bindings!` does. On the rootlet, `varlet`
-  overwrites.
+  overwrites. `import-bindings!` also skips bindings that the target already
+  sees with the same value, to keep s7's lookup cache in the user module
+  (see [02](02-boot-and-modules.md#lookup-caching)).
 - **Macros with internal definitions** ✓. In s7 11, a macro whose body
   defines helper functions can lose them between recursive calls of those
   helpers. Seen with `case-lambda` used inside a function body with two or

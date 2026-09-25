@@ -207,9 +207,18 @@ same binary. The workload was a boot plus `run-all-tests`.
 2. **The cache points into the scanned let** (about 90% of the cost).
    - **Renumbering.** `with-let` and `s7_set_curlet` give the let they enter a
      fresh, highest id, and `update_symbol_ids` points every symbol bound
-     there at that let. TeXmacs enters the user module constantly: every
-     `eval_scheme`/`call` from C++, `tm-eval`, and `with-module`. So the user
-     module gets renumbered and its symbols get cached correctly.
+     there at that let. TeXmacs used to enter the user module each time a
+     module containing a `tm-define-macro` was loaded, through
+     `(with-module *texmacs-user-module* …)`: 211 times in a boot plus one
+     LaTeX export. So the user module got renumbered and its symbols got
+     cached correctly.
+     - An earlier version of this note also blamed `eval_scheme`/`call`
+       from C++ and `tm-eval`. That was wrong: `s7_eval`, `s7_call` and
+       `eval` set the current let without renumbering it (checked on
+       2026-09-25 by watching the user module's id).
+     - Since 2026-09-25 the user module is renumbered exactly once, after
+       the kernel is imported, and never afterwards (see
+       [02](02-boot-and-modules.md#lookup-caching)).
    - **Inverted ids.** After renumbering, the user module is *newer* than the
      module environments and closures created inside it earlier.
    - **The miss.** Starting from such an inner let, the skip loop stops at
