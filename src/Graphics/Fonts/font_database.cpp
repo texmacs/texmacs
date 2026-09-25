@@ -229,6 +229,13 @@ font_database_load_substitutions (url u) {
 // a newer one are merged in. Without this, a font a new version registers
 // stays invisible to an old home directory, and a character which only that
 // font draws is not found at all and comes out as its name in red.
+//
+// Merging keeps only the fonts which are installed on this machine, and the
+// fonts TeXmacs ships are installed in the directory of the installation
+// which merges. A home directory shared by several installations, as a
+// developer has, would otherwise keep the fonts of whichever ran last and
+// hide the rest for good, the stamp saying that the merge had been done:
+// the installation is therefore part of the stamp.
 
 static string
 shipped_fonts_stamp () {
@@ -238,7 +245,8 @@ shipped_fonts_stamp () {
     as_string (last_modified (GLOBAL_FEATURES, false)) * " " *
     as_string (file_size (GLOBAL_FEATURES)) * " " *
     as_string (last_modified (GLOBAL_CHARACTERISTICS, false)) * " " *
-    as_string (file_size (GLOBAL_CHARACTERISTICS));
+    as_string (file_size (GLOBAL_CHARACTERISTICS)) * " " *
+    get_env ("TEXMACS_PATH");
 }
 
 static bool
