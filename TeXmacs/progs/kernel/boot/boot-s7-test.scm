@@ -171,6 +171,26 @@
            (with-module m (use-modules (kernel logic logic-bind)))
            (m '*exports*))
          '())
+   (test "import-bindings! skips bindings visible with the same value"
+         (let* ((u (inlet 'boot-test-a car))
+                (m (sublet u)))
+           (import-bindings! m (list (cons 'boot-test-a car)))
+           (list (defined? 'boot-test-a m #t) (eq? (m 'boot-test-a) car)))
+         '(#f #t))
+   (test "import-bindings! copies bindings visible with another value"
+         (let* ((u (inlet 'boot-test-a car))
+                (m (sublet u)))
+           (import-bindings! m (list (cons 'boot-test-a cdr)))
+           (list (defined? 'boot-test-a m #t) (eq? (m 'boot-test-a) cdr)))
+         '(#t #t))
+   (test "kernel bindings are not copied into modules"
+         (let ((m (fresh-module)))
+           (with-module m (use-modules (kernel boot abbrevs)))
+           (list (defined? '== m #t) (eq? (m '==) ==)))
+         '(#f #t))
+   (test "tm-define-macro defines the macro in the user module"
+         (macro? ((resolve-module '(texmacs-user)) 'boot-test-tm-macro))
+         #t)
    (test "inherit-modules re-exports"
          (let ((m (fresh-module)))
            (with-module m (inherit-modules (kernel logic logic-bind)))

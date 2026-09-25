@@ -340,12 +340,16 @@
     ;;(display* "   " `(tm-define ,macro-head ,@body) "\n")
     ;;(display* "   " `(define-public-macro ,head
     ;;                   ,(apply* (ca*r macro-head) head)) "\n")
+    ;; On s7, the macro is defined in the user module with eval and not
+    ;; with-module: with-let would renumber the user module, which then
+    ;; looks newer than the modules loaded before, and every lookup of a
+    ;; kernel symbol from those modules would scan their whole environment
     (if (s7-scheme?)
         `(begin
            (tm-define ,macro-head ,@body)
-           (with-module *texmacs-user-module*
-             (define-public-macro ,head
-               ,(apply* (ca*r macro-head) head))))
+           (eval '(define-public-macro ,head
+                    ,(apply* (ca*r macro-head) head))
+                 *texmacs-user-module*))
         `(begin
            (tm-define ,macro-head ,@body)
            (set! temp-module ,(current-module))

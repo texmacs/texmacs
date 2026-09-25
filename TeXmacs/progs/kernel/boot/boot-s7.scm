@@ -63,6 +63,16 @@
 (define-macro (export . symbols)
     `(set! *exports* (append ',symbols *exports*)))
 
+;; Entering a let with with-let gives it a fresh, highest id, and makes the
+;; cached binding of each of its symbols point into it. Call this once, after
+;; the kernel has been imported into the user module: the kernel symbols are
+;; then found in O(1) from any module loaded afterwards, since those modules
+;; are newer and are skipped by the lookup. A later renumbering would make the
+;; user module newer than all the modules loaded so far, and every lookup of a
+;; kernel symbol from those modules would scan their whole environment.
+(define (renumber-user-module!)
+  (with-let *texmacs-user-module* (curlet)))
+
 (define-macro (with-module module . body)
   `(let ((m ,module)) (with-let m
      (let-temporarily (((*texmacs-module* '*current-module*) (curlet)))
@@ -121,11 +131,20 @@
 
 ;; s7 (since version 11) refuses to varlet a symbol which is already bound
 ;; in the target let, so we update existing bindings in place
+;; A binding which target already sees, with the same value, through its
+;; outlets (typically a kernel symbol imported into the user module) is not
+;; copied: the copy would not change what lookups return, and since target
+;; is newer than the user module, s7 would move the symbol's cached binding
+;; into target, so that lookups from everywhere else would have to scan
 (define (import-bindings! target entries)
   (for-each (lambda (entry)
-              (if (defined? (car entry) target #t)
-                  (let-set! target (car entry) (cdr entry))
-                  (varlet target (car entry) (cdr entry))))
+              (cond ((defined? (car entry) target #t)
+                     (let-set! target (car entry) (cdr entry)))
+                    ((and (defined? (car entry) target)
+                          (eq? (let-ref target (car entry)) (cdr entry)))
+                     (noop))
+                    (else
+                     (varlet target (car entry) (cdr entry)))))
             entries))
 
 (define-macro (use-modules . modules)

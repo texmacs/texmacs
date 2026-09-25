@@ -87,6 +87,9 @@
                  (kernel old-gui old-gui-form)
                  (kernel old-gui old-gui-test))
 (lazy-define (kernel gui menu-convert) make-menu-widget**)
+;; the kernel is now imported into the user module: make its symbols
+;; resolve in O(1) from all the modules loaded from here on (see boot-s7.scm)
+(renumber-user-module!)
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 
