@@ -359,10 +359,40 @@ edit_typeset_rep::init_update () {
     grefs= copy (buf->data->ref);
 }
 
+// drd->heuristic_init iterates to a fixed point over every macro of the
+// environment; calling it again with the same drd and an equal environment
+// changes nothing, so remember the last (drd, environment) pair and skip
+// the call while no drd has been modified since (drd_change_stamp).
+extern int drd_change_stamp;
+static drd_info* drd_update_last_drd= NULL;
+static hashmap<string,tree> drd_update_last_env;
+static int drd_update_last_stamp= -1;
+
+static bool
+same_environment (hashmap<string,tree> a, hashmap<string,tree> b) {
+  if (N(a) != N(b)) return false;
+  iterator<string> it= iterate (a);
+  while (it->busy ()) {
+    string var= it->next ();
+    if (!b->contains (var) || a[var] != b[var]) return false;
+  }
+  return true;
+}
+
 void
 edit_typeset_rep::drd_update () {
   typeset_exec_until (tp);
-  drd->heuristic_init (cur[tp]);
+  hashmap<string,tree> h= cur[tp];
+  if (drd_update_last_drd != NULL &&
+      drd_update_last_stamp == drd_change_stamp &&
+      drd_update_last_drd->operator-> () == drd.operator-> () &&
+      same_environment (h, drd_update_last_env))
+    return;
+  drd->heuristic_init (h);
+  if (drd_update_last_drd == NULL) drd_update_last_drd= tm_new<drd_info> (drd);
+  else *drd_update_last_drd= drd;
+  drd_update_last_env= copy (h);
+  drd_update_last_stamp= drd_change_stamp;
 }
 
 #ifdef EXPERIMENTAL
