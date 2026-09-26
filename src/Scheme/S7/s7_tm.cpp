@@ -150,6 +150,12 @@ scheme_dialect () {
   return "s7";
 }
 
+string
+scheme_init_file () {
+  // sets up s7, then loads the common init-kernel.scm and init-texmacs.scm
+  return "$TEXMACS_PATH/progs/init-s7.scm";
+}
+
 /******************************************************************************
  * Strings
  ******************************************************************************/

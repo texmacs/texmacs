@@ -11,9 +11,11 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Loaded by init-texmacs.scm, first thing, when TeXmacs runs on s7.
-;; Everything specific to s7 happens here, up to the kernel's
-;; compatibility module; the common initialization is in init-texmacs.scm.
+;; The initialization file of TeXmacs on s7 (scheme_init_file in s7_tm.cpp).
+;; It sets up s7, loads the module system and the kernel's compatibility
+;; module, then the common init-kernel.scm and init-texmacs.scm.
+
+(define boot-start (texmacs-time))
 
 ;; We use s7's native (run-time) define-macro.  We used to alias it to
 ;; define-expansion (read-time macros), but s7 10 did not find expansions
@@ -59,3 +61,10 @@
 (load (url-concretize "$TEXMACS_PATH/progs/kernel/boot/boot-s7.scm"))
 
 (inherit-modules (kernel boot compat-s7))
+
+;; The common initialization, with the steps specific to s7 in between
+(load (url-concretize "$TEXMACS_PATH/progs/init-kernel.scm"))
+;; the kernel is now imported into the user module: make its symbols
+;; resolve in O(1) from all the modules loaded from here on (boot-s7.scm)
+(renumber-user-module!)
+(load (url-concretize "$TEXMACS_PATH/progs/init-texmacs.scm"))

@@ -283,6 +283,11 @@ scheme_dialect () {
 	return "littlescheme";
 }
 
+string
+scheme_init_file () {
+	return "$TEXMACS_PATH/progs/init-texmacs.scm";
+}
+
 void scm_define_glue(const char *name, scm_foreign_func f)
 {
 	//  cout << "Define glue: " << name << LF;

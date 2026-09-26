@@ -11,51 +11,10 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define boot-start (texmacs-time))
-(define remote-client-list (list))
+;; Loaded by init-s7.scm or init-guile.scm, after init-kernel.scm; common
+;; to both interpreters. The initialization file that TeXmacs loads first
+;; is the one of the Scheme backend (scheme_init_file in C++).
 
-;; The start of the initialization depends on the Scheme interpreter:
-;; init-s7.scm or init-guile.scm load the module system and the kernel's
-;; compatibility module. The rest of this file is common to both.
-;; On s7, load evaluates in the rootlet unless it is given an environment.
-(if (equal? (scheme-dialect) "s7")
-    (load (url-concretize "$TEXMACS_PATH/progs/init-s7.scm") (curlet))
-    (if (and (os-mingw?) (equal? (gui-version) "qt4"))
-        (load "init-guile.scm")
-        (load (url-concretize "$TEXMACS_PATH/progs/init-guile.scm"))))
-
-(define tm-interactive-hook tm-interactive)
-
-(inherit-modules (kernel boot abbrevs)
-                 (kernel boot debug) (kernel boot srfi)
-                 (kernel boot ahash-table) (kernel boot prologue))
-(inherit-modules (kernel library base) (kernel library list)
-                 (kernel library tree) (kernel library content)
-                 (kernel library patch))
-(inherit-modules (kernel regexp regexp-match) (kernel regexp regexp-select))
-(inherit-modules (kernel logic logic-rules) (kernel logic logic-query)
-                 (kernel logic logic-data))
-(inherit-modules (kernel texmacs tm-define)
-                 (kernel texmacs tm-preferences) (kernel texmacs tm-modes)
-                 (kernel texmacs tm-plugins) (kernel texmacs tm-secure)
-                 (kernel texmacs tm-convert) (kernel texmacs tm-dialogue)
-                 (kernel texmacs tm-language) (kernel texmacs tm-file-system)
-                 (kernel texmacs tm-states))
-(inherit-modules (kernel gui gui-markup)
-                 (kernel gui menu-define) (kernel gui menu-widget)
-                 (kernel gui kbd-define)
-                 (kernel gui speech-define)
-                 (kernel gui kbd-handlers)
-                 (kernel gui menu-test)
-                 (kernel old-gui old-gui-widget)
-                 (kernel old-gui old-gui-factory)
-                 (kernel old-gui old-gui-form)
-                 (kernel old-gui old-gui-test))
-(lazy-define (kernel gui menu-convert) make-menu-widget**)
-(if (s7-scheme?)
-    ;; the kernel is now imported into the user module: make its symbols
-    ;; resolve in O(1) from all the modules loaded from here on (boot-s7.scm)
-    (renumber-user-module!))
 ;(display* "time: " (- (texmacs-time) boot-start) "\n")
 ;(display* "memory: " (texmacs-memory) " bytes\n")
 

@@ -275,6 +275,12 @@ scheme_dialect () {
 #endif
 }
 
+string
+scheme_init_file () {
+  // sets up Guile, then loads the common init-kernel.scm and init-texmacs.scm
+  return "$TEXMACS_PATH/progs/init-guile.scm";
+}
+
 #if (defined(GUILE_C) || defined(GUILE_D))
 #define SET_SMOB(smob,data,type)   \
 SCM_NEWSMOB (smob, SCM_UNPACK (type), data);

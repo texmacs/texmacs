@@ -11,9 +11,11 @@
 ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Loaded by init-texmacs.scm, first thing, when TeXmacs runs on Guile.
-;; Everything specific to Guile happens here, up to the kernel's
-;; compatibility module; the common initialization is in init-texmacs.scm.
+;; The initialization file of TeXmacs on Guile (scheme_init_file in
+;; guile_tm.cpp). It sets up Guile, loads the module system and the kernel's
+;; compatibility module, then the common init-kernel.scm and init-texmacs.scm.
+
+(define boot-start (texmacs-time))
 
 (cond ((os-mingw?)
        (debug-set! stack 0))
@@ -96,3 +98,11 @@
     (load "kernel/boot/boot.scm")
     (load (url-concretize "$TEXMACS_PATH/progs/kernel/boot/boot.scm")))
 (inherit-modules (kernel boot compat))
+
+;; The common initialization
+(define (load-init-file name)
+  (if (and (os-mingw?) (string= (gui-version) "qt4"))
+      (load name)
+      (load (url-concretize (string-append "$TEXMACS_PATH/progs/" name)))))
+(load-init-file "init-kernel.scm")
+(load-init-file "init-texmacs.scm")
