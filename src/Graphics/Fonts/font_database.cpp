@@ -249,13 +249,34 @@ shipped_fonts_stamp () {
     get_env ("TEXMACS_PATH");
 }
 
+// The two lines of the stamp: what was merged, and how large the database
+// was when this installation left it
+static array<string>
+shipped_fonts_mark () {
+  string s;
+  array<string> r;
+  if (!exists (url (SHIPPED_STAMP))) return r;
+  if (load_string (SHIPPED_STAMP, s, false)) return r;
+  return tokenize (trim_spaces (s), "\n");
+}
+
 static bool
 shipped_fonts_changed () {
   if (!exists (url (GLOBAL_DATABASE))) return false;
-  if (!exists (url (SHIPPED_STAMP))) return true;
-  string stamp;
-  if (load_string (SHIPPED_STAMP, stamp, false)) return true;
-  return trim_spaces (stamp) != shipped_fonts_stamp ();
+  array<string> mark= shipped_fonts_mark ();
+  if (N (mark) < 2) return true;
+  return trim_spaces (mark[0]) != shipped_fonts_stamp ();
+}
+
+// Another installation which rebuilds the database of this home directory
+// keeps the fonts it ships and drops the ones we ship, and would leave our
+// stamp behind: merge again when the database has lost entries.
+static bool
+shipped_fonts_shrunk (int nr) {
+  array<string> mark= shipped_fonts_mark ();
+  if (N (mark) < 2) return false;
+  string n= trim_spaces (mark[1]);
+  return is_int (n) && nr < as_int (n);
 }
 
 void
@@ -265,6 +286,10 @@ font_database_load () {
   font_database_load_database (LOCAL_DATABASE);
   if (renew && N (font_table) != 0)
     cout << "TeXmacs] the shipped font database changed, merging it\n";
+  else if (!renew && shipped_fonts_shrunk (N (font_table))) {
+    cout << "TeXmacs] the local font database lost entries, merging again\n";
+    renew= true;
+  }
   if (N (font_table) == 0 || renew) {
     font_database_load_database (GLOBAL_DATABASE);
     font_database_filter ();
@@ -283,7 +308,9 @@ font_database_load () {
     font_database_save_characteristics (LOCAL_CHARACTERISTICS);
   }
   font_database_load_substitutions (GLOBAL_SUBSTITUTIONS);
-  if (renew) save_string (SHIPPED_STAMP, shipped_fonts_stamp ());
+  if (renew)
+    save_string (SHIPPED_STAMP,
+                 shipped_fonts_stamp () * "\n" * as_string (N (font_table)));
   fonts_loaded= true;
 }
 
