@@ -951,6 +951,7 @@
 ("release" "release")
 ("reload" "znova nahrát")
 ("remark" "anotace")
+("remember cursor position" "pamatovat si pozici kurzoru")
 ("remove number" "odebrat £íslo")
 ("remove this switch" "odebrat p°epína£")
 ("renumber this page" "znovu o£íslovat tuto stranu")

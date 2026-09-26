@@ -970,6 +970,7 @@
 ("release" "wydanie")
 ("reload" "przeªaduj")
 ("remark" "uwaga")
+("remember cursor position" "zapami¦tuj pozycj¦ kursora")
 ("remove number" "usu« numer")
 ("remove this switch" "usu« ten przeª¡cznik")
 ("renumber this page" "zmie« numeracj¦ tej strony")

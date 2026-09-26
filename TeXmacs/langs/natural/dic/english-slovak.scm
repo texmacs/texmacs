@@ -2331,6 +2331,7 @@
 ("reload" "znovu načítať")
 ("remark" "poznámka")
 ("remarks" "poznámky")
+("remember cursor position" "pamätať si polohu kurzora")
 ("remote" "vzdialené")
 ("remote connections" "vzdialené spojenia")
 ("remote control" "vzdialené ovládanie")

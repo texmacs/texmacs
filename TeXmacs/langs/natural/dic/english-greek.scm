@@ -2024,6 +2024,7 @@
 ("release left button: finish editing" "απελευθέρωση αριστερού κουμπιού: τέλος επεξεργασίας")
 ("reload" "επαναφόρτωση")
 ("remark" "σχόλιο")
+("remember cursor position" "απομνημόνευση θέσης δρομέα")
 ("remote" "απομακρυσμένη")
 ("remote connections" "απομακρυσμένες συνδέσεις")
 ("remote control" "τηλεχειρισμός")
