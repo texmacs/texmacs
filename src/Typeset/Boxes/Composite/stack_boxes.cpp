@@ -16,6 +16,10 @@
 ******************************************************************************/
 
 struct stack_box_rep: public composite_box_rep {
+  // absolute position and change log of the last position_at call
+  SI          pos_x, pos_y;
+  rectangles* pos_logs;
+
   stack_box_rep (path ip, array<box> bs, array<SI> spc); 
   int get_type () { return STACK_BOX; }
   operator tree () {
@@ -27,6 +31,7 @@ struct stack_box_rep: public composite_box_rep {
 
   void      position (array<SI> spc);
   void      finalize ();
+  void      position_at (SI x, SI y, rectangles& change_log);
   void      display (renderer ren);
   void      clear_incomplete (rectangles& rs, SI pixel, int i, int i1, int i2);
   bool      access_allowed ();
@@ -56,12 +61,24 @@ stack_box_rep::position (array<SI> spc) {
 }
 
 stack_box_rep::stack_box_rep (path ip, array<box> bs2, array<SI> spc):
-  composite_box_rep (ip)
+  composite_box_rep (ip), pos_x (0), pos_y (0), pos_logs (NULL)
 {
   bs= bs2;
   if (N(bs) != 0)
     position (spc);
   finalize ();
+}
+
+void
+stack_box_rep::position_at (SI x, SI y, rectangles& change_log) {
+  // Boxes are not modified once built, so if this stack was already placed
+  // at the same absolute position for the same change log, all phrase boxes
+  // inside it are up to date and there is nothing to log.  This avoids
+  // walking all the lines of a long document at every typesetting pass.
+  SI ax= x + x0, ay= y + y0;
+  if (pos_logs == &change_log && pos_x == ax && pos_y == ay) return;
+  pos_logs= &change_log; pos_x= ax; pos_y= ay;
+  box_rep::position_at (x, y, change_log);
 }
 
 void

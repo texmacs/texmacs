@@ -645,6 +645,8 @@ phrase_box_rep::~phrase_box_rep () {
 void
 phrase_box_rep::position_at (SI x, SI y, rectangles& logs) {
   x += x0; y += y0;
+  // unchanged position: the logged pair would be discarded by requires_update
+  if (logs_ptr == &logs && ox == x && oy == y) return;
   if (logs_ptr == NULL) logs= rectangles (rectangle (0, 0, 0, 0), logs);
   else logs= rectangles (rectangle (ox+x3, oy+y3, ox+x4, oy+y4), logs);
   ox= x; oy= y;
