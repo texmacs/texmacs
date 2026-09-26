@@ -32,6 +32,7 @@
 #define MACRO_REMOVE      2
 
 class bridge;
+struct chunk_cache_rep;
 class bridge_rep: public abstract_struct {
 public:
   typesetter           ttt;      // the underlying typesetter
@@ -45,9 +46,18 @@ public:
   stack_border         sb;       // border properties of l
   link_repository      link_env; // loci and links declared inside bridge
 
+  // Cache of the single stack item into which l is merged outside paper
+  // mode; rebuilding it for every paragraph at every typesetting pass made
+  // the cost of a keystroke linear in the size of the document.
+  array<page_item>     stack_cache;
+  path                 stack_cache_ip;
+  bool                 stack_cache_ok;
+  int                  version;  // incremented whenever l is recomputed
+  chunk_cache_rep*     chunk_cache; // see chunk_lines in bridge.cpp
+
 public:
   bridge_rep (typesetter ttt, tree st, path ip);
-  inline virtual ~bridge_rep () {}
+  virtual ~bridge_rep ();
 
   virtual void notify_assign (path p, tree u) = 0;
   virtual void notify_insert (path p, tree u);

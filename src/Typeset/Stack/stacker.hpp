@@ -64,4 +64,6 @@ array<page_item> typeset_stack (edit_env env, tree t, path ip,
 void merge_stack (array<page_item>& l, stack_border& sb,
 		  array<page_item> l2, stack_border sb2);
 
+void shove_cache_new_pass ();
+
 #endif // defined STACKER_H

@@ -564,8 +564,10 @@ box_rep::redraw (renderer ren, path p, rectangles& l) {
       if (!is_nil(ll)) {
         i1= min (i1, k);
         i2= max (i2, k);
-        l = ll * l;
-        ll= rectangles ();
+        // Prepend the new rectangles instead of "l= ll * l": list concatenation
+        // copies both operands (recursively), which made this loop quadratic
+        // (and deeply recursive) in the number of redrawn children.
+        for (; !is_nil (ll); ll= ll->next) l= rectangles (ll->item, l);
       }
     }
     
