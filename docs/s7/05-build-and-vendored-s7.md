@@ -27,10 +27,10 @@ The option drives everything else:
 - **Packaging:** the rules in the top-level `Makefile.in` copy Guile's
   `ice-9` directory only when there is one.
 
-**Both interpreters build, boot and pass the tests.** This was checked with
-autotools, on macOS, with Guile 1.8.7. Guile runs all the regression suites
-except the two that test s7 specifically. Linux and Windows builds have not
-been tried yet (see [06](06-open-issues.md)).
+**Both interpreters build, boot and pass the tests.**
+- **s7:** checked on Linux, macOS and Windows by CI (§5.4).
+- **Guile:** checked with autotools on macOS, with Guile 1.8.7. Guile runs
+  all the regression suites except the two that test s7 specifically.
 
 **CMake.** Upstream's CMake build had gaps that stayed hidden while an
 autotools `config.h` was left in the source tree. Three were fixed:
@@ -154,3 +154,49 @@ The original history, with all commits and authors, is kept on the branch
    SRFI-13/14 functions, `(ice-9 …)` modules or `procedure-property`. Add
    what's missing to `compat-s7.scm`.
 3. **Rebuild from clean and run the tests on both interpreters.**
+
+<a id="ci"></a>
+## 5.4 Continuous integration
+
+`.github/workflows/ci.yml` runs on every push to `wip_s7` (and to
+`wip_s7-ci`), on pull requests to `wip_s7`, and by hand from the Actions tab.
+It has one job per platform, each limited to 60 minutes. Each job:
+1. installs the dependencies;
+2. configures with `--with-scheme=s7`;
+3. builds;
+4. runs the regression suites headless, with
+   `.github/scripts/run-tests.sh`;
+5. uploads a runnable bundle, kept for 14 days.
+
+| Platform | Runner and dependencies | Artifact |
+|---|---|---|
+| Linux | Ubuntu 24.04, Qt 6 and libraries from apt | `texmacs-linux-x86_64`: a tarball of `TeXmacs/` |
+| macOS | macOS 14 (Apple silicon), Qt 6 and libraries from Homebrew | `texmacs-macos-arm64`: the zipped `TeXmacs.app` (unsigned) |
+| Windows | MSYS2 MinGW-w64, Qt 6 and libraries from MSYS2 | `texmacs-windows-x86_64`: the zipped `WINDOWS_BUNDLE` folder |
+
+A full run takes about 15 minutes for Linux and macOS, and 20–25 minutes for
+Windows.
+
+**Platform details:**
+- **Tests.** TeXmacs' exit status doesn't reflect test failures, so
+  `run-tests.sh` runs `run-all-tests` inside a `catch` and checks for a
+  marker line. A test script that fails to load quits at once, with a
+  timeout as a last resort.
+- **macOS.** `packages/macos/bundle-libs.sh` knows the library locations
+  of MacPorts, Fink and `/usr/local`, but not Homebrew's `/opt/homebrew`.
+  The job therefore runs `make MACOS_BUNDLE MACOS_DEPLOY=none`, which skips
+  that script, and deploys with Qt's `macdeployqt`.
+- **Windows.**
+  - Qt is found with `--with-qt-find-method=pkgconfig`. With qmake, Qt
+    defines `QT_NEEDS_QMAIN`, which `windows64_entrypoint.cpp` refuses.
+  - `moc`, `uic` and `rcc` are in `/mingw64/share/qt6/bin`, which goes on
+    the `PATH`.
+  - Winsock is linked with `LIBS=-lws2_32`.
+  - `WINDOWS_BUNDLE` gets `QT_PLUGINS_PATH=/mingw64/share/qt6/plugins`,
+    so that the bundle contains `platforms/qwindows.dll`.
+
+**Worth fixing upstream:**
+- `configure` should add `ws2_32` itself for MinGW;
+- the `#error` in `windows64_entrypoint.cpp` spells the option
+  `pkg-config`, which `configure` rejects;
+- `bundle-libs.sh` should learn Homebrew's paths.

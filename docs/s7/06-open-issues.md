@@ -100,9 +100,11 @@
 
 ## 6.4 Before merging upstream
 
-1. **Build and test on Linux and Windows** (MinGW and MSVC). Only macOS has
-   been built and run; the Linux, Windows and Android build files were
-   edited but not built.
+1. **Build and test the remaining configurations.**
+   - CI builds and tests s7 on Linux, macOS and Windows (MinGW), see
+     [05](05-build-and-vendored-s7.md#ci).
+   - Not built yet: MSVC, Android, CMake builds, and Guile builds outside
+     macOS.
 2. **Exercise plugins and user code.** Scheme code written for Guile, such
    as `my-init-texmacs.scm` or plugin `progs`, can use features that
    `compat-s7.scm` lacks or only partly provides (§6.2). No plugin has been

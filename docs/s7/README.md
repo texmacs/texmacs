@@ -11,7 +11,7 @@ performs, and what is left before it can be merged.
 | [02-boot-and-modules.md](02-boot-and-modules.md) | The boot sequence, the module system built on s7 environments, how lookups stay fast, `tm-define` |
 | [03-compat-layer.md](03-compat-layer.md) | `compat-s7.scm` and the Guile/s7 differences it covers |
 | [04-progs-changes.md](04-progs-changes.md) | The Scheme code shared by both interpreters, the s7-motivated edits and fixes, the tests |
-| [05-build-and-vendored-s7.md](05-build-and-vendored-s7.md) | Choosing the interpreter at build time, glue regeneration, the vendored s7, the branch and how to rebase it |
+| [05-build-and-vendored-s7.md](05-build-and-vendored-s7.md) | Choosing the interpreter at build time, glue regeneration, the vendored s7, the branch and how to rebase it, CI |
 | [06-open-issues.md](06-open-issues.md) | Open bugs, fragile spots, Guile leftovers, what to do before merging |
 | [07-performance.md](07-performance.md) | s7 versus Guile 1.8.7 on boot, tests, conversions, LaTeX export and the manual; where the time goes |
 | [bench/](bench) | The benchmark scripts |
@@ -22,8 +22,9 @@ performs, and what is left before it can be merged.
   with `./configure --with-scheme=s7|guile` or CMake `-DSCHEME_IMPL=…`.
   - An s7 build needs no Guile: nothing to install or link, and even the
     glue is regenerated with s7.
-  - Both interpreters build, boot and pass the tests (on macOS; see
-    [06](06-open-issues.md) for the other platforms).
+  - Both interpreters build, boot and pass the tests. For s7, CI checks
+    this on Linux, macOS and Windows, and keeps a runnable build of each
+    (see [05](05-build-and-vendored-s7.md#ci)).
 - **s7 11.9 is vendored unmodified.**
 - **The C++ ↔ Scheme boundary barely changed.** TeXmacs already talked to
   Scheme through its `tmscm_*` layer. `s7_tm.hpp/.cpp` implements that
@@ -55,7 +56,7 @@ performs, and what is left before it can be merged.
 
   See [07](07-performance.md).
 - **Before merging** (see [06](06-open-issues.md#64-before-merging-upstream)):
-  - build and test on Linux and Windows;
+  - build the configurations CI doesn't cover (MSVC, Android, CMake);
   - try plugins and user code written for Guile;
   - split the branch into a reviewable series;
   - report two s7 bugs upstream (both are worked around).
