@@ -12,7 +12,7 @@ standalone (see [06-open-issues.md](06-open-issues.md)).
 | [02-boot-and-modules.md](02-boot-and-modules.md) | Boot sequence (`init-s7.scm` around the common `init-kernel.scm` and `init-texmacs.scm`), the environment-based module system in `boot-s7.scm`, `tm-define` |
 | [03-compat-layer.md](03-compat-layer.md) | `compat-s7.scm` and the Guile/s7 semantic differences it papers over |
 | [04-progs-changes.md](04-progs-changes.md) | Changes to shared Scheme modules under `TeXmacs/progs` |
-| [05-build-and-history.md](05-build-and-history.md) | How s7 is built and selected, the local s7 patch, the commit timeline |
+| [05-build-and-history.md](05-build-and-history.md) | How s7 is built and selected, the vendored s7 (unmodified), the former lookup patch, the commit timeline |
 | [06-open-issues.md](06-open-issues.md) | Verified bugs, fragile spots, leftover Guile-isms, suggested next steps |
 | [07-benchmark.md](07-benchmark.md) | s7 versus Guile 1.8.7 on boot, regression suites and document conversions |
 
@@ -48,14 +48,17 @@ standalone (see [06-open-issues.md](06-open-issues.md)).
 
   Each interpreter runs the code it ran before. See
   [04-progs-changes.md](04-progs-changes.md).
-- **s7 carries one real local patch.** In `lookup_from`, before scanning an
-  environment, it checks whether that environment holds the symbol's cached
-  binding. Without it, s7 scans hundreds of slots of TeXmacs's very large
-  user environment for answers it already has, which makes boot ~40% slower.
-  - This replaces, since 2026-09-24, the original move-to-front patch.
-    That patch was as fast but unsound: it reorders environments that s7
-    iterates over or fills by position.
-  - See [05-build-and-history.md](05-build-and-history.md#s7-version-and-local-patch).
+- **s7 is vendored unmodified (11.9) since 2026-09-26.**
+  - **Before:** TeXmacs patched s7's symbol lookup, first with an unsound
+    move-to-front patch, then with an id check. `use-modules` copied every
+    export into one huge user environment of about a thousand bindings, and
+    lookups kept scanning it.
+  - **Now:** public definitions are published in the rootlet. The user
+    environment holds about 240 bindings, and stock s7 is as fast as the
+    patched one. Boot, the tests and the LaTeX export are all a little
+    faster than before, and peak memory on large exports is 30% lower.
+  - See [02](02-boot-and-modules.md#lookup-caching) and
+    [05](05-build-and-history.md#s7-version-and-local-patch).
 - **The port is mostly 2021–2022 work.** It was mainly done by M. Gubinelli
   and imported by Darcy Shen (沈达). The branch was rebased onto 2025 upstream
   in July 2025. Of the 618 commits in `master..HEAD`, only about 34 are

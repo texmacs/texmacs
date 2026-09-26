@@ -89,13 +89,40 @@ targets.
   includes it.
 
 <a id="s7-version-and-local-patch"></a>
-## 5.2 s7 version and the local patch
+## 5.2 s7 version (vendored unmodified since 2026-09-26)
 
 ### Version
 
 `s7.h`: `S7_VERSION "11.9"`, `S7_DATE "21-Sep-2026"`. This is the current
 release from `https://ccrma.stanford.edu/software/s7/s7.tar.gz`, vendored on
 2026-09-24. Before that, the vendored version was 10.0 (11-Jan-2022).
+
+**No local patch since 2026-09-26.** `s7.c` and `s7.h` are byte-identical
+to the release.
+
+- **Before:** TeXmacs needed a patch in s7's symbol lookup, described
+  below. The user module held about a thousand bindings that lookups kept
+  scanning.
+- **Now:** public definitions are published in the rootlet (§2.2). The
+  user module holds about 240 bindings, and stock s7 performs as well as the
+  patched one.
+
+The table compares the committed patched build of 2026-09-25 with the
+stock build and the new module system, measured in the same session:
+
+| | Patched s7, old module system | Stock s7, new module system |
+|---|---:|---:|
+| Boot | 0.82–0.92 s | 0.77–0.80 s |
+| Regression suites | 196–213 ms | 184–188 ms |
+| 8 LaTeX exports | 2.97–3.04 s | 2.72–2.77 s |
+| Peak memory (exports) | 419–424 MB | 289–296 MB |
+
+With the old module system, stock s7 boots in 0.9 s and needs 8.1 s for
+the exports.
+
+**The initial heap is 1 M cells.** `start_scheme` sets `(*s7* 'heap-size)`
+to 1 024 000, about what TeXmacs uses once booted. It avoids some
+collections while booting and in short tasks.
 
 **`s7.c` is compiled as C.** s7 11.9 no longer compiles as C++: in C++ mode
 it disables complex numbers, and its stub `clog` then becomes ambiguous
@@ -111,7 +138,11 @@ the C compiler (`cc_incl`). CMake already compiled it as C.
 - nested loads during expansions;
 - internal definitions in macro bodies.
 
-### The patch in use: `s7-lookup_from.patch` (id check, since 2026-09-24)
+### The former patch: `s7-lookup_from.patch` (id check, 2026-09-24 to 2026-09-26)
+
+This patch and the move-to-front one below are gone. The descriptions are
+kept because they explain how s7's lookup behaves. The files are in the
+history before `b4f18673e1`.
 
 In `inline_lookup_from` (about `s7.c:11589` in 11.9), the scan over the
 outlet chain now checks, before walking a let's slot list, whether that let
@@ -163,7 +194,7 @@ excluded the rootlet.
   move-to-front variant for s7 10.0 (threshold 20, halfway to the front). It
   has the same problem and is kept only for reference.
 
-### Why a lookup patch is needed (measured on 2026-09-24, s7 11.9)
+### Why a lookup patch was needed with the old module system (measured on 2026-09-24, s7 11.9)
 
 To measure this, `inline_lookup_from` was temporarily instrumented in a
 TeXmacs build. The instrumentation counted lookups, walked slots, moves, and
@@ -301,21 +332,18 @@ What the measurements show:
   These costs do not depend on s7. They were measured on the offscreen
   platform and may differ with the Cocoa one.
 
-### `s7.c.orig` / `s7.h.orig`
+### Upgrading s7
 
-These are the pristine upstream 11.9 files. `diff s7.c.orig s7.c` shows
-exactly the local patch, and `s7-lookup_from.patch` is that diff.
-`patch -p1 < src/Scheme/S7/s7-lookup_from.patch` from the repository root,
-applied to pristine 11.9, reproduces `s7.c`. `s7.h` is unmodified.
+1. Copy the new upstream `s7.c` and `s7.h` into `src/Scheme/S7`.
+2. Rebuild from clean.
+3. Run the regression suites and the probe tests from
+   [06](06-open-issues.md).
+4. Check the timings of [07](07-benchmark.md), at least the LaTeX export
+   loop. The module system relies on how s7 caches lookups (§2.2), so an s7
+   change there would show up as a slowdown, not as a failure.
 
-**To upgrade s7 again:**
-
-1. Copy the new upstream `s7.c` and `s7.h` over both the working files and
-   the `.orig` files.
-2. Re-apply or port the patch, and regenerate it with
-   `git diff --no-index s7.c.orig s7.c`.
-3. Rebuild.
-4. Run the probe tests from [06](06-open-issues.md).
+Until 2026-09-26 the pristine files were also kept as `s7.c.orig` and
+`s7.h.orig`, to show the local patch.
 
 ## 5.3 History
 

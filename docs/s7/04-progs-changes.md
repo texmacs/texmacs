@@ -96,11 +96,11 @@ The regression suites are listed in `check/check-master.scm`, and
 
 | Suite | Module | Tests | What it checks |
 |---|---|---|---|
-| `regtest-compat-s7` | `kernel/boot/compat-s7-test` | 77 | Guile compatibility layer: lists and alists, `while`, `symbol?`/`list?` rebindings, string search, char-sets (including the s7 closure bug), records, `delay`/`force`, `hash`, `*random-state*`, curried `define` |
-| `regtest-boot-s7` | `kernel/boot/boot-s7-test` | 52 | Reader (`'x` as `(quote x)`, quasiquote, multiple values, NUL in strings), the `catch` adapter, run-time macros (not expanded in quasiquoted templates, helper definitions in macro bodies), the module system (exports, private definitions, repeated `use-modules`, `inherit-modules`), lookup in large lets (the local s7 patch) |
+| `regtest-compat-s7` | `kernel/boot/compat-s7-test` | 91 | Guile compatibility layer: lists and alists, `while`, `symbol?`/`list?` rebindings, string search, char-sets (including the s7 closure bug), records, `delay`/`force`, `hash`, `*random-state*`, curried `define` |
+| `regtest-boot-s7` | `kernel/boot/boot-s7-test` | 56 | Reader (`'x` as `(quote x)`, quasiquote, multiple values, NUL in strings), the `catch` adapter, run-time macros (not expanded in quasiquoted templates, helper definitions in macro bodies), the module system (exports, private definitions, repeated `use-modules`, `inherit-modules`), lookup in large lets (the local s7 patch) |
 | `regtest-abbrevs` | `kernel/boot/abbrevs-test` | 60 | Adaptive hash tables, programming constructs (`with`, `with-global`, `for`, …), SRFI macros (`receive`, `case-lambda`, `cut`, `and-let*`), `save-object`/`load-object` |
-| `regtest-logic` | `kernel/logic/logic-engine-test` | 19 | Unification, logic tables with run-time names, dispatchers, groups, rules and queries with free variables |
-| `regtest-tm-glue` | `kernel/texmacs/tm-glue-test` | 39 | C++/Scheme conversions: booleans, integers, doubles, strings with NUL and UTF-8, string arrays, trees, urls, commands from closures, blackboxes across `gc` |
+| `regtest-logic` | `kernel/logic/logic-engine-test` | 21 | Unification, logic tables with run-time names, dispatchers, groups, rules and queries with free variables |
+| `regtest-tm-glue` | `kernel/texmacs/tm-glue-test` | 41 | C++/Scheme conversions: booleans, integers, doubles, strings with NUL and UTF-8, string arrays, trees, urls, commands from closures, blackboxes across `gc` |
 | `regtest-tm-define` | `kernel/texmacs/tm-define-test` | 34 | Procedure names, overloading with `:require` and `former`, properties, `tm-property`, `compute-interactive-args`, `interactive-title`, `tm-define-macro`, mode predicates |
 | `regtest-tm-dialogue` | `kernel/texmacs/tm-dialogue-test` | 2 | `compute-interactive-args` |
 | `regtest-tm-convert` | `kernel/texmacs/tm-convert-test` | 25 | Format registration (existing suite, now wired in) |

@@ -117,9 +117,9 @@ all the later ones. The probe script below runs each suite separately.
 
 A loop that calls a closure argument can mis-apply a *different* closure
 after it has run once with a closure of another shape. This reproduces with
-the vendored s7 10.0, with the unpatched `s7.c.orig`, and with **s7 11.9
-(21-Sep-2026)**, so it is not caused by the local patch and has not been
-fixed upstream:
+the vendored s7 10.0, with unpatched s7 10.0, and with **s7 11.9
+(21-Sep-2026)**, which is now vendored unmodified. So it was not caused by
+the former local patch, and it has not been fixed upstream:
 
 ```scheme
 (define (mk s) (let ((chars (string->list s))) (lambda (ch) (and (memv ch chars) #t))))
@@ -195,7 +195,8 @@ Mode predicates such as `in-math?` are installed as anonymous lambdas, so
 
 The local s7 patch reordered environments during lookups. That breaks
 iteration over an environment, and possibly the positional refill of reused
-argument lets. The patch is now an id check that never mutates. See
+argument lets. It was replaced by an id check that never mutates, and
+since 2026-09-26 s7 is not patched at all. See
 [05](05-build-and-history.md#s7-version-and-local-patch).
 
 ### 13. Regressions in shared C++ code (confirmed, **fixed**)
@@ -322,6 +323,6 @@ Results after the rebase, on the clean rebuild:
 4. **Look at the Qt part of the boot** (see
    [05](05-build-and-history.md#boot-time)). It now dominates, and a Guile
    build pays it too.
-5. Refresh the vendored s7, re-applying `s7-lookup_from.patch`, and
-   regenerate `s7.c.orig` from the same upstream revision so that the diff
-   shows only the local patch.
+5. **Done on 2026-09-26: s7 is vendored unmodified.** To upgrade it, copy
+   the new release and check the timings (see
+   [05](05-build-and-history.md#s7-version-and-local-patch)).

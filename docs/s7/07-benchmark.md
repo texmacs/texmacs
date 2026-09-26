@@ -2,7 +2,8 @@
 
 Measured on 2026-09-24 and 2026-09-25 on macOS (Apple silicon):
 
-- **s7 build:** s7 11.9 with the id-check lookup patch;
+- **s7 build:** s7 11.9 with the id-check lookup patch (on 2026-09-26 the
+  patch was removed; see [After the module restructuring](#restructuring));
 - **Guile build:** Guile 1.8.7.
 
 Both builds come from the same tree (`4ae073ff9a` and later), share the Scheme
@@ -242,6 +243,47 @@ without the cache, on both interpreters.
 - a few other logic-table lookups of the same kind (`latex-texmacs-arity`,
   `latex-texmacs-option?`, the catcode definitions);
 - the GC, about a fifth of the time.
+
+<a id="restructuring"></a>
+## After the module restructuring (2026-09-26)
+
+Public definitions are now published in the rootlet, instead of being
+copied into the user module (see [02](02-boot-and-modules.md#lookup-caching)).
+This removes the need for the s7 lookup patch.
+
+**How the pieces were measured.** The machine was under load, so each
+comparison alternated the builds within one session.
+
+| Build | Suites | 8 LaTeX exports | Peak |
+|---|---:|---:|---:|
+| committed, patched s7 | 202–206 ms | 3.07–3.22 s | 420 MB |
+| new module system, patched s7 | 211–259 ms | 2.61–2.93 s | 286 MB |
+| new module system, stock s7 | 217–225 ms | 2.77–2.89 s | 289 MB |
+| new module system, stock s7, without the renumbering | 237–245 ms | 6.4–6.5 s | 291 MB |
+| old module system, stock s7 | 231–254 ms | 8.1 s | 421 MB |
+
+- **The slower suites came from the GC.** With the new module system the
+  heap after boot is smaller (512 k cells against 1 M), so there are more
+  collections. Starting with a larger heap removes the difference, and TeXmacs
+  now starts s7 with 1 M cells.
+- **On stock s7, two names bound in the user module** still cost scans from
+  older modules, and were fixed:
+  - `list?` (2.6 M lookups in the loop) is now bound in the rootlet;
+  - `define` (the curried-`define` shim) stays, because rebinding `define`
+    in the rootlet silently ends s7's current `load`. It costs about 110 M
+    slot comparisons in the loop.
+
+**Final comparison** (same session, 3 alternated rounds):
+
+| | Committed (patched s7) | Final (stock s7, 1 M heap) |
+|---|---:|---:|
+| Boot | 0.82–0.92 s | 0.77–0.80 s |
+| Regression suites | 196–213 ms | 184–188 ms |
+| 8 LaTeX exports | 2.97–3.04 s | 2.72–2.77 s |
+| Peak memory (exports) | 419–424 MB | 289–296 MB |
+
+The "Memory" section above no longer applies: nothing is copied, and the
+heap stays at 2 M cells during the exports.
 
 ## Portability gaps found by the benchmark
 

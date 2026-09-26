@@ -118,9 +118,17 @@ unnoticed (see [06](06-open-issues.md)).
 
 ### Exports and imports
 
-- **`define-public`, `define-public-macro`, `export`.** A normal `define`
-  (in the module's environment), plus a push of the symbol onto the module's
-  `*exports*`.
+- **`define-public`, `define-public-macro`.** A normal `define` in the
+  module's environment, a push of the symbol onto the module's `*exports*`,
+  and a **publication of the binding in the rootlet** (`publish-binding!`),
+  which is where the other modules find it (since 2026-09-26).
+  - With `TM_PUBLISH_LOG` set, publications that replace a different
+    rootlet value are reported. Today there are four:
+    - `assoc-set!`, which is defined twice;
+    - `list-tail`, `string->keyword` and `help`, s7 builtins that TeXmacs
+      redefines with compatible meanings.
+- **`export`** only pushes onto `*exports*`. Such names are copied by
+  `use-modules` as before.
 - **`use-modules m…`.** For each module:
   1. Resolve it, loading it if needed.
   2. Walk the module's environment. In s7, `map` over a `let` yields
@@ -134,7 +142,7 @@ unnoticed (see [06](06-open-issues.md)).
        in the target let ("duplicate identifier"). s7 10 used to add a
        shadowing slot instead.
      - **Already visible with the same value** (`eq?`) through the target's
-       outlets, typically a kernel symbol imported into the user module: it
+       outlets, typically a public definition published in the rootlet: it
        does nothing. The copy would not change what lookups return, but it
        would move the symbol's lookup cache into the target (see
        [Lookup caching](#lookup-caching)).
@@ -149,71 +157,87 @@ unnoticed (see [06](06-open-issues.md)).
 
 ### Consequences
 
-- **Imports copy values.** `use-modules` copies the current value of each
-  exported binding into the importer. If the exporting module later does a
-  `set!` or redefines a `define-public` variable, importers keep the old
-  value. Guile modules share the variable instead.
-  - The exception is a binding that the importer already sees with the same
-    value through the user module. It is not copied, so the importer shares
-    the user module's binding.
+- **Public names have one shared binding, but the defining module has its
+  own.** The other modules all see the rootlet binding. If the defining
+  module later does a `set!` of a `define-public` variable, only its own
+  binding changes. Guile modules share the variable instead.
   - This matters little in practice, because the definitions most often
     overridden are made with `tm-define`, and those live in the rootlet
-    (§2.3).
+    too (§2.3).
+  - Names exported with a plain `export` are still copied into importers.
 - **Modules see all of the user environment.** Every module's parent is
   `*texmacs-user-module*`, so every module can see everything imported at top
   level, not just what it declared with `:use`. Missing `:use` clauses are
   therefore not detected.
-- **The top-level environment is very large.** Modules loaded from
-  `init-texmacs.scm` add their exports to `*texmacs-user-module*` itself.
-  It ends up holding about a thousand slots in one linked list, and s7 looks
-  symbols up in a non-global `let` by linear search when its per-symbol cache
-  misses. This is the reason for the local `lookup_from` patch in s7 (see
+- **The user module is small.** Before 2026-09-26, `use-modules` at top
+  level copied every export into `*texmacs-user-module*`. It held about a
+  thousand slots in one linked list, which s7 scans when its per-symbol
+  cache misses, and TeXmacs needed a patch in s7's lookup to be fast. With
+  the exports in the rootlet, it holds about 240 slots, and TeXmacs runs on
+  s7 as released (see
   [05](05-build-and-history.md#s7-version-and-local-patch)).
 
 <a id="lookup-caching"></a>
 ### Lookup caching and the user module
 
-s7 caches, for each symbol, its most recent binding and the id of the let
-that holds it. Lets get increasing ids when they are created, and a lookup
-skips the lets that are newer than the symbol's cached binding. Two
-operations change the picture:
+**How s7 finds a name.**
 
-- **Entering a let with `with-let`** (and so `with-module`) gives it a
-  fresh, highest id, and points the cache of each of its symbols into it.
-- **Adding a binding to a newer let** (`varlet`, `define`) moves the
-  symbol's cache into that let.
+- For each symbol, s7 caches its most recent *local* binding (outside the
+  rootlet) and the id of the let that holds it.
+- Lets get increasing ids when they are created.
+- A lookup walks outward from the current let:
+  - it skips the lets that are newer than the cached binding;
+  - it answers in O(1) if it reaches the let of the cached binding;
+  - it otherwise scans the slots of each older let;
+  - it ends in the rootlet, whose bindings are found directly.
+- Entering a let with `with-let` (and so `with-module`) gives it a fresh,
+  highest id.
 
-For modules, lookups of kernel symbols are fast when two things hold:
+**What that means for modules.**
 
-- the kernel symbols are cached in the user module;
-- every module is newer than the user module, so that its environment is
-  skipped on the way.
+- A public name is bound in its module, which was created after the user
+  module, and in the rootlet.
+- A lookup from another module skips the frames and the (newer) module let,
+  and reaches the user module.
+- For kernel names this should cost nothing, and three rules make sure of
+  it:
+  - **`renumber-user-module!`** (`boot-s7.scm`) enters the user module once,
+    right after the kernel is loaded (`init-s7.scm`). The user module then
+    becomes newer than the kernel modules that bind the kernel names, so
+    lookups of kernel names skip it too and end in the rootlet. Without this
+    step, 8 LaTeX exports take 6.4 s instead of 2.8 s.
+  - **Nothing enters the user module afterwards.** It would become newer
+    than every module loaded so far. Lookups from their code of the few
+    names bound in the user module itself (mainly `define`, the curried
+    `define` of `compat-s7.scm`) would then scan their environment.
+    - `tm-define-macro` therefore uses `eval`, which sets the current let
+      without renumbering it (§2.3).
+    - `eval_scheme` and `call_scheme` from C++ use `s7_eval` and `s7_call`,
+      which don't renumber either.
+  - **`import-bindings!`** does not copy a binding that a module already
+    sees with the same value (above). The copy would move the symbol's cache
+    into the importer.
 
-The s7 kernel keeps this invariant with three rules:
+**`define` can't move to the rootlet.** Rebinding `define` itself in the
+rootlet silently ends s7's current `load`. So the curried-`define` shim
+stays in the user module.
 
-- **`renumber-user-module!`** (`boot-s7.scm`) enters the user module once,
-  right after the kernel is imported (`init-s7.scm`), which caches
-  the kernel symbols there.
-- **Nothing enters the user module afterwards.** A later `with-let` on it
-  would make it newer than every module loaded so far, and each lookup of a
-  kernel symbol from their code would scan their whole environment.
-  `tm-define-macro` therefore uses `eval`, which sets the current let
-  without renumbering it (§2.3). `eval_scheme` and `call_scheme` from C++
-  use `s7_eval` and `s7_call`, which don't renumber either.
-- **`import-bindings!`** does not copy a binding that a module already sees
-  with the same value (above).
+**History.** Before the exports were published in the rootlet, the kernel
+names lived in the user module. Several things had to be fixed:
 
-Breaking the invariant used to make repeated LaTeX export about twice as
-slow. See [07](07-benchmark.md#why-the-warm-latex-export-was-slow) for the
-measurements.
+- `tm-define-macro` entered the user module 211 times during a LaTeX export,
+  which made the export about three times slower (see
+  [07](07-benchmark.md#why-the-warm-latex-export-was-slow));
+- a patch in s7's lookup was needed (§5.2);
+- the placement of the renumbering was a trade-off.
 
 ### Other definitions
 
 - **`on-entry` and `on-exit`.** `on-entry` evaluates its body immediately.
   `on-exit` chains thunks onto `quit-TeXmacs-scheme`.
 - **`has-look-and-feel?`.** Hard-coded to `(== x "emacs")`.
-- **`list?` is rebound to `proper-list?`.** In s7, `list?` is true for any
-  pair, including dotted and circular ones.
+- **`list?` is rebound to `proper-list?`, in the rootlet.** In s7, `list?`
+  is true for any pair, including dotted and circular ones.
 - **`display` and `write`.** With a single argument, they are redirected to
   `tm-output`, so output reaches the TeXmacs console and session widgets.
 
