@@ -37,4 +37,5 @@
 (tm-define (notify-cursor-moved status)
   (:require prog-highlight-brackets?)
   (:mode in-prog-cpp?)
-  (select-brackets-after-movement "([{" ")]}" "\\"))
+  (select-brackets-after-movement "([{" ")]}" "\\")
+  (former status))
