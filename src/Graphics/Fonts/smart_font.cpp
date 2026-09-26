@@ -661,6 +661,24 @@ stix_fix (string family, string series, string shape) {
 // family by its text companion. Math sans serif and math typewriter are
 // served by the companions the profile declares, since a math font has no
 // sans or typewriter face of its own.
+// A math font TeXmacs knows by name may be installed and yet be absent
+// from the font database, which only holds what the shipped database
+// records and what a scan of the disk found: the math fonts of a TeX
+// distribution are the usual case. Selecting such a family would find no
+// font at all and fall back on the nearest text face by feature distance,
+// so add the file to the database of the home directory, once.
+static void
+register_profiled_font (string math_family) {
+  if (N (font_database_styles (math_family)) > 0) return;
+  string file= math_font_profile_attr (math_family, "file");
+  if (file == "") return;
+  url u= tt_font_find (file);
+  if (is_none (u)) return;
+  cout << "TeXmacs] registering " << math_family << ", the math font of "
+       << as_string (u) << "\n";
+  font_database_extend_local (u);
+}
+
 string
 profile_fix (string family, string variant, string series, string shape) {
   (void) series;
@@ -668,10 +686,17 @@ profile_fix (string family, string variant, string series, string shape) {
   for (int i= 0; i < N(a); i++) {
     string item= a[i];
     if (!occurs ("=", item)) {
+      // the name may be that of a math font, in text as well as in math:
+      // the companion a profile declares is the math font itself when the
+      // family has no text face of its own, as Concrete Math and Euler
+      // Math have none
+      register_profiled_font (item);
       if (starts (shape, "math")) {
         string m= math_family_for_text (item);
-        if (m != "" && tt_font_exists (math_font_profile_attr (m, "file")))
+        if (m != "" && tt_font_exists (math_font_profile_attr (m, "file"))) {
+          register_profiled_font (m);
           item= m;
+        }
         string key= (variant == "ss"? string ("sans"):
                      (variant == "tt"? string ("mono"): string ("")));
         if (key != "") {
