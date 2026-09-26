@@ -120,7 +120,9 @@
          '("dir" "file.tm"))
    (test "urls are blackboxes" (url? (url-unix "a" "")) #t)
    (test "equal urls" (equal? (url-unix "a" "b") (url-unix "a" "b")) #t)
-   (test "printing a url" (object->string (url-unix "a" "b")) "<url a/b>")
+   ;; a url prints with the native separator (a\b on Windows)
+   (test "printing a url" (object->string (url-unix "a" "b"))
+         (string-append "<url " (url->string (url-unix "a" "b")) ">"))
    (test "url-none" (url-none? (url-none)) #t)
    (test "array of urls"
          (length (array-url-append (url-unix "a" "") (list (url-unix "b" ""))))

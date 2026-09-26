@@ -472,6 +472,11 @@ MACOS_PACKAGE_CONTENTS = $(MACOS_PACKAGE_APP)/Contents
 MACOS_PACKAGE_RESOURCES = $(MACOS_PACKAGE_CONTENTS)/Resources
 MACOS_PACKAGE_TEXMACS = $(MACOS_PACKAGE_RESOURCES)/share/TeXmacs
 
+# How the libraries are copied into the bundle: bundle-libs (the default,
+# packages/macos/bundle-libs.sh), or none, e.g. to run Qt's macdeployqt
+# afterwards, which also handles a Homebrew Qt in /opt/homebrew
+MACOS_DEPLOY ?= bundle-libs
+
 MACOS_BUNDLE: TEXMACS
 	$(MKDIR) ../distr
 	$(RM) -r $(MACOS_PACKAGE_APP)
@@ -500,9 +505,11 @@ MACOS_BUNDLE: TEXMACS
 	find -d $(MACOS_PACKAGE_TEXMACS) -name .svn -exec rm -rf {} \;
 
 	@echo Deploying libraries into application bundle.
-	QT_PLUGINS_PATH="$(QT_PLUGINS_PATH)" QT_PLUGINS_LIST="$(QT_PLUGINS_LIST)" \
-	QT_FRAMEWORKS_PATH="$(QT_FRAMEWORKS_PATH)" \
-		$(MACOS_PACKAGE_SRC)/bundle-libs.sh $(MACOS_PACKAGE_CONTENTS)/MacOS/TeXmacs
+	if test "$(MACOS_DEPLOY)" = bundle-libs; then \
+	  QT_PLUGINS_PATH="$(QT_PLUGINS_PATH)" QT_PLUGINS_LIST="$(QT_PLUGINS_LIST)" \
+	  QT_FRAMEWORKS_PATH="$(QT_FRAMEWORKS_PATH)" \
+		$(MACOS_PACKAGE_SRC)/bundle-libs.sh $(MACOS_PACKAGE_CONTENTS)/MacOS/TeXmacs; \
+	fi
 	@echo ----------------------------------------------------
 	@echo TeXmacs has been bundled in $(MACOS_PACKAGE_APP)
 	@if test -n "@SIGNID@";then \
@@ -549,7 +556,7 @@ WINDOWS_BUNDLE: TEXMACS WINDOWS_PDB
 	$(RM) $(WINDOWS_BUILD_BIN_DIR)/texmacs
 	$(MV) $(WINDOWS_BUILD_BIN_DIR)/texmacs.bin $(WINDOWS_BUILD_BIN_DIR)/texmacs.exe
 	if test -n "@SIGNID@"; then @SIGNID@ $(WINDOWS_BUILD_BIN_DIR)/texmacs.exe; fi
-	if test "@XTRA_CMD@" != @'XTRA_CMD'@; then $(CP) -u "@XTRA_CMD@/"* $(WINDOWS_BUILD_BIN_DIR)/; fi
+	if test -n "@XTRA_CMD@" && test -d "@XTRA_CMD@"; then $(CP) -u "@XTRA_CMD@/"* $(WINDOWS_BUILD_BIN_DIR)/; fi
 	if [ -d "$(TMREPO)" ]; then \
 		$(CP) -r $(TMREPO)/lib/aspell-* $(WINDOWS_BUILD_DIR); \
 	fi

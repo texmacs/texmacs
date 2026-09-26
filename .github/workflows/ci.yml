@@ -1,0 +1,154 @@
+# Builds TeXmacs (with s7) on Linux, macOS and Windows, runs the regression
+# suites headless, and keeps a runnable bundle of each build as an artifact.
+
+name: CI
+
+on:
+  push:
+    branches: [wip_s7, wip_s7-ci]
+  pull_request:
+    branches: [wip_s7]
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  linux:
+    name: Linux (Ubuntu 24.04, Qt 6)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential pkg-config \
+            qt6-base-dev qt6-base-dev-tools qt6-svg-dev libgl-dev \
+            libfreetype-dev libpng-dev zlib1g-dev libjpeg-dev \
+            libgnutls28-dev libsqlite3-dev
+
+      - name: Configure
+        run: ./configure --with-scheme=s7 QMAKE=/usr/lib/qt6/bin/qmake
+
+      - name: Build
+        run: make -j"$(nproc)"
+
+      - name: Run the regression suites
+        run: .github/scripts/run-tests.sh TeXmacs/bin/texmacs.bin
+
+      - name: Package
+        run: tar -czf texmacs-linux-x86_64.tar.gz TeXmacs
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: texmacs-linux-x86_64
+          path: texmacs-linux-x86_64.tar.gz
+          retention-days: 14
+
+  macos:
+    name: macOS (Apple silicon, Qt 6)
+    runs-on: macos-14
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: brew install qt freetype libpng jpeg gnutls sqlite
+
+      - name: Configure
+        run: |
+          B=$(brew --prefix)
+          ./configure --with-scheme=s7 \
+            QMAKE="$(brew --prefix qt)/bin/qmake" \
+            CPPFLAGS="-I$(brew --prefix libpng)/include/libpng16 -I$B/include" \
+            LDFLAGS="-L$(brew --prefix libpng)/lib -L$B/lib"
+
+      - name: Build
+        run: make -j"$(sysctl -n hw.ncpu)"
+
+      - name: Run the regression suites
+        run: .github/scripts/run-tests.sh TeXmacs/bin/texmacs.bin
+
+      - name: Bundle
+        run: |
+          # bundle-libs.sh does not handle Homebrew's /opt/homebrew, so the
+          # libraries, frameworks and plugins are deployed with macdeployqt
+          make MACOS_BUNDLE MACOS_DEPLOY=none
+          "$(brew --prefix qt)/bin/macdeployqt" ../distr/TeXmacs.app
+          ditto -c -k --keepParent ../distr/TeXmacs.app texmacs-macos-arm64.zip
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: texmacs-macos-arm64
+          path: texmacs-macos-arm64.zip
+          retention-days: 14
+
+  windows:
+    name: Windows (MSYS2 MinGW-w64, Qt 6)
+    runs-on: windows-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        shell: msys2 {0}
+    env:
+      # qmake6 is in /mingw64/bin, but moc, uic and rcc of Qt 6 only in here
+      QT6_BIN: /mingw64/share/qt6/bin
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: >-
+            make perl rsync zip
+            mingw-w64-x86_64-toolchain
+            mingw-w64-x86_64-pkgconf
+            mingw-w64-x86_64-qt6-base
+            mingw-w64-x86_64-qt6-svg
+            mingw-w64-x86_64-freetype
+            mingw-w64-x86_64-libpng
+            mingw-w64-x86_64-zlib
+            mingw-w64-x86_64-libjpeg-turbo
+            mingw-w64-x86_64-gnutls
+            mingw-w64-x86_64-sqlite3
+
+      - name: Configure
+        run: |
+          export PATH="$QT6_BIN:$PATH"
+          # the Windows entry point needs Qt found with pkg-config: with
+          # qmake, Qt defines QT_NEEDS_QMAIN and replaces main
+          # With pkg-config, Qt's flags no longer bring in Winsock (ws2_32),
+          # which the socket code needs; configure should add it for MinGW
+          ./configure --with-scheme=s7 --with-qt-find-method=pkgconfig \
+            QMAKE=/mingw64/bin/qmake6 LIBS=-lws2_32
+
+      - name: Build
+        run: |
+          export PATH="$QT6_BIN:$PATH"
+          make -j"$(nproc)"
+
+      - name: Run the regression suites
+        run: |
+          BIN=TeXmacs/bin/texmacs.bin
+          test -f "$BIN" || BIN=TeXmacs/bin/texmacs.bin.exe
+          .github/scripts/run-tests.sh "$BIN"
+
+      - name: Bundle
+        run: |
+          export PATH="$QT6_BIN:$PATH"
+          # with Qt found by pkg-config, configure does not set the plugin
+          # directory, and the bundle needs at least platforms/qwindows.dll
+          make WINDOWS_BUNDLE QT_PLUGINS_PATH=/mingw64/share/qt6/plugins
+          ls ../distr/TeXmacs-Windows/bin/platforms
+          (cd ../distr && zip -qr "$GITHUB_WORKSPACE/texmacs-windows-x86_64.zip" TeXmacs-Windows)
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: texmacs-windows-x86_64
+          path: texmacs-windows-x86_64.zip
+          retention-days: 14
