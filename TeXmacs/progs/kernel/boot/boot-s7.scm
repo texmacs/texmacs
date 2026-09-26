@@ -16,7 +16,9 @@
 (define (s7-scheme?) #t)
 (define has-look-and-feel? (lambda (x) (== x "emacs")))
 
-(define list? proper-list?)
+;; TeXmacs expects Guile's list?, which only holds for proper lists. Like the
+;; exported definitions (see define-public), it is bound in the rootlet
+(varlet (rootlet) 'list? proper-list?)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Redirect standard output
@@ -63,13 +65,16 @@
 (define-macro (export . symbols)
     `(set! *exports* (append ',symbols *exports*)))
 
-;; Entering a let with with-let gives it a fresh, highest id, and makes the
-;; cached binding of each of its symbols point into it. Call this once, after
-;; the kernel has been imported into the user module: the kernel symbols are
-;; then found in O(1) from any module loaded afterwards, since those modules
-;; are newer and are skipped by the lookup. A later renumbering would make the
-;; user module newer than all the modules loaded so far, and every lookup of a
-;; kernel symbol from those modules would scan their whole environment.
+;; s7 caches, for each symbol, the id of the let that holds its most recent
+;; local binding, and a lookup skips the lets that are newer than that; lets
+;; get increasing ids when they are created. Entering a let with with-let
+;; gives it a fresh, highest id. Call this once, right after the kernel is
+;; loaded: the user module then becomes newer than the kernel modules, where
+;; the kernel symbols are bound, so that lookups of kernel symbols skip it on
+;; their way to the rootlet. Do not enter the user module afterwards (hence
+;; eval in tm-define-macro): it would become newer than the modules loaded
+;; so far, and lookups from their code of the names bound in the user module
+;; (such as define, see compat-s7.scm) would scan their environment.
 (define (renumber-user-module!)
   (with-let *texmacs-user-module* (curlet)))
 
@@ -78,12 +83,31 @@
      (let-temporarily (((*texmacs-module* '*current-module*) (curlet)))
      ,@body))))
 
+;; Public definitions are made in their module and published in the rootlet,
+;; which is where the other modules find them. use-modules sees them there,
+;; with the same value, and does not copy them (import-bindings!). So the
+;; other modules share one binding of each public name, and the user module
+;; stays small; lookups of public names skip the (newer) module lets and end
+;; in the rootlet. The defining module keeps its own binding, as before: a
+;; set! of a public variable there is not seen by the other modules.
+;; With TM_PUBLISH_LOG set, publications which replace another value are
+;; reported (a name defined public by two modules, or an s7 builtin).
+(define publish-log? (getenv "TM_PUBLISH_LOG"))
+(define (publish-binding! name value)
+  (when (and publish-log?
+             (defined? name (rootlet))
+             (not (eq? ((rootlet) name) value)))
+    (format *stderr* "PUBLISH-REPLACES ~A in ~A~%" name
+            ((*texmacs-module* '*current-module*) '*module-name*)))
+  (varlet (rootlet) name value))
+
 (define-macro (define-public head . body)
+  (let ((name (if (pair? head) (car head) head)))
     `(begin
-        (define ,head ,@body)
-        (export ,(if (pair? head) (car head) head))))
-        
-        
+       (define ,head ,@body)
+       (export ,name)
+       ,@(if (symbol? name) `((publish-binding! ',name ,name)) '()))))
+
 (define-macro (provide-public head . body)
   (if (or (and (symbol? head) (not (defined? head)))
 	  (and (pair? head) (symbol? (car head)) (not (defined? (car head)))))
@@ -91,9 +115,11 @@
       '(noop)))
 
 (define-macro (define-public-macro head . body)
+  (let ((name (if (pair? head) (car head) head)))
     `(begin
-	   (define-macro ,head ,@body)
-	   (export ,(if (pair? head) (car head) head))))
+       (define-macro ,head ,@body)
+       (export ,name)
+       ,@(if (symbol? name) `((publish-binding! ',name ,name)) '()))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Module handling
@@ -132,10 +158,10 @@
 ;; s7 (since version 11) refuses to varlet a symbol which is already bound
 ;; in the target let, so we update existing bindings in place
 ;; A binding which target already sees, with the same value, through its
-;; outlets (typically a kernel symbol imported into the user module) is not
-;; copied: the copy would not change what lookups return, and since target
-;; is newer than the user module, s7 would move the symbol's cached binding
-;; into target, so that lookups from everywhere else would have to scan
+;; outlets (typically a public definition, published in the rootlet) is not
+;; copied: the copy would not change what lookups return, and it would move
+;; the symbol's cached binding into target, so that lookups from elsewhere
+;; would have to scan
 (define (import-bindings! target entries)
   (for-each (lambda (entry)
               (cond ((defined? (car entry) target #t)

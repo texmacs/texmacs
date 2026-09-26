@@ -38,6 +38,10 @@ start_scheme (int argc, char** argv, void (*call_back) (int, char**)) {
   // quoted forms, e.g. (== (car x) 'quote), as in standard Scheme
   s7_eval_c_string (tm_s7, "(set! (*s7* 'symbol-quote?) #t)");
 
+  // start with a heap of 1M cells (about what TeXmacs uses once booted)
+  // instead of growing it step by step, with fewer collections meanwhile
+  s7_eval_c_string (tm_s7, "(set! (*s7* 'heap-size) 1024000)");
+
   // make a new user environment (used in evaluation)
   user_env = s7_inlet (tm_s7, s7_nil (tm_s7));
   s7_gc_protect (tm_s7, user_env);

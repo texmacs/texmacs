@@ -64,7 +64,7 @@
 
 ;; The common initialization, with the steps specific to s7 in between
 (load (url-concretize "$TEXMACS_PATH/progs/init-kernel.scm"))
-;; the kernel is now imported into the user module: make its symbols
-;; resolve in O(1) from all the modules loaded from here on (boot-s7.scm)
+;; the kernel is now loaded: make the user module newer than the kernel
+;; modules, so that lookups of kernel symbols skip it (see boot-s7.scm)
 (renumber-user-module!)
 (load (url-concretize "$TEXMACS_PATH/progs/init-texmacs.scm"))

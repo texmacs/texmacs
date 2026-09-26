@@ -11587,16 +11587,9 @@ static Inline s7_pointer inline_lookup_from(s7_scheme *sc, const s7_pointer symb
 	return(local_value(symbol));
     }
   for (; let; let = let_outlet(let))
-    {
-      /* (TeXmacs) let ids need not decrease along the outlet chain (with-let
-         renumbers the let it enters), so the symbol's cached slot may be in
-         any let of the chain, not only in the first one */
-      if (let_id(let) == symbol_id(symbol))
-	return(local_value(symbol));
-      for (s7_pointer slot = let_slots(let); is_slot_checked(slot); slot = next_slot(slot))
-	if (slot_symbol(slot) == symbol)
-	  return(slot_value(slot));
-    }
+    for (s7_pointer slot = let_slots(let); is_slot_checked(slot); slot = next_slot(slot))
+      if (slot_symbol(slot) == symbol)
+	return(slot_value(slot));
 
   if (is_slot(global_slot(symbol)))
     return(global_value(symbol));
