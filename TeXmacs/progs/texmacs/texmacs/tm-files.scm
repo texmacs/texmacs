@@ -458,6 +458,116 @@
                                 (raw-quote (url->system u)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Remembering the cursor position in files
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define cursor-memory-max 300)
+(define cursor-memory-table #f) ; file name -> (time . cursor path in body)
+(define cursor-memory-modified? #f)
+
+(define (cursor-memory-on?)
+  (get-boolean-preference "remember cursor position"))
+
+(define (cursor-memory-file)
+  (url-append "$TEXMACS_HOME_PATH" "system/cursor-positions.scm"))
+
+(define (cursor-memory-buffer? name)
+  (and name (buffer-has-name? name)
+       (not (url-scratch? name))
+       (not (url-rooted-web? name))
+       (not (url-rooted-tmfs? name))))
+
+(define (cursor-memory-entry? e)
+  (and (pair? e) (string? (car e)) (pair? (cdr e)) (number? (cadr e))
+       (list? (cddr e)) (list-and (map integer? (cddr e)))))
+
+(define (cursor-memory)
+  (when (not cursor-memory-table)
+    (set! cursor-memory-table (make-ahash-table))
+    (with u (cursor-memory-file)
+      (when (url-exists? u)
+        (with l (catch #t (lambda () (load-object u)) (lambda args '()))
+          (when (list? l)
+            (for (e l)
+              (when (cursor-memory-entry? e)
+                (ahash-set! cursor-memory-table (car e) (cdr e)))))))))
+  cursor-memory-table)
+
+(define (cursor-memory-save)
+  (when cursor-memory-modified?
+    (let* ((l (ahash-table->list (cursor-memory)))
+           (s (sort l (lambda (a b) (> (cadr a) (cadr b)))))
+           (r (if (> (length s) cursor-memory-max)
+                  (sublist s 0 cursor-memory-max) s)))
+      (set! cursor-memory-modified? #f)
+      (catch #t (lambda () (save-object (cursor-memory-file) r)) noop))))
+
+(define (cursor-memory-body-path)
+  (let* ((r (tree->path (buffer-tree)))
+         (c (cursor-path)))
+    (and r c (list-starts? c r) (list-tail c (length r)))))
+
+(define (cursor-memory-record)
+  (with name (current-buffer)
+    (when (and (cursor-memory-on?) (cursor-memory-buffer? name))
+      (and-with p (cursor-memory-body-path)
+        (let* ((key (url->system name))
+               (old (ahash-ref (cursor-memory) key)))
+          (when (or (not old) (!= (cdr old) p))
+            (ahash-set! (cursor-memory) key (cons (current-time) p))
+            (when (not cursor-memory-modified?)
+              (set! cursor-memory-modified? #t)
+              (delayed
+                (:idle 3000)
+                (cursor-memory-save)))))))))
+
+(tm-define (notify-cursor-moved status)
+  (former status)
+  (cursor-memory-record))
+
+(on-exit
+  (catch #t
+    (lambda () (cursor-memory-record) (cursor-memory-save))
+    noop))
+
+(tm-define (cursor-memory-valid? t p)
+  (:synopsis "Is @p a valid cursor path inside the tree @t?")
+  (cond ((null? p) #f)
+        ((tree-atomic? t)
+         (and (null? (cdr p)) (<= 0 (car p) (string-length (tree->string t)))))
+        ((null? (cdr p)) (in? (car p) '(0 1)))
+        ((< -1 (car p) (tree-arity t))
+         (cursor-memory-valid? (tree-ref t (car p)) (cdr p)))
+        (else #f)))
+
+(tm-define (cursor-memory-subtree t p)
+  (:synopsis "Deepest subtree of @t along the (possibly outdated) path @p")
+  (and (pair? p) (tree-compound? t) (< -1 (car p) (tree-arity t))
+       (with u (tree-ref t (car p))
+         (or (cursor-memory-subtree u (cdr p)) u))))
+
+(define (cursor-memory-restore name)
+  (and-with e (ahash-ref (cursor-memory) (url->system name))
+    (when (and (current-buffer)
+               (== (url->system (current-buffer)) (url->system name)))
+      (let* ((body (buffer-tree))
+             (p (cdr e)))
+        (cond ((cursor-memory-valid? body p)
+               (go-to (append (tree->path body) p)))
+              ((cursor-memory-subtree body p)
+               => (lambda (t) (tree-go-to t :start))))))))
+
+(define (cursor-memory-notify-open name opts)
+  ;; restore before returning to the event loop, so that no cursor movement
+  ;; at the start of the document can be recorded in the meantime
+  (when (and (cursor-memory-on?) (cursor-memory-buffer? name)
+             (nin? :background opts))
+    (catch #t (lambda () (cursor-memory-restore name)) noop)))
+
+(define-preferences
+  ("remember cursor position" "on" noop))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Loading buffers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -485,7 +595,9 @@
           ((url-exists? name)
            (if (buffer-load name)
                (set-message `(concat "Could not load " ,vname) "Load file")
-               (load-buffer-open name opts)))
+               (begin
+                 (load-buffer-open name opts)
+                 (cursor-memory-notify-open name opts))))
           (else
             (with uname (if (string? name) (string->url name) name)
               (buffer-set-body name '(document ""))
