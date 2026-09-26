@@ -932,6 +932,7 @@
 ("release" "julkaisu")
 ("reload" "lataa uudelleen")
 ("remark" "huomautus")
+("remember cursor position" "muista kohdistimen sijainti")
 ("remove this switch" "poista tämä valitsin")
 ("repeat object" "toista objekti")
 ("replace" "korvaa")

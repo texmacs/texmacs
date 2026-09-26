@@ -1442,6 +1442,7 @@
 ("odd page right margin" "ulige sides højre margen")
 ("odd page shift" "ulige sideskift")
 ("reference guide" "manual")
+("remember cursor position" "husk markørens position")
 ("remove package" "fjern pakke")
 ("show hidden" "vis skjulte")
 ("standard TeXmacs styles" "standard TeXmacs typografier")

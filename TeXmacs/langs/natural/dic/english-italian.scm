@@ -2125,6 +2125,7 @@
 ("release left button: finish editing" "rilascia pulsante sinistro: termina modifica")
 ("reload" "ricarica")
 ("remark" "osservazione")
+("remember cursor position" "ricorda la posizione del cursore")
 ("remote" "remoto")
 ("remote connections" "connessioni remote")
 ("remote control" "telecomando")

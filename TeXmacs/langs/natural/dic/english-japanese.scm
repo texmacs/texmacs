@@ -1051,6 +1051,7 @@
 ("release" "")
 ("reload" "")
 ("remark" "注意")
+("remember cursor position" "カーソル位置を記憶")
 ("remove all output fields" "")
 ("remove fields" "")
 ("remove input field" "")

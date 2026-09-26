@@ -2365,6 +2365,7 @@
 ("release left button: finish editing" "pu²tanje lijeve tipke: dovr²etak ureživanja")
 ("reload" "ponovno u£itaj")
 ("remark" "napomena")
+("remember cursor position" "zapamti poloºaj kursora")
 ("remote" "udaljeno")
 ("remote connections" "daljinske veze")
 ("remote control" "daljinsko upravljanje")

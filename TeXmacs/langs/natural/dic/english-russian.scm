@@ -1045,6 +1045,7 @@
 ("release" "версия")
 ("reload" "перезагрузить")
 ("remark" "замечание")
+("remember cursor position" "запоминать положение курсора")
 ("remove all output fields" "удалить все поля вывода")
 ("remove fields" "удалить поля")
 ("remove input field" "удалить поле ввода")

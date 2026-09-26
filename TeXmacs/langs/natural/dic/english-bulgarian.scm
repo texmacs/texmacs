@@ -950,6 +950,7 @@
 ("release" "версия")
 ("reload" "перезареди")
 ("remark" "забележка")
+("remember cursor position" "запомняне на положението на курсора")
 ("remove number" "премахни номера")
 ("remove this switch" "премахни този превключвател")
 ("renumber this page" "переномерирай тази страница")

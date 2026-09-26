@@ -1455,6 +1455,7 @@
 ("resize object" "")
 ("resized" "")
 ("rebuild translations file" "重建翻译文件")
+("remember cursor position" "记住游标位置")
 ("retain" "保留")
 ("retina settings" "高分屏设置")
 ("retina screen settings" "高分屏设置")

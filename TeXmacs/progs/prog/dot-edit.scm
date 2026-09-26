@@ -35,7 +35,8 @@
 (tm-define (notify-cursor-moved status)
   (:require prog-highlight-brackets?)
   (:mode in-prog-dot?)
-  (select-brackets-after-movement "([{" ")]}" "\\"))
+  (select-brackets-after-movement "([{" ")]}" "\\")
+  (former status))
 
 (kbd-map
   (:mode in-prog-dot?)
