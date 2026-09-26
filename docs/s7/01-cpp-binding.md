@@ -64,8 +64,9 @@ You pick a backend with one include in `src/Scheme/Scheme/object.hpp`:
 
 **Note: the C++ entry points evaluate in `user_env`.** The Scheme boot (see
 §2) defines its own `*texmacs-user-module*` as the `curlet` at the point where
-`boot-s7.scm` is loaded. Because `init-texmacs-s7.scm` is itself loaded
-through `eval_scheme_file`, that is `user_env`.
+`boot-s7.scm` is loaded. `init-texmacs.scm` is loaded through
+`eval_scheme_file`, and it loads `init-s7.scm` into its own environment, so
+that is `user_env`.
 
 ### Calls
 

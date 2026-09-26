@@ -19,7 +19,9 @@ The option drives everything else:
   `src/makefile.in` compiles `src/Scheme/{Scheme,$(SCHEME_DIR)}`, and CMake
   globs the same directory.
 - **C++ selection.** `object.hpp` includes `s7_tm.hpp` or `guile_tm.hpp`, and
-  `tm_server.cpp` boots `init-texmacs-s7.scm` or `init-texmacs.scm`.
+  `init-texmacs.scm` loads `init-s7.scm` or `init-guile.scm` according to
+  `(scheme-dialect)`. So `tm_server.cpp` boots the same file for both, as
+  upstream does.
 - **Guile detection.** `LC_GUILE` (Guile detection, flags, `-lguile`) only
   runs for Guile.
 - **Platform code.** The Guile hooks in the platform files (Unix, Windows64,
@@ -339,8 +341,9 @@ an exact merge base.
 **To rebase onto a later snapshot**, run
 `git rebase --onto <new-snapshot> <old-snapshot>`. After that:
 
-1. Re-sync `init-texmacs-s7.scm` with `init-texmacs.scm` (see
-   [06](06-open-issues.md)).
+1. Merge upstream's changes to `init-texmacs.scm`. Since 2026-09-26 the file
+   is shared: changes to its start belong in `init-guile.scm`, and possibly
+   in `init-s7.scm`.
 2. Rebuild from clean.
 3. Run the probe tests.
 
@@ -366,4 +369,5 @@ an exact merge base.
 
 The vendored interpreter has not changed since January 2022. Since then the
 work has been rebasing and keeping `init-texmacs-s7.scm` in step with
-`init-texmacs.scm`.
+`init-texmacs.scm`. Since 2026-09-26 the two share one body (see
+[02](02-boot-and-modules.md)).

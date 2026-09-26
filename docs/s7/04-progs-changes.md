@@ -50,9 +50,9 @@ The shared Scheme kernel runs on both s7 and Guile. Each boot file defines
 
 Some pieces stay single-dialect:
 
-- **Files loaded by only one boot:** `boot-s7.scm`, `compat-s7.scm` and
-  `init-texmacs-s7.scm` for s7; `boot.scm`, `compat.scm` and
-  `init-texmacs.scm` for Guile. `compat.scm` now also defines `tm-eval`,
+- **Files loaded by only one boot:** `init-s7.scm`, `boot-s7.scm` and
+  `compat-s7.scm` for s7; `init-guile.scm`, `boot.scm` and `compat.scm` for
+  Guile. `init-texmacs.scm` loads the right one and is otherwise shared. `compat.scm` now also defines `tm-eval`,
   which the C++ `eval (object)` calls.
 - **Tests:** `check-master.scm` loads and runs `compat-s7-test` and
   `boot-s7-test` only with s7.

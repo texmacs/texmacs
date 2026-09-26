@@ -64,7 +64,7 @@ this are reported.
 
 ### 4. The `catch` wrapper fails when the error has no data (confirmed, **fixed**)
 
-The handler adapter in `init-texmacs-s7.scm:41-44` does `(caadr args)`. This
+The handler adapter in `init-texmacs-s7.scm:41-44` (now `init-s7.scm`) did `(caadr args)`. This
 fails when the error info is not a pair. For example, `(throw 'foo)` with no
 arguments raises a `wrong-type-arg` from inside the handler, and the original
 error is lost.
@@ -79,7 +79,7 @@ output for errors that worked before is unchanged.
 
 `doc/apidoc-funcs.scm:107-118` (`parse-form`) uses `source-property` and
 `def-keywords`. Neither is defined under s7: `def-keywords` exists only in
-`init-texmacs.scm`. The "module exported symbols" part of the API docs should
+`init-guile.scm`. The "module exported symbols" part of the API docs should
 fail.
 
 ### 6. Memo tables no longer cache `#f` (confirmed)
@@ -283,7 +283,7 @@ Results after the rebase, on the clean rebuild:
 - **Glue error messages are vague.** Argument errors say
   `"some other thing"` instead of the expected type (`TMSCM_ASSERT`).
 - **`tmscm_install_procedure` ignores its optional and rest argument counts.**
-- **`developer-mode?` is hard-coded to `#f`** in `init-texmacs-s7.scm`. The
+- **`developer-mode?` is hard-coded to `#f`** in `init-s7.scm`. The
   boot-time benchmarks and the forced keyboard loading were removed on
   2026-09-24.
 
@@ -296,7 +296,7 @@ Results after the rebase, on the clean rebuild:
   `texmacs_init_guile_hooks` in s7 builds, and `$GUILE_LOAD_PATH` as the
   module search path.
 - **Scheme files that only work under Guile:**
-  - `init-texmacs.scm`, `kernel/boot/boot.scm` and `kernel/boot/compat.scm`
+  - `init-guile.scm`, `kernel/boot/boot.scm` and `kernel/boot/compat.scm`
     (only the Guile boot loads them);
   - `utils/misc/doxygen.scm:15` uses `(ice-9 rdelim)`;
   - the trace facility in `kernel/boot/debug.scm:284` uses
@@ -311,14 +311,12 @@ Results after the rebase, on the clean rebuild:
    the tests (see [04](04-progs-changes.md), §4.2). New shared code, and
    future upstream syncs, should be checked with both builds, in particular
    for s7 reader syntax in shared files.
-3. Generate `init-texmacs-s7.scm` from `init-texmacs.scm`, or share a common
-   body, so the two do not drift apart. Drift has already caused one test
-   failure (bug 7).
-   - Today the two differ only in the prelude (up to the kernel
-     `inherit-modules`, with `compat` → `compat-s7`) and in the two developer
-     benchmark commands at the end of the s7 file.
-   - A simple approach would be to put the common body in
-     `init-texmacs-body.scm` and `load` it from both files.
+3. **Done on 2026-09-26: the two init files share one body.**
+   `init-texmacs.scm` is used by both interpreters. It first loads
+   `init-s7.scm` or `init-guile.scm`, which hold everything specific to one
+   interpreter up to the kernel's compatibility module, and then runs the
+   common flow. `init-texmacs-s7.scm` is gone, and `tm_server.cpp` is back to
+   upstream's version. Drift had caused one test failure (bug 7).
 4. **Look at the Qt part of the boot** (see
    [05](05-build-and-history.md#boot-time)). It now dominates, and a Guile
    build pays it too.

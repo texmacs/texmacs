@@ -6,11 +6,20 @@
    prelude in the rootlet and registers the blackbox type and the glue
    (see [01](01-cpp-binding.md)).
 2. **Init file.** `tm_server_rep::tm_server_rep` loads
-   `$TEXMACS_PATH/progs/init-texmacs-s7.scm` into `user_env`
+   `$TEXMACS_PATH/progs/init-texmacs.scm` into `user_env`
    (`src/Texmacs/Server/tm_server.cpp:138`). The Guile file
    `init-texmacs.scm` is still in the tree, is not used, and has to be kept in
    sync with the s7 file by hand.
-3. **Rebindings.** The top of `init-texmacs-s7.scm` installs these:
+3. **Interpreter-specific start.** `init-texmacs.scm` is the same file for
+   both interpreters. Its first action is to load, according to
+   `(scheme-dialect)`, either `init-s7.scm` or `init-guile.scm`. Each of them
+   sets up its interpreter, loads its module system (`boot-s7.scm` or
+   `boot.scm`) and its kernel compatibility module (`compat-s7` or
+   `compat`). The rest of `init-texmacs.scm` is common to both. On s7,
+   `init-s7.scm` is loaded with `(load file (curlet))`, since s7's `load`
+   evaluates in the rootlet by default.
+
+   `init-s7.scm` installs these rebindings:
    - **`quote` is read as the symbol `quote`.** `start_scheme` in
      `s7_tm.cpp` sets `(*s7* 'symbol-quote?)` to `#t`. Otherwise s7 11 reads
      `'x` as `(#_quote x)`, and TeXmacs code that inspects quoted forms, such
@@ -42,8 +51,8 @@
    `(kernel boot compat-s7)` ([03](03-compat-layer.md)). Right after the
    kernel, `(renumber-user-module!)` is called, once (see
    [Lookup caching](#lookup-caching)).
-5. **The rest of the init file** mirrors `init-texmacs.scm` (`lazy-define`,
-   `lazy-menu`, `lazy-keyboard`, …) with these differences:
+5. **The rest of the init file** is common to both interpreters
+   (`lazy-define`, `lazy-menu`, `lazy-keyboard`, …). On s7:
    - `developer-mode?` is hard-coded to `#f`. The Guile version reads the
      `developer tool` preference.
    - The Guile reader hook that records source locations of definitions
@@ -131,7 +140,7 @@ unnoticed (see [06](06-open-issues.md)).
   is evaluated, not when it is expanded. The old version resolved, and so
   loaded, the modules at expansion time. With read-time macros on s7 11, a
   `load` during an expansion silently ended the load of the file being read,
-  and the rest of `init-texmacs-s7.scm` just vanished.
+  and the rest of the init file just vanished.
 - **`import-from`.** An alias for `use-modules`.
 
 ### Consequences
@@ -151,7 +160,7 @@ unnoticed (see [06](06-open-issues.md)).
   level, not just what it declared with `:use`. Missing `:use` clauses are
   therefore not detected.
 - **The top-level environment is very large.** Modules loaded from
-  `init-texmacs-s7.scm` add their exports to `*texmacs-user-module*` itself.
+  `init-texmacs.scm` add their exports to `*texmacs-user-module*` itself.
   It ends up holding about a thousand slots in one linked list, and s7 looks
   symbols up in a non-global `let` by linear search when its per-symbol cache
   misses. This is the reason for the local `lookup_from` patch in s7 (see
@@ -179,7 +188,7 @@ For modules, lookups of kernel symbols are fast when two things hold:
 The s7 kernel keeps this invariant with three rules:
 
 - **`renumber-user-module!`** (`boot-s7.scm`) enters the user module once,
-  right after the kernel is imported (`init-texmacs-s7.scm`), which caches
+  right after the kernel is imported (`init-texmacs.scm`), which caches
   the kernel symbols there.
 - **Nothing enters the user module afterwards.** A later `with-let` on it
   would make it newer than every module loaded so far, and each lookup of a

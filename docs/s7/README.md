@@ -9,7 +9,7 @@ standalone (see [06-open-issues.md](06-open-issues.md)).
 | File | Contents |
 |---|---|
 | [01-cpp-binding.md](01-cpp-binding.md) | C++ side: `tmscm` abstraction, `s7_tm.cpp`, blackboxes, GC protection, glue generation |
-| [02-boot-and-modules.md](02-boot-and-modules.md) | Boot sequence, `init-texmacs-s7.scm`, the environment-based module system in `boot-s7.scm`, `tm-define` |
+| [02-boot-and-modules.md](02-boot-and-modules.md) | Boot sequence (`init-texmacs.scm` with `init-s7.scm`), the environment-based module system in `boot-s7.scm`, `tm-define` |
 | [03-compat-layer.md](03-compat-layer.md) | `compat-s7.scm` and the Guile/s7 semantic differences it papers over |
 | [04-progs-changes.md](04-progs-changes.md) | Changes to shared Scheme modules under `TeXmacs/progs` |
 | [05-build-and-history.md](05-build-and-history.md) | How s7 is built and selected, the local s7 patch, the commit timeline |
@@ -37,7 +37,7 @@ standalone (see [06-open-issues.md](06-open-issues.md)).
   directly into `(rootlet)`.
 - **Guile builtins are supplied by `compat-s7.scm`.** It defines `1+`, `noop`,
   `delq`, `acons`, `assoc-ref`, `string-index`, `iota`, `while`, records, R7RS
-  `delay`/`force`, `hash`, curried `define`, and more. `init-texmacs-s7.scm` also
+  `delay`/`force`, `hash`, curried `define`, and more. `init-s7.scm` also
   rebinds `symbol?` (keywords are excluded) and `load`/`eval`/`catch` (so
   they use the TeXmacs environment and Guile's handler signature).
 - **One Scheme kernel serves both interpreters.** Shared files test

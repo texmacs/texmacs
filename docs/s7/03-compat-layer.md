@@ -32,7 +32,7 @@ vendored s7: first 10.0 (11-Jan-2022), and again after the update to 11.9
 (21-Sep-2026).
 
 - **Keywords.** In s7, `:foo` is a symbol (and self-evaluating).
-  `init-texmacs-s7.scm` rebinds `symbol?` to reject keywords.
+  `init-s7.scm` rebinds `symbol?` to reject keywords.
 - **Macros.** TeXmacs uses s7's native run-time `define-macro` (see §2.1).
   Guile's `(define-macro name (lambda args …))` form is not accepted, which
   is why `graphics-utils.scm` was rewritten.
@@ -98,6 +98,6 @@ vendored s7: first 10.0 (11-Jan-2022), and again after the update to 11.9
   `tmhtml.scm` now rounds percentages explicitly before printing.
 - **Error handlers.** s7 calls a `catch` handler as `(type info)`, where
   `info` is usually `(format-string . args)`. The `catch` wrapper in
-  `init-texmacs-s7.scm` converts this to Guile's shape, `(key subr msg args)`.
+  `init-s7.scm` converts this to Guile's shape, `(key subr msg args)`.
 - **Evaluation environment.** A bare `eval` uses the current `curlet`, and
   `load` uses the rootlet. Both are wrapped (§2.1).
