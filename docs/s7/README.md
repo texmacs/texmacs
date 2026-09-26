@@ -1,94 +1,59 @@
-# TeXmacs on s7: findings on the `wip_s7` branch
+# TeXmacs on s7
 
-These notes describe how this branch replaces Guile with the
-[s7](https://ccrma.stanford.edu/software/snd/snd/s7.html) Scheme interpreter.
-They are based on reading the tree, `git diff master...HEAD` and the history.
-The key semantic claims were checked against the vendored s7 by building it
-standalone (see [06-open-issues.md](06-open-issues.md)).
+The `wip_s7` branch lets TeXmacs run its Scheme code on
+[s7](https://ccrma.stanford.edu/software/snd/snd/s7.html) instead of
+Guile. These notes describe how it works, what differs from Guile, how it
+performs, and what is left before it can be merged.
 
 | File | Contents |
 |---|---|
-| [01-cpp-binding.md](01-cpp-binding.md) | C++ side: `tmscm` abstraction, `s7_tm.cpp`, blackboxes, GC protection, glue generation |
-| [02-boot-and-modules.md](02-boot-and-modules.md) | Boot sequence (`init-s7.scm` around the common `init-kernel.scm` and `init-texmacs.scm`), the environment-based module system in `boot-s7.scm`, `tm-define` |
-| [03-compat-layer.md](03-compat-layer.md) | `compat-s7.scm` and the Guile/s7 semantic differences it papers over |
-| [04-progs-changes.md](04-progs-changes.md) | Changes to shared Scheme modules under `TeXmacs/progs` |
-| [05-build-and-history.md](05-build-and-history.md) | How s7 is built and selected, the vendored s7 (unmodified), the former lookup patch, the commit timeline |
-| [06-open-issues.md](06-open-issues.md) | Verified bugs, fragile spots, leftover Guile-isms, suggested next steps |
-| [07-benchmark.md](07-benchmark.md) | s7 versus Guile 1.8.7 on boot, regression suites and document conversions |
+| [01-cpp-binding.md](01-cpp-binding.md) | The C++ side: the `tmscm` layer on s7, blackboxes, GC protection, glue, the cost of crossing the boundary |
+| [02-boot-and-modules.md](02-boot-and-modules.md) | The boot sequence, the module system built on s7 environments, how lookups stay fast, `tm-define` |
+| [03-compat-layer.md](03-compat-layer.md) | `compat-s7.scm` and the Guile/s7 differences it covers |
+| [04-progs-changes.md](04-progs-changes.md) | The Scheme code shared by both interpreters, the s7-motivated edits and fixes, the tests |
+| [05-build-and-vendored-s7.md](05-build-and-vendored-s7.md) | Choosing the interpreter at build time, glue regeneration, the vendored s7, the branch and how to rebase it |
+| [06-open-issues.md](06-open-issues.md) | Open bugs, fragile spots, Guile leftovers, what to do before merging |
+| [07-performance.md](07-performance.md) | s7 versus Guile 1.8.7 on boot, tests, conversions, LaTeX export and the manual; where the time goes |
+| [bench/](bench) | The benchmark scripts |
 
 ## Summary
 
-- **The interpreter is a build option, and s7 is the default.** Use
-  `./configure --with-scheme=s7|guile` or CMake `-DSCHEME_IMPL=s7|guile…`.
-  - The option sets `USE_S7` or `USE_GUILE` and the backend directory.
-  - An s7 build needs no Guile: nothing to install or link, and glue
-    regeneration uses a small `s7-run`.
-  - A Guile build (checked with Guile 1.8.7) builds, boots and passes the
-    regression tests, except the two suites that test s7 specifically.
-  - See [05-build-and-history.md](05-build-and-history.md).
+- **The interpreter is a build option, and s7 is the default.** Choose it
+  with `./configure --with-scheme=s7|guile` or CMake `-DSCHEME_IMPL=…`.
+  - An s7 build needs no Guile: nothing to install or link, and even the
+    glue is regenerated with s7.
+  - Both interpreters build, boot and pass the tests (on macOS; see
+    [06](06-open-issues.md) for the other platforms).
+- **s7 11.9 is vendored unmodified.**
 - **The C++ ↔ Scheme boundary barely changed.** TeXmacs already talked to
-  Scheme through the `tmscm_*` layer. `s7_tm.hpp/.cpp` (about 600 lines)
-  re-implements that layer on the s7 C API. The generated glue
-  (`glue_*.cpp`) and `object.cpp` work with either interpreter.
-- **The module system is emulated with s7 first-class environments (`let`s).**
-  `boot-s7.scm` provides `texmacs-module`, `use-modules`, `inherit-modules`,
-  `define-public`, `export` and `with-module` on top of `inlet`, `sublet`,
-  `varlet` and a `*modules*` hash table. `tm-define` puts its definitions
-  directly into `(rootlet)`.
-- **Guile builtins are supplied by `compat-s7.scm`.** It defines `1+`, `noop`,
-  `delq`, `acons`, `assoc-ref`, `string-index`, `iota`, `while`, records, R7RS
-  `delay`/`force`, `hash`, curried `define`, and more. `init-s7.scm` also
-  rebinds `symbol?` (keywords are excluded) and `load`/`eval`/`catch` (so
-  they use the TeXmacs environment and Guile's handler signature).
-- **One Scheme kernel serves both interpreters.** Shared files test
-  `(s7-scheme?)`:
-  - at expansion time in the definition macros (`tm-define`,
-    `texmacs-modes`, …);
-  - or at load time around the few dialect-specific definitions.
-
-  Each interpreter runs the code it ran before. See
-  [04-progs-changes.md](04-progs-changes.md).
-- **s7 is vendored unmodified (11.9) since 2026-09-26.**
-  - **Before:** TeXmacs patched s7's symbol lookup, first with an unsound
-    move-to-front patch, then with an id check. `use-modules` copied every
-    export into one huge user environment of about a thousand bindings, and
-    lookups kept scanning it.
-  - **Now:** public definitions are published in the rootlet. The user
-    environment holds about 240 bindings, and stock s7 is as fast as the
-    patched one. Boot, the tests and the LaTeX export are all a little
-    faster than before, and peak memory on large exports is 30% lower.
-  - See [02](02-boot-and-modules.md#lookup-caching) and
-    [05](05-build-and-history.md#s7-version-and-local-patch).
-- **The port is mostly 2021–2022 work.** It was mainly done by M. Gubinelli
-  and imported by Darcy Shen (沈达). The branch was rebased onto 2025 upstream
-  in July 2025. Of the 618 commits in `master..HEAD`, only about 34 are
-  unique (`git cherry`).
-- **The branch is now based on `svn_sync_20260921`.** The port was squashed
-  into one commit, followed by fix and docs commits. The original history is
-  on `wip_s7_pre_rebase_20260924`. See
-  [05-build-and-history.md](05-build-and-history.md).
-- **Bugs fixed, and tested on a clean rebuild:**
-  - `ahash-size`;
-  - `property` with procedure arguments;
-  - the `catch` adapter;
-  - `prog-format`, which failed because the init file had drifted;
-  - three Guile dependencies in new upstream code: uint glue, SRFI-14
-    char-sets and `*random-state*`.
-
-  All regression and integration suites pass.
-- **s7 is faster than Guile 1.8.7 on every workload measured:**
-  - boot takes 0.63 s instead of about 1.6 s;
+  Scheme through its `tmscm_*` layer. `s7_tm.hpp/.cpp` implements that
+  layer on the s7 C API, and the generated glue works with either
+  interpreter.
+- **Modules are s7 environments.** `boot-s7.scm` implements `texmacs-module`,
+  `use-modules`, `define-public` and the rest on top of s7's first-class
+  environments.
+  - Public definitions and `tm-define`s live in the rootlet, where every
+    module finds them.
+  - A few rules keep s7's lookups fast (see
+    [02](02-boot-and-modules.md#lookup-caching)).
+- **Guile builtins come from `compat-s7.scm`,** plus a few rebindings in
+  `init-s7.scm` (`symbol?`, `load`, `eval`, `catch`).
+- **One Scheme code base serves both interpreters.**
+  - The C++ backend loads its own init file: `init-s7.scm` or
+    `init-guile.scm`.
+  - That file loads the shared `init-kernel.scm` and `init-texmacs.scm`.
+  - Shared code that has to differ tests `(s7-scheme?)`, so each
+    interpreter runs the code it ran before.
+- **s7 is faster than Guile 1.8.7 on everything measured:**
+  - boot takes about 0.6 s instead of 1.6 s;
   - the regression suites run 1.4× faster;
-  - warm document conversions are at parity or faster.
+  - repeated LaTeX export is 2.9× faster;
+  - regenerating the manual is 1.25× faster;
+  - s7 peaks at 20–40% more memory.
 
-  Repeated LaTeX export used to be 20–25% slower on s7. `tm-define-macro`
-  renumbered the user module, which made every kernel lookup from older
-  modules scan their whole environment. Since this was fixed, it is about
-  35% faster than on Guile.
-- **Most of the LaTeX export time was one repeated logic-engine query.**
-  `latex-needs?` was asked about 5 000 times per export for about 70
-  distinct keys. It is now cached until logic rules are added, and s7
-  exports about 2.7× faster than Guile. See [07-benchmark.md](07-benchmark.md).
-- **Open upstream s7 bug.** An s7 optimizer bug can mis-apply closures
-  called from loops. It is still present in s7 11.9 and is worked around in
-  `compat-s7.scm`. See [06-open-issues.md](06-open-issues.md).
+  See [07](07-performance.md).
+- **Before merging** (see [06](06-open-issues.md#64-before-merging-upstream)):
+  - build and test on Linux and Windows;
+  - try plugins and user code written for Guile;
+  - split the branch into a reviewable series;
+  - report two s7 bugs upstream (both are worked around).
