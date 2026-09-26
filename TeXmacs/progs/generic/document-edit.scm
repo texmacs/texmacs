@@ -122,7 +122,9 @@
          (init-font "roman" "roman"))
         ((and (== val "roman") (!= opts (list "roman")))
          (init-font "roman" "roman"))
-        ((string-starts? val "Stix")
+        ;; the master of the old STIX, not of Stix Two Text, which has a
+        ;; profile of its own and its own math font
+        ((== val "Stix")
          (init-font "stix" "math-stix"))
         ((string-starts? val "TeX Gyre Bonum")
          (init-font "bonum" "math-bonum"))
