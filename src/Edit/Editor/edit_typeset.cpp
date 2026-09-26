@@ -35,7 +35,8 @@ edit_typeset_rep::edit_typeset_rep ():
   editor_rep (), // NOTE: ignored by the compiler, but suppresses warning
   the_style (TUPLE),
   cur (hashmap<string,tree> (UNINIT)),
-  stydef (UNINIT), pre (UNINIT), init (UNINIT), fin (UNINIT), grefs (UNINIT),
+  stydef (UNINIT), pre (UNINIT), pre_version (0), prep_version (-1),
+  prep_env (UNINIT), init (UNINIT), fin (UNINIT), grefs (UNINIT),
   env (drd, buf->buf->master,
        buf->data->ref, (buf->prj==NULL? grefs: buf->prj->data->ref),
        buf->data->aux, (buf->prj==NULL? buf->data->aux: buf->prj->data->aux),
@@ -298,6 +299,7 @@ edit_typeset_rep::typeset_preamble () {
   env->patch_env (init);
   env->update ();
   env->read_env (pre);
+  pre_version++;
   drd->heuristic_init (pre);
 }
 
@@ -305,8 +307,23 @@ void
 edit_typeset_rep::typeset_prepare () {
   env->base_file_name= buf->buf->master;
   env->read_only= buf->buf->read_only;
-  env->write_default_env ();
-  env->patch_env (pre);
+  // pre is the complete environment after the style and the initial
+  // settings, so patching the default environment with it rewrites thousands
+  // of variables; this happens at every typesetting pass and every get-env.
+  // Keep the patched environment and only redo the updates of the variables
+  // whose assignment has side effects on the edit_env state.
+  if (prep_version != pre_version) {
+    env->write_default_env ();
+    env->patch_env (pre);
+    env->read_env (prep_env);
+    prep_active= array<string> ();
+    env->active_vars (pre, prep_active);
+    prep_version= pre_version;
+  }
+  else {
+    env->write_env (prep_env);
+    for (int i=0; i<N(prep_active); i++) env->update (prep_active[i]);
+  }
   env->style_init_env ();
   env->update ();
 }
@@ -960,6 +977,7 @@ edit_typeset_rep::init_default (string var) {
   init->reset (var);
   if (stydef->contains (var)) pre(var)= stydef[var];
   else pre->reset (var);
+  pre_version++;
   notify_change (THE_ENVIRONMENT);
 }
 

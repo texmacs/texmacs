@@ -23,6 +23,10 @@ protected:
   hashmap<path,hashmap<string,tree> > cur; // environment at different paths
   hashmap<string,tree> stydef;            // environment after styles
   hashmap<string,tree> pre;               // environment after styles and init
+  int                  pre_version;       // incremented whenever pre changes
+  int                  prep_version;      // pre_version of prep_env
+  hashmap<string,tree> prep_env;          // default env patched with pre
+  array<string>        prep_active;       // active variables of pre
   hashmap<string,tree> init;              // environment changes w.r.t. style
   hashmap<string,tree> fin;               // environment changes w.r.t. doc
   hashmap<string,tree> grefs;             // global references
