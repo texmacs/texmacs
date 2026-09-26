@@ -45,6 +45,14 @@ public:
   stack_border         sb;       // border properties of l
   link_repository      link_env; // loci and links declared inside bridge
 
+  // Cache of the single stack item into which l is merged outside paper
+  // mode; rebuilding it for every paragraph at every typesetting pass made
+  // the cost of a keystroke linear in the size of the document.
+  array<page_item>     stack_cache;
+  path                 stack_cache_ip;
+  bool                 stack_cache_ok;
+  int                  version;  // incremented whenever l is recomputed
+
 public:
   bridge_rep (typesetter ttt, tree st, path ip);
   inline virtual ~bridge_rep () {}
