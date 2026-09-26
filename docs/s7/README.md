@@ -45,7 +45,9 @@ performs, and what is left before it can be merged.
   - Shared code that has to differ tests `(s7-scheme?)`, so each
     interpreter runs the code it ran before.
 - **s7 is faster than Guile 1.8.7 on everything measured:**
-  - boot takes about 0.6 s instead of 1.6 s;
+  - the first window is ready after about 0.7 s instead of 1.9 s, and
+    startup, including the work deferred to idle moments, ends after about
+    1.4 s instead of 3.7 s;
   - the regression suites run 1.4× faster;
   - repeated LaTeX export is 2.9× faster;
   - regenerating the manual is 1.25× faster;

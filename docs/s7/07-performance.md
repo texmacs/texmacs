@@ -20,7 +20,8 @@
 
 | Workload | s7 | Guile | Guile / s7 |
 |---|---:|---:|---:|
-| Boot (launch → quit) | 0.59–0.71 s | 1.55–1.64 s | 2.6× |
+| Boot: window ready (§7.3) | about 0.7 s | about 1.9 s | 2.7× |
+| Boot: fully started, with deferred work (§7.3) | 1.35–1.69 s | 3.72–3.99 s | 2.6× |
 | 15 portable regression suites | 190–208 ms | 277–282 ms (one run at 372) | 1.4× |
 | 8 warm LaTeX exports of the change log | 2.81–2.98 s | 7.80–8.80 s | 2.9× |
 | Regenerating the manual (124 pages) | 4.55–4.59 s | 5.61–5.87 s | 1.25× |
@@ -73,17 +74,62 @@ faster. Peak memory was 966 MB on s7 and 817 MB on Guile.
 <a id="boot"></a>
 ## 7.3 Boot
 
-A sample of an s7 boot (about 0.66 s) shows:
+Starting TeXmacs has two parts:
+- **Up to the first idle moment:** the Scheme init files run, the first
+  window is created, and the empty document is typeset and painted.
+- **After it:** deferred work runs in the background, at idle moments. This
+  includes lazy keyboard modules, plugin initialization and the updater.
 
-- **Loading the Scheme init files: about 45 ms.**
-- **Opening the first window (`open_window`): about 82%.** Within it:
-  - about 30% goes to building a `QDockWidget`, because Qt's Fusion style
-    loads its standard icons (`QIcon::addFile`);
-  - about 25% goes to the Qt font database, including the family aliases
-    for the missing "Sans Serif" family that Qt warns about;
-  - the rest is menus and toolbars (Scheme), and the first buffer.
+Quitting from a `-x` command stops at the first part, so three measures
+were taken:
+- **quit at once:** `-x '(quit-TeXmacs)'`;
+- **window ready:** `-x '(delayed (:idle 100) (quit-TeXmacs))'`, minus the
+  100 ms;
+- **fully started:** `-x '(delayed (:idle 3000) (quit-TeXmacs))'`, minus the
+  3 s, which includes the deferred work.
 
-So boot is now mostly Qt, and a Guile build pays the same Qt costs.
+All three used a copy of a real `~/.TeXmacs` (preferences, font caches, a
+user plugin). Three runs each, in wall time:
+
+| | s7 | Guile |
+|---|---:|---:|
+| quit at once | 0.67–0.68 s | 1.78 s |
+| window ready | about 0.7 s | about 1.96 s |
+| fully started | 1.35–1.69 s | 3.72–3.99 s |
+| fully started, CPU time | 1.40–1.99 s | 3.82–4.12 s |
+
+Other things checked:
+- **The first launch after copying the home directory** was slower
+  (1.95 s on s7), as TeXmacs refreshed its caches.
+- **The real macOS platform gives the same times as offscreen:** 0.53–0.57 s
+  for quit at once and 0.77–0.86 s for window ready on s7, against 1.46–1.54
+  and 1.81–1.88 s on Guile.
+- **An almost empty scratch home is slower to settle** (2.1 s on s7, 4.4 s
+  on Guile), because some first-start work is redone.
+
+**Before the event loop,** TeXmacs's own timers (`texmacs.bin -debug-bench`)
+give:
+- Scheme initialization: 56–59 ms on s7 against 324 ms on Guile;
+- plugins: 18 ms;
+- the rest of the TeXmacs initialization: 50 ms.
+
+A sample of the part up to the window shows:
+- about 30% building a `QDockWidget`, because Qt's Fusion style loads its
+  standard icons;
+- about 25% in the Qt font database, including the family aliases for the
+  missing "Sans Serif" family that Qt warns about;
+- the rest in menus and toolbars (Scheme) and the first buffer.
+
+**The deferred work is dominated by plugin detection.** Each plugin's
+init file checks whether its program is installed with
+`url-exists-in-path?`. `resolve_in_path` then runs `which <program>` in a
+shell and waits for it, whenever `use_which` is set. It is set at startup
+by running `which texmacs`, which always succeeds, since TeXmacs puts its
+own `bin` directory on the `PATH`.
+- With 39 plugins that check, this takes about 0.6 s of the s7 startup.
+- It is upstream behavior, so Guile pays the same.
+- `resolve_in_path` already has a direct search of `$PATH`, which doesn't
+  spawn anything.
 
 ## 7.4 Where the LaTeX export spends its time
 
@@ -189,7 +235,9 @@ output files to `$TEXMACS_HOME_PATH/system/tmp/s7-bench`.
 | `conversions.scm` | loading, converting and exporting four documents (`BENCH …`) |
 | `marshal.scm` | the cost of crossing the C++/Scheme boundary (`MARSHAL …`) |
 
-Measure boot with `time texmacs.bin -x '(quit-TeXmacs)'`.
+Measure boot with `time texmacs.bin -x …`, quitting from
+`(delayed (:idle N) (quit-TeXmacs))` and subtracting `N` ms (§7.3). A plain
+`(quit-TeXmacs)` stops before the deferred work.
 
 - **Use a scratch home directory** (`TEXMACS_HOME_PATH`), and
   `QT_QPA_PLATFORM=offscreen` to run without a display.

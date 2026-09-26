@@ -116,8 +116,13 @@
 
    Upstream should regenerate `configure` itself.
 4. **Report the two s7 bugs above upstream.**
-5. **Look at the Qt part of the boot.** It dominates boot time on both
-   interpreters (see [07](07-performance.md#boot)).
+5. **Look at the rest of startup, on both interpreters** (see
+   [07](07-performance.md#boot)):
+   - **Plugin detection** spawns a shell (`which`) for each plugin, about
+     0.6 s in all. Searching `$PATH` directly, as `resolve_in_path` can
+     already do, or caching the answers, would avoid it.
+   - **Qt's dock widget and font database** take about half of the time to
+     the first window.
 6. **Optional:**
    - a direct tree ↔ s7 conversion for `tree->stree` and `stree->tree`
      (§1.7);
