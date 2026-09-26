@@ -174,7 +174,7 @@ public:
   virtual void notify_change (int env_set, int env_unset = 0) = 0;
   virtual bool has_changed (int question) = 0;
   virtual int  idle_time (int event_type= ANY_EVENT) = 0;
-  virtual int  change_time () = 0;
+  virtual time_t change_time () = 0;
   virtual void full_screen_mode (bool flag) = 0;
   virtual void before_menu_action () = 0;
   virtual void after_menu_action () = 0;

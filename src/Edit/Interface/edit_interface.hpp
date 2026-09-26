@@ -135,7 +135,7 @@ public:
   void notify_change (int env_set, int env_unset = 0);
   bool has_changed (int question);
   int  idle_time (int event_type= ANY_EVENT);
-  int  change_time ();
+  time_t change_time ();
   void update_menus ();
   int  find_alt_selection_index (range_set alt_sel, SI y, int b, int e);
   void apply_changes ();
