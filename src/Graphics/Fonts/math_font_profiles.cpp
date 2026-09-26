@@ -77,10 +77,18 @@ math_font_profile_attr (string family, string key) {
   return "";
 }
 
+// A profile names its text companion by the master, the way the font
+// environment variable names a font, but a document may well name one of
+// the families of that master: the document font of kpfonts is KpRoman as
+// often as Kepler, and Fira Sans as often as Fira. Both are the same design
+// and want the same mathematics.
 string
 math_family_for_text (string text_family) {
   if (text_to_math ()->contains (text_family))
     return text_to_math () [text_family];
+  string master= font_database_master (text_family);
+  if (master == "" || master == text_family) return "";
+  if (text_to_math ()->contains (master)) return text_to_math () [master];
   return "";
 }
 

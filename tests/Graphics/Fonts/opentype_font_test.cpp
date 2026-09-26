@@ -850,6 +850,28 @@ test_magnified_assembly () {
   }
 }
 
+// A document names the family it wants, and a profile names the master of
+// its text companion: a family of that master must find the same math font,
+// or the mathematics of KpRoman, Fira Sans or Libertinus Serif is emulated
+// from the text face instead of coming from KpMath, Fira Math or
+// Libertinus Math.
+static void
+test_math_family_for_text () {
+  if (get_env ("TM_TEST_FONT_DIR") == "") SKIP ("no TM_TEST_FONT_DIR");
+  // profiles are defined in Scheme at boot; here we set one by hand
+  tree p (TUPLE);
+  p << tuple ("file", "KpMath-Regular") << tuple ("text", "Kepler")
+    << tuple ("letters", "math") << tuple ("menu", "Kp Fonts");
+  math_font_profile_set ("KpMath", p);
+  CHECK_EQ (math_family_for_text ("Kepler"), string ("KpMath"));
+  // KpRoman and KpSans belong to the master Kepler
+  CHECK_EQ (math_family_for_text ("KpRoman"), string ("KpMath"));
+  CHECK_EQ (math_family_for_text ("KpSans"), string ("KpMath"));
+  // a family which belongs to no master with a profile keeps its answer
+  CHECK_EQ (math_family_for_text ("Zorglub Nonesuch"), string (""));
+  CHECK_EQ (math_family_for_text ("KpMath"), string (""));
+}
+
 int
 main () {
   test_setup ();
@@ -870,6 +892,7 @@ main () {
   RUN (test_wide_variants);
   RUN (test_feature_variants);
   RUN (test_profiles);
+  RUN (test_math_family_for_text);
   RUN (test_feature_font);
   RUN (test_gpos_kerning);
   RUN (test_text_font_features);
