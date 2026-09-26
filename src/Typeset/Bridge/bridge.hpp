@@ -32,6 +32,7 @@
 #define MACRO_REMOVE      2
 
 class bridge;
+struct chunk_cache_rep;
 class bridge_rep: public abstract_struct {
 public:
   typesetter           ttt;      // the underlying typesetter
@@ -52,10 +53,11 @@ public:
   path                 stack_cache_ip;
   bool                 stack_cache_ok;
   int                  version;  // incremented whenever l is recomputed
+  chunk_cache_rep*     chunk_cache; // see chunk_lines in bridge.cpp
 
 public:
   bridge_rep (typesetter ttt, tree st, path ip);
-  inline virtual ~bridge_rep () {}
+  virtual ~bridge_rep ();
 
   virtual void notify_assign (path p, tree u) = 0;
   virtual void notify_insert (path p, tree u);
