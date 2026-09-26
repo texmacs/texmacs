@@ -158,6 +158,7 @@ typesetter_rep::typeset () {
   }
 
   // Typeset
+  shove_cache_new_pass ();
   if (env->complete) {
     env->local_aux= hashmap<string,tree> (UNINIT);
     env->missing  = hashmap<string,tree> (UNINIT);
