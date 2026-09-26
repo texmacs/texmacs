@@ -5,20 +5,24 @@
 1. **C++ prelude.** `start_scheme` → `initialize_scheme` evaluates a small
    prelude in the rootlet and registers the blackbox type and the glue
    (see [01](01-cpp-binding.md)).
-2. **Init file.** `tm_server_rep::tm_server_rep` loads
-   `$TEXMACS_PATH/progs/init-texmacs.scm` into `user_env`
-   (`src/Texmacs/Server/tm_server.cpp:138`). The Guile file
-   `init-texmacs.scm` is still in the tree, is not used, and has to be kept in
-   sync with the s7 file by hand.
-3. **Interpreter-specific start.** `init-texmacs.scm` is the same file for
-   both interpreters. Its first action is to load, according to
-   `(scheme-dialect)`, either `init-s7.scm` or `init-guile.scm`. Each of them
-   sets up its interpreter, loads its module system (`boot-s7.scm` or
-   `boot.scm`) and its kernel compatibility module (`compat-s7` or
-   `compat`). The rest of `init-texmacs.scm` is common to both. On s7,
-   `init-s7.scm` is loaded with `(load file (curlet))`, since s7's `load`
-   evaluates in the rootlet by default.
+2. **Init file.** `tm_server_rep::tm_server_rep` loads the initialization
+   file of the Scheme backend, `scheme_init_file ()`, into `user_env`
+   (`src/Texmacs/Server/tm_server.cpp`). It is `progs/init-s7.scm` on s7
+   (`s7_tm.cpp`) and `progs/init-guile.scm` on Guile (`guile_tm.cpp`).
+3. **The dialect file wraps the common ones.** Each dialect file is a plain
+   sequence, with no test on the interpreter:
+   1. set up the interpreter;
+   2. load its module system (`boot-s7.scm` or `boot.scm`);
+   3. load its kernel compatibility module (`compat-s7` or `compat`);
+   4. load the common `init-kernel.scm`, which imports the kernel;
+   5. run its own steps between the two common files, which on s7 is
+      `(renumber-user-module!)`;
+   6. load the common `init-texmacs.scm`, the rest of the initialization.
 
+   Code specific to one interpreter therefore goes into its file, before,
+   between or after the common ones.
+
+   `init-s7.scm` installs these rebindings:
    `init-s7.scm` installs these rebindings:
    - **`quote` is read as the symbol `quote`.** `start_scheme` in
      `s7_tm.cpp` sets `(*s7* 'symbol-quote?)` to `#t`. Otherwise s7 11 reads
@@ -46,10 +50,10 @@
      `(key subr message args)`. `subr` is always `"[not-implemented]"`; the
      other values are taken from s7's `(type info)`. See
      [06](06-open-issues.md) for the case where this wrapper fails.
-4. **Module system.** `kernel/boot/boot-s7.scm` is loaded (see §2.2), then the
-   kernel modules are brought in with `inherit-modules`, starting with
-   `(kernel boot compat-s7)` ([03](03-compat-layer.md)). Right after the
-   kernel, `(renumber-user-module!)` is called, once (see
+4. **Module system.** `kernel/boot/boot-s7.scm` is loaded (see §2.2), then
+   `(kernel boot compat-s7)` ([03](03-compat-layer.md)), then the kernel
+   modules with `inherit-modules` (`init-kernel.scm`). Right after the kernel,
+   `(renumber-user-module!)` is called, once (see
    [Lookup caching](#lookup-caching)).
 5. **The rest of the init file** is common to both interpreters
    (`lazy-define`, `lazy-menu`, `lazy-keyboard`, …). On s7:
@@ -188,7 +192,7 @@ For modules, lookups of kernel symbols are fast when two things hold:
 The s7 kernel keeps this invariant with three rules:
 
 - **`renumber-user-module!`** (`boot-s7.scm`) enters the user module once,
-  right after the kernel is imported (`init-texmacs.scm`), which caches
+  right after the kernel is imported (`init-s7.scm`), which caches
   the kernel symbols there.
 - **Nothing enters the user module afterwards.** A later `with-let` on it
   would make it newer than every module loaded so far, and each lookup of a

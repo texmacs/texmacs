@@ -312,11 +312,13 @@ Results after the rebase, on the clean rebuild:
    future upstream syncs, should be checked with both builds, in particular
    for s7 reader syntax in shared files.
 3. **Done on 2026-09-26: the two init files share one body.**
-   `init-texmacs.scm` is used by both interpreters. It first loads
-   `init-s7.scm` or `init-guile.scm`, which hold everything specific to one
-   interpreter up to the kernel's compatibility module, and then runs the
-   common flow. `init-texmacs-s7.scm` is gone, and `tm_server.cpp` is back to
-   upstream's version. Drift had caused one test failure (bug 7).
+   - The C++ backend loads its own `init-s7.scm` or `init-guile.scm` (from
+     `scheme_init_file ()`).
+   - That file sets up its interpreter, then loads the common
+     `init-kernel.scm` and `init-texmacs.scm`, with its own steps in
+     between.
+   - `init-texmacs-s7.scm` is gone. Drift between the two copies had caused
+     one test failure (bug 7).
 4. **Look at the Qt part of the boot** (see
    [05](05-build-and-history.md#boot-time)). It now dominates, and a Guile
    build pays it too.

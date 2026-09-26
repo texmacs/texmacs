@@ -124,7 +124,7 @@ Three changes to the s7 kernel:
      second of two consecutive LaTeX exports. The cause was not
      investigated.
 2. **`renumber-user-module!`** (in `boot-s7.scm`) is called exactly once, in
-   `init-texmacs.scm` (on s7 only), right after the kernel is imported. The kernel
+   `init-s7.scm`, right after the kernel is imported (`init-kernel.scm`). The kernel
    symbols are then cached in the user module, and every module loaded
    afterwards is newer, so lookups skip it.
    - Without this step the kernel symbols stay cached in their defining
