@@ -38,7 +38,8 @@ bridge nil_bridge;
 
 bridge_rep::bridge_rep (typesetter ttt2, tree st2, path ip2):
   ttt (ttt2), env (ttt->env), st (st2), ip (ip2),
-  status (CORRUPTED), changes (UNINIT), stack_cache_ok (false), version (0),
+  status (CORRUPTED), changes (UNINIT), removed (UNINIT),
+  stack_cache_ok (false), version (0),
   chunk_cache (NULL) {}
 
 static tree inactive_auto
@@ -140,6 +141,7 @@ void
 replace_bridge (bridge& br, tree st, path ip) {
   bridge new_br= make_bridge (br->ttt, st, ip);
   new_br->changes= br->changes;
+  new_br->removed= br->removed;
   br= new_br;
 }
 

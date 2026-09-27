@@ -41,6 +41,7 @@ public:
   path                 ip;       // source location of the paragraph
   int                  status;   // status among above values
   hashmap<string,tree> changes;  // changes in the environment
+  hashmap<string,tree> removed;  // changes of paragraphs removed just before
 
   array<page_item>     l;        // the typesetted lines of st
   stack_border         sb;       // border properties of l

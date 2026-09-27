@@ -208,6 +208,15 @@ edit_env_rep::local_update (hashmap<string,tree>& old_patch,
 }
 
 void
+edit_env_rep::removed_update (hashmap<string,tree>& old_patch,
+                              hashmap<string,tree> change)
+{
+  // paragraphs with the changes change were removed just before the current
+  // point: at the previous pass, the environment here was patched by them
+  old_patch->post_patch (change, env);
+}
+
+void
 edit_env_rep::local_end (hashmap<string,tree>& prev_back) {
   int i=0, n=back->n;
   for (; i<n; i++) {

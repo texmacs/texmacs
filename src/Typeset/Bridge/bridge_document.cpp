@@ -100,6 +100,16 @@ public:
   void my_typeset (int desired_status);
 };
 
+static void
+compose_changes (hashmap<string,tree>& h, hashmap<string,tree> later) {
+  // h followed by later
+  iterator<string> it= iterate (later);
+  while (it->busy ()) {
+    string var= it->next ();
+    h (var)= later [var];
+  }
+}
+
 bridge_document_rep::bridge_document_rep (typesetter ttt, tree st, path ip):
   bridge_rep (ttt, st, ip)
 {
@@ -191,16 +201,30 @@ bridge_document_rep::notify_remove (path p, int nr) {
       brs2[i]->ip->item -= nr;
     }
     bool change_flag= false;
-    for (i=pos; i<pos+nr; i++)
-      change_flag |= !brs[i]->changes->empty();
+    hashmap<string,tree> gone (UNINIT);
+    for (i=pos; i<pos+nr; i++) {
+      change_flag |= !brs[i]->changes->empty() || !brs[i]->removed->empty();
+      compose_changes (gone, brs[i]->removed);
+      compose_changes (gone, brs[i]->changes);
+    }
     brs= brs2;
     n -= nr;
     st = st (0, pos) * st (pos+nr, N(st));
     if (pos>0) brs[pos-1]->notify_change (); // touch in case of surroundings
     if (pos<n) brs[pos  ]->notify_change (); // touch in case of surroundings
-    if (change_flag) // touch brs[pos..n] for correct ``changes handling''
+    if (change_flag && !is_nil (acc))
+      // touch brs[pos..n] for correct ``changes handling''
       for (i=pos; i<n; i++)
 	brs[i]->notify_change ();
+    else if (change_flag && pos<n) {
+      // Instead of retypesetting all following paragraphs, tell the next
+      // one which changes of the environment it saw at the previous pass
+      // (see typeset_one): the usual comparison of the environments with
+      // the previous pass then retypesets the paragraphs which follow as
+      // long as the environment differs, and no further.
+      compose_changes (gone, brs[pos]->removed);
+      brs[pos]->removed= gone;
+    }
     if (!is_nil (acc)) acc->notify_remove (p, nr);
     // initialize_acc ();
   }
@@ -266,6 +290,10 @@ bridge_document_rep::typeset_one (int i, int n, int desired_status,
   int wanted= (i==n-1? desired_status & WANTED_MASK: WANTED_PARAGRAPH);
   ttt->a= (i==0  ? a: array<line_item> ());
   ttt->b= (i==n-1? b: array<line_item> ());
+  if (!brs[i]->removed->empty ()) {
+    env->removed_update (ttt->old_patch, brs[i]->removed);
+    brs[i]->removed= hashmap<string,tree> (UNINIT);
+  }
   brs[i]->typeset (PROCESSED+ wanted);
 }
 
@@ -277,7 +305,7 @@ bridge_document_rep::replay_tail (doc_run& run, int s, int e) {
   for (int k= s; k < e; k++) {
     bridge_rep* br= brs[k].operator-> ();
     if (run.brs[k-s].operator-> () != br || run.vers[k-s] != br->version ||
-        br->status != PROCESSED + WANTED_PARAGRAPH)
+        br->status != PROCESSED + WANTED_PARAGRAPH || !br->removed->empty ())
       return false;
   }
   int idx= last_line_item (ttt->l);
