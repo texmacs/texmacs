@@ -65,5 +65,6 @@ void merge_stack (array<page_item>& l, stack_border& sb,
 		  array<page_item> l2, stack_border sb2);
 
 void shove_cache_new_pass ();
+void shove_cache_end_pass ();
 
 #endif // defined STACKER_H

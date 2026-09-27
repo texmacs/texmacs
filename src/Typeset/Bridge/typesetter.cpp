@@ -166,6 +166,7 @@ typesetter_rep::typeset () {
     env->touched  = hashmap<string,bool> (false);
   }
   br->typeset (PROCESSED+ WANTED_PARAGRAPH);
+  shove_cache_end_pass ();
   pager ppp= tm_new<pager_rep> (br->ip, env, l);
   box rb= ppp->make_pages ();
   if (env->complete && paper) determine_page_references (rb);

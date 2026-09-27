@@ -402,6 +402,7 @@ chunk_lines (bridge_rep* br, array<page_item> l) {
     }
     i= j;
   }
+  cc->prev= hashmap<pointer,line_chunk> ();  // see stack_cache in typeset
   return out;
 }
 
@@ -441,6 +442,9 @@ bridge_rep::typeset (int desired_status) {
     ttt->local_end (l, sb);
     env->link_env= old_link_env;
     status= desired_status;
+    // release the old lines now: a phrase box logs the area to be repainted
+    // when it is destroyed, so a stale cache would leave it on the screen
+    stack_cache= array<page_item> ();
     stack_cache_ok= false;
     version++;
     // cout << "old_patch     = " << ttt->old_patch << LF;

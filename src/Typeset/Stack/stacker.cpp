@@ -224,7 +224,11 @@ shove (page_item& item1, page_item& item2,
 * immutable and shared between passes) and on a few border parameters, so
 * its result is remembered.  Two generations of entries are kept (current
 * and previous pass), which bounds the memory and keeps the referenced boxes
-* alive, so that identity comparisons remain meaningful.
+* alive, so that identity comparisons remain meaningful.  The previous
+* generation is dropped as soon as the paragraphs have been typeset: boxes
+* log the area to be repainted when they are destroyed, so keeping the
+* lines of the previous pass alive until the next one would leave removed
+* lines on the screen.
 ******************************************************************************/
 
 struct shove_entry {
@@ -240,6 +244,11 @@ void
 shove_cache_new_pass () {
   shove_prev= shove_cur;
   shove_cur = hashmap<pointer,shove_entry> ();
+}
+
+void
+shove_cache_end_pass () {
+  shove_prev= hashmap<pointer,shove_entry> ();
 }
 
 static void
