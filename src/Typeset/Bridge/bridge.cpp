@@ -309,6 +309,7 @@ extern tree the_et;
 
 #include <stdint.h>
 
+#define CHUNK_MIN 16
 #define CHUNK_MAX 256
 
 struct line_chunk {
@@ -332,9 +333,16 @@ chunkable (page_item& it) {
 
 static inline bool
 chunk_boundary (page_item& it) {
-  // content defined boundaries (about one every 64 lines)
-  uint64_t h= (uint64_t) (uintptr_t) it->b.operator-> ();
-  h= (h >> 4) * 0x9E3779B97F4A7C15ULL;
+  // content defined boundaries (about one every 64 lines), depending on the
+  // geometry of the line only: the same lines give the same chunks, also
+  // after a full retypesetting (which matters for snap_stack_spacing)
+  box b= it->b;
+  uint64_t h= (uint64_t) (uint32_t) b->w ();
+  h= h * 0x9E3779B97F4A7C15ULL + (uint64_t) (uint32_t) b->y1;
+  h= h * 0x9E3779B97F4A7C15ULL + (uint64_t) (uint32_t) b->y2;
+  h= h * 0x9E3779B97F4A7C15ULL + (uint64_t) (uint32_t) b->y3;
+  h= h * 0x9E3779B97F4A7C15ULL + (uint64_t) (uint32_t) b->y4;
+  h= (h ^ (h >> 29)) * 0xBF58476D1CE4E5B9ULL;
   return (h >> 58) == 0;
 }
 
@@ -387,7 +395,9 @@ chunk_lines (bridge_rep* br, array<page_item> l) {
     int j= i;
     while (j < n-1 && chunkable (l[j]) && j - i < CHUNK_MAX) {
       j++;
-      if (chunk_boundary (l[j-1])) break;
+      // (many lines have the same extents: with a minimal length, chunks
+      // remain long even if their common signature is a boundary)
+      if (j - i >= CHUNK_MIN && chunk_boundary (l[j-1])) break;
     }
     if (j - i < 2) { out << l[i]; i= j; continue; }
     pointer key= (pointer) l[i]->b.operator-> ();
