@@ -245,6 +245,10 @@
 
 (tm-define (ext-spell-error t)
   (:secure #t)
-  `(spell-error* ,(tree-ref t 0)
-                 ,(tree-ref t 1)
-                 (spell-propositions ,@(cddr (tree-children t)))))
+  (if (get-boolean-preference "languagetool use widgets")
+      `(spell-correct-error* ,(tree-ref t 0)
+			     ,(tree-ref t 1)
+			     (spell-propositions ,@(cddr (tree-children t))))
+      `(spell-error* ,(tree-ref t 0)
+		     ,(tree-ref t 1)
+		     (spell-propositions ,@(cddr (tree-children t))))))

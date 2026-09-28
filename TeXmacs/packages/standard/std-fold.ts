@@ -713,6 +713,8 @@
 
   <assign|spell-error*|<macro|body|msg|proposals|<on-event|focus|<render-old|<arg|body>>|display-balloon|<quote-arg|body>|<very-small|<spell-balloon|<arg|msg>|<arg|proposals>>>|left|BOTTOM|keyboard>>>
 
+  <assign|spell-correct-error*|<macro|body|msg|proposals|<on-event|focus|<render-old|<arg|body>>|update-correct-widget>>>
+
   <assign|show-key|<macro|key|<active*|<move|<with|font-family|tt|<with|ornament-color|#e8e0d8|ornament-sunny-color|#f4f0ec|ornament-shadow-color|#d0c0b0|ornament-vpadding|2ln|ornament-border|2ln|ornament-hpadding|4ln|ornament-shape|rounded|ornament-corner|50%|<ornament|<compound|inflate|<with|color|dark
   brown|<arg|key>>>>>>||0.075ex>>>>
 

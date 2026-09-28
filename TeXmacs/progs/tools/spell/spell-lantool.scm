@@ -110,9 +110,12 @@
                  (when (nnull? l)
                    (tree-go-to (car l) 0 :start)
                    (delayed
-                     (:idle 100)
-                     (recenter-window)
-                     (refresh-tooltips))))))))
+                     (:idle 200)
+		     (recenter-window)
+		     (if (get-boolean-preference
+			  "languagetool use widgets")
+			 (open-correct)			   
+			 (refresh-tooltips)))))))))
         (else (set-message "No running LanguageTool server" "Spell check")))
   (tree-pointer-detach tp)
   (next))

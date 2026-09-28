@@ -64,8 +64,8 @@
 	(refresh-now "correct-explanation")
 	(refresh-now "correct-suggestions"))))
 
-(tm-define (update-widget)
-  ;(display* "update-widget\n")
+(tm-define (update-correct-widget)
+  (:secure #t)
   (clear-widget)
   (when (inside-spell?)
     (with t (tree-innermost 'spell-error)
@@ -110,11 +110,11 @@
     (buffer-set-master aux u)
     (when (not (buffer-exists? aux))
       (buffer-set-body aux `(document "")))
-    (spell-register-hook update-widget)))
+    (spell-register-hook update-correct-widget)))
 
 (tm-define (correct-end)
   (focus-on-master-buffer)
-  (spell-cancel-hook update-widget))
+  (spell-cancel-hook update-correct-widget))
 
 (define (correct-replace)
   (focus-on-master-buffer)
@@ -343,6 +343,7 @@
        (open-correct-widget))
       ((balloon (icon "tm_close_tool.xpm") "Close spell tool")
        (correct-end)
+       (spell-terminate)
        (exit-toolbar))
       //)
     (glue #f #f 0 1)))
