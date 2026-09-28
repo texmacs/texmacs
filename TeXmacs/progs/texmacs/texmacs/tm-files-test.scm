@@ -14,40 +14,32 @@
   (:use (texmacs texmacs tm-files)))
 
 (define (test-doc)
-  (stree->tree '(document "abc" (strong "de"))))
+  (stree->tree '(document "abc" (strong "de")
+                          (with "font-series" "bold" "xyz")
+                          (folded "Sum" "hidden"))))
 
-(define (valid-in-test-doc p)
-  (cursor-memory-valid? (test-doc) p))
+(define (target-in-test-doc p)
+  (cursor-memory-target (test-doc) p))
 
-(define (subtree-in-test-doc p)
-  (with t (cursor-memory-subtree (test-doc) p)
-    (and t (tree->stree t))))
-
-(define (regtest-cursor-memory-valid)
+(define (regtest-cursor-memory-target)
   (regression-test-group
-   "valid cursor paths" "cursor-memory-valid"
-   valid-in-test-doc :none
-   (test "inside a string" '(0 2) #t)
-   (test "end of a string" '(0 3) #t)
-   (test "beyond a string" '(0 4) #f)
-   (test "inside a nested string" '(1 0 1) #t)
-   (test "after a compound tree" '(1 1) #t)
-   (test "invalid compound position" '(1 2) #f)
-   (test "missing paragraph" '(2 0) #f)
-   (test "negative index" '(-1 0) #f)
-   (test "empty path" '() #f)))
-
-(define (regtest-cursor-memory-subtree)
-  (regression-test-group
-   "subtrees along outdated paths" "cursor-memory-subtree"
-   subtree-in-test-doc :none
-   (test "outdated string position" '(0 9) "abc")
-   (test "outdated nested position" '(1 0 7) "de")
-   (test "missing paragraph" '(5 0) #f)
-   (test "empty path" '() #f)))
+   "restoring saved cursor paths" "cursor-memory-target"
+   target-in-test-doc :none
+   (test "inside a string" '(0 2) '(0 2))
+   (test "inside a nested string" '(1 0 1) '(1 0 1))
+   (test "after a compound tree" '(1 1) '(1 1))
+   (test "inside the body of a with" '(2 2 1) '(2 2 1))
+   (test "shortened string" '(0 9) '(0 3))
+   (test "shortened nested string" '(1 0 7) '(1 0 2))
+   (test "string replaced a compound" '(1 0 1 4) '(1 0 0))
+   (test "attribute of a with" '(2 0 2) '(2 2 0))
+   (test "hidden body of a fold" '(3 1 2) '(3 0 0))
+   (test "missing child" '(1 5) '(1 0 0))
+   (test "missing paragraph" '(5 0) '(3 0))
+   (test "negative index" '(-1 0) '(0 0))
+   (test "empty path" '() '(0 0))))
 
 (tm-define (regtest-cursor-memory)
-  (let ((n (+ (regtest-cursor-memory-valid)
-              (regtest-cursor-memory-subtree))))
+  (let ((n (regtest-cursor-memory-target)))
     (display* "Total: " (object->string n) " tests.\n")
     (display "Test suite of cursor-memory: ok\n")))
