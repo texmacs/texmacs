@@ -172,6 +172,7 @@
           (if (== (url-suffix name) "ts") (style-clear-cache))
           (autosave-remove name)
           (buffer-notify-recent name)
+          (cursor-memory-record name)
           (set-message `(concat "Saved " ,vname) "Save file")
           (save-buffer-post name opts)))))
 
@@ -389,6 +390,7 @@
             (else
              (when (not (rescue-mode?))
                (buffer-pretend-autosaved name)
+               (cursor-memory-record name)
                (set-temporary-message `(concat "Auto-saved " ,vname)
                                       "Auto-save file" 2500)))))))
 
@@ -462,8 +464,6 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define cursor-memory-max 300)
-(define cursor-memory-table #f) ; file name -> (time . cursor path in body)
-(define cursor-memory-modified? #f)
 
 (define (cursor-memory-on?)
   (get-boolean-preference "remember cursor position"))
@@ -481,54 +481,55 @@
   (and (pair? e) (string? (car e)) (pair? (cdr e)) (number? (cadr e))
        (list? (cddr e)) (list-and (map integer? (cddr e)))))
 
-(define (cursor-memory)
-  (when (not cursor-memory-table)
-    (set! cursor-memory-table (make-ahash-table))
-    (with u (cursor-memory-file)
-      (when (url-exists? u)
-        (with l (catch #t (lambda () (load-object u)) (lambda args '()))
-          (when (list? l)
-            (for (e l)
-              (when (cursor-memory-entry? e)
-                (ahash-set! cursor-memory-table (car e) (cdr e)))))))))
-  cursor-memory-table)
-
-(define (cursor-memory-save)
-  (when cursor-memory-modified?
-    (let* ((l (ahash-table->list (cursor-memory)))
-           (s (sort l (lambda (a b) (> (cadr a) (cadr b)))))
-           (r (if (> (length s) cursor-memory-max)
-                  (sublist s 0 cursor-memory-max) s)))
-      (set! cursor-memory-modified? #f)
-      (catch #t (lambda () (save-object (cursor-memory-file) r)) noop))))
+(define (cursor-memory-read)
+  ;; table file name -> (time . cursor path in body), read from disk
+  (let ((t (make-ahash-table))
+        (u (cursor-memory-file)))
+    (when (url-exists? u)
+      (with l (catch #t (lambda () (load-object u)) (lambda args '()))
+        (when (list? l)
+          (for (e l)
+            (when (cursor-memory-entry? e)
+              (ahash-set! t (car e) (cdr e)))))))
+    t))
 
 (define (cursor-memory-body-path)
   (let* ((r (tree->path (buffer-tree)))
          (c (cursor-path)))
     (and r c (list-starts? c r) (list-tail c (length r)))))
 
-(define (cursor-memory-record)
-  (with name (current-buffer)
-    (when (and (cursor-memory-on?) (cursor-memory-buffer? name))
-      (and-with p (cursor-memory-body-path)
-        (let* ((key (url->system name))
-               (old (ahash-ref (cursor-memory) key)))
-          (when (or (not old) (!= (cdr old) p))
-            (ahash-set! (cursor-memory) key (cons (current-time) p))
-            (when (not cursor-memory-modified?)
-              (set! cursor-memory-modified? #t)
-              (delayed
-                (:idle 3000)
-                (cursor-memory-save)))))))))
+(define (cursor-memory-position name)
+  ;; file name and cursor path of the buffer @name, if it is to be recorded
+  (and (cursor-memory-buffer? name)
+       (with p (with-buffer name (cursor-memory-body-path))
+         (and (pair? p) (cons (url->system name) p)))))
 
-(tm-define (notify-cursor-moved status)
-  (former status)
-  (cursor-memory-record))
+(define (cursor-memory-store names)
+  ;; the file is read again before it is updated, so that the positions
+  ;; saved in the meantime by other instances of TeXmacs are kept
+  (with l (list-filter (map cursor-memory-position names) identity)
+    (when (nnull? l)
+      (let* ((t (cursor-memory-read))
+             (now (current-time)))
+        (for (e l)
+          (ahash-set! t (car e) (cons now (cdr e))))
+        (let* ((s (sort (ahash-table->list t)
+                        (lambda (a b) (> (cadr a) (cadr b)))))
+               (r (if (> (length s) cursor-memory-max)
+                      (sublist s 0 cursor-memory-max) s)))
+          (save-object (cursor-memory-file) r))))))
+
+(define (cursor-memory-record . names)
+  ;; called when a buffer is saved, auto-saved or closed, and at exit
+  (when (cursor-memory-on?)
+    (catch #t (lambda () (cursor-memory-store names)) noop)))
+
+(tm-define (buffer-close name)
+  (cursor-memory-record name)
+  (former name))
 
 (on-exit
-  (catch #t
-    (lambda () (cursor-memory-record) (cursor-memory-save))
-    noop))
+  (apply cursor-memory-record (buffer-list)))
 
 (define (cursor-memory-nearest u i)
   ;; accessible child of @u at or before the index @i, else the first one
@@ -560,7 +561,7 @@
           (else (path-start t (reverse acc))))))
 
 (define (cursor-memory-restore name)
-  (and-with e (ahash-ref (cursor-memory) (url->system name))
+  (and-with e (ahash-ref (cursor-memory-read) (url->system name))
     (when (and (current-buffer)
                (== (url->system (current-buffer)) (url->system name)))
       (let* ((body (buffer-tree))
