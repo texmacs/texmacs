@@ -172,6 +172,7 @@
           (if (== (url-suffix name) "ts") (style-clear-cache))
           (autosave-remove name)
           (buffer-notify-recent name)
+          (cursor-memory-record name)
           (set-message `(concat "Saved " ,vname) "Save file")
           (save-buffer-post name opts)))))
 
@@ -389,6 +390,7 @@
             (else
              (when (not (rescue-mode?))
                (buffer-pretend-autosaved name)
+               (cursor-memory-record name)
                (set-temporary-message `(concat "Auto-saved " ,vname)
                                       "Auto-save file" 2500)))))))
 
@@ -458,6 +460,126 @@
                                 (raw-quote (url->system u)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Remembering the cursor position in files
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(define cursor-memory-max 300)
+
+(define (cursor-memory-on?)
+  (get-boolean-preference "remember cursor position"))
+
+(define (cursor-memory-file)
+  (url-append "$TEXMACS_HOME_PATH" "system/cursor-positions.scm"))
+
+(define (cursor-memory-buffer? name)
+  (and name (buffer-has-name? name)
+       (not (url-scratch? name))
+       (not (url-rooted-web? name))
+       (not (url-rooted-tmfs? name))))
+
+(define (cursor-memory-entry? e)
+  (and (pair? e) (string? (car e)) (pair? (cdr e)) (number? (cadr e))
+       (list? (cddr e)) (list-and (map integer? (cddr e)))))
+
+(define (cursor-memory-read)
+  ;; table file name -> (time . cursor path in body), read from disk
+  (let ((t (make-ahash-table))
+        (u (cursor-memory-file)))
+    (when (url-exists? u)
+      (with l (catch #t (lambda () (load-object u)) (lambda args '()))
+        (when (list? l)
+          (for (e l)
+            (when (cursor-memory-entry? e)
+              (ahash-set! t (car e) (cdr e)))))))
+    t))
+
+(define (cursor-memory-body-path)
+  (let* ((r (tree->path (buffer-tree)))
+         (c (cursor-path)))
+    (and r c (list-starts? c r) (list-tail c (length r)))))
+
+(define (cursor-memory-position name)
+  ;; file name and cursor path of the buffer @name, if it is to be recorded
+  (and (cursor-memory-buffer? name)
+       (with p (with-buffer name (cursor-memory-body-path))
+         (and (pair? p) (cons (url->system name) p)))))
+
+(define (cursor-memory-store names)
+  ;; the file is read again before it is updated, so that the positions
+  ;; saved in the meantime by other instances of TeXmacs are kept
+  (with l (list-filter (map cursor-memory-position names) identity)
+    (when (nnull? l)
+      (let* ((t (cursor-memory-read))
+             (now (current-time)))
+        (for (e l)
+          (ahash-set! t (car e) (cons now (cdr e))))
+        (let* ((s (sort (ahash-table->list t)
+                        (lambda (a b) (> (cadr a) (cadr b)))))
+               (r (if (> (length s) cursor-memory-max)
+                      (sublist s 0 cursor-memory-max) s)))
+          (save-object (cursor-memory-file) r))))))
+
+(define (cursor-memory-record . names)
+  ;; called when a buffer is saved, auto-saved or closed, and at exit
+  (when (cursor-memory-on?)
+    (catch #t (lambda () (cursor-memory-store names)) noop)))
+
+(tm-define (buffer-close name)
+  (cursor-memory-record name)
+  (former name))
+
+(on-exit
+  (apply cursor-memory-record (buffer-list)))
+
+(define (cursor-memory-nearest u i)
+  ;; accessible child of @u at or before the index @i, else the first one
+  (let* ((l (list-filter (.. 0 (tree-arity u))
+                         (lambda (j) (tree-accessible-child? u j))))
+         (b (list-filter l (lambda (j) (<= j i)))))
+    (cond ((nnull? b) (cAr b))
+          ((nnull? l) (car l))
+          (else #f))))
+
+(tm-define (cursor-memory-target t p)
+  (:synopsis "Closest accessible cursor path inside @t to the saved path @p")
+  ;; follow @p top-down as long as it leads through accessible children;
+  ;; where it stops, go to the start of the nearest accessible child
+  (let walk ((u t) (q p) (acc '()))
+    (cond ((null? q) (path-start t (reverse acc)))
+          ((tree-atomic? u)
+           (with n (string-length (tree->string u))
+             (if (null? (cdr q))
+                 (reverse (cons (max 0 (min (car q) n)) acc))
+                 (path-start t (reverse acc)))))
+          ((and (null? (cdr q)) (in? (car q) '(0 1)) (nnull? acc))
+           (reverse (cons (car q) acc)))
+          ((and (< -1 (car q) (tree-arity u))
+                (tree-accessible-child? u (car q)))
+           (walk (tree-ref u (car q)) (cdr q) (cons (car q) acc)))
+          ((cursor-memory-nearest u (car q))
+           => (lambda (j) (walk (tree-ref u j) '() (cons j acc))))
+          (else (path-start t (reverse acc))))))
+
+(define (cursor-memory-restore name)
+  (and-with e (ahash-ref (cursor-memory-read) (url->system name))
+    (when (and (current-buffer)
+               (== (url->system (current-buffer)) (url->system name)))
+      (let* ((body (buffer-tree))
+             (q (cursor-memory-target body (cdr e))))
+        (when (pair? q)
+          (go-to (append (tree->path body) q)))))))
+
+(define (cursor-memory-notify-open name opts)
+  ;; restore before returning to the event loop, so that no cursor movement
+  ;; at the start of the document can be recorded in the meantime
+  (when (and (cursor-memory-on?) (cursor-memory-buffer? name)
+             (nin? :background opts))
+    (catch #t (lambda () (cursor-memory-restore name)) noop)))
+
+(define-preferences
+  ("remember cursor position" "on" noop))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Loading buffers
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -485,7 +607,9 @@
           ((url-exists? name)
            (if (buffer-load name)
                (set-message `(concat "Could not load " ,vname) "Load file")
-               (load-buffer-open name opts)))
+               (begin
+                 (load-buffer-open name opts)
+                 (cursor-memory-notify-open name opts))))
           (else
             (with uname (if (string? name) (string->url name) name)
               (buffer-set-body name '(document ""))

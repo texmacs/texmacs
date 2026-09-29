@@ -1059,6 +1059,7 @@
 ("release" "release")
 ("reload" "ponovno naloºi")
 ("remark" "opomba")
+("remember cursor position" "zapomni si poloºaj kazalke")
 ("remove all output fields" "odstrani vsa izhodna polja")
 ("remove all output fields" "odstrani vsa vnosna polja")
 ("remove fields" "odstrani polja")

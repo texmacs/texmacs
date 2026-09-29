@@ -3620,3 +3620,4 @@
 ("zoom out" "зменшити масштаб")
 ("conjecture" "гіпотеза")
 ("macro editor" "редактор макросів")
+("remember cursor position" "запам'ятовувати позицію курсора")

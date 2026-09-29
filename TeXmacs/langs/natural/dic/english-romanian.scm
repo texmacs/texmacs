@@ -953,6 +953,7 @@
 ("release" "versiune")
 ("reload" "reînc rcare")
 ("remark" "observaµie")
+("remember cursor position" "memoreaz  poziµia cursorului")
 ("remove number" "³tergere num r")
 ("remove this switch" "³terge acest switch")
 ("renumber this page" "renumeroteaz  aceast  pagin ")

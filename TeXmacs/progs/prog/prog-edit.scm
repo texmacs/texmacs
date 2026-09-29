@@ -220,7 +220,8 @@
   (:require prog-highlight-brackets?)
   (:require (not (in-prog?)))
   (if (nnull? (get-alt-selection "brackets"))
-      (cancel-alt-selection "brackets")))
+      (cancel-alt-selection "brackets"))
+  (former status))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Whitespace handling

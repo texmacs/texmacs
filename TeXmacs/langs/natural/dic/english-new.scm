@@ -2355,6 +2355,7 @@
 ("reload" "")
 ("remark" "")
 ("remarks" "")
+("remember cursor position" "")
 ("remote" "")
 ("remote connections" "")
 ("remote control" "")

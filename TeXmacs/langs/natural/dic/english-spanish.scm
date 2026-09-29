@@ -1419,3 +1419,4 @@
 ("roman" "roman")
 ("use calligraphic font" "utilizar tipo caligráfico")
 ("more information about GNU TeXmacs can be found in the Help" "Puedes encontrar más información sobre GNU TeXmacs en la ayuda")
+("remember cursor position" "recordar la posición del cursor")

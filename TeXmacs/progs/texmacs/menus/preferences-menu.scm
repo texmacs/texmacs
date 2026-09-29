@@ -242,6 +242,7 @@
           ("300 s" "300")
           ---
           ("Disable" "0"))
+    (toggle ("Remember cursor position" "remember cursor position"))
     (enum ("Bibtex command" "bibtex command")
           "bibtex" "biber" "biblatex" "rubibtex" *)))
 

@@ -943,6 +943,7 @@
 ("release" "release")
 ("reload" "recarregar")
 ("remark" "comentário")
+("remember cursor position" "lembrar a posição do cursor")
 ("remove number" "remover númeração")
 ("renumber this page" "renumerar esta página")
 ("repeat object" "repetir objeto")

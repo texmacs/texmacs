@@ -1048,6 +1048,7 @@
 ("release" "Version")
 ("reload" "wieder laden")
 ("remark" "Bemerkung")
+("remember cursor position" "Cursorposition merken")
 ("remove all output fields" "entferne alle Ausgabe-Felder")
 ("remove fields" "entferne Felder")
 ("remove input field" "entferne Eingabe-Feld")

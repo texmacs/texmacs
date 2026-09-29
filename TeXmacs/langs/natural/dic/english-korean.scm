@@ -1057,6 +1057,7 @@
 ("release" "")
 ("reload" "")
 ("remark" "리마크")
+("remember cursor position" "커서 위치 기억")
 ("remove all output fields" "")
 ("remove fields" "")
 ("remove input field" "")

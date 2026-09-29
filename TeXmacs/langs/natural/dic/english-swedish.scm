@@ -507,6 +507,7 @@
 ("references" "referenser")
 ("release" "version")
 ("remark" "kommentar")
+("remember cursor position" "kom ihåg markörens position")
 ("reset" "reset")
 ("resize object" "ändra objektets storlek")
 ("resized" "förändrad storlek")

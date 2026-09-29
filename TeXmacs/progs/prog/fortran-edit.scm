@@ -58,7 +58,8 @@
 (tm-define (notify-cursor-moved status)
   (:require prog-highlight-brackets?)
   (:mode in-prog-fortran?)
-  (select-brackets-after-movement "([" ")]" "\\"))
+  (select-brackets-after-movement "([" ")]" "\\")
+  (former status))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Preferences for syntax highlighting
