@@ -257,6 +257,9 @@ public:
   virtual void       anim_position (double delay);
   virtual double     anim_next ();
   virtual rectangles anim_invalid ();
+  virtual double     anim_next (rectangle vis);
+  bool               anim_visible (rectangle vis);
+  virtual rectangles anim_invalid (rectangle vis);
 
   /********************************* obsolete ********************************/
 

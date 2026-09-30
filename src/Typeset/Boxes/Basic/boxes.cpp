@@ -805,6 +805,43 @@ box_rep::anim_invalid () {
   return rs;
 }
 
+/* The same, restricted to the animations which intersect the rectangle vis
+   (the visible part of the document).  Walking the whole box tree at each
+   frame of an animation made a long document with a single animated image
+   slow to edit, also when the animation was far away from the screen.
+   Animations which are not visited resynchronize when they are displayed. */
+
+bool
+box_rep::anim_visible (rectangle vis) {
+  return min (x1, x3) < vis->x2 && max (x2, x4) > vis->x1 &&
+         min (y1, y3) < vis->y2 && max (y2, y4) > vis->y1;
+}
+
+double
+box_rep::anim_next (rectangle vis) {
+  double r= 1.0e12;
+  if (!anim_visible (vis)) return r;
+  int i, n= subnr ();
+  for (i=0; i<n; i++) {
+    double sr= subbox (i)->anim_next (translate (vis, -sx (i), -sy (i)));
+    r= min (r, sr);
+  }
+  return r;
+}
+
+rectangles
+box_rep::anim_invalid (rectangle vis) {
+  rectangles rs;
+  if (!anim_visible (vis)) return rs;
+  int i, n= subnr ();
+  for (i=0; i<n; i++) {
+    rectangles rs2= subbox (i)->anim_invalid (translate (vis, -sx (i), -sy (i)));
+    rs2= translate (rs2, sx (i), sy (i));
+    rs << rs2;
+  }
+  return rs;
+}
+
 /******************************************************************************
 * Miscellaneous routines
 ******************************************************************************/

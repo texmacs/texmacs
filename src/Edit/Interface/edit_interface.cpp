@@ -197,6 +197,15 @@ edit_interface_rep::invalidate_all () {
   send_invalidate_all (this);
 }
 
+rectangle
+edit_interface_rep::visible_part () {
+  // the part of the document on the screen (animations elsewhere are
+  // neither advanced nor repainted)
+  update_visible ();
+  SI m= 16 * pixel;
+  return rectangle (vx1 - m, vy1 - m, vx2 + m, vy2 + m);
+}
+
 void
 edit_interface_rep::update_visible () {
   SERVER (get_visible (vx1, vy1, vx2, vy2));
@@ -1083,10 +1092,18 @@ edit_interface_rep::apply_changes () {
 
 void
 edit_interface_rep::animate () {
-  if (((double) texmacs_time ()) >= anim_next) {
-    rectangles rs= eb->anim_invalid ();
-    invalidate (rs);
-    stored_rects= rectangles ();
+  double now= (double) texmacs_time ();
+  if (now >= anim_next) {
+    rectangle vis= visible_part ();
+    rectangles rs= eb->anim_invalid (vis);
+    if (is_nil (rs))
+      // nothing to repaint (e.g. the animations left the screen), so that
+      // draw_text will not update anim_next: do it here
+      anim_next= max (now + 25.0, eb->anim_next (vis));
+    else {
+      invalidate (rs);
+      stored_rects= rectangles ();
+    }
   }
 }
 
