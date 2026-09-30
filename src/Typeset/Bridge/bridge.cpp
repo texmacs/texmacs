@@ -11,6 +11,7 @@
 
 #include "bridge.hpp"
 #include "Boxes/construct.hpp"
+#include "Stack/stacker.hpp"
 
 bridge bridge_document (typesetter, tree, path);
 bridge bridge_surround (typesetter, tree, path);
@@ -38,7 +39,9 @@ bridge nil_bridge;
 
 bridge_rep::bridge_rep (typesetter ttt2, tree st2, path ip2):
   ttt (ttt2), env (ttt->env), st (st2), ip (ip2),
-  status (CORRUPTED), changes (UNINIT) {}
+  status (CORRUPTED), changes (UNINIT), removed (UNINIT),
+  stack_cache_ok (false), stack_cache_snap (0), version (0),
+  chunk_cache (NULL) {}
 
 static tree inactive_auto
   (MACRO, "x", tree (REWRITE_INACTIVE, tree (ARG, "x"), "recurse*"));
@@ -139,6 +142,7 @@ void
 replace_bridge (bridge& br, tree st, path ip) {
   bridge new_br= make_bridge (br->ttt, st, ip);
   new_br->changes= br->changes;
+  new_br->removed= br->removed;
   br= new_br;
 }
 
@@ -289,6 +293,132 @@ bridge_rep::exec_until (path p, bool skip_flag) {
 
 extern tree the_et;
 
+/******************************************************************************
+* Merging runs of lines outside paper mode
+*
+* Outside paper mode, the lines of a bridge are merged into a single stack
+* box before being handed to the pager, unless some of them carry floats or
+* several columns.  In the latter case all lines used to be passed on
+* individually, so that for a long document with a few figures the pager
+* reprocessed every line of the document at each keystroke.  Instead, runs
+* of ordinary lines are merged into chunks, exactly as the whole list would
+* have been merged in the absence of floats, while the special items are
+* kept as they are.  Chunk boundaries only depend on the lines themselves,
+* so that an edit only changes the chunk in which it occurs, and chunks are
+* cached from one typesetting pass to the next.
+******************************************************************************/
+
+#include <stdint.h>
+
+#define CHUNK_MIN 16
+#define CHUNK_MAX 256
+
+struct line_chunk {
+  array<page_item> src;  // the merged lines
+  page_item        out;  // the resulting item
+};
+
+struct chunk_cache_rep {
+  // chunks of the current and of the previous pass, by their first box
+  hashmap<pointer,line_chunk> cur, prev;
+};
+
+bridge_rep::~bridge_rep () {
+  if (chunk_cache != NULL) tm_delete (chunk_cache);
+}
+
+static inline bool
+chunkable (page_item& it) {
+  return it->type == PAGE_LINE_ITEM && N(it->fl) == 0 && it->nr_cols <= 1;
+}
+
+static inline bool
+chunk_boundary (page_item& it) {
+  // content defined boundaries (about one every 64 lines), depending on the
+  // geometry of the line only: the same lines give the same chunks, also
+  // after a full retypesetting (which matters for snap_stack_spacing)
+  box b= it->b;
+  uint64_t h= (uint64_t) (uint32_t) b->w ();
+  h= h * 0x9E3779B97F4A7C15ULL + (uint64_t) (uint32_t) b->y1;
+  h= h * 0x9E3779B97F4A7C15ULL + (uint64_t) (uint32_t) b->y2;
+  h= h * 0x9E3779B97F4A7C15ULL + (uint64_t) (uint32_t) b->y3;
+  h= h * 0x9E3779B97F4A7C15ULL + (uint64_t) (uint32_t) b->y4;
+  h= (h ^ (h >> 29)) * 0xBF58476D1CE4E5B9ULL;
+  return (h >> 58) == 0;
+}
+
+static inline bool
+same_space (space s1, space s2) {
+  return s1->min == s2->min && s1->def == s2->def && s1->max == s2->max;
+}
+
+static bool
+same_lines (array<page_item>& src, array<page_item>& l, int i1, int i2) {
+  if (N(src) != i2 - i1) return false;
+  for (int k= i1; k < i2; k++) {
+    page_item& a= src[k-i1];
+    page_item& b= l[k];
+    if (a->b != b->b || a->penalty != b->penalty ||
+        !same_space (a->spc, b->spc))
+      return false;
+  }
+  return true;
+}
+
+static page_item
+merge_line_run (path ip, array<page_item>& l, int i1, int i2) {
+  array<box> bs;
+  array<SI>  spc;
+  for (int k= i1; k < i2; k++) {
+    bs  << l[k]->b;
+    spc << l[k]->spc->def;
+  }
+  box lb= stack_box (path (ip), bs, spc);
+  lb= move_box (path (ip), lb, 0, bs[0]->y2);
+  page_item it (lb);
+  it->spc= l[i2-1]->spc;
+  it->penalty= l[i2-1]->penalty;
+  return it;
+}
+
+static array<page_item>
+chunk_lines (bridge_rep* br, array<page_item> l) {
+  if (br->chunk_cache == NULL) br->chunk_cache= tm_new<chunk_cache_rep> ();
+  chunk_cache_rep* cc= br->chunk_cache;
+  cc->prev= cc->cur;
+  cc->cur = hashmap<pointer,line_chunk> ();
+  array<page_item> out;
+  int i= 0, n= N(l);
+  // the first and the last item are never merged: the pager uses their
+  // extents for the corrections at the top and the bottom of pages
+  while (i < n) {
+    if (i == 0 || i == n-1 || !chunkable (l[i])) { out << l[i]; i++; continue; }
+    int j= i;
+    while (j < n-1 && chunkable (l[j]) && j - i < CHUNK_MAX) {
+      j++;
+      // (many lines have the same extents: with a minimal length, chunks
+      // remain long even if their common signature is a boundary)
+      if (j - i >= CHUNK_MIN && chunk_boundary (l[j-1])) break;
+    }
+    if (j - i < 2) { out << l[i]; i= j; continue; }
+    pointer key= (pointer) l[i]->b.operator-> ();
+    if (cc->prev->contains (key) && same_lines (cc->prev (key).src, l, i, j)) {
+      out << cc->prev (key).out;
+      cc->cur (key)= cc->prev (key);
+    }
+    else {
+      line_chunk ch;
+      ch.src= range (l, i, j);
+      ch.out= merge_line_run (br->ip, l, i, j);
+      out << ch.out;
+      cc->cur (key)= ch;
+    }
+    i= j;
+  }
+  cc->prev= hashmap<pointer,line_chunk> ();  // see stack_cache in typeset
+  return out;
+}
+
 void
 bridge_rep::typeset (int desired_status) {
   // FIXME: this dirty hack ensures a perfect coherence between
@@ -325,6 +455,11 @@ bridge_rep::typeset (int desired_status) {
     ttt->local_end (l, sb);
     env->link_env= old_link_env;
     status= desired_status;
+    // release the old lines now: a phrase box logs the area to be repainted
+    // when it is destroyed, so a stale cache would leave it on the screen
+    stack_cache= array<page_item> ();
+    stack_cache_ok= false;
+    version++;
     // cout << "old_patch     = " << ttt->old_patch << LF;
     // cout << "changes       = " << changes << LF;
     // cout << UNINDENT << "Typesetted " << st << ", " << desired_status << LF;
@@ -333,13 +468,25 @@ bridge_rep::typeset (int desired_status) {
 
   // ttt->insert_stack (l, sb);
   //if (N(l) == 0); else
+  bool root= (this == ttt->br.operator-> ());
   if (ttt->paper || (N(l) <= 1)) ttt->insert_stack (l, sb);
+  else if (stack_cache_ok && strong_equal (ip, stack_cache_ip) &&
+           (!root || stack_cache_snap == ttt->snap_pixel)) {
+    if (root && N(stack_cache) > 0) ttt->last_body= stack_cache[0]->b;
+    ttt->insert_stack (stack_cache, sb);
+  }
   else {
     bool flag= false;
     int i, n= N(l);
     for (i=0; i<n; i++)
       flag= flag || (N (l[i]->fl) != 0) || (l[i]->nr_cols > 1);
-    if (flag) ttt->insert_stack (l, sb);
+    if (flag) {
+      stack_cache= chunk_lines (this, l);
+      stack_cache_ip= ip;
+      stack_cache_snap= ttt->snap_pixel;
+      stack_cache_ok= true;
+      ttt->insert_stack (stack_cache, sb);
+    }
     else {
       int first=-1, last=-1;
       array<box> bs;
@@ -357,12 +504,19 @@ bridge_rep::typeset (int desired_status) {
                   l[i]->t[1] == PAGE_THIS_BOT ||
                   l[i]->t[1] == PAGE_THIS_BG_COLOR))
           special_l << l[i];
+      if (root && ttt->snap_pixel > 0)
+        snap_stack_spacing (bs, spc, ttt->snap_pixel);
       box lb= stack_box (path (ip), bs, spc);
       if (first != -1) lb= move_box (path (ip), lb, 0, bs[first]->y2);
+      if (root) ttt->last_body= lb;
       array<page_item> new_l (1);
       new_l[0]= page_item (lb);
       new_l[0]->spc= l[last]->spc;
       new_l << special_l;
+      stack_cache= new_l;
+      stack_cache_ip= ip;
+      stack_cache_snap= ttt->snap_pixel;
+      stack_cache_ok= true;
       ttt->insert_stack (new_l, sb);
     }
   }

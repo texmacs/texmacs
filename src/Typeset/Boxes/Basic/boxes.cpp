@@ -564,8 +564,10 @@ box_rep::redraw (renderer ren, path p, rectangles& l) {
       if (!is_nil(ll)) {
         i1= min (i1, k);
         i2= max (i2, k);
-        l = ll * l;
-        ll= rectangles ();
+        // Prepend the new rectangles instead of "l= ll * l": list concatenation
+        // copies both operands (recursively), which made this loop quadratic
+        // (and deeply recursive) in the number of redrawn children.
+        for (; !is_nil (ll); ll= ll->next) l= rectangles (ll->item, l);
       }
     }
     
@@ -797,6 +799,43 @@ box_rep::anim_invalid () {
   int i, n= subnr ();
   for (i=0; i<n; i++) {
     rectangles rs2= subbox (i)->anim_invalid ();
+    rs2= translate (rs2, sx (i), sy (i));
+    rs << rs2;
+  }
+  return rs;
+}
+
+/* The same, restricted to the animations which intersect the rectangle vis
+   (the visible part of the document).  Walking the whole box tree at each
+   frame of an animation made a long document with a single animated image
+   slow to edit, also when the animation was far away from the screen.
+   Animations which are not visited resynchronize when they are displayed. */
+
+bool
+box_rep::anim_visible (rectangle vis) {
+  return min (x1, x3) < vis->x2 && max (x2, x4) > vis->x1 &&
+         min (y1, y3) < vis->y2 && max (y2, y4) > vis->y1;
+}
+
+double
+box_rep::anim_next (rectangle vis) {
+  double r= 1.0e12;
+  if (!anim_visible (vis)) return r;
+  int i, n= subnr ();
+  for (i=0; i<n; i++) {
+    double sr= subbox (i)->anim_next (translate (vis, -sx (i), -sy (i)));
+    r= min (r, sr);
+  }
+  return r;
+}
+
+rectangles
+box_rep::anim_invalid (rectangle vis) {
+  rectangles rs;
+  if (!anim_visible (vis)) return rs;
+  int i, n= subnr ();
+  for (i=0; i<n; i++) {
+    rectangles rs2= subbox (i)->anim_invalid (translate (vis, -sx (i), -sy (i)));
     rs2= translate (rs2, sx (i), sy (i));
     rs << rs2;
   }

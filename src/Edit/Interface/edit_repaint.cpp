@@ -50,7 +50,8 @@ edit_interface_rep::draw_text (renderer ren, rectangles& l) {
   if (animated_flag) anim_next= 1.0e12;
   eb->redraw (ren, eb->find_box_path (tp, tp_found), l);
   if (animated_flag) {
-    double t= max (((double) texmacs_time ()) + 25.0, eb->anim_next ());
+    double t= max (((double) texmacs_time ()) + 25.0,
+                   eb->anim_next (visible_part ()));
     anim_next= min (anim_next, t);
   }
 }
@@ -293,6 +294,7 @@ edit_interface_rep::draw_with_shadow (renderer win, rectangle r) {
   rectangles l;
   win->set_zoom_factor (zoomf);
   ren->set_zoom_factor (zoomf);
+  draw_pixel= win->pixel;
   draw_pre (win, ren, r);
   draw_text (ren, l);
   ren->reset_zoom_factor ();

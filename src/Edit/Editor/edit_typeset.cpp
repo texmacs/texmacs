@@ -35,7 +35,8 @@ edit_typeset_rep::edit_typeset_rep ():
   editor_rep (), // NOTE: ignored by the compiler, but suppresses warning
   the_style (TUPLE),
   cur (hashmap<string,tree> (UNINIT)),
-  stydef (UNINIT), pre (UNINIT), init (UNINIT), fin (UNINIT), grefs (UNINIT),
+  stydef (UNINIT), pre (UNINIT), pre_version (0), prep_version (-1),
+  prep_env (UNINIT), init (UNINIT), fin (UNINIT), grefs (UNINIT),
   env (drd, buf->buf->master,
        buf->data->ref, (buf->prj==NULL? grefs: buf->prj->data->ref),
        buf->data->aux, (buf->prj==NULL? buf->data->aux: buf->prj->data->aux),
@@ -298,6 +299,7 @@ edit_typeset_rep::typeset_preamble () {
   env->patch_env (init);
   env->update ();
   env->read_env (pre);
+  pre_version++;
   drd->heuristic_init (pre);
 }
 
@@ -305,8 +307,23 @@ void
 edit_typeset_rep::typeset_prepare () {
   env->base_file_name= buf->buf->master;
   env->read_only= buf->buf->read_only;
-  env->write_default_env ();
-  env->patch_env (pre);
+  // pre is the complete environment after the style and the initial
+  // settings, so patching the default environment with it rewrites thousands
+  // of variables; this happens at every typesetting pass and every get-env.
+  // Keep the patched environment and only redo the updates of the variables
+  // whose assignment has side effects on the edit_env state.
+  if (prep_version != pre_version) {
+    env->write_default_env ();
+    env->patch_env (pre);
+    env->read_env (prep_env);
+    prep_active= array<string> ();
+    env->active_vars (pre, prep_active);
+    prep_version= pre_version;
+  }
+  else {
+    env->write_env (prep_env);
+    for (int i=0; i<N(prep_active); i++) env->update (prep_active[i]);
+  }
   env->style_init_env ();
   env->update ();
 }
@@ -342,10 +359,40 @@ edit_typeset_rep::init_update () {
     grefs= copy (buf->data->ref);
 }
 
+// drd->heuristic_init iterates to a fixed point over every macro of the
+// environment; calling it again with the same drd and an equal environment
+// changes nothing, so remember the last (drd, environment) pair and skip
+// the call while no drd has been modified since (drd_change_stamp).
+extern int drd_change_stamp;
+static drd_info* drd_update_last_drd= NULL;
+static hashmap<string,tree> drd_update_last_env;
+static int drd_update_last_stamp= -1;
+
+static bool
+same_environment (hashmap<string,tree> a, hashmap<string,tree> b) {
+  if (N(a) != N(b)) return false;
+  iterator<string> it= iterate (a);
+  while (it->busy ()) {
+    string var= it->next ();
+    if (!b->contains (var) || a[var] != b[var]) return false;
+  }
+  return true;
+}
+
 void
 edit_typeset_rep::drd_update () {
   typeset_exec_until (tp);
-  drd->heuristic_init (cur[tp]);
+  hashmap<string,tree> h= cur[tp];
+  if (drd_update_last_drd != NULL &&
+      drd_update_last_stamp == drd_change_stamp &&
+      drd_update_last_drd->operator-> () == drd.operator-> () &&
+      same_environment (h, drd_update_last_env))
+    return;
+  drd->heuristic_init (h);
+  if (drd_update_last_drd == NULL) drd_update_last_drd= tm_new<drd_info> (drd);
+  else *drd_update_last_drd= drd;
+  drd_update_last_env= copy (h);
+  drd_update_last_stamp= drd_change_stamp;
 }
 
 #ifdef EXPERIMENTAL
@@ -960,6 +1007,7 @@ edit_typeset_rep::init_default (string var) {
   init->reset (var);
   if (stydef->contains (var)) pre(var)= stydef[var];
   else pre->reset (var);
+  pre_version++;
   notify_change (THE_ENVIRONMENT);
 }
 
@@ -1033,9 +1081,32 @@ edit_typeset_rep::typeset (SI& x1, SI& y1, SI& x2, SI& y2) {
   int missing_nr= INT_MAX;
   int redefined_nr= INT_MAX;
   x1= MAX_SI; y1= MAX_SI; x2= MIN_SI; y2= MIN_SI;
+  bool allowed;
+  SI snap= shift_pixel (allowed);
   while (true) {
     SI sx1, sy1, sx2, sy2;
+    ttt->snap_pixel= snap;
+    ttt->shift_allowed= allowed;
     typeset_sub (sx1, sy1, sx2, sy2);
+    if (ttt->shift_dy != 0) {
+      // the areas to repaint are then usually the changed lines and a few
+      // far away things (e.g. notes at the end), whose union would cover
+      // everything in between: only repaint what is on the screen
+      rectangle vis= shift_contents (ttt->shift_y1, ttt->shift_y2,
+                                     ttt->shift_dy);
+      sx1= MAX_SI; sy1= MAX_SI; sx2= MIN_SI; sy2= MIN_SI;
+      for (rectangles l= ttt->shift_rects; !is_nil (l); l= l->next) {
+        rectangle r= l->item;
+        SI rx1= max (r->x1, vis->x1), ry1= max (r->y1, vis->y1);
+        SI rx2= min (r->x2, vis->x2), ry2= min (r->y2, vis->y2);
+        if (rx1 >= rx2 || ry1 >= ry2) continue;
+        sx1= min (sx1, rx1); sy1= min (sy1, ry1);
+        sx2= max (sx2, rx2); sy2= max (sy2, ry2);
+      }
+      if (sx1 > sx2) sx1= sy1= sx2= sy2= 0;
+      ttt->shift_rects= rectangles ();
+    }
+    allowed= false;  // only the first pass starts from what is on the screen
     x1= min (x1, sx1); y1= min (y1, sy1);
     x2= max (x2, sx2); y2= max (y2, sy2);
     if (!env->complete) break;

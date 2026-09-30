@@ -86,8 +86,18 @@
 	(else (cons (tm-car x) (sublist (tm-cdr x) from to)))))
 
 (define-public (tm-func? x . args)
-  (or (and (list? x) (apply func? (cons x args)))
-      (and (compound-tree? x) (apply func? (cons (tree->list x) args)))))
+  (cond ((list? x) (apply func? (cons x args)))
+        ((compound-tree? x)
+         ;; Test label and arity directly: converting the tree with tree->list
+         ;; costs O(arity), which is paid on every keystroke when predicates
+         ;; such as db-field-any? are tried on the document root.
+         (cond ((null? args) #f)
+               ((null? (cdr args)) (== (tree-label x) (car args)))
+               ((null? (cddr args))
+                (and (== (tree-label x) (car args))
+                     (= (tree-arity x) (cadr args))))
+               (else (apply func? (cons (tree->list x) args)))))
+        (else #f)))
 
 (define-public (tm-is? x lab)
   (or (and (pair? x) (== (car x) lab))

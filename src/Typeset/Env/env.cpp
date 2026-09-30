@@ -176,6 +176,18 @@ edit_env_rep::patch_env (hashmap<string,tree> patch) {
 }
 
 void
+edit_env_rep::active_vars (hashmap<string,tree> patch, array<string>& vars) {
+  // the variables of patch, in the order used by patch_env, for which
+  // write_update does more than storing the value
+  int i=0, n=patch->n;
+  for (; i<n; i++) {
+    list<hashentry<string,tree> > l=patch->a[i];
+    for (; !is_nil(l); l=l->next)
+      if (var_type[l->item.key] != Env_User) vars << l->item.key;
+  }
+}
+
+void
 edit_env_rep::read_env (hashmap<string,tree>& ret) {
   ret= copy (env);
 }
@@ -193,6 +205,15 @@ edit_env_rep::local_update (hashmap<string,tree>& old_patch,
   old_patch->pre_patch (back, env);
   old_patch->post_patch (change, env);
   change= invert (back, env);
+}
+
+void
+edit_env_rep::removed_update (hashmap<string,tree>& old_patch,
+                              hashmap<string,tree> change)
+{
+  // paragraphs with the changes change were removed just before the current
+  // point: at the previous pass, the environment here was patched by them
+  old_patch->post_patch (change, env);
 }
 
 void

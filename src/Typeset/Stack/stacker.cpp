@@ -125,17 +125,9 @@ shove_in (box b1, box b2, SI hor_sep, SI top, SI bot) {
 // the parameters would be determined for individual boxes on each line
 // and the maxima of the individual values are taken on each line.
 
-static void
-shove (page_item& item1, page_item& item2,
-       stack_border sb, stack_border sb2, array<SI> swell) {
-  SI  height = max (sb->height , sb2->height_before );
-  SI  sep    = max (sb->sep    , sb2->sep_before    );
-  SI  hor_sep= max (sb->hor_sep, sb2->hor_sep_before);
-  SI  ver_sep= max (sb->ver_sep, sb2->ver_sep_before);
-  SI  bot    = sb->bot;
-  SI  top    = sb2->top;
-
-  box b1= item1->b, b2= item2->b;
+static SI
+shove_delta (box b1, box b2, SI height, SI sep, SI hor_sep, SI ver_sep,
+             SI bot, SI top, array<SI> swell) {
   // cout << "Shove: " << sb->height << ", " << sb2->height_before
   // << "; " << b1->y1 << ", " << b2->y2
   // << "; " << top << ", " << bot << LF;
@@ -188,7 +180,7 @@ shove (page_item& item1, page_item& item2,
   if ((b2->y2- b1->y1) < (height- max (sep, ver_sep))) {
     // enough place
     // cout << "  Normal" << LF;
-    item1->spc= item1->spc + space (height- (b2->y2- b1->y1));
+    return height- (b2->y2- b1->y1);
   }
   else {
     SI sh= shove_in (b1, b2, hor_sep, top, bot);
@@ -200,14 +192,110 @@ shove (page_item& item1, page_item& item2,
 	b2->get_type() == SCROLL_BOX)
     {
       SI h= max (height, max (b2->y2, b2->y2 - b1->y1 - (top - bot)));
-      item1->spc= item1->spc + space (h- (b2->y2- b1->y1));
+      return h- (b2->y2- b1->y1);
     }
     else {
       // collisions
       SI h= max (height, sh + ver_sep);
-      item1->spc= item1->spc + space (h- (b2->y2- b1->y1));
+      return h- (b2->y2- b1->y1);
     }
   }
+}
+
+static void
+shove (page_item& item1, page_item& item2,
+       stack_border sb, stack_border sb2, array<SI> swell) {
+  SI d= shove_delta (item1->b, item2->b,
+                     max (sb->height , sb2->height_before ),
+                     max (sb->sep    , sb2->sep_before    ),
+                     max (sb->hor_sep, sb2->hor_sep_before),
+                     max (sb->ver_sep, sb2->ver_sep_before),
+                     sb->bot, sb2->top, swell);
+  item1->spc= item1->spc + space (d);
+}
+
+/******************************************************************************
+* Memoized shoving between successive paragraphs
+*
+* merge_stack is called for every paragraph of a document at every
+* typesetting pass, also for paragraphs whose lines are reused from the
+* previous pass.  The shove between the last line of a paragraph and the
+* first line of the next one only depends on the two boxes (which are
+* immutable and shared between passes) and on a few border parameters, so
+* its result is remembered.  Two generations of entries are kept (current
+* and previous pass), which bounds the memory and keeps the referenced boxes
+* alive, so that identity comparisons remain meaningful.  The previous
+* generation is dropped as soon as the paragraphs have been typeset: boxes
+* log the area to be repainted when they are destroyed, so keeping the
+* lines of the previous pass alive until the next one would leave removed
+* lines on the screen.
+******************************************************************************/
+
+struct shove_entry {
+  box b1, b2;
+  SI  par[6];
+  SI  delta;
+};
+
+// entries of the current and of the previous pass, by their second box
+static hashmap<pointer,shove_entry> shove_cur, shove_prev;
+
+void
+snap_stack_spacing (array<box> bs, array<SI>& spc, SI snap) {
+  // Outside paper mode, the distance between the origins of successive
+  // lines of the document is rounded to a multiple of the screen pixel
+  // snap, so that all lines below a change move by a whole number of
+  // pixels and the editor can move their pixels on the screen instead of
+  // redrawing them (see typesetter_rep::find_shift).  Each distance is off
+  // by less than half a pixel; paper mode (and so printing) is unaffected.
+  int i, n= N(bs);
+  for (i=0; i<n-1; i++) {
+    SI d = bs[i]->y1 - spc[i] - bs[i+1]->y2;
+    SI rd= snap * ((SI) tm_round (((double) d) / snap));
+    spc[i] += d - rd;
+  }
+}
+
+void
+shove_cache_new_pass () {
+  shove_prev= shove_cur;
+  shove_cur = hashmap<pointer,shove_entry> ();
+}
+
+void
+shove_cache_end_pass () {
+  shove_prev= hashmap<pointer,shove_entry> ();
+}
+
+static void
+cached_shove (page_item& item1, page_item& item2,
+              stack_border sb, stack_border sb2) {
+  box b1= item1->b, b2= item2->b;
+  SI par[6]= { max (sb->height , sb2->height_before ),
+               max (sb->sep    , sb2->sep_before    ),
+               max (sb->hor_sep, sb2->hor_sep_before),
+               max (sb->ver_sep, sb2->ver_sep_before),
+               sb->bot, sb2->top };
+  pointer key= (pointer) b2.operator-> ();
+  bool in_cur= shove_cur->contains (key);
+  if (in_cur || shove_prev->contains (key)) {
+    shove_entry e= (in_cur? shove_cur (key): shove_prev (key));
+    bool same= (e.b1 == b1 && e.b2 == b2);
+    for (int k=0; same && k<6; k++) same= (e.par[k] == par[k]);
+    if (same) {
+      if (!in_cur) shove_cur (key)= e;
+      item1->spc= item1->spc + space (e.delta);
+      return;
+    }
+  }
+  shove_entry e;
+  e.b1= b1; e.b2= b2;
+  for (int k=0; k<6; k++) e.par[k]= par[k];
+  // merge_stack does not use swelling, hence the empty swell array
+  e.delta= shove_delta (b1, b2, par[0], par[1], par[2], par[3],
+                        par[4], par[5], array<SI> ());
+  shove_cur (key)= e;
+  item1->spc= item1->spc + space (e.delta);
 }
 
 /******************************************************************************
@@ -274,7 +362,7 @@ merge_stack (array<page_item>& l, stack_border& sb,
     else {
       // normal case
       l[i]= copy (l[i]);
-      shove (l[i], l2[j], sb, sb2, swell);
+      cached_shove (l[i], l2[j], sb, sb2);
       l[i]->spc= l[i]->spc + max (sb->vspc_after, sb2->vspc_before);
       if (sb->nobr_after || sb2->nobr_before) l[i]->penalty= HYPH_INVALID;
     }

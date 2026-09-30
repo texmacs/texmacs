@@ -479,9 +479,11 @@ public:
   void write_env (hashmap<string,tree> user_env);
   void monitored_patch_env (hashmap<string,tree> patch);
   void patch_env (hashmap<string,tree> patch);
+  void active_vars (hashmap<string,tree> patch, array<string>& vars);
   void read_env (hashmap<string,tree>& ret);
   void local_start (hashmap<string,tree>& prev_back);
   void local_update (hashmap<string,tree>& oldpat, hashmap<string,tree>& chg);
+  void removed_update (hashmap<string,tree>& oldpat, hashmap<string,tree> chg);
   void local_end (hashmap<string,tree>& prev_back);
 
   /* updating environment variables */

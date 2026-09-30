@@ -185,6 +185,47 @@ composite_box_rep::transform (frame fr) {
 * Cursor routines
 ******************************************************************************/
 
+// path_less (reverse (p1), reverse (p2)) without allocating the reversed
+// paths: finalize is called for every composite box, and for long stacks
+// the reversals dominated its cost.
+#define RPATH_MAX 64
+
+static inline int
+rpath_items (path p, int* buf) {
+  int n= 0;
+  for (path q= p; !is_nil (q); q= q->next)
+    if (n < RPATH_MAX) buf[n++]= q->item;
+    else return -1;
+  for (int i=0, j=n-1; i<j; i++, j--) {
+    int t= buf[i]; buf[i]= buf[j]; buf[j]= t;
+  }
+  return n;
+}
+
+static bool
+rpath_less (path p1, path p2) {
+  int a[RPATH_MAX], b[RPATH_MAX];
+  int n1= rpath_items (p1, a), n2= rpath_items (p2, b);
+  if (n1 < 0 || n2 < 0) return path_less (reverse (p1), reverse (p2));
+  // same logic as path_less_eq, then exclude equality
+  bool less_eq= false;
+  for (int i=0; ; i++) {
+    if (i == n1 || i == n2) { less_eq= (n1 == n2); break; }
+    if (i == n1-1 || i == n2-1) {
+      if (i == n1-1 && i == n2-1) less_eq= (a[i] <= b[i]);
+      else less_eq= (i == n1-1 && a[i] == 0) || (i == n2-1 && b[i] == 1);
+      break;
+    }
+    if (a[i] < b[i]) { less_eq= true; break; }
+    if (a[i] > b[i]) { less_eq= false; break; }
+  }
+  if (!less_eq) return false;
+  if (n1 != n2) return true;
+  for (int i=0; i<n1; i++)
+    if (a[i] != b[i]) return true;
+  return false;
+}
+
 void
 composite_box_rep::finalize () {
   int i, n= subnr ();
@@ -199,9 +240,9 @@ composite_box_rep::finalize () {
     cout << "  r  = " << r << "\n";
     */
     if (is_accessible (l) && is_accessible (r)) {
-      if (is_decoration (lip) || path_less (reverse (l), reverse (lip)))
+      if (is_decoration (lip) || rpath_less (l, lip))
 	lip= l;
-      if (is_decoration (rip) || path_less (reverse (rip), reverse (r)))
+      if (is_decoration (rip) || rpath_less (rip, r))
 	rip= r;
     }
   }

@@ -16,6 +16,9 @@
 #include "iterator.hpp"
 #include "analyze.hpp"
 
+// incremented by every mutation of any drd (see edit_typeset_rep::drd_update)
+int drd_change_stamp= 0;
+
 /******************************************************************************
 * Constructors and basic operations
 ******************************************************************************/
@@ -43,6 +46,7 @@ drd_info_rep::get_locals () {
 
 bool
 drd_info_rep::set_locals (tree t) {
+  drd_change_stamp++;
   if (!is_func (t, COLLECTION))
     return false;
   int i, n= N(t);
@@ -68,6 +72,7 @@ operator << (tm_ostream& out, drd_info drd) {
 
 void
 drd_info_rep::set_type (tree_label l, int tp) {
+  drd_change_stamp++;
   if (info[l]->pi.freeze_type) return;
   if (!info->contains (l)) info(l)= copy (info[l]);
   tag_info& ti= info(l);
@@ -81,6 +86,7 @@ drd_info_rep::get_type (tree_label l) {
 
 void
 drd_info_rep::freeze_type (tree_label l) {
+  drd_change_stamp++;
   if (!info->contains (l)) info(l)= copy (info[l]);
   tag_info& ti= info(l);
   ti->pi.freeze_type= true;
@@ -97,6 +103,7 @@ drd_info_rep::get_type (tree t) {
 
 void
 drd_info_rep::set_arity (tree_label l, int arity, int extra, int am, int cm) {
+  drd_change_stamp++;
   if (info[l]->pi.freeze_arity) return;
   if (!info->contains (l)) info(l)= copy (info[l]);
   tag_info& ti= info(l);
@@ -145,6 +152,7 @@ drd_info_rep::get_nr_indices (tree_label l) {
 
 void
 drd_info_rep::freeze_arity (tree_label l) {
+  drd_change_stamp++;
   if (!info->contains (l)) info(l)= copy (info[l]);
   tag_info& ti= info(l);
   ti->pi.freeze_arity= true;
@@ -238,6 +246,7 @@ drd_info_rep::is_dynamic (tree t, bool hack) {
 
 void
 drd_info_rep::set_border (tree_label l, int mode) {
+  drd_change_stamp++;
   if (info[l]->pi.freeze_border) return;
   if (!info->contains (l)) info(l)= copy (info[l]);
   tag_info& ti= info(l);
@@ -251,6 +260,7 @@ drd_info_rep::get_border (tree_label l) {
 
 void
 drd_info_rep::freeze_border (tree_label l) {
+  drd_change_stamp++;
   if (!info->contains (l)) info(l)= copy (info[l]);
   tag_info& ti= info(l);
   ti->pi.freeze_border= true;
@@ -281,6 +291,7 @@ drd_info_rep::var_without_border (tree_label l) {
 
 void
 drd_info_rep::set_with_like (tree_label l, bool is_with_like) {
+  drd_change_stamp++;
   if (info[l]->pi.freeze_with) return;
   if (!info->contains (l)) info(l)= copy (info[l]);
   tag_info& ti= info(l);
@@ -294,6 +305,7 @@ drd_info_rep::get_with_like (tree_label l) {
 
 void
 drd_info_rep::freeze_with_like (tree_label l) {
+  drd_change_stamp++;
   if (!info->contains (l)) info(l)= copy (info[l]);
   tag_info& ti= info(l);
   ti->pi.freeze_with= true;
@@ -311,6 +323,7 @@ drd_info_rep::is_with_like (tree t) {
 
 void
 drd_info_rep::set_var_type (tree_label l, int vt) {
+  drd_change_stamp++;
   if (info[l]->pi.freeze_with) return;
   if (!info->contains (l)) info(l)= copy (info[l]);
   tag_info& ti= info(l);
@@ -324,6 +337,7 @@ drd_info_rep::get_var_type (tree_label l) {
 
 void
 drd_info_rep::freeze_var_type (tree_label l) {
+  drd_change_stamp++;
   if (!info->contains (l)) info(l)= copy (info[l]);
   tag_info& ti= info(l);
   ti->pi.freeze_with= true;
@@ -335,6 +349,7 @@ drd_info_rep::freeze_var_type (tree_label l) {
 
 void
 drd_info_rep::set_attribute (tree_label l, string which, tree val) {
+  drd_change_stamp++;
   if (!info->contains (l)) info(l)= copy (info[l]);
   tag_info& ti= info(l);
   ti->set_attribute (which, val);
@@ -350,16 +365,19 @@ drd_info_rep::get_attribute (tree_label l, string which) {
 
 void
 drd_info_rep::set_name (tree_label l, string val) {
+  drd_change_stamp++;
   set_attribute (l, "name", val);
 }
 
 void
 drd_info_rep::set_long_name (tree_label l, string val) {
+  drd_change_stamp++;
   set_attribute (l, "long-name", val);
 }
 
 void
 drd_info_rep::set_syntax (tree_label l, tree val) {
+  drd_change_stamp++;
   set_attribute (l, "syntax", val);
 }
 
@@ -444,6 +462,7 @@ drd_info_rep::get_syntax (tree t, path p) {
 
 void
 drd_info_rep::set_type (tree_label l, int nr, int tp) {
+  drd_change_stamp++;
   if (!info->contains (l)) info(l)= copy (info[l]);
   tag_info  & ti= info(l);
   if (nr >= N(ti->ci)) return;
@@ -460,6 +479,7 @@ drd_info_rep::get_type (tree_label l, int nr) {
 
 void
 drd_info_rep::freeze_type (tree_label l, int nr) {
+  drd_change_stamp++;
   if (!info->contains (l)) info(l)= copy (info[l]);
   tag_info  & ti= info(l);
   if (nr >= N(ti->ci)) return;
@@ -489,6 +509,7 @@ drd_info_rep::get_type_child (tree t, int i) {
 
 void
 drd_info_rep::set_accessible (tree_label l, int nr, int is_accessible) {
+  drd_change_stamp++;
   if (!info->contains (l)) info(l)= copy (info[l]);
   tag_info  & ti= info(l);
   if (nr >= N(ti->ci)) return;
@@ -505,6 +526,7 @@ drd_info_rep::get_accessible (tree_label l, int nr) {
 
 void
 drd_info_rep::freeze_accessible (tree_label l, int nr) {
+  drd_change_stamp++;
   if (!info->contains (l)) info(l)= copy (info[l]);
   tag_info  & ti= info(l);
   if (nr >= N(ti->ci)) return;
@@ -572,6 +594,7 @@ drd_info_rep::is_accessible_path (tree t, path p) {
 
 void
 drd_info_rep::set_writability (tree_label l, int nr, int writability) {
+  drd_change_stamp++;
   if (!info->contains (l)) info(l)= copy (info[l]);
   tag_info  & ti= info(l);
   if (nr >= N(ti->ci)) return;
@@ -588,6 +611,7 @@ drd_info_rep::get_writability (tree_label l, int nr) {
 
 void
 drd_info_rep::freeze_writability (tree_label l, int nr) {
+  drd_change_stamp++;
   if (!info->contains (l)) info(l)= copy (info[l]);
   tag_info  & ti= info(l);
   if (nr >= N(ti->ci)) return;
@@ -614,11 +638,13 @@ drd_info_rep::get_writability_child (tree t, int i) {
 
 void
 drd_info_rep::set_child_name (tree_label l, int nr, string val) {
+  drd_change_stamp++;
   set_attribute (l, "name-" * as_string (nr), val);
 }
 
 void
 drd_info_rep::set_child_long_name (tree_label l, int nr, string val) {
+  drd_change_stamp++;
   set_attribute (l, "long-name-" * as_string (nr), val);
 }
 
@@ -697,6 +723,7 @@ drd_env_read (tree env, string var, tree val) {
 
 void
 drd_info_rep::set_env (tree_label l, int nr, tree env) {
+  drd_change_stamp++;
   //if (as_string (l) == "section")
   //cout << as_string (l) << ", " << nr << " -> " << env << "\n";
   //if (as_string (l) == "session")
@@ -717,6 +744,7 @@ drd_info_rep::get_env (tree_label l, int nr) {
 
 void
 drd_info_rep::freeze_env (tree_label l, int nr) {
+  drd_change_stamp++;
   if (!info->contains (l)) info(l)= copy (info[l]);
   tag_info  & ti= info(l);
   if (nr >= N(ti->ci)) return;
@@ -790,6 +818,7 @@ drd_info_rep::get_env_descendant (tree t, path p, string var, tree val) {
 
 void
 drd_info_rep::set_environment (hashmap<string,tree> env2) {
+  drd_change_stamp++;
   env= env2;
 }
 

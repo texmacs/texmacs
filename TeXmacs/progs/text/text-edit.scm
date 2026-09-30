@@ -30,23 +30,31 @@
 ;; Inserting a title and an abstract
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(define (document-has-child-label? bt lab)
+  ;; like (in? lab (map tree-label (tree-children bt))) without building lists
+  (let loop ((i (- (tree-arity bt) 1)))
+    (and (>= i 0)
+         (or (== (tree-label (tree-ref bt i)) lab)
+             (loop (- i 1))))))
+
+;; The cheap cursor test goes first: these predicates are evaluated by the
+;; focus toolbar after every change, and scanning all paragraphs of a long
+;; document each time is noticeable.
 (tm-define (document-propose-title?)
   (with bt (buffer-tree)
-    (with brothers (map tree-label (tree-children bt))
-      (and-with t (tree-ref bt :down)
-        (and (tree-is? bt 'document)
-	     (match? (cursor-tree) "")
-	     (not (in? 'doc-data brothers))
-             (not (style-has? "beamer-style")))))))
+    (and (tree-is? bt 'document)
+         (match? (cursor-tree) "")
+         (and-with t (tree-ref bt :down)
+           (and (not (document-has-child-label? bt 'doc-data))
+                (not (style-has? "beamer-style")))))))
 
 (tm-define (document-propose-abstract?)
   (with bt (buffer-tree)
-    (with brothers (map tree-label (tree-children bt))
-      (and-with t (tree-ref bt :down)
-        (and (tree-is? bt 'document)
-	     (match? (cursor-tree) "")
-             (in? 'doc-data brothers)
-	     (not (in? 'abstract-data brothers)))))))
+    (and (tree-is? bt 'document)
+         (match? (cursor-tree) "")
+         (and-with t (tree-ref bt :down)
+           (and (document-has-child-label? bt 'doc-data)
+                (not (document-has-child-label? bt 'abstract-data)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Inserting document, author and abstract data

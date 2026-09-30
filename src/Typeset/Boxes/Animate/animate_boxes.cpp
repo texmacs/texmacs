@@ -35,6 +35,12 @@ struct anim_box_rep: public box_rep {
   void   anim_position (double pos) { delay= pos; }
   double anim_time () { return pl->get_elapsed () - delay; }
   void   pre_display (renderer& ren) { (void) ren; animated_flag= true; }
+  double anim_next () { return box_rep::anim_next (); }
+  rectangles anim_invalid () { return box_rep::anim_invalid (); }
+  double anim_next (rectangle vis) {
+    return anim_visible (vis)? anim_next (): 1.0e12; }
+  rectangles anim_invalid (rectangle vis) {
+    return anim_visible (vis)? anim_invalid (): rectangles (); }
 };
 
 struct composite_anim_box_rep: public composite_box_rep {
@@ -51,6 +57,12 @@ struct composite_anim_box_rep: public composite_box_rep {
   void   anim_position (double pos) { delay= pos; }
   double anim_time () { return pl->get_elapsed () - delay; }
   void   pre_display (renderer& ren) { (void) ren; animated_flag= true; }
+  double anim_next () { return box_rep::anim_next (); }
+  rectangles anim_invalid () { return box_rep::anim_invalid (); }
+  double anim_next (rectangle vis) {
+    return anim_visible (vis)? anim_next (): 1.0e12; }
+  rectangles anim_invalid (rectangle vis) {
+    return anim_visible (vis)? anim_invalid (): rectangles (); }
 };
 
 /******************************************************************************
