@@ -119,6 +119,16 @@ renderer_rep::href (string label, SI x1, SI y1, SI x2, SI y2) {
 }
 
 void
+renderer_rep::embed_video (url u, int ms, bool repeat,
+                           SI x1, SI y1, SI x2, SI y2) {
+  // the animated image u is displayed in the rectangle, ms milliseconds per
+  // frame; renderers which can play videos (PDF) add it to their output,
+  // the others ignore it
+  (void) u; (void) ms; (void) repeat;
+  (void) x1; (void) y1; (void) x2; (void) y2;
+}
+
+void
 renderer_rep::toc_entry (string kind, string title, SI x, SI y) {
   (void) kind; (void) title;
   (void) x; (void) y;

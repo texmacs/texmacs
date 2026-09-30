@@ -135,6 +135,8 @@ public:
   virtual void next_page ();
   virtual void anchor (string label, SI x1, SI y1, SI x2, SI y2);
   virtual void href (string label, SI x1, SI y1, SI x2, SI y2);
+  virtual void embed_video (url u, int ms, bool repeat,
+                            SI x1, SI y1, SI x2, SI y2);
   virtual void toc_entry (string kind, string title, SI x, SI y);
   virtual void set_metadata (string kind, string val);
 };
