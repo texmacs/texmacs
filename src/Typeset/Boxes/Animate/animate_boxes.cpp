@@ -84,6 +84,9 @@ public:
   double     cur_delay;
   int        last_index;
   double     last_delay;
+  url        video;        // the file of a <video>, or url_none ()
+  int        video_ms;     // its duration per frame
+  bool       video_repeat;
 
   anim_compose_box_rep (path ip, array<box> bs, player pl);
   ~anim_compose_box_rep ();
@@ -103,6 +106,7 @@ public:
   double     anim_next ();
   rectangles anim_invalid ();
   void       pre_display (renderer& ren);
+  void       post_display (renderer& ren);
 
   path          find_box_path (SI x, SI y, SI delta, bool force, bool& found);
   path          find_box_path (path p, bool& found);
@@ -118,7 +122,8 @@ public:
 
 anim_compose_box_rep::anim_compose_box_rep (path ip, array<box> b2, player pl):
   anim_box_rep (ip, pl, 0.0),
-  bs (b2), offsets (N(bs))
+  bs (b2), offsets (N(bs)), video (url_none ()), video_ms (0),
+  video_repeat (false)
 {
   ASSERT (N(bs) != 0, "empty animation");
 
@@ -231,6 +236,12 @@ anim_compose_box_rep::pre_display (renderer& ren) {
   anim_resync ();
   last_index= current;
   last_delay= delay;
+}
+
+void
+anim_compose_box_rep::post_display (renderer& ren) {
+  if (!is_none (video))
+    ren->embed_video (video, video_ms, video_repeat, x1, y1, x2, y2);
 }
 
 /******************************************************************************
@@ -566,7 +577,12 @@ video_box (path ip, player pl, url u,
   if (is_none (frames)) return empty_box (ip, 0, 0, w, h);
   array<box> bs;
   add_frames (bs, decorate (ip), pl, frames, w, h, alpha, ms, px);
-  box b= anim_compose_box (rep? decorate (ip): ip, bs, pl);
+  anim_compose_box_rep* c=
+    tm_new<anim_compose_box_rep> (rep? decorate (ip): ip, bs, pl);
+  c->video= u;
+  c->video_ms= ms;
+  c->video_repeat= rep;
+  box b= c;
   if (rep) return anim_repeat_box (ip, b, pl);
   else return b;
 }
