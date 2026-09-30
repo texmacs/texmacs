@@ -207,6 +207,10 @@ needing_update (false)
     retina_icons= get_user_preference ("retina-icons") == "on"? 2: 1;
   if (has_user_preference ("retina-scale"))
     retina_scale= as_double (get_user_preference ("retina-scale"));
+  // the style sheet of the theme was applied when the application was
+  // created (QTMApplication::load), when retina_scale was not yet known:
+  // apply it again, with its sizes scaled accordingly
+  if (!headless_mode && tm_style_sheet != "") init_style_sheet (qApp);
 #endif
 }
 
