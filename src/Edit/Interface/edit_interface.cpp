@@ -66,6 +66,7 @@ edit_interface_rep::edit_interface_rep ():
   magf (zoomf / std_shrinkf),
   pixel ((SI) tm_round ((std_shrinkf * PIXEL) / zoomf)),
   zpixel (max ((SI) tm_round (std_shrinkf * PIXEL), pixel)),
+  draw_pixel (0),
   copy_always (),
   last_x (0), last_y (0), last_t (0),
   tremble_count (0), tremble_right (false),
@@ -204,6 +205,78 @@ edit_interface_rep::visible_part () {
   update_visible ();
   SI m= 16 * pixel;
   return rectangle (vx1 - m, vy1 - m, vx2 + m, vy2 + m);
+}
+
+/******************************************************************************
+* Moving the pixels of unchanged lines
+******************************************************************************/
+
+SI
+edit_interface_rep::shift_pixel (bool& allowed) {
+  // Outside paper mode, the typesetter rounds the distances between the
+  // lines of the body to the screen pixel returned here, and it may ask
+  // to move the pixels of unchanged lines (allowed) when the page has a
+  // plain background and nothing else is drawn over the text.  With the
+  // preference off, 0 is returned: the layout is not rounded either.
+  // Before the first repaint, the pixel of the renderer is not known yet:
+  // use the pixel of the editor, which is the same unless the renderer
+  // works with a device pixel ratio.
+  allowed= false;
+#ifdef QTTEXMACS
+  if (get_init_string (PAGE_MEDIUM) == "paper" ||
+      get_user_preference ("move unchanged lines", "on") != "on") return 0;
+  if (draw_pixel <= 0) return pixel;
+  allowed= is_atomic (get_init_value (BG_COLOR)) &&
+           !inside_graphics (false) && is_nil (stored_rects) &&
+           is_attached (this);
+  return draw_pixel;
+#else
+  return 0;
+#endif
+}
+
+static void
+invalidate_moved (edit_interface_rep* ed, rectangles rs, SI dy) {
+  // an overlay was drawn at rs: its pixels were moved along
+  if (is_nil (rs)) return;
+  ed->invalidate (rs);
+  ed->invalidate (translate (rs, 0, dy));
+}
+
+rectangle
+edit_interface_rep::shift_contents (SI y1, SI y2, SI dy) {
+  // Move the pixels between the ordinates y1 and y2 by dy (upwards), a
+  // multiple of draw_pixel (see typesetter_rep::find_shift), over the whole
+  // width of the window.  The widget invalidates the uncovered parts.
+  // Returns the visible part of the document (with a margin).
+  update_visible ();
+  SI x1= min (vx1, eb->x1) - 16 * pixel, x2= max (vx2, eb->x2) + 16 * pixel;
+  SI k = dy / draw_pixel;
+  send_shift_contents (this, (SI) floor (x1*magf), (SI) floor (y1*magf),
+                       (SI) ceil (x2*magf), (SI) ceil (y2*magf), -k);
+  // pixel rows at the edges of the band may also contain other things
+  SI p= 3 * pixel;
+  invalidate (x1, y1 + dy - p, x2, y1 + dy + p);
+  invalidate (x1, y2 + dy - p, x2, y2 + dy + p);
+  // things drawn over the text
+  SI dw= 0;
+  if (tremble_count > 3) dw= (1 + min (tremble_count - 3, 25)) * 2 * pixel;
+  SI P3= 3 * zpixel;
+  rectangle ocr (oc->ox+ ((SI) ((oc->y1-dw)*oc->slope))- P3 - dw,
+                 oc->oy+ (oc->y1-dw)- P3,
+                 oc->ox+ ((SI) ((oc->y2+dw)*oc->slope))+ P3 + dw,
+                 oc->oy+ (oc->y2+dw)+ P3);
+  invalidate_moved (this, rectangles (ocr), dy);
+  invalidate_moved (this, copy_always, dy);
+  invalidate_moved (this, selection_rects, dy);
+  for (int i=0; i<N(alt_selection_rects); i++)
+    invalidate_moved (this, alt_selection_rects[i], dy);
+  invalidate_moved (this, env_rects, dy);
+  invalidate_moved (this, foc_rects, dy);
+  invalidate_moved (this, sem_rects, dy);
+  invalidate_moved (this, locus_rects, dy);
+  invalidate_moved (this, keys_rects, dy);
+  return visible_part ();
 }
 
 void

@@ -105,8 +105,10 @@ protected:
   QPixmap*     backingPixmap;  
   QPoint       backing_pos;
   bool         backing_valid;
+  QRegion      shifted_region;  // moved in the backing store, not on screen
 
   void invalidate_rect (int x1, int y1, int x2, int y2);
+  void shift_rect (int x1, int y1, int x2, int y2, int dy);
   void invalidate_all ();
   bool is_invalid ();
   void repaint_invalid_regions ();

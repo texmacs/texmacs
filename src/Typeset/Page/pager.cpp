@@ -10,6 +10,7 @@
 ******************************************************************************/
 
 #include "pager.hpp"
+#include "Stack/stacker.hpp"
 #include "Boxes/construct.hpp"
 
 /******************************************************************************
@@ -17,7 +18,7 @@
 ******************************************************************************/
 
 pager_rep::pager_rep (path ip2, edit_env env2, array<page_item> l2):
-  ip (ip2), env (env2), style (UNINIT), l (l2)
+  ip (ip2), env (env2), style (UNINIT), l (l2), snap (0)
 {
   style (PAGE_THE_PAGE)     = tree (MACRO, compound ("page-nr"));
   style (PAGE_ODD_HEADER)   = env->read (PAGE_ODD_HEADER);
@@ -100,6 +101,23 @@ format_stack (path ip, array<box> bx, array<space> ht, SI height,
   // normal case
   else for (i=0; i<n-1; i++) spc[i]= ht[i]->def;
 
+  return stack_box (ip, bx, spc);
+}
+
+box
+format_snapped_stack (path ip, array<box> bx, array<space> ht, SI height,
+                      SI snap) {
+  // as format_stack in the normal case, with the spacing rounded as in
+  // snap_stack_spacing (the lines of the body outside paper mode)
+  int i, n= N(bx);
+  space total (0);
+  for (i=0; i<n-1; i++) total += space (bx[i]->h()) + ht[i];
+  if (n > 0) total += space (bx[n-1]->h());
+  if (total->def != height) return format_stack (ip, bx, ht, height, true);
+  array<SI> spc (n);
+  for (i=0; i<n-1; i++) spc[i]= ht[i]->def;
+  if (n > 0) spc[n-1]= 0;
+  snap_stack_spacing (bx, spc, snap);
   return stack_box (ip, bx, spc);
 }
 

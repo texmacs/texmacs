@@ -173,7 +173,7 @@ qt_simple_widget_rep::reapply_sent_slots () {
 
 void
 qt_simple_widget_rep::send (slot s, blackbox val) {
-  save_send_slot (s, val);
+  if (s != SLOT_SHIFT_CONTENTS) save_send_slot (s, val);
 
   switch (s) {
     case SLOT_INVALIDATE:
@@ -197,6 +197,24 @@ qt_simple_widget_rep::send (slot s, blackbox val) {
     {
       check_type_void (val, s);
       invalidate_all ();
+    }
+      break;
+
+    case SLOT_SHIFT_CONTENTS:
+    {
+      typedef quintuple<SI,SI,SI,SI,SI> coord5;
+      check_type<coord5>(val, s);
+      coord5 p= open_box<coord5> (val);
+      qt_renderer_rep* ren = the_qt_renderer (device_pixel_ratio ());
+      coord2 pt_or = from_qpoint(backing_pos);
+      SI ox = -pt_or.x1;
+      SI oy = -pt_or.x2;
+      ren->set_origin(ox,oy);
+      SI x1 = p.x1, y1 = p.x2, x2 = p.x3, y2 = p.x4;
+      ren->outer_round (x1, y1, x2, y2);
+      ren->decode (x1, y1);
+      ren->decode (x2, y2);
+      shift_rect (x1, y2, x2, y1, p.x5);
     }
       break;
       
@@ -472,6 +490,59 @@ qt_simple_widget_rep::invalidate_all () {
 #endif
 }
 
+/*
+ Move the pixels of the rectangle (in backing store coordinates) by dy,
+ downwards if dy > 0, as the editor does when unchanged lines of a document
+ move.  The parts of the destination which cannot be filled with valid moved
+ pixels are invalidated, and so are the images of pending invalid regions.
+ The screen is updated at the next repaint_invalid_regions.
+ */
+void
+qt_simple_widget_rep::shift_rect (int x1, int y1, int x2, int y2, int dy) {
+  if (x1 >= x2 || y1 >= y2) return;
+  QRect src (x1, y1, x2 - x1, y2 - y1);
+  QRect all= src.united (src.translated (0, dy));
+  if (backingPixmap == NULL || backingPixmap->isNull () || !backing_valid ||
+      dy == 0 || !canvas ()) {
+    invalidate_rect (all.left (), all.top (),
+                     all.right () + 1, all.bottom () + 1);
+    return;
+  }
+  all= all & backingPixmap->rect ();
+  if (all.isEmpty ()) return;
+  QRegion exposed;
+  backingPixmap->scroll (0, dy, all, &exposed);
+#if QT_VERSION >= 0x050800
+  for (const QRect& r: exposed)
+    invalidate_rect (r.left (), r.top (), r.right () + 1, r.bottom () + 1);
+#else
+  QVector<QRect> exposed_rects= exposed.rects ();
+  for (int i=0; i<exposed_rects.size (); i++) {
+    const QRect& r= exposed_rects[i];
+    invalidate_rect (r.left (), r.top (), r.right () + 1, r.bottom () + 1);
+  }
+#endif
+  rectangles moved;
+  for (rectangles l= invalid_regions; !is_nil (l); l= l->next) {
+    rectangle r= l->item;
+    SI ix1= max (r->x1, x1), iy1= max (r->y1, y1);
+    SI ix2= min (r->x2, x2), iy2= min (r->y2, y2);
+    if (ix1 < ix2 && iy1 < iy2)
+      moved= rectangles (rectangle (ix1, iy1 + dy, ix2, iy2 + dy), moved);
+  }
+  if (!is_nil (moved)) invalid_regions= invalid_regions | moved;
+#if QT_VERSION >= 0x060000
+  double pixel_ratio= canvas()->surface()->devicePixelRatio();
+#else
+  double pixel_ratio= retina_factor;
+#endif
+  int lx1= (int) floor (all.left () / pixel_ratio);
+  int ly1= (int) floor (all.top () / pixel_ratio);
+  int lx2= (int) ceil ((all.right () + 1) / pixel_ratio);
+  int ly2= (int) ceil ((all.bottom () + 1) / pixel_ratio);
+  shifted_region += QRect (lx1, ly1, lx2 - lx1, ly2 - ly1);
+}
+
 bool
 qt_simple_widget_rep::is_invalid () {
   return !is_nil (invalid_regions);
@@ -674,6 +745,10 @@ qt_simple_widget_rep::repaint_invalid_regions () {
   }
   
   // propagate immediately the changes to the screen
+  if (!shifted_region.isEmpty ()) {
+    qrgn += shifted_region;
+    shifted_region= QRegion ();
+  }
   if (!qrgn.isEmpty ()) {
     canvas()->surface()->repaint (qrgn);
     backing_valid= true;

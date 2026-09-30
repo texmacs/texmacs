@@ -29,6 +29,18 @@ public:
   hashmap<string,tree> old_patch;
   bool paper;
 
+  // Moving the pixels of unchanged lines outside paper mode (set by the
+  // editor before typesetting; see find_shift)
+  SI   snap_pixel;          // screen pixel to which line distances are rounded
+  bool shift_allowed;       // may the editor move pixels on the screen?
+  array<box> body_lines;    // lines of the body at the last pass
+  array<SI>  body_ys;       // and the absolute ordinates of their origins
+  array<rectangle> body_others; // vertical extents of the rest of the page
+  SI   shift_y1, shift_y2;  // after typesetting: band of unchanged lines
+  SI   shift_dy;            // moved by shift_dy (0: nothing to move)
+  rectangles shift_rects;   // then the areas to repaint (not their union)
+  box  last_body;           // body stack made by the pager at this pass
+
 public:
   typesetter_rep (edit_env& env, tree et, path ip);
 
@@ -42,6 +54,7 @@ public:
   void local_end     (array<page_item>& l, stack_border& sb);
 
   void determine_page_references (box b);
+  void find_shift (box b, box body, bool plain);
   box  typeset ();
   box  typeset (SI& x1, SI& y1, SI& x2, SI& y2);
 };

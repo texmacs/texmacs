@@ -64,6 +64,7 @@ array<page_item> typeset_stack (edit_env env, tree t, path ip,
 void merge_stack (array<page_item>& l, stack_border& sb,
 		  array<page_item> l2, stack_border sb2);
 
+void snap_stack_spacing (array<box> bs, array<SI>& spc, SI snap);
 void shove_cache_new_pass ();
 void shove_cache_end_pass ();
 

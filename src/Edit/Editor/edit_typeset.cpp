@@ -1081,9 +1081,32 @@ edit_typeset_rep::typeset (SI& x1, SI& y1, SI& x2, SI& y2) {
   int missing_nr= INT_MAX;
   int redefined_nr= INT_MAX;
   x1= MAX_SI; y1= MAX_SI; x2= MIN_SI; y2= MIN_SI;
+  bool allowed;
+  SI snap= shift_pixel (allowed);
   while (true) {
     SI sx1, sy1, sx2, sy2;
+    ttt->snap_pixel= snap;
+    ttt->shift_allowed= allowed;
     typeset_sub (sx1, sy1, sx2, sy2);
+    if (ttt->shift_dy != 0) {
+      // the areas to repaint are then usually the changed lines and a few
+      // far away things (e.g. notes at the end), whose union would cover
+      // everything in between: only repaint what is on the screen
+      rectangle vis= shift_contents (ttt->shift_y1, ttt->shift_y2,
+                                     ttt->shift_dy);
+      sx1= MAX_SI; sy1= MAX_SI; sx2= MIN_SI; sy2= MIN_SI;
+      for (rectangles l= ttt->shift_rects; !is_nil (l); l= l->next) {
+        rectangle r= l->item;
+        SI rx1= max (r->x1, vis->x1), ry1= max (r->y1, vis->y1);
+        SI rx2= min (r->x2, vis->x2), ry2= min (r->y2, vis->y2);
+        if (rx1 >= rx2 || ry1 >= ry2) continue;
+        sx1= min (sx1, rx1); sy1= min (sy1, ry1);
+        sx2= max (sx2, rx2); sy2= max (sy2, ry2);
+      }
+      if (sx1 > sx2) sx1= sy1= sx2= sy2= 0;
+      ttt->shift_rects= rectangles ();
+    }
+    allowed= false;  // only the first pass starts from what is on the screen
     x1= min (x1, sx1); y1= min (y1, sy1);
     x2= max (x2, sx2); y2= max (y2, sy2);
     if (!env->complete) break;

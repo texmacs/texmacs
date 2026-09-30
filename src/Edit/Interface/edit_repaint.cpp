@@ -294,6 +294,7 @@ edit_interface_rep::draw_with_shadow (renderer win, rectangle r) {
   rectangles l;
   win->set_zoom_factor (zoomf);
   ren->set_zoom_factor (zoomf);
+  draw_pixel= win->pixel;
   draw_pre (win, ren, r);
   draw_text (ren, l);
   ren->reset_zoom_factor ();

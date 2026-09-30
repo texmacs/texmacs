@@ -17,7 +17,9 @@
 ******************************************************************************/
 
 typesetter_rep::typesetter_rep (edit_env& env2, tree et, path ip):
-  env (env2), old_patch (UNINIT)
+  env (env2), old_patch (UNINIT),
+  snap_pixel (0), shift_allowed (false), shift_y1 (0), shift_y2 (0),
+  shift_dy (0)
 {
   paper= (env->get_string (PAGE_MEDIUM) == "paper");
   br= make_bridge (this, et, ip);
@@ -106,17 +108,125 @@ typesetter_rep::local_end (array<page_item>& prev_l, stack_border& prev_sb) {
 ******************************************************************************/
 
 static rectangles
-requires_update (rectangles log) {
+requires_update (rectangles log, SI y1, SI y2, SI dy) {
+  // Pairs (new, old) of phrase box areas, (0, old) for a destroyed box and
+  // (new, 0) for a new one.  If the editor moves the pixels between the
+  // ordinates y1 and y2 by dy (dy != 0), boxes inside that band which moved
+  // by exactly dy need no repainting, while whatever else was drawn in the
+  // band has been moved along and must be repainted at its new place.
+  rectangle zero (0, 0, 0, 0);
   rectangles rs;
   while (!is_nil (log)) {
     rectangle r1= log->item;
     rectangle r2= log->next->item;
-    if (r1 == rectangle (0, 0, 0, 0)) rs= rectangles (r2, rs);
-    else if (r2 == rectangle (0, 0, 0, 0)) rs= rectangles (r1, rs);
-    else if (r1 != r2) rs= rectangles (r1, rectangles (r2, rs));
     log= log->next->next;
+    if (dy != 0 && r2 != zero && r2->y2 > y1 && r2->y1 < y2) {
+      if (r1 == translate (r2, 0, dy) && r2->y1 >= y1 && r2->y2 <= y2)
+        continue;
+      rs= rectangles (translate (r2, 0, dy), rs);
+    }
+    if (r1 == zero) rs= rectangles (r2, rs);
+    else if (r2 == zero) rs= rectangles (r1, rs);
+    else if (r1 != r2) rs= rectangles (r1, rectangles (r2, rs));
   }
   return reverse (rs);
+}
+
+static bool
+find_body (box b, box body, SI y, SI& by, array<rectangle>& others,
+           int depth) {
+  // Ordinate by of the origin of body inside b, looking only at a few levels
+  // of boxes with few children (the pages and their parts).  The vertical
+  // extents of the other children of the boxes on the path from b to body
+  // (headers, footers, floats, notes, ...) are added to others.
+  int i, n= b->subnr ();
+  if (depth > 12 || n > 16) return false;
+  for (i=0; i<n; i++) {
+    box c= b->subbox (i);
+    bool found= (c == body);
+    if (found) by= y + b->sy (i);
+    else found= find_body (c, body, y + b->sy (i), by, others, depth + 1);
+    if (found) {
+      for (int k=0; k<n; k++)
+        if (k != i) {
+          box o= b->subbox (k);
+          SI  oy= y + b->sy (k);
+          others << rectangle (0, oy + min (o->y1, o->y3),
+                               0, oy + max (o->y2, o->y4));
+        }
+      return true;
+    }
+  }
+  return false;
+}
+
+static bool
+clear_of (array<rectangle> others, SI y1, SI y2) {
+  for (int i=0; i<N(others); i++)
+    if (others[i]->y1 < y2 && others[i]->y2 > y1) return false;
+  return true;
+}
+
+void
+typesetter_rep::find_shift (box b, box body, bool plain) {
+  // Outside paper mode, the body of the document is one stack of lines
+  // (paragraphs are merged into a single line).  When the last lines are
+  // the same boxes as at the previous pass, all moved by the same multiple
+  // dy of the screen pixel (see snap_stack_spacing), the editor can move
+  // their pixels on the screen instead of redrawing them, provided that
+  // nothing else is drawn in the band that they cover, before and after:
+  // no other line of the body, no other part of the page, and only a plain
+  // page background (plain; the editor checks the one of the document).
+  array<box>       old_lines = body_lines;
+  array<SI>        old_ys    = body_ys;
+  array<rectangle> old_others= body_others;
+  body_lines = array<box> ();
+  body_ys    = array<SI> ();
+  body_others= array<rectangle> ();
+  SI oy;
+  array<rectangle> others;
+  if (is_nil (body) || !find_body (b, body, 0, oy, others, 0)) return;
+  while (body->get_type () == MOVE_BOX && body->subnr () == 1) {
+    oy += body->sy (0);
+    body= body->subbox (0);
+  }
+  if (body->get_type () != STACK_BOX) return;
+  int i, n= body->subnr ();
+  for (i=0; i<n; i++) {
+    body_lines << body->subbox (i);
+    body_ys    << oy + body->sy (i);
+  }
+  body_others= others;
+  if (!shift_allowed || !plain || snap_pixel <= 0) return;
+  int j, m= N(old_lines);
+  i= n-1; j= m-1;
+  SI dy= 0;
+  while (i >= 0 && j >= 0 && body_lines[i] == old_lines[j]) {
+    SI d= body_ys[i] - old_ys[j];
+    if (i < n-1 && d != dy) break;
+    dy= d; i--; j--;
+  }
+  // lines i+1..n-1 of the new body are lines j+1..m-1 of the old one
+  if (dy == 0 || i+1 >= n || (dy % snap_pixel) != 0) return;
+  SI y1= MAX_SI, y2= MIN_SI;
+  for (int k= j+1; k<m; k++) {
+    box l= old_lines[k];
+    y1= min (y1, old_ys[k] + min (l->y1, l->y3));
+    y2= max (y2, old_ys[k] + max (l->y2, l->y4));
+  }
+  // the other lines, old and new, must stay clear of the band
+  for (int k= 0; k<=j; k++) {
+    box l= old_lines[k];
+    if (old_ys[k] + min (l->y1, l->y3) < y2) return;
+  }
+  for (int k= 0; k<=i; k++) {
+    box l= body_lines[k];
+    if (body_ys[k] + min (l->y1, l->y3) < y2 + dy) return;
+  }
+  // and so must the other parts of the page
+  if (!clear_of (old_others, y1, y2)) return;
+  if (!clear_of (others, y1 + dy, y2 + dy)) return;
+  shift_y1= y1; shift_y2= y2; shift_dy= dy;
 }
 
 void
@@ -159,6 +269,7 @@ typesetter_rep::typeset () {
 
   // Typeset
   shove_cache_new_pass ();
+  last_body= box ();
   if (env->complete) {
     env->local_aux= hashmap<string,tree> (UNINIT);
     env->missing  = hashmap<string,tree> (UNINIT);
@@ -168,7 +279,9 @@ typesetter_rep::typeset () {
   br->typeset (PROCESSED+ WANTED_PARAGRAPH);
   shove_cache_end_pass ();
   pager ppp= tm_new<pager_rep> (br->ip, env, l);
+  if (!paper) ppp->snap= snap_pixel;
   box rb= ppp->make_pages ();
+  if (!is_nil (ppp->body)) last_body= ppp->body;
   if (env->complete && paper) determine_page_references (rb);
   tm_delete (ppp);
   // env->complete= false;  // moved to edit_typeset_rep::typeset
@@ -180,16 +293,27 @@ typesetter_rep::typeset (SI& x1b, SI& y1b, SI& x2b, SI& y2b) {
   x1= x1b; y1= y1b; x2=x2b; y2= y2b;
   box b= typeset ();
   // cout << "-------------------------------------------------------------\n";
-  b->position_at (0, 0, change_log);
-  change_log= requires_update (change_log);
-  rectangle r (0, 0, 0, 0);
-  if (!is_nil (change_log)) r= least_upper_bound (change_log);
   array<brush> new_bgs;
   array<rectangle> rs;
   b->collect_page_colors (new_bgs, rs);
+  bool plain= true;
+  for (int i=0; i<N(new_bgs); i++)
+    plain= plain && new_bgs[i]->get_type () != brush_pattern;
+  for (int i=0; i<N(old_bgs); i++)
+    plain= plain && old_bgs[i]->get_type () != brush_pattern;
+  shift_dy= 0;
+  find_shift (b, last_body, plain);  // before position_at: frees old lines
+  last_body= box ();
+  b->position_at (0, 0, change_log);
+  change_log= requires_update (change_log, shift_y1, shift_y2, shift_dy);
+  rectangle r (0, 0, 0, 0);
+  if (!is_nil (change_log)) r= least_upper_bound (change_log);
+  shift_rects= (shift_dy != 0? change_log: rectangles ());
   for (int i=0; i<min(N(old_bgs), N(new_bgs)); i++)
-    if (new_bgs[i] != old_bgs[i])
+    if (new_bgs[i] != old_bgs[i]) {
       r= least_upper_bound (r, rs[i]);
+      if (shift_dy != 0) shift_rects= rectangles (rs[i], shift_rects);
+    }
   old_bgs= new_bgs;
   x1b= r->x1; y1b= r->y1; x2b= r->x2; y2b= r->y2;
   change_log= rectangles ();

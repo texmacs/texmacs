@@ -53,6 +53,7 @@ public:
   array<page_item>     stack_cache;
   path                 stack_cache_ip;
   bool                 stack_cache_ok;
+  SI                   stack_cache_snap; // snap_pixel of the typesetter
   int                  version;  // incremented whenever l is recomputed
   chunk_cache_rep*     chunk_cache; // see chunk_lines in bridge.cpp
 
