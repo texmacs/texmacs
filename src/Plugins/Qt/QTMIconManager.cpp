@@ -66,13 +66,18 @@ load_svg (url file_name, QIcon& icon) {
   icon= QIcon (to_qstring (concretize (res)));
   if (QTMIconManager::is_dark_mode () &&
       tail (head (res)) != url (sub)) {
-    QImage image= icon.pixmap (512).toImage ();
-    if (may_transform (file_name, image)) {
-      invert_colors (image);
-      saturate (image);
-      QPixmap pixmap= QPixmap::fromImage (image);
-      icon= QIcon (pixmap);
+    int sizes[] = { 16, 24, 32, 48, 64, 128, 256, 512 };
+    QIcon dark_icon;
+    for (int i = 0; i < 8; i++) {
+      int s = sizes[i];
+      QImage image = icon.pixmap (s).toImage ();
+      if (may_transform (file_name, image)) {
+        invert_colors (image);
+        saturate (image);
+      }
+      dark_icon.addPixmap (QPixmap::fromImage (image));
     }
+    icon = dark_icon;
   }
   return !icon.isNull ();
 }

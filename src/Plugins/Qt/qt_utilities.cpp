@@ -37,6 +37,7 @@
 #include <QGuiApplication>
 #endif
 
+#include <QSvgRenderer>
 
 #include "colors.hpp"
 
@@ -412,6 +413,8 @@ qt_supports (url u) {
   // http://forum.texmacs.cn/t/how-are-graphics-supposed-to-look-like/963/12
   if (suf == "pdf" || suf == "ps" || suf == "eps")
     return false; 
+  if (suf == "svg")
+    return true;
   bool ans= (bool) formats.contains((QByteArray) as_charp(suf));
   if (DEBUG_CONVERT) {
     if (ans)
@@ -426,6 +429,17 @@ bool
 qt_image_size (url image, int& w, int& h) {// w, h in points
   if (DEBUG_CONVERT)
     debug_convert << "qt_image_size, handling " << image << LF;
+  if (suffix (image) == "svg") {
+    QSvgRenderer r (utf8_to_qstring (materialize (image)));
+    if (r.isValid ()) {
+      QSize sz = r.defaultSize ();
+      w = (int) rint (sz.width () * 72.0 / 96.0);
+      h = (int) rint (sz.height () * 72.0 / 96.0);
+      if (DEBUG_CONVERT)
+        debug_convert << "qtsvg image_size: " << w << " x " << h << LF;
+      return true;
+    }
+  }
   QImage im= QImage (utf8_to_qstring (materialize (image)));
   if (im.isNull ()) {
     convert_error << "qt_image_size, failed reading " << image << LF;
@@ -446,6 +460,15 @@ bool
 qt_native_image_size (url image, int& w, int& h) {
   if (DEBUG_CONVERT)
     debug_convert << "qt_native_image_size, handling " << image << LF;
+  if (suffix (image) == "svg") {
+    QSvgRenderer r (utf8_to_qstring (materialize (image)));
+    if (r.isValid ()) {
+      QSize sz = r.defaultSize ();
+      w = (int) ceil (sz.width ());
+      h = (int) ceil (sz.height ());
+      return true;
+    }
+  }
   QImage im= QImage (utf8_to_qstring (materialize (image)));
   if (im.isNull ()) return false;
   else {
@@ -489,6 +512,21 @@ qt_convert_image (url image, url dest, int w, int h) {// w, h in pixels
   if (DEBUG_CONVERT)
     debug_convert << "qt_convert_image, converting " << image
 		  << " into " << dest << LF;
+  if (suffix (image) == "svg") {
+    QSvgRenderer renderer (utf8_to_qstring (materialize (image)));
+    if (renderer.isValid ()) {
+      if (w <= 0) w = (int) ceil (renderer.defaultSize ().width ());
+      if (h <= 0) h = (int) ceil (renderer.defaultSize ().height ());
+      if (w > 0 && h > 0) {
+        QImage tmp (w, h, QImage::Format_ARGB32);
+        tmp.fill (Qt::transparent);
+        QPainter painter (&tmp);
+        renderer.render (&painter, QRectF (0, 0, w, h));
+        tmp.save (utf8_to_qstring (materialize (dest, "")));
+      }
+      return;
+    }
+  }
   QImage im (utf8_to_qstring (materialize (image)));
   if (im.isNull ())
     convert_error << "qt_convert_image, failed reading " << image << LF;

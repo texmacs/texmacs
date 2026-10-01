@@ -26,6 +26,7 @@
 #include <QPainter>
 #include <QPaintDevice>
 #include <QPixmap>
+#include <QSvgRenderer>
 #ifdef USE_RESVG
 #include "Resvg/resvg.hpp"
 #endif
@@ -255,6 +256,22 @@ get_image_for_real (url u, int w, int h, tree eff, SI pixel) {
     }
   }
 #endif
+  if (pm == NULL && suffix (u) == "svg") {
+    QSvgRenderer renderer (utf8_to_qstring (materialize (u)));
+    if (renderer.isValid ()) {
+      if (w <= 0 || h <= 0) {
+        QSize def = renderer.defaultSize ();
+        if (w <= 0 && def.width () > 0) w = def.width ();
+        if (h <= 0 && def.height () > 0) h = def.height ();
+      }
+      if (w > 0 && h > 0) {
+        pm= new QImage (w, h, QImage::Format_ARGB32);
+        pm->fill (Qt::transparent);
+        QPainter painter (pm);
+        renderer.render (&painter, QRectF (0, 0, w, h));
+      }
+    }
+  }
   if (pm == NULL) {
     if (qt_supports (u)) {
       pm= new QImage (utf8_to_qstring (materialize (u)));
