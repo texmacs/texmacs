@@ -29,9 +29,6 @@
 #ifdef USE_RESVG
 #include "Resvg/resvg.hpp"
 #endif
-#ifdef USE_QTSVG
-#include <QSvgRenderer>
-#endif
 
 /******************************************************************************
 * Abstract Qt pictures

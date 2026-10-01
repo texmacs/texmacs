@@ -184,7 +184,6 @@
 #cmakedefine USE_ICONV 1
 #cmakedefine USE_IMLIB2 1
 #cmakedefine USE_INTL 1
-#cmakedefine USE_QTSVG 1
 #cmakedefine USE_RESVG 1
 #cmakedefine USE_SPARKLE 1
 #cmakedefine USE_SQLITE3 1

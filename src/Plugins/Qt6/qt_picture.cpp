@@ -26,7 +26,6 @@
 #include <QPainter>
 #include <QPaintDevice>
 #include <QPixmap>
-#include <QSvgRenderer>
 
 /******************************************************************************
 * Abstract Qt pictures
@@ -236,13 +235,7 @@ QImage*
 get_image_for_real (url u, int w, int h, tree eff, SI pixel) {
   QImage *pm = NULL;
 
-  if (suffix (u) == "svg") {
-    QSvgRenderer renderer (utf8_to_qstring (concretize (u)));
-    pm= new QImage (w, h, QImage::Format_ARGB32);
-    pm->fill (Qt::transparent);
-    QPainter painter (pm);
-    renderer.render (&painter);
-  } else if (qt_supports (u)) {
+  if (qt_supports (u)) {
     pm= new QImage (utf8_to_qstring (concretize (u)));
   } else {
     url temp= url_temp (".png");

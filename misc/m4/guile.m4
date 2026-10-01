@@ -113,12 +113,12 @@ AC_DEFUN([LC_WITH_GUILE],[
       case "${host}" in
         *mingw*)
           GUILE_PREFIX=$(pwd -W)/embedded_guile/build
-          GUILE_STATIC='$(shell '${GUILE_PREFIX}'/bin/guile.exe -e main -s "'${GUILE_PREFIX}'/bin/guile-config" link)'
+          GUILE_STATIC='-L'${GUILE_PREFIX}'/lib '${GUILE_PREFIX}'/lib/libguile.a $(shell '${GUILE_PREFIX}'/bin/guile.exe -e main -s "'${GUILE_PREFIX}'/bin/guile-config" link | sed -e "s|-lguile ||g" -e "s|-lguile$$||g")'
           GUILE_BIN=${GUILE_PREFIX}/bin/guile.exe
         ;;
         *)
           GUILE_PREFIX=$(pwd)/embedded_guile/build
-          GUILE_STATIC='$(shell '${GUILE_PREFIX}'/bin/guile-config link)'
+          GUILE_STATIC='-L'${GUILE_PREFIX}'/lib '${GUILE_PREFIX}'/lib/libguile.a $(shell '${GUILE_PREFIX}'/bin/guile-config link | sed -e "s|-lguile ||g" -e "s|-lguile$$||g")'
           GUILE_BIN=${GUILE_PREFIX}/bin/guile
         ;;
       esac

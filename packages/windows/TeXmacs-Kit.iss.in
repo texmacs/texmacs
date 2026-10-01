@@ -40,6 +40,7 @@ Name: "custom"; Description: "Custom installation"; Flags: iscustom
 Name: "texmacs"; Description: "TeXmacs"; Types: full custom; Flags: fixed
 Name: "java"; Description: "Java (Microsoft OpenJDK 17)"; Types: full
 Name: "python"; Description: "Python 3"; Types: full
+Name: "languagetool"; Description: "Language Tool"; Types: full
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
@@ -53,6 +54,7 @@ Root: HKA; Subkey: "{code:GetEnvironmentKey}"; ValueType: string; ValueName: "TE
 
 [Files]
 Source: ..\..\..\distr\TeXmacs-Windows\*; DestDir: {app}; Flags: recursesubdirs createallsubdirs ignoreversion
+Source: ..\..\..\installers\languagetool\*; DestDir: {autopf}\LanguageTool; Flags: recursesubdirs createallsubdirs ignoreversion
 Source: TeXmacs.ico; DestDir: {app}; Components: texmacs
 Source: topbanner.bmp; Flags: dontcopy
 Source: ..\..\..\installers\java\*.msi; DestDir: {tmp}; DestName: openjdk17.msi; Flags: deleteafterinstall; Components: java

@@ -950,7 +950,6 @@ enable_windows_pbd
 enable_qt
 with_qt_find_method
 enable_qt_new
-with_qtsvg
 with_qt
 with_x
 enable_qtpipes
@@ -1667,8 +1666,6 @@ Optional Packages:
   --with-qt-find-method=METHOD
                           Method to find Qt (autotroll, autotrollstatic,
                           pkgconfig)
-  --with-qtsvg            enable Qt SVG support (default: auto; optional if
-                          resvg is present)
   --with-qt[=ARG]         Qt support. ARG can be `yes' (the default), `no', or
                           a path to Qt binaries; if `yes' or empty, use PATH
                           and some default directories to find Qt binaries
@@ -10460,12 +10457,12 @@ printf "%s\n" "$as_me: use embedded guile" >&6;}
       case "${host}" in
         *mingw*)
           GUILE_PREFIX=$(pwd -W)/tm-guile188/build
-          GUILE_STATIC='$(shell '${GUILE_PREFIX}'/bin/guile.exe -e main -s "'${GUILE_PREFIX}'/bin/guile-config" link)'
+          GUILE_STATIC='-L'${GUILE_PREFIX}'/lib '${GUILE_PREFIX}'/lib/libguile.a $(shell '${GUILE_PREFIX}'/bin/guile.exe -e main -s "'${GUILE_PREFIX}'/bin/guile-config" link | sed -e "s|-lguile ||g" -e "s|-lguile$$||g")'
           GUILE_BIN=${GUILE_PREFIX}/bin/guile.exe
         ;;
         *)
           GUILE_PREFIX=$(pwd)/tm-guile188/build
-          GUILE_STATIC='$(shell '${GUILE_PREFIX}'/bin/guile-config link)'
+          GUILE_STATIC='-L'${GUILE_PREFIX}'/lib '${GUILE_PREFIX}'/lib/libguile.a $(shell '${GUILE_PREFIX}'/bin/guile-config link | sed -e "s|-lguile ||g" -e "s|-lguile$$||g")'
           GUILE_BIN=${GUILE_PREFIX}/bin/guile
         ;;
       esac
@@ -27506,17 +27503,6 @@ esac
 fi
 
 
-
-# Check whether --with-qtsvg was given.
-if test ${with_qtsvg+y}
-then :
-  withval=$with_qtsvg; with_qtsvg=$withval
-else case e in #(
-  e) with_qtsvg=auto ;;
-esac
-fi
-
-
   case $qt_find_method in
     autotroll)
       { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Searching for Qt using autotroll" >&5
@@ -27589,27 +27575,6 @@ test -n "$QMAKE" || QMAKE="missing"
 
   if test "x$QMAKE" = "xmissing"; then
     as_fn_error $? "Cannot find qmake, qmake-qt4, qmake-qt5, qmake-qt6, or qmake6, for using a Qt library" "$LINENO" 5
-  fi
-  xtraSvg=""
-  xtraSvgPlug=""
-  use_qtsvg="no"
-  if test "$with_qtsvg" != "no"; then
-    if test "x$HAS_RESVG" != "xyes"; then
-      xtraSvg="+svg"
-      xtraSvgPlug="qsvg"
-      use_qtsvg="yes"
-    else
-      # Check if QtSvg is available
-      if test -d "$($QMAKE -query QT_INSTALL_HEADERS 2>/dev/null)/QtSvg" || \
-         test -f "$($QMAKE -query QT_INSTALL_LIBS 2>/dev/null)/libQtSvg.a" || \
-         test -f "$($QMAKE -query QT_INSTALL_LIBS 2>/dev/null)/QtSvg.lib"; then
-        xtraSvg="+svg"
-        xtraSvgPlug="qsvg"
-        use_qtsvg="yes"
-      elif test "$with_qtsvg" = "yes"; then
-        as_fn_error $? "Qt SVG was requested with --with-qtsvg, but QtSvg was not found" "$LINENO" 5
-      fi
-    fi
   fi
   case $qt_find_method.$($QMAKE -query QT_VERSION 2>/dev/null) in
   autotroll.4.* | autotrollstatic.4.*)
@@ -28255,10 +28220,10 @@ $at_mod"
   echo "$qt_conf" | sed 1d >>"$pro_file"
 
 
- # Tweak the value of QT in the .pro file for $xtralibs +printsupport $xtraSvg.
+ # Tweak the value of QT in the .pro file for $xtralibs +printsupport +svg.
 
   qt_conf=''
-  for at_mod in $xtralibs +printsupport $xtraSvg; do
+  for at_mod in $xtralibs +printsupport +svg; do
     at_mod=`echo "$at_mod" | sed 's/^-//; tough
                                   s/^+//; beef
                                   :ough
@@ -29300,10 +29265,10 @@ $at_mod"
   echo "$qt_conf" | sed 1d >>"$pro_file"
 
 
- # Tweak the value of QT in the .pro file for $xtralibs +printsupport $xtraSvg +network $xtraPlug.
+ # Tweak the value of QT in the .pro file for $xtralibs +printsupport +svg +network $xtraPlug.
 
   qt_conf=''
-  for at_mod in $xtralibs +printsupport $xtraSvg +network $xtraPlug; do
+  for at_mod in $xtralibs +printsupport +svg +network $xtraPlug; do
     at_mod=`echo "$at_mod" | sed 's/^-//; tough
                                   s/^+//; beef
                                   :ough
@@ -29335,7 +29300,7 @@ $at_mod"
  # Add the extra-settings the user wants to set in the .pro
   echo "
       LIBS += $LDFLAGS
-      QTPLUGIN = qjpeg qgif qico $xtraSvgPlug
+      QTPLUGIN = qjpeg qgif qico qsvg
     " >>"$pro_file"
 
 
@@ -30348,10 +30313,10 @@ $at_mod"
   echo "$qt_conf" | sed 1d >>"$pro_file"
 
 
- # Tweak the value of QT in the .pro file for $xtralibs +core +gui +printsupport $xtraSvg +network $xtraPlug.
+ # Tweak the value of QT in the .pro file for $xtralibs +core +gui +printsupport +svg +network $xtraPlug.
 
   qt_conf=''
-  for at_mod in $xtralibs +core +gui +printsupport $xtraSvg +network $xtraPlug; do
+  for at_mod in $xtralibs +core +gui +printsupport +svg +network $xtraPlug; do
     at_mod=`echo "$at_mod" | sed 's/^-//; tough
                                   s/^+//; beef
                                   :ough
@@ -30383,7 +30348,7 @@ $at_mod"
  # Add the extra-settings the user wants to set in the .pro
   echo "
       LIBS += $LDFLAGS
-      QTPLUGIN += qjpeg qgif qico $xtraSvgPlug qxcb
+      QTPLUGIN += qjpeg qgif qico qsvg qxcb
       QTPLUGIN.platforms += qminimal qxcb
       CONFIG += import_plugins
       CONFIG += static
@@ -31407,10 +31372,10 @@ $at_mod"
   echo "$qt_conf" | sed 1d >>"$pro_file"
 
 
- # Tweak the value of QT in the .pro file for $xtralibs +printsupport $xtraSvg +concurrent +network $xtraPlug.
+ # Tweak the value of QT in the .pro file for $xtralibs +printsupport +svg +concurrent +network $xtraPlug.
 
   qt_conf=''
-  for at_mod in $xtralibs +printsupport $xtraSvg +concurrent +network $xtraPlug; do
+  for at_mod in $xtralibs +printsupport +svg +concurrent +network $xtraPlug; do
     at_mod=`echo "$at_mod" | sed 's/^-//; tough
                                   s/^+//; beef
                                   :ough
@@ -31442,7 +31407,7 @@ $at_mod"
  # Add the extra-settings the user wants to set in the .pro
   echo "
       LIBS += $LDFLAGS
-      QTPLUGIN = qjpeg qgif qico $xtraSvgPlug
+      QTPLUGIN = qjpeg qgif qico qsvg
     " >>"$pro_file"
 
 
@@ -32347,23 +32312,7 @@ fi
     QT_PACKAGES="Qt${QT_MAJOR}Core$QT_PKGCONFIG_SUFFIX "
     QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Gui$QT_PKGCONFIG_SUFFIX"
     QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Widgets$QT_PKGCONFIG_SUFFIX"
-    use_qtsvg="no"
-    if test "$with_qtsvg" != "no"; then
-      if $PKG_CONFIG --exists Qt${QT_MAJOR}Svg$QT_PKGCONFIG_SUFFIX 2>/dev/null; then
-        use_qtsvg="yes"
-      elif test "$with_qtsvg" = "yes"; then
-        as_fn_error $? "Qt SVG was requested with --with-qtsvg, but Qt${QT_MAJOR}Svg was not found" "$LINENO" 5
-      elif test "x$HAS_RESVG" != "xyes"; then
-        as_fn_error $? "Qt SVG was not found, and resvg is not available. At least one SVG library is required." "$LINENO" 5
-      else
-        { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Qt SVG not found, but resvg is available (Qt SVG is optional)" >&5
-printf "%s\n" "$as_me: Qt SVG not found, but resvg is available (Qt SVG is optional)" >&6;}
-      fi
-    fi
-
-    if test "$use_qtsvg" = "yes"; then
-      QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Svg$QT_PKGCONFIG_SUFFIX"
-    fi
+    QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Svg$QT_PKGCONFIG_SUFFIX"
     QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}PrintSupport$QT_PKGCONFIG_SUFFIX"
     QT_PACKAGES="$QT_PACKAGES Qt${QT_MAJOR}Network$QT_PKGCONFIG_SUFFIX"
     # if CONFIG_OS is GNU_LINUX and QT_VERSION is higher than 6, use wayland
@@ -34201,13 +34150,7 @@ rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
 esac
 fi
 
-  if test "x$use_qtsvg" = "xyes"
-then :
-
-
-printf "%s\n" "#define USE_QTSVG 1" >>confdefs.h
-
-    if test "$cross_compiling" = yes
+  if test "$cross_compiling" = yes
 then :
   { { printf "%s\n" "$as_me:${as_lineno-$LINENO}: error: in '$ac_pwd':" >&5
 printf "%s\n" "$as_me: error: in '$ac_pwd':" >&2;}
@@ -34246,8 +34189,6 @@ rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
 esac
 fi
 
-
-fi
   if test "$cross_compiling" = yes
 then :
   { { printf "%s\n" "$as_me:${as_lineno-$LINENO}: error: in '$ac_pwd':" >&5
@@ -34288,14 +34229,6 @@ fi
 
       ;;
     pkgconfig)
-  if test "x$use_qtsvg" = "xyes"
-then :
-
-
-printf "%s\n" "#define USE_QTSVG 1" >>confdefs.h
-
-
-fi
       ;;
   esac
 
