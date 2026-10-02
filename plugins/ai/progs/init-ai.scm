@@ -182,6 +182,24 @@
 ;; Albert
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(tm-menu (focus-ai-agents-interlocutor ai)
+  (with pref (string-append ai " ai-agents interlocutor")
+    (for (s (cons "default" (ai-agents-interlocutors)))
+      ((check (eval s) "v" (== (get-preference pref) s))
+       (set-preference pref s)))))
+
+(define (focus-session-language*)
+  (string-downcase (focus-session-language)))
+
+(tm-menu (focus-extra-icons t)
+  (:require (in? (focus-session-language*) (list "albert"))) ;;(ai-models)))
+  (dynamic (former t))
+  (mini #t
+    //
+    (=> (eval (get-preference (string-append (focus-session-language*)
+					     " ai-agents interlocutor")))
+        (dynamic (focus-ai-agents-interlocutor (focus-session-language*))))))
+
 (tm-define (has-albert?)
   (!= (get-preference "albert api key") ""))
 
