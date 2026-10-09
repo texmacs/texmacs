@@ -32,6 +32,7 @@
 (define tmhtml-mathjax? #f)
 (define tmhtml-mathml? #f)
 (define tmhtml-images? #f)
+(define tmhtml-image-embed? #f)
 (define tmhtml-image-serial 0)
 (define tmhtml-image-cache (make-ahash-table))
 (define tmhtml-image-root-url (unix->url "image"))
@@ -49,6 +50,8 @@
 	(== (assoc-ref opts "texmacs->html:mathml") "on"))
   (set! tmhtml-images?
 	(== (assoc-ref opts "texmacs->html:images") "on"))
+  (set! tmhtml-image-embed?
+	(== (assoc-ref opts "texmacs->html:image-embed") "on"))
   (set! tmhtml-image-cache (make-ahash-table))
   (let* ((suffix (url-suffix current-save-target))
 	 (n (+ (string-length suffix) 1)))
@@ -1379,21 +1382,44 @@
             name-string)
            name))))) ;; image does not exist, can't do much
 
+(define (html-embed-image-sub h)
+  (cond ((not (list? h)) h)
+	((func? h 'src 1)
+	 (let* ((image-name (second h))
+		(suf (url-suffix image-name))
+		(s (string-load image-name)))
+	   (if (== s "")
+	       h
+	       `(src ,(string-append "data:image/" suf ";base64,"
+				     (encode-base64 s))))))
+	(else (map html-embed-image-sub h))))
+
+(define (html-embed-image h)
+  (cond ((not (list? h)) h)
+        ((func? h 'h:img 1) (html-embed-image-sub h))
+        (else (map html-embed-image h))))
+
 (define (tmhtml-image l)
   ;; FIXME: Should also test that width and height are not magnifications.
   ;; Currently, magnifications make tmlength->htmllength return #f.
   (cond ((nin? (tmhtml-image-suffix (car l)) tmhtml-web-formats)
-         ;; linked or embedded non-web image: convert & save to png  
-         (tmhtml-png (cons 'image l)))
+         ;; linked or embedded non-web image: convert & save to png
+         (with h (tmhtml-png (cons 'image l))
+	   (if tmhtml-image-embed?
+	       (set! h (html-embed-image h)))
+	   h))
         ((and (func? (car l) 'tuple 2)
               (func? (cadar l) 'raw-data 1)
               (string? (cadr (cadar l)))
               (string? (caddar l)))
-         ;; embedded web image, extract it    
+         ;; embedded web image
          (receive (name-url name-string)
-                  (tmhtml-image-names (url-suffix (cork->utf8 (caddar l))))
-           (string-save (cadr (cadar l)) name-url)
-           (tmhtml-image (cons name-string (cdr l)))))
+	          (tmhtml-image-names (url-suffix (cork->utf8 (caddar l))))
+	   (string-save (cadr (cadar l)) name-url)
+	   (with h (tmhtml-image (cons name-string (cdr l)))
+	     (if tmhtml-image-embed?
+		 (set! h (html-embed-image h)))
+	     h)))
         ((nstring? (first l))
          ;; treat complex images as generic markup
          (tmhtml-png (cons 'image l)))
@@ -2178,3 +2204,10 @@
 	     tmhtml-finalize-document
 	     tmhtml-finalize-selection)
 	 (tmhtml-root x)))))
+
+(tm-define (texmacs->html* x)
+  (texmacs->html x '(("texmacs->html:image-embed" . "on")
+		     ("texmacs->html:mathjax" . "off")
+		     ("texmacs->html:mathml" . "on")
+		     ("texmacs->html:images" . "off")
+		     ("texmacs->html:css-stylesheet" . "---"))))

@@ -625,8 +625,16 @@ edit_select_rep::selection_set (string key, tree t, bool persistant) {
       tree tmp;
       tmp= exec_verbatim (t, tp);
       sv= tree_to_generic (tmp, "verbatim-snippet");
-      //tmp= exec_html (t, tp);
-      //sh= tree_to_generic (tmp, "html-snippet");
+      // sv= selection_encode (lan, sv); // why not used ???
+      /*
+      if (mode == "math")
+	tmp= exec_html (compound ("math", t));
+      else
+	tmp= exec_html (t, tp);
+      object obj= call ("texmacs->html*", tree_to_stree (tmp));
+      sh= as_string (call ("serialize-html", obj));
+      sh= selection_encode (lan, sh);
+      */
 #endif
     }
     s= selection_encode (lan, s);

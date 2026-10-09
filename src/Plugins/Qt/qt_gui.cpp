@@ -385,7 +385,6 @@ qt_gui_rep::set_selection (string key, tree t,
 
   cb->setText (QString::fromLatin1 (selection, N_selection), mode);
   QMimeData *md = new QMimeData;
-
   if (format == "verbatim" || format == "default") {
     if (format == "default") {
       md->setData ("application/x-texmacs-clipboard", (char*)selection);
@@ -393,9 +392,11 @@ qt_gui_rep::set_selection (string key, tree t,
       QString pid_str;
       pid_str.setNum (QCoreApplication::applicationPid ());
       md->setData ("application/x-texmacs-pid", pid_str.toLatin1());
-      
+
+      //c_string tmp (sh);
+      //md->setHtml (QString::fromUtf8 (tmp, N(sh)));
       (void) sh;
-      
+
       selection = c_string (sv);
       N_selection = N(sv);
     }
