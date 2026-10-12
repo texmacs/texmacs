@@ -684,7 +684,26 @@
    (eval `(define-preference-names "texmacs->image:format" ,@valid-image-format-list))
    (cadr (apply map list valid-image-format-list))))
 
-(define (supports-inkscape?) (url-exists-in-path? "inkscape"))
+(when (and (os-macos?)
+	   (url-exists? "/Applications/Inkscape.app/Contents/MacOS/inkscape"))
+  (setenv "PATH" (string-append "/Applications/Inkscape.app/Contents/MacOS/:"
+				(getenv "PATH"))))
+
+(define (inkscape-version)
+  (with l (string-tokenize-by-char
+	   (cadr (evaluate-system
+		  (list "inkscape" "--version") '() '() '(1))) #\space)
+    (and (>= (length l) 2) (cadr l))))
+
+(define (inkscape-version-ge-1.4?)
+  (and-with v (inkscape-version)
+    (and-with l (map string->number (string-tokenize-by-char v #\.))
+      (or (and (>= (length l) 1) (> (car l) 2))
+	  (and (>= (length l) 2) (>= (car l) 1) (>= (cadr l) 4))))))
+
+(define (supports-inkscape?)
+  (and (url-exists-in-path? "inkscape")
+       (inkscape-version-ge-1.4?)))
 
 (tm-widget (image-preferences-widget)
   ======

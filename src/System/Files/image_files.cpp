@@ -476,7 +476,9 @@ image_to_eps (url image, url eps, int w_pt, int h_pt, int dpi) {
   // Note: since inkscape would most likely be the prog called to
   // translate svg we could at no additional cost allow other
   // vector formats supported by inkscape : ai, svgz, cdr, wmf ...
-  if ((s == "svg") && !wrap_qt_supports (image) &&
+  if ((s == "svg") &&
+      (!wrap_qt_supports (image) ||
+       get_preference ("image->texmacs:svg-prefer-inkscape") == "on") &&
       (call_scm_converter (image, eps))) return;
   
 #ifdef USE_GS
@@ -531,7 +533,9 @@ image_to_pdf (url image, url pdf, int w_pt, int h_pt, int dpi) {
 		  << " into " << pdf << LF;
   string s= suffix (image);
   // First try to preserve "vectorialness"
-  if ((s == "svg") && !wrap_qt_supports (image) &&
+  if ((s == "svg") &&
+      (!wrap_qt_supports (image) ||
+       get_preference ("image->texmacs:svg-prefer-inkscape") == "on") &&
       call_scm_converter (image, pdf)) return;
 #ifdef USE_GS
   if (gs_supports (image)) {

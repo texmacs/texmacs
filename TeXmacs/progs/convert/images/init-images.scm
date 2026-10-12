@@ -149,15 +149,16 @@
 
 (converter svg-file postscript-file
   (:require (url-exists-in-path? "inkscape"))
-  (:shell "inkscape" "-z" "-f" from "-P" to))
+  (:shell "inkscape" "--export-overwrite" "--export-filename=" to from))
 
 (converter svg-file pdf-file
   (:require (url-exists-in-path? "inkscape"))
-  (:shell "inkscape" "-z" "-f" from "-A" to))
+  (:shell "inkscape" "--export-overwrite" "--export-filename=" to from))
 
 (converter svg-file png-file
   (:require (url-exists-in-path? "inkscape"))
-  (:shell "inkscape" "-z" "-d" "600" from "--export-png" to))
+  (:shell "inkscape" "-d" "600" "--export-overwrite"
+	  "--export-filename=" to from))
 
 (converter svg-file png-file
   (:require (and (url-exists-in-path? "rsvg-convert")
