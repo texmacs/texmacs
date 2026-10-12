@@ -689,10 +689,19 @@
   (setenv "PATH" (string-append "/Applications/Inkscape.app/Contents/MacOS/:"
 				(getenv "PATH"))))
 
+(when (os-mingw64?)
+  (with r (eval-system "reg.exe query \"HKLM\\Software\\Microsoft\\Windows\\CurrentVersion\\App Paths\\inkscape.exe\"")
+    (with l (filter (lambda (x) (string-contains? x "Path "))
+		    (string-tokenize-by-char r #\newline))
+      (with s (if (null? l) "" (string-trim-spaces-left (car l)))
+	(with pos (string-search-forwards ":" 0 s)
+	  (if (>= pos 1) (set! s (string-drop s (- pos 1))))
+	  (when (string-ends? s "\x0d") (set! s (string-drop-right s 1))))
+	(when (!= s "")
+	  (setenv "PATH" (string-append s ";" (getenv "PATH"))))))))
+
 (define (inkscape-version)
-  (with l (string-tokenize-by-char
-	   (cadr (evaluate-system
-		  (list "inkscape" "--version") '() '() '(1))) #\space)
+  (with l (string-tokenize-by-char (eval-system "inkscape --version") #\space)
     (and (>= (length l) 2) (cadr l))))
 
 (define (inkscape-version-ge-1.4?)
