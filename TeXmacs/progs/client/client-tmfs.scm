@@ -338,8 +338,21 @@
     (list "Name" "string")))
 
 (tmfs-permission-handler (remote-file name type)
-  ;; FIXME: asynchroneous retrieval of file permissions
   #t)
+  ;; TODO << use the following asynchroneous code (???)
+  ;; (let* ((sname (car (tmfs->list name)))
+  ;; 	    (server (client-find-server sname)))
+  ;;   (when server
+  ;;     (with-remote-identifier rid server remote-file
+  ;;     (with-remote-get-entry entry server rid
+  ;; 	 (with pseudo (client-find-server-pseudo server)
+  ;; 	   (or
+  ;; 	     (cond ((== type "read")
+  ;; 		    (in? pseudo (or (assoc-ref entry "readable") (list))))
+  ;; 		   ((== type "write")
+  ;; 		    (in? pseudo (or (assoc-ref entry "writable") (list))))
+  ;; 		   (else #f))
+  ;; 	     (in? pseudo (or (assoc-ref entry "owner") (list)))))
 
 ;;(tmfs-format-handler (remote-file name)
 ;;  ;; FIXME: support for other file formats
@@ -729,6 +742,12 @@
                 ($when (and msg (!= msg ""))
                   ($describe-item vs msg))))))))))
 
+(define (info-date-leq info1 info2)
+  (with (rid1 date1 vname1 by1 msg1) info1
+    (with (rid2 date2 vname2 by2 msg2) info2
+      (<= (or (string->number date1) 0)
+	  (or (string->number date2) 0)))))
+    
 (define (compute-remote-versions rname)
   (let* ((name (remote-file-name rname))
          (sname (tmfs-car name))
@@ -738,6 +757,7 @@
     (and server
          (client-remote-eval server `(remote-get-versions ,name)
            (lambda (l)
+	     (set! l (list-sort l info-date-leq))
              (let* ((s (url->tmfs-string rname))
                     (h (string-append "tmfs://history/" s))
                     (doc (build-version-page s prefix l)))
