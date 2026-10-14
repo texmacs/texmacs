@@ -74,6 +74,10 @@ copy_bst_file (url base, string style) {
 url
 find_bib_file (url base, string fname,
                string suffix= ".bib", bool rooted= false) {
+  //cout << "find_bib_file " << base << ", " << fname << ", "
+  //     << suffix << ", " << (int) rooted << LF;
+  if (starts (as_unix_string (base), "tmfs://remote-file/"))
+    return url_none ();
   if (!ends (fname, suffix)) fname= fname * suffix;
   url bibf (fname);
   if (exists (bibf) && (!rooted || is_rooted (bibf)))
@@ -118,6 +122,8 @@ void
 edit_process_rep::generate_bibliography (
   string bib, string style, string fname)
 {
+  // cout << "generate_bibliography " << bib << ", " << style
+  //      << ", " << fname << LF;
   if (N(style) == 0) style= "tm-plain";
   system_wait ("Generating bibliography, ", "please wait");
   if (DEBUG_AUTO)
