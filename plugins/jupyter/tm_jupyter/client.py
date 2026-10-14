@@ -138,8 +138,6 @@ def main():
         lines = [line]
         while line != "<EOF>":
             line = input ()
-            if line == '':
-                continue
             lines.append(line)
         code = '\n'.join(lines[:-1])
         

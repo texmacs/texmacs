@@ -2,6 +2,17 @@
 
 A [TeXmacs](https://www.texmacs.org/) plugin to run and communicate with [Jupyter kernels](https://github.com/jupyter/jupyter/wiki/Jupyter-kernels).
 
+##### Tests
+
+From the repository root, run:
+
+```sh
+python3 -m unittest discover -s plugins/jupyter/tests -v
+```
+
+These input handling tests use a mock kernel and require only the Python standard
+library; TeXmacs and Jupyter do not need to be installed.
+
 ##### Notes
 
 - [Messaging in Jupyter](https://jupyter-client.readthedocs.io/en/latest/messaging.html)
