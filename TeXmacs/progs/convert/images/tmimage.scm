@@ -70,7 +70,8 @@
 (define (selection-trim-ending) ; code from text-edit.scm
               (if (selection-active-any?)
                (with st (selection-tree)
-                  (if (and (not  (tree-atomic? st ))
+		 (if (and (not (tree-atomic? st))
+			  (!= (tree-label st) 'image)
                           (tree-empty? (tree-ref st :last)))
                    (begin
                      (selection-set
