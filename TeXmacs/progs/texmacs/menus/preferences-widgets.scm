@@ -727,7 +727,7 @@
     (item (text "Clipboard image format:")
       (enum (set-pretty-preference "texmacs->image:format" answer)
             (pretty-format-list)
-            (get-pretty-preference "texmacs->image:format")
+            (string-capitalize (get-pretty-preference "texmacs->image:format"))
             "8em")))
   ====== ======
   (bold (text "Image -> TeXmacs"))
