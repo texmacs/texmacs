@@ -1152,8 +1152,13 @@ qt_gui_rep::put_graphics_on_clipboard (url file) {
     if (extension == "svg") mime = "image/svg+xml"; //this works with Inskcape version >= 0.47
     
     string filecontent;
-    load_string (file, filecontent, true);
-    
+    load_string (file, filecontent, false);
+    if (filecontent == "") {
+      if (DEBUG_QT)
+	debug_qt << "qt_gui_rep::put_graphics_on_clipboard, "
+		 << "cannot load " << file << "\n";
+      return false;
+    }
     // warning: we need to tell Qt the size of the byte buffer
     c_string tmp (filecontent);
     QByteArray rawdata (tmp, N(filecontent));
