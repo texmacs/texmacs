@@ -1399,15 +1399,12 @@
         ((func? h 'h:img 1) (html-embed-image-sub h))
         (else (map html-embed-image h))))
 
-(define (tmhtml-image l)
+(define (tmhtml-image-sub l)
   ;; FIXME: Should also test that width and height are not magnifications.
   ;; Currently, magnifications make tmlength->htmllength return #f.
   (cond ((nin? (tmhtml-image-suffix (car l)) tmhtml-web-formats)
          ;; linked or embedded non-web image: convert & save to png
-         (with h (tmhtml-png (cons 'image l))
-	   (if tmhtml-image-embed?
-	       (set! h (html-embed-image h)))
-	   h))
+         (tmhtml-png (cons 'image l)))
         ((and (func? (car l) 'tuple 2)
               (func? (cadar l) 'raw-data 1)
               (string? (cadr (cadar l)))
@@ -1416,10 +1413,7 @@
          (receive (name-url name-string)
 	          (tmhtml-image-names (url-suffix (cork->utf8 (caddar l))))
 	   (string-save (cadr (cadar l)) name-url)
-	   (with h (tmhtml-image (cons name-string (cdr l)))
-	     (if tmhtml-image-embed?
-		 (set! h (html-embed-image h)))
-	     h)))
+	   (tmhtml-image (cons name-string (cdr l)))))
         ((nstring? (first l))
          ;; treat complex images as generic markup
          (tmhtml-png (cons 'image l)))
@@ -1433,6 +1427,10 @@
                         ,@(if w `((width ,w)) '())
                         ,@(if h `((height ,h)) '()))))))))
 
+(define (tmhtml-image l)
+  (with h (tmhtml-image-sub l)
+    (if tmhtml-image-embed? (html-embed-image h) h)))  
+  
 (define (tmhtml-ornament-get-env-style)
   (let* ((l0 (hash-map->list list tmhtml-env))
          (l1 (filter (lambda (x)
