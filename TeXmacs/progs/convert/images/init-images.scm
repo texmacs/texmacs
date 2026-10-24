@@ -25,7 +25,7 @@
   (url-exists-in-path? "pdftocairo"))
 
 (tm-define (gs-binary)
-  (let* ((n1 "$TEXMACS_PATH\\bin\\gs.exe;c:\\Program F*\\gs\\gs*\\gswin*c.exe")
+  (let* ((n1 "$TEXMACS_PATH\\bin\\gs.exe;c:\\Program F*\\gs\\gs*\\gswin*c.exe;gs.exe")
          (n2 "$TEXMACS_PATH/bin/gs:gs")
          (name (if (os-mingw?) n1 n2)))
     (url->system (url-resolve-in-path name))))
