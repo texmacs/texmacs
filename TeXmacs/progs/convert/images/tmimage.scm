@@ -31,6 +31,9 @@
   ("texmacs->image:format" (default-image-export-format) noop))
   ;("texmacs->image:scale" "2.0" noop)
 
+(when (== (get-preference "texmacs->image:format") "default")
+  (set-preference "texmacs->image:format" (default-image-export-format)))
+  
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; private functions
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -254,11 +257,9 @@
     (with suffix (url-suffix myurl)
       (when (not (file-converter-exists? "x.pdf" (string-append "y." suffix)))
         (show-message (string-append "Sorry, pdf to " suffix " converter is missing. Generating pdf instead") "Image format not available" )
-        (let* ((sufl (string-length suffix))
-              (surl (url->string myurl))
-              (sl (string-length surl)))
-          (set! myurl (string->url (string-append (substring surl (- sl sufl) sl) "pdf"))))))
-
+        (with sufl (string-length suffix)
+          (set! myurl (url-glue (url-unglue myurl sufl) "pdf")))))
+   
 ; TODO Handle when output file already exists (presently we overwritte without warning)
 
     (selection-trim-ending)
