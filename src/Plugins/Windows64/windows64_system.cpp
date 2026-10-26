@@ -141,14 +141,21 @@ ssize_t texmacs_fread(char *z, size_t n, FILE *stream) {
 
 ssize_t texmacs_fwrite(const char *str, size_t size, FILE *stream) {
   if (stream != stdout && stream != stderr) {
-    size_t ret= fwrite(str, size, 1, stream);
+    size_t ret = fwrite(str, size, 1, stream);
     return ret < 1 ? 0 : size;
   }
-  std::wstring wide_str = texmacs_utf8_to_wide(string(str, size));
-  if (stream == stdout) {
-    std::wcout << wide_str;
+  int fd = _fileno(stream);
+  HANDLE h = (HANDLE)_get_osfhandle(fd);
+  DWORD mode;
+  if (h != INVALID_HANDLE_VALUE && GetConsoleMode(h, &mode)) {
+    // Native Windows console (cmd.exe / conhost)
+    std::wstring wide_str = texmacs_utf8_to_wide(string(str, (int)size));
+    DWORD written = 0;
+    WriteConsoleW(h, wide_str.data(), (DWORD)wide_str.size(), &written, NULL);
   } else {
-    std::wcerr << wide_str;
+    // MinGW64 / MSYS2 console, pipe, or file: write UTF-8 bytes directly
+    fwrite(str, 1, size, stream);
+    fflush(stream);
   }
   return size;
 }

@@ -83,7 +83,36 @@ void setup_texmacs_home_path () {
   texmacs_setenv("TEXMACS_HOME_PATH", concretize(texmacs_home_path));
 }
 
+static void texmacs_qt_message_output(QtMsgType type, const QMessageLogContext &context, const QString &msg) {
+  QByteArray localMsg = msg.toLocal8Bit();
+  const char *prefix = "";
+  switch (type) {
+    case QtDebugMsg:    prefix = ""; break;
+    case QtInfoMsg:     prefix = "Info: "; break;
+    case QtWarningMsg:  prefix = "Warning: "; break;
+    case QtCriticalMsg: prefix = "Critical: "; break;
+    case QtFatalMsg:    prefix = "Fatal: "; break;
+  }
+  fprintf(stderr, "%s%s\n", prefix, localMsg.constData());
+  fflush(stderr);
+
+  if (IsDebuggerPresent()) {
+    std::wstring wmsg = msg.toStdWString() + L"\n";
+    OutputDebugStringW(wmsg.c_str());
+  }
+
+  if (type == QtFatalMsg) {
+    abort();
+  }
+}
+
 int WINAPI CommonMain() {
+  _wputenv(L"QT_LOGGING_TO_CONSOLE=1");
+  _wputenv(L"QT_ASSUME_STDERR_HAS_CONSOLE=1");
+  SetEnvironmentVariableW(L"QT_LOGGING_TO_CONSOLE", L"1");
+  SetEnvironmentVariableW(L"QT_ASSUME_STDERR_HAS_CONSOLE", L"1");
+
+  qInstallMessageHandler(texmacs_qt_message_output);
   texmacs_attach_console();
   texmacs_initialize_displayname();
   setup_texmacs_path();
