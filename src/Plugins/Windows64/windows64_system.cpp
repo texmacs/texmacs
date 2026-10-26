@@ -208,29 +208,39 @@ string get_local_appdata_path() {
 
 bool texmacs_getenv(string var_name, string &var_value) {
   std::wstring wide_var_name = texmacs_utf8_to_wide(var_name);
-  size_t required_size;
-  _wgetenv_s(&required_size, nullptr, 0, wide_var_name.c_str());
+  DWORD required_size = GetEnvironmentVariableW(wide_var_name.c_str(), nullptr, 0);
 
   if (required_size == 0) {
     return false;
   }
 
   std::vector<wchar_t> value(required_size);
-  _wgetenv_s(&required_size, value.data(), required_size, wide_var_name.c_str());
+  DWORD read_size = GetEnvironmentVariableW(wide_var_name.c_str(), value.data(), required_size);
+  if (read_size == 0 || read_size >= required_size) {
+    return false;
+  }
 
-  var_value = texmacs_wide_to_utf8(value.data());
+  var_value = texmacs_wide_to_utf8(std::wstring(value.data(), read_size));
   return true;
 }
 
 bool texmacs_setenv(string var_name, string new_value) {
   std::wstring wide_var_name = texmacs_utf8_to_wide(var_name);
   std::wstring wide_new_value = texmacs_utf8_to_wide(new_value);
-  return _wputenv_s(wide_var_name.c_str(), wide_new_value.c_str()) == 0;
+  _wputenv_s(wide_var_name.c_str(), wide_new_value.c_str());
+  return SetEnvironmentVariableW(wide_var_name.c_str(), wide_new_value.c_str()) != 0;
 }
 
 bool texmacs_putenv(string variable) {
   std::wstring wide_variable = texmacs_utf8_to_wide(variable);
-  return _wputenv(wide_variable.c_str()) == 0;
+  _wputenv(wide_variable.c_str());
+  size_t eq = wide_variable.find(L'=');
+  if (eq != std::wstring::npos) {
+    std::wstring name = wide_variable.substr(0, eq);
+    std::wstring val = wide_variable.substr(eq + 1);
+    SetEnvironmentVariableW(name.c_str(), val.c_str());
+  }
+  return true;
 }
 
 bool texmacs_mkdir(string dirname, int mode) {
@@ -402,10 +412,16 @@ void texmacs_init_guile_hooks() {
 }
 
 intptr_t texmacs_spawnvp(int mode, string name, array<string> args) {
-  // convert the arguments to a wide string
+  // convert the arguments to a wide string with quoting if needed
   std::vector<wchar_t*> wide_args;
   for (int i = 0; i < N(args); i++) {
     std::wstring wide_arg = texmacs_utf8_to_wide(args[i]);
+    if (wide_arg.empty()) wide_arg = L"\"\"";
+    else if (wide_arg.find_first_of(L" \t\n\v\"") != std::wstring::npos) {
+      if (wide_arg.front() != L'"' || wide_arg.back() != L'"') {
+        wide_arg = L"\"" + wide_arg + L"\"";
+      }
+    }
     wchar_t *c_wide_arg = (wchar_t*)malloc((wide_arg.size() + 1) * sizeof(wchar_t));
     memcpy(c_wide_arg, &wide_arg[0], wide_arg.size() * sizeof(wchar_t));
     c_wide_arg[wide_arg.size()] = 0;
@@ -708,7 +724,10 @@ mingw_system (::array< ::string> arg,
 
   // send data to spawn process
   ::array<int> pos_in (n_in);
-  for (int i= 0; i < n_in; i++) pos_in[i]= 0;
+  for (int i= 0; i < n_in; i++) {
+    pos_in[i]= 0;
+    if (N(str_in[i]) == 0) ch[i].close ();
+  }
   time_t last_wait_time= texmacs_time ();
 
   bool busy;
@@ -748,7 +767,9 @@ mingw_system (::array< ::string> arg,
 void applyWindowsAcrylicAndUnifiedToolbar(QWidget* widget) {
   if (widget == nullptr) return;
 
+#if QT_VERSION >= 0x060000
   widget->setWindowFlag(Qt::NoTitleBarBackgroundHint, true);
+#endif
 
   
   widget->setWindowFlag(Qt::Window, true);

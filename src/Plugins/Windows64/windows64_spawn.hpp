@@ -26,6 +26,7 @@ public:
   void Init (Direction d);
   void redirect ();
   inline int getPipe() const { return (toBeClosed); }
+  inline int getOrigin() const { return (origin); }
   void read (std::string *str);
   inline int write (void * data, int lenght) { 
     return (_write(fd, data, lenght)); }
@@ -50,10 +51,12 @@ private:
 class spawn_system {
 public:
   spawn_system(array<Channel> &ch, string name, array<string> args);
-  inline int getpid() { return (pid); }
+  inline int getpid() { return (int)process_id; }
   int wait();
-  inline bool isRunning() { return (pid?true:false); }
+  inline bool isRunning() { return (process_handle != NULL); }
+  ~spawn_system();
 private:
-  intptr_t pid;
+  DWORD process_id;
+  HANDLE process_handle;
   array<Channel> &channel;
 };
