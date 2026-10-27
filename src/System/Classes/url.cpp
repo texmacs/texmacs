@@ -1077,6 +1077,7 @@ exists (url u) {
 bool
 exists_in_path (url u) {
 #ifdef OS_MINGW
+  if (suffix (u) != "") return !is_none (resolve_in_path (u));
   return !is_none (resolve_in_path (url (as_string (u) * ".bat"))) ||\
          !is_none (resolve_in_path (url (as_string (u) * ".exe"))) ||\
          !is_none (resolve_in_path (url (as_string (u) * ".com")));
