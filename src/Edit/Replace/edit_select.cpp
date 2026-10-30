@@ -15,6 +15,122 @@
 #include "packrat.hpp"
 #include "tree_select.hpp"
 #include "drd_mode.hpp"
+#include "file.hpp"
+#include "image_files.hpp"
+
+/******************************************************************************
+* Internationalization
+******************************************************************************/
+
+struct lazy_clipboard {
+  edit_select_rep* ed;
+  editor_rep* edt;
+  string mode;
+  tree t, txt, html, tex;
+  string image, image_format;
+  path tp;
+  lazy_clipboard () {}
+
+  void
+  bind (edit_select_rep* _ed, string m, tree _t, path p) {
+    ed= _ed;
+    edt= dynamic_cast<editor_rep*> (ed);
+    mode= m;
+    t= copy (_t);
+    tp= p;
+    txt= html= tex= tree ();
+    image= image_format= string ();
+    if (is_func (t, IMAGE, 5)) {
+      array<tree> a= A(t);
+      if (is_atomic (a[0])) {
+	string name= cork_to_utf8 (as_string (a[0]));
+	url u= url_system (name);
+	u= relative (get_current_buffer (), u);
+	image_format= suffix (u);
+	load_string (u, image, false);
+      }
+      else if (is_func (a[0], TUPLE, 2)) {
+	a= A(a[0]);
+	if (is_func (a[0], RAW_DATA, 1) && is_atomic (a[1])) {
+	  array<tree> b= A(a[0]);
+	  image= as_string (b[0]);
+	  image_format= as_string (a[1]);
+	}
+      }
+    }
+    if (occurs (".", image_format))
+      image_format= suffix (url_system (cork_to_utf8 (image_format)));
+  }
+  tree
+  get_verbatim () {
+    if (ed != NULL && txt == tree ()) 
+      txt= ed->exec_verbatim (t, tp);
+    return txt;
+  }
+  tree
+  get_html () {
+    if (ed != NULL && html == tree ())
+      html= mode == "math" ? 
+	ed->exec_html (compound ("math", t)) : ed->exec_html (t, tp);
+    return html;
+  }
+  tree
+  get_latex () {
+    if (ed != NULL && tex == tree ())
+      tex= mode == "math" ? 
+	ed->exec_latex (compound ("math", t)) : ed->exec_latex (t, tp);
+    return html;
+  }
+  void
+  unbind (editor_rep* e) {
+    if (e != edt) return;
+    txt= get_verbatim ();
+    html= get_html ();
+    tex= get_latex ();
+    edt= ed= NULL;
+  }
+};
+
+inline static lazy_clipboard&
+get_lazy_default_clipboard () {
+  static lazy_clipboard c;
+  return c;
+}
+
+void
+bind_default_clipboard (edit_select_rep* e, string m, tree t, path p) {
+  return get_lazy_default_clipboard ().bind (e, m, t, p);
+}
+
+void
+unbind_default_clipboard (editor_rep* e) {
+  return get_lazy_default_clipboard ().unbind (e);
+}
+
+tree
+get_default_clipboard_verbatim () {
+  return get_lazy_default_clipboard ().get_verbatim ();
+}
+
+tree
+get_default_clipboard_html () {
+  return get_lazy_default_clipboard ().get_html ();
+}
+
+tree
+get_default_clipboard_latex () {
+  return get_lazy_default_clipboard ().get_latex ();
+}
+
+string
+get_default_clipboard_image () {
+  return get_lazy_default_clipboard ().image;
+}
+
+string
+get_default_clipboard_image_format () {
+  return get_lazy_default_clipboard ().image_format;
+}
 
 /******************************************************************************
 * Internationalization
@@ -55,7 +171,8 @@ edit_select_rep::edit_select_rep ():
   selecting (false), shift_selecting (false), mid_p (),
   selection_import ("default"), selection_export ("default"),
   focus_p (), focus_hold (false) {}
-edit_select_rep::~edit_select_rep () {}
+edit_select_rep::~edit_select_rep () {
+  unbind_default_clipboard (dynamic_cast<editor_rep*> (this)); }
 
 /******************************************************************************
 * Semantic selections
@@ -556,7 +673,7 @@ edit_select_rep::selection_get_env_value (string var) {
 
 void
 edit_select_rep::selection_raw_set (string key, tree t) {
-  (void) ::set_selection (key, t, "", "", "", "texmacs");
+  (void) ::set_selection (key, t, "", "texmacs");
 }
 
 tree
@@ -605,41 +722,33 @@ edit_select_rep::selection_set (string key, tree t, bool persistant) {
   /* TODO: add mode="graphics" somewhere in the context of the <graphics>
      tag. To be done when implementing the different embeddings for
      nicely copying graphics into text, text into graphics, etc. */
-  string s, sh, sv;
+  string s;
   if (key == "primary" || key == "mouse") {
-    if (selection_export == "verbatim") t= exec_verbatim (t, tp);
+    if (selection_export == "verbatim")
+      t= exec_verbatim (t, tp);
     if (selection_export == "html") {
-        if (mode == "math") 
-            t= exec_html (compound ("math", t));
-        else 
-            t= exec_html (t, tp);
+      if (mode == "math") 
+	t= exec_html (compound ("math", t));
+      else 
+	t= exec_html (t, tp);
     }
-    if (selection_export == "latex") t= exec_latex (t, tp);
-    if ((selection_export == "latex") && (mode == "math"))
-      t= compound ("math", t);
+    if (selection_export == "latex") {
+      if (mode == "math")
+	t= exec_latex (compound ("math", t));
+      else
+	t= exec_latex (t, tp);
+    }
     if (selection_export != "default")
       s= tree_to_generic (t, selection_export * "-snippet");
-    else {
+    else { // default
       s= tree_to_generic (t, "texmacs-snippet");
 #ifdef QTTEXMACS
-      tree tmp;
-      tmp= exec_verbatim (t, tp);
-      sv= tree_to_generic (tmp, "verbatim-snippet");
-      // sv= selection_encode (lan, sv); // why not used ???
-      /*
-      if (mode == "math")
-	tmp= exec_html (compound ("math", t));
-      else
-	tmp= exec_html (t, tp);
-      object obj= call ("texmacs->html*", tree_to_stree (tmp));
-      sh= as_string (call ("serialize-html", obj));
-      sh= selection_encode (lan, sh);
-      */
+      bind_default_clipboard (this, mode, t, tp);
 #endif
     }
     s= selection_encode (lan, s);
   }
-  if (::set_selection (key, sel, s, sv, sh, selection_export) && !persistant)
+  if (::set_selection (key, sel, s, selection_export) && !persistant)
     selection_cancel ();
 }
 

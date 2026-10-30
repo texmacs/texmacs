@@ -29,6 +29,7 @@
 #include "qt_simple_widget.hpp"
 #include "qt_window_widget.hpp"
 #include "QTMApplication.hpp"
+#include "QTMMimeData.hpp"
 
 #if QT_VERSION < 0x060000
 #include <QDesktopWidget>
@@ -251,6 +252,9 @@ qt_gui_rep::~qt_gui_rep()  {
 
 bool
 qt_gui_rep::get_selection (string key, tree& t, string& s, string format) {
+  if (DEBUG_QT)
+    debug_qt << "qt_gui_rep::get_selection,  key=" << key
+	     << ", format=" << format << LF;
   QClipboard *cb = QApplication::clipboard ();
   QClipboard::Mode mode = QClipboard::Clipboard;
   bool direct_selection= (key == "extern");
@@ -265,7 +269,7 @@ qt_gui_rep::get_selection (string key, tree& t, string& s, string format) {
   
   s = "";
   t = "none";
-    // Knowing when we owns (or not) the content is not clear
+  // Knowing when we owns (or not) the content is not clear
   bool owns = (format != "temp" && format != "wrapbuf" && key != "primary") &&
   !(key == "mouse" && cb->supportsSelection ());
   
@@ -313,8 +317,8 @@ qt_gui_rep::get_selection (string key, tree& t, string& s, string format) {
       buf = md->html().toUtf8 ();
       input_format = "html-snippet";
     }
-    else if (md->hasFormat ("text/plain;charset=utf8")) {
-      buf = md->data ("text/plain;charset=utf8");
+    else if (md->hasFormat ("text/plain;charset=utf-8")) {
+      buf = md->data ("text/plain;charset=utf-8");
       input_format = "verbatim-snippet";
     }
     else {
@@ -367,11 +371,9 @@ qt_gui_rep::get_selection (string key, tree& t, string& s, string format) {
 }
 
 bool
-qt_gui_rep::set_selection (string key, tree t,
-                           string s, string sv, string sh, string format) {
-  selection_t (key)= copy (t);
+qt_gui_rep::set_selection (string key, tree t, string s, string format) {
+  selection_t (key)= copy (t); // tuple ("texmacs", selection_tree, mode, lan)
   selection_s (key)= copy (s);
-  
   QClipboard *cb = QApplication::clipboard ();
   QClipboard::Mode mode = QClipboard::Clipboard;
   if (key == "primary");
@@ -379,53 +381,46 @@ qt_gui_rep::set_selection (string key, tree t,
     mode = QClipboard::Selection;
   else return true;
   cb->clear (mode);
-
-  c_string selection (s);
-  int N_selection= N(s);
-
-  cb->setText (QString::fromLatin1 (selection, N_selection), mode);
+  c_string _s (s);
+  int N_s= N(s);
+  cb->setText (QString::fromLatin1 (_s, N_s), mode);
+  if (format == "default") {
+    // use our customized QMimeData to advertize all mimetype we can do;
+    // data of desired form is evaluated only when receiving a request
+    // see QTMMimeData.*pp
+    QMimeData *md= new QTMMimeData (t, s);
+    cb->setMimeData (md, mode);
+    return true;
+  }
+  // format is specified: use standard QMimeData to deliver it
   QMimeData *md = new QMimeData;
-  if (format == "verbatim" || format == "default") {
-    if (format == "default") {
-      md->setData ("application/x-texmacs-clipboard", (char*)selection);
-      
-      QString pid_str;
-      pid_str.setNum (QCoreApplication::applicationPid ());
-      md->setData ("application/x-texmacs-pid", pid_str.toLatin1());
-
-      //c_string tmp (sh);
-      //md->setHtml (QString::fromUtf8 (tmp, N(sh)));
-      (void) sh;
-
-      selection = c_string (sv);
-      N_selection = N(sv);
-    }
-    
+  if (format == "verbatim") {
     string enc = get_preference ("texmacs->verbatim:encoding");
     if (enc == "auto")
       enc = get_locale_charset ();
-    
     if (enc == "utf-8" || enc == "UTF-8")
-      md->setText (QString::fromUtf8 (selection, N_selection));
-    else if (enc == "iso-8859-1" || enc == "ISO-8859-1")
-      md->setText (QString::fromLatin1 (selection, N_selection));
+      md->setText (QString::fromUtf8 (_s, N_s));
     else
-      md->setText (QString::fromLatin1 (selection, N_selection));
+      md->setText (QString::fromLatin1 (_s, N_s));
   }
-  else if (format == "html") 
-      md->setHtml (QString::fromUtf8 (selection, N_selection));
+  else if (format == "html") {
+    md->setHtml (QString::fromUtf8 (_s, N_s));
+    md->setText (QString::fromLatin1 (_s, N_s));
+  }
   else if (format == "latex") {
     string enc = get_preference ("texmacs->latex:encoding"); 
     if (enc == "utf-8" || enc == "UTF-8" || enc == "cork")
-      md->setText (utf8_to_qstring (string ((char*) selection, N_selection)));
+      md->setText (utf8_to_qstring (s));
     else
-      md->setText (QString::fromLatin1 (selection, N_selection));
+      md->setText (QString::fromLatin1 (_s, N_s));
+    QByteArray data (_s, N_s);
+    md->setData ("application/x-tex", data);
+    md->setData ("text/x-tex", data);
   }
   else
-    md->setText (QString::fromLatin1 (selection, N_selection));
+    md->setText (QString::fromLatin1 (_s, N_s));
   cb->setMimeData (md, mode);
-    // according to the docs, ownership of mimedata is transferred to clipboard
-    // so no memory leak here
+  // ownership of mimedata is transferred to clipboard (no memory leak)
   return true;
 }
 
@@ -1110,12 +1105,10 @@ load_system_font (string fam, int sz, int dpi, font_metric& fnm, font_glyphs& fn
  ******************************************************************************/
 
 bool
-set_selection (string key, tree t,
-               string s, string sv, string sh, string format) {
-    // Copy a selection 't' with string equivalent 's' to the clipboard 'cb'
-    // and possibly the variants 'sv' and 'sh' for verbatim and html
-    // Returns true on success
-  return the_gui->set_selection (key, t, s, sv, sh, format);
+set_selection (string key, tree t, string s, string format) {
+    // Copy a selection 't' to the clipboard 'cb'.
+    // Returns true on success.
+  return the_gui->set_selection (key, t, s, format);
 }
 
 bool
