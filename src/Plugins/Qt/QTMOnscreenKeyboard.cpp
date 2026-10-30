@@ -12,6 +12,7 @@
 
 #include "scheme.hpp"
 #include "qt_utilities.hpp"
+#include "QTMWidget.hpp"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -23,9 +24,14 @@
 #include <cstdio>
 
 QTMOnscreenKeyboard::QTMOnscreenKeyboard() {
+	QSizePolicy sp_retain = sizePolicy();
+	sp_retain.setRetainSizeWhenHidden(true);
+	setSizePolicy(sp_retain);
+
+	
 	mLayout = new QVBoxLayout(this);
 	mLayout->setContentsMargins(0, 0, 0, 0);
-	mLayout->setSpacing(2);
+	mLayout->setSpacing(0);
 
 	QTimer::singleShot(10, this, SLOT(initializeKeyboard()));
 }
@@ -64,11 +70,11 @@ void QTMOnscreenKeyboard::updateButtonGeometry() {
 					mKeyboardSizeHint.height(): 200.0;
     const double z = max(0.6, min(width() / w0, height() / h0));
 
-    const int minHeight = (int) round(26.0 * z);
+    // const int minHeight = (int) round(26.0 * z);
     const int fontSize = (int) round(10.0 * z);
 	for (const QPointer<QPushButton>& key : mButtons) {
         if (key == nullptr) continue;
-        key->setMinimumHeight(minHeight);
+        //key->setMinimumHeight(minHeight);
         QFont f = key->font();
         f.setPointSize(max(8, fontSize));
         key->setFont(f);
@@ -89,6 +95,8 @@ void QTMOnscreenKeyboard::onKeyboardButtonClicked(QPushButton* key) {
 
 	if (refreshLayout)
 	  QTimer::singleShot(0, this, SLOT(initializeKeyboard()));
+
+	QTMWidget::setFocusToLast();
 }
 
 bool QTMOnscreenKeyboard::hasActiveEmuModifier() const {
@@ -219,18 +227,19 @@ void QTMOnscreenKeyboard::rebuildKeyboard() {
 		rowWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 		QHBoxLayout* rowLayout = new QHBoxLayout(rowWidget);
 		rowLayout->setContentsMargins(0, 0, 0, 0);
-		rowLayout->setSpacing(4);
+		rowLayout->setSpacing(0);
 
 		double rowUnits = 0.0;
 		for (int j = 0; j < N(row); j++) {
 			KeyData keyData = row[j];
 
 			QPushButton* button = new QPushButton(keyData.label, rowWidget);
+			button->setObjectName("onscreenKeyboardButton");
 			mButtons << button;
 			button->setProperty("tm-cmd", keyData.cmd);
 			button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-			connect(button, &QPushButton::clicked, this, 
-				[this, button]() { onKeyboardButtonClicked(button); });
+			connect(button, &QPushButton::pressed, this,
+				&QTMOnscreenKeyboard::onKeyboardButtonClickedFromSender);
 
 			int stretch = max(1, (int) round(keyData.widthUnits * 100.0));
 			rowLayout->addWidget(button, stretch);
@@ -245,7 +254,7 @@ void QTMOnscreenKeyboard::rebuildKeyboard() {
 		const int hintWidth = (int) round(max(10.0, maxUnits) * 42.0);
 		const int hintHeight = max(200, N(mRows) * 44 + 10);
 		mKeyboardSizeHint = QSize(hintWidth, hintHeight);
-		setMinimumSize(mKeyboardSizeHint);
+		//setMinimumSize(mKeyboardSizeHint);
 	}
 
 	updateButtonGeometry();
@@ -275,4 +284,10 @@ void QTMOnscreenKeyboard::initializeKeyboard() {
 	} catch (string& err) {
 		cout << "custom-keyboard-layout failed: " << err << LF;
 	}
+}
+
+void QTMOnscreenKeyboard::onKeyboardButtonClickedFromSender() {
+	QPushButton* button = qobject_cast<QPushButton*>(sender());
+	if (button == nullptr) return;
+	onKeyboardButtonClicked(button);
 }

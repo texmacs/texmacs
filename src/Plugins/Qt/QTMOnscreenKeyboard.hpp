@@ -49,6 +49,24 @@ public:
    */
   QTMOnscreenKeyboard();
 
+  inline void show() {
+    emit visibilityChanged(true);
+    QWidget::show();
+  }
+
+  inline void hide() {
+    emit visibilityChanged(false);
+    QWidget::hide();
+  }
+
+  inline void setVisible(bool visible) override {
+    emit visibilityChanged(visible);
+    QWidget::setVisible(visible);
+  }
+
+signals:
+  void visibilityChanged(bool visible);
+
 private slots:
   /**
    * @brief Fetch and apply the current keyboard layout.
@@ -61,6 +79,8 @@ private slots:
    */
   void onKeyboardButtonClicked(QPushButton* key);
 
+  void onKeyboardButtonClickedFromSender();
+
 protected:
   /**
    * @brief Resize handler used to update button geometry.
@@ -71,6 +91,16 @@ protected:
    * @brief Delayed resize callback.
    */
   void onResizeEvent();
+
+  inline void showEvent(QShowEvent* event) override {
+    QWidget::showEvent(event);
+    emit visibilityChanged(true);
+  }
+
+  inline void hideEvent(QHideEvent* event) override {
+    QWidget::hideEvent(event);
+    emit visibilityChanged(false);
+  }
 
 private:
   /**
