@@ -171,8 +171,7 @@ edit_select_rep::edit_select_rep ():
   selecting (false), shift_selecting (false), mid_p (),
   selection_import ("default"), selection_export ("default"),
   focus_p (), focus_hold (false) {}
-edit_select_rep::~edit_select_rep () {
-  unbind_default_clipboard (dynamic_cast<editor_rep*> (this)); }
+edit_select_rep::~edit_select_rep () {}
 
 /******************************************************************************
 * Semantic selections
