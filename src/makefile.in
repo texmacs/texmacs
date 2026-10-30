@@ -71,7 +71,7 @@ GUILE_BIN = @GUILE_BIN@
 GLUE = cd Scheme/Glue; ./build-glue
 TOUCH = touch
 MOC = @MOC@
-MOCFLAGS = @QT_CPPFLAGS@
+MOCFLAGS = @QT_CPPFLAGS@ $(subst -isystem,-I,$(filter-out -std=%,$(CXXQT)))
 QT_PLUGIN_DIR = @QT_PLUGIN_DIR@
 
 ###############################################################################
