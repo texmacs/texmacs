@@ -485,6 +485,7 @@ protected:
 
 public slots:
   void scrollToSelection (const QItemSelection& selected);
+  void onTrackedListViewDestroyed(QObject *obj);
 };
 
 #endif // QTMMENUHELPER_HPP

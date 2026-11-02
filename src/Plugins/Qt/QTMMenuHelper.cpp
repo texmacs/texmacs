@@ -18,10 +18,15 @@
 #include "qt_picture.hpp"       // xpm_image
 #include "qt_tm_widget.hpp"     // tweak_iconbar_size
 #include "QTMMenuHelper.hpp"
+#include "QTMWindow.hpp"
+#include <QDebug>
 #include "QTMGuiHelper.hpp"
 #include "QTMStyle.hpp"
 #include "QTMTreeModel.hpp"
 #include "QTMApplication.hpp"
+#if QT_VERSION >= 0x050000
+#include "QTMMainTabWindow.hpp"
+#endif
 
 #include <QToolTip>
 #include <QCompleter>
@@ -895,6 +900,12 @@ void
 QTMTabWidget::resizeOthers (int current) {
 BEGIN_SLOT
 
+#if QT_VERSION >= 0x050000
+  if (qobject_cast<QTMMainTabWindow*>(window())) {
+    return;
+  }
+#endif
+
   for (int i = 0; i < count(); ++i) {
     widget(i)->setSizePolicy (QSizePolicy::Preferred, QSizePolicy::Preferred);
   }
@@ -963,6 +974,7 @@ QTMRefreshWidget::QTMRefreshWidget (qt_widget _tmwid, string _strwid, string _ki
 #endif
   QVBoxLayout* l = new QVBoxLayout (this);
   l->setContentsMargins (0, 0, 0, 0);
+  l->setAlignment (Qt::AlignTop);
 #if QT_VERSION < 0x060000
   l->setMargin (0);
 #endif
@@ -1029,6 +1041,9 @@ BEGIN_SLOT
       qwid->deleteLater();
     }
     qwid = concrete (cur)->as_qwidget(this);
+    if (qwid && qwid->layout ()) {
+      qwid->layout ()->setAlignment (Qt::AlignTop);
+    }
 
     delete layout()->takeAt(0);
     layout()->addWidget (qwid);
@@ -1062,6 +1077,7 @@ QTMRefreshableWidget::QTMRefreshableWidget (qt_widget _tmwid, object _prom, stri
 #endif
   QVBoxLayout* l = new QVBoxLayout (this);
   l->setContentsMargins (0, 0, 0, 0);
+  l->setAlignment (Qt::AlignTop);
 #if QT_VERSION < 0x060000
   l->setMargin (0);
 #endif
@@ -1120,6 +1136,9 @@ BEGIN_SLOT
       qwid->deleteLater();
     }
     qwid = concrete (cur)->as_qwidget(this);
+    if (qwid && qwid->layout ()) {
+      qwid->layout ()->setAlignment (Qt::AlignTop);
+    }
 
     delete layout()->takeAt(0);
     layout()->addWidget (qwid);
@@ -1232,9 +1251,8 @@ void QTMScrollArea::setWidgetAndConnect (QWidget* w) {
   
   for (QTMListView* listView : listViews) {
     
-    connect(listView, &QObject::destroyed, this, [this, listView]() {
-        listViews.removeAll(listView);
-    });
+    connect(listView, &QObject::destroyed,
+        this, &QTMScrollArea::onTrackedListViewDestroyed);
 
     if (!listView->isScrollable()) {
 #if QT_VERSION < 0x060000
@@ -1246,6 +1264,12 @@ void QTMScrollArea::setWidgetAndConnect (QWidget* w) {
 #endif
     }
   }
+}
+
+void QTMScrollArea::onTrackedListViewDestroyed(QObject *obj) {
+  QTMListView *listView = qobject_cast<QTMListView *>(obj);
+  if (listView == nullptr) return;
+  listViews.removeAll(listView);
 }
 
 /*! Scrolls the area to a given index in a QTMListView. */

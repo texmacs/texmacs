@@ -327,7 +327,7 @@
        ($glue #f #f 25 0)
        ($vlist ,@(map gui-make (cdr x)))
        ($glue #f #f 25 0))
-     ($glue #f #f 0 10)))
+     ($glue #f #t 0 10)))
 
 (define (gui-make-centered x)
   (require-format x '(centered :*))
@@ -337,7 +337,7 @@
        ($glue #t #f 25 0)
        ($vlist ,@(map gui-make (cdr x)))
        ($glue #t #f 25 0))
-     ($glue #f #f 0 10)))
+     ($glue #f #t 0 10)))
 
 (define (gui-make-bottom-buttons x)
   (require-format x '(bottom-buttons :*))

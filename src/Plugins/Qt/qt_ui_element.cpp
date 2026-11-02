@@ -614,7 +614,7 @@ qt_ui_element_rep::as_qaction () {
       url    image = open_box<url>(load);
       act = new QTMAction (NULL);
 #if QT_VERSION >= 0x060000
-      act->setIcon(tmapp()->icon_manager().getIcon(image));
+      tmapp()->icon_manager().setActionIcon (act, image);
 #else
       act->setIcon (QIcon (as_pixmap (*xpm_image (image))));
 #endif
@@ -729,7 +729,7 @@ qt_ui_element_rep::as_qlayoutitem (QWidget* parent_widget) {
          layout when you create it, but before you do anything with it. 
          */
       QGridLayout* l = new QGridLayout ();
-      l->setAlignment (Qt::AlignLeft);  // Don't center items automatically
+      l->setAlignment (Qt::AlignLeft | Qt::AlignTop);  // Don't center items automatically, align to top
       l->setSizeConstraint (QLayout::SetMinAndMaxSize);
       l->setHorizontalSpacing (6+hsep/PIXEL);
       l->setVerticalSpacing (6+vsep/PIXEL);
@@ -945,7 +945,7 @@ qt_ui_element_rep::as_qwidget (QWidget* parent_widget) {
         
         QTMLazyMenu* lm = new QTMLazyMenu (pw, b, type == pullright_button);
 #if QT_VERSION >= 0x060000
-        b->setIcon (tmapp()->icon_manager().getIcon(image));
+        tmapp()->icon_manager().setToolButtonIcon (b, image);
 #else
         b->setIcon (QIcon (as_pixmap (*xpm_image (image))));
 #endif
@@ -1063,8 +1063,7 @@ qt_ui_element_rep::as_qwidget (QWidget* parent_widget) {
       url image = open_box<url>(load);
       QLabel* l = new QLabel (parent_widget);
 #if QT_VERSION >= 0x060000
-      QIcon tmp= tmapp()->icon_manager().getIcon(image);
-      l->setPixmap (tmp.pixmap(tmp.availableSizes().last()));
+      tmapp()->icon_manager().setLabelPixmap (l, image);
 #else
       l->setPixmap (as_pixmap (*xpm_image (image)));
 #endif
@@ -1341,65 +1340,6 @@ qt_ui_element_rep::as_qwidget (QWidget* parent_widget) {
       break;
       
     case tabs_widget:
-    {
-      typedef array<widget> T1;
-      typedef pair<T1, T1> T;
-      T       x = open_box<T>(load);
-      T1   tabs = x.x1;
-      T1 bodies = x.x2;
-      
-      QTMTabWidget* tw = new QTMTabWidget (parent_widget);
-      
-      int i;
-      for (i = 0; i < N(tabs); i++) {
-        if (is_nil (tabs[i])) break;
-        QWidget* prelabel = concrete (tabs[i])->as_qwidget(tw);
-        QLabel*     label = qobject_cast<QLabel*> (prelabel);
-        QWidget*     body = concrete (bodies[i])->as_qwidget(tw);
-        tw->addTab (body, label ? label->text() : "");
-        delete prelabel;
-      }
-
-      if (i>0) tw->resizeOthers(0);   // Force the automatic resizing
-
-      qwid = tw;
-    }
-      break;
-      
-    case icon_tabs_widget:
-    {
-      typedef array<url> U1;
-      typedef array<widget> T1;
-      typedef triple<U1, T1, T1> T;
-      T       x = open_box<T>(load);
-      U1  icons = x.x1;
-      T1   tabs = x.x2;
-      T1 bodies = x.x3;
-
-      QTMTabWidget* tw = new QTMTabWidget (parent_widget);
-      int i;
-      for (i = 0; i < N(tabs); i++) {
-        if (is_nil (tabs[i])) break;
-        QImage*       img = xpm_image (icons[i]);
-        QWidget* prelabel = concrete (tabs[i])->as_qwidget(tw);
-        QLabel*     label = qobject_cast<QLabel*> (prelabel);
-        QWidget*     body = concrete (bodies[i])->as_qwidget(tw);
-#if QT_VERSION >= 0x060000
-        tw->addTab(body, QIcon(), label ? label->text() : "");
-	      (void) img;
-	      tw->setTabIcon(i, tmapp()->icon_manager().getIcon (icons[i]));
-#else
-        tw->addTab (body, QIcon (as_pixmap (*img)), label ? label->text() : "");
-#endif
-        delete prelabel;
-      }
-
-      if (i>0) tw->resizeOthers(0);   // Force the automatic resizing
-
-      qwid = tw;
-    }
-      break;
-
     case responsive_tabs_widget:
     {
       typedef array<widget> T1;
@@ -1408,22 +1348,39 @@ qt_ui_element_rep::as_qwidget (QWidget* parent_widget) {
       T1   tabs = x.x1;
       T1 bodies = x.x2;
 
-      QTMResponsiveTabWidget* tw = new QTMResponsiveTabWidget (parent_widget);
+      bool useResponsiveTabs = type == responsive_tabs_widget;
+#if QT_VERSION >= 0x060000
+      useResponsiveTabs = useResponsiveTabs || tmapp()->useTabWindow();
+#endif
+      QTMTabWidget* tw = useResponsiveTabs ? nullptr : new QTMTabWidget (parent_widget);
+      QTMResponsiveTabWidget* responsiveTw =
+        useResponsiveTabs ? new QTMResponsiveTabWidget (parent_widget) : nullptr;
+      QWidget* tabParent = useResponsiveTabs
+        ? static_cast<QWidget*> (responsiveTw) : static_cast<QWidget*> (tw);
       
       int i;
       for (i = 0; i < N(tabs); i++) {
         if (is_nil (tabs[i])) break;
-        QWidget* prelabel = concrete (tabs[i])->as_qwidget(tw);
+        QWidget* prelabel = concrete (tabs[i])->as_qwidget(tabParent);
         QLabel*     label = qobject_cast<QLabel*> (prelabel);
-        QWidget*     body = concrete (bodies[i])->as_qwidget(tw);
-        tw->addTab (body, label ? label->text() : "", QIcon());
+        QWidget*     body = concrete (bodies[i])->as_qwidget(tabParent);
+        if (body && body->layout ()) {
+          body->layout ()->setAlignment (Qt::AlignTop);
+        }
+        if (responsiveTw)
+          responsiveTw->addTab (body, label ? label->text() : "", QIcon());
+        else
+          tw->addTab (body, label ? label->text() : "");
         delete prelabel;
       }
 
-      qwid = tw;
+      if (tw && i>0) tw->resizeOthers(0);   // Force the automatic resizing
+
+      qwid = tabParent;
     }
       break;
-
+      
+    case icon_tabs_widget:
     case responsive_icon_tabs_widget:
     {
       typedef array<url> U1;
@@ -1434,22 +1391,47 @@ qt_ui_element_rep::as_qwidget (QWidget* parent_widget) {
       T1   tabs = x.x2;
       T1 bodies = x.x3;
 
-      QTMResponsiveTabWidget* tw = new QTMResponsiveTabWidget (parent_widget);
+      bool useResponsiveTabs = type == responsive_icon_tabs_widget;
+#if QT_VERSION >= 0x060000
+      useResponsiveTabs = useResponsiveTabs || tmapp()->useTabWindow();
+#endif
+      QTMTabWidget* tw = useResponsiveTabs ? nullptr : new QTMTabWidget (parent_widget);
+      QTMResponsiveTabWidget* responsiveTw =
+        useResponsiveTabs ? new QTMResponsiveTabWidget (parent_widget) : nullptr;
+      QWidget* tabParent = useResponsiveTabs
+        ? static_cast<QWidget*> (responsiveTw) : static_cast<QWidget*> (tw);
       int i;
       for (i = 0; i < N(tabs); i++) {
         if (is_nil (tabs[i])) break;
-        QWidget* prelabel = concrete (tabs[i])->as_qwidget(tw);
+        QWidget* prelabel = concrete (tabs[i])->as_qwidget(tabParent);
         QLabel*     label = qobject_cast<QLabel*> (prelabel);
-        QWidget*     body = concrete (bodies[i])->as_qwidget(tw);
+        QWidget*     body = concrete (bodies[i])->as_qwidget(tabParent);
+        if (body && body->layout ()) {
+          body->layout ()->setAlignment (Qt::AlignTop);
+        }
 #if QT_VERSION >= 0x060000
-        tw->addTab(body, label ? label->text() : "", tmapp()->icon_manager().getIcon (icons[i]));
+        if (responsiveTw) {
+          responsiveTw->addTab (body, label ? label->text() : "");
+          tmapp()->icon_manager().setTabIcon (responsiveTw, i, icons[i]);
+        }
+        else {
+          tw->addTab (body, QIcon(), label ? label->text() : "");
+          tmapp()->icon_manager().setTabIcon (tw, i, icons[i]);
+        }
 #else
-        tw->addTab (body, label ? label->text() : "", QIcon (as_pixmap (*xpm_image (icons[i]))));
+        QImage* img = xpm_image (icons[i]);
+        QIcon icon (as_pixmap (*img));
+        if (responsiveTw)
+          responsiveTw->addTab (body, label ? label->text() : "", icon);
+        else
+          tw->addTab (body, icon, label ? label->text() : "");
 #endif
         delete prelabel;
       }
 
-        qwid = tw;
+      if (tw && i>0) tw->resizeOthers(0);   // Force the automatic resizing
+
+      qwid = tabParent;
     }
       break;
       
