@@ -25,6 +25,7 @@
 #include "window.hpp"
 #include <QWidget>
 #include <QWidgetItem>
+#include <QVBoxLayout>
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QScroller>
@@ -334,13 +335,23 @@ qt_widget_rep::plain_window_widget (string name, command quit, int border) {
   scrollArea->setFrameShape(QFrame::NoFrame);
   scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
   scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+#if QT_VERSION >= 0x060000
   win->setCentralWidget(scrollArea);
+#else
+  QVBoxLayout* windowLayout = new QVBoxLayout (win);
+  windowLayout->setContentsMargins (0, 0, 0, 0);
+  windowLayout->addWidget (scrollArea);
+#endif
 
   scrollArea->setAttribute(Qt::WA_AcceptTouchEvents);
   scrollArea->setAttribute(Qt::WA_TouchPadAcceptSingleTouchEvents);
   QScroller::grabGesture(scrollArea, QScroller::TouchGesture);
   
+#if QT_VERSION >= 0x060000
   win->setWindowOrTabTitle (to_qstring (name));  // HACK: remove me (see bug#40837)
+#else
+  win->setWindowTitle (to_qstring (name));
+#endif
   
   qt_window_widget_rep* wid = tm_new<qt_window_widget_rep> (win, name, quit);
   wid->add_child (this);

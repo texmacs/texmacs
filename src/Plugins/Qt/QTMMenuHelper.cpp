@@ -24,7 +24,7 @@
 #include "QTMStyle.hpp"
 #include "QTMTreeModel.hpp"
 #include "QTMApplication.hpp"
-#if QT_VERSION >= 0x050000
+#if QT_VERSION >= 0x060000
 #include "QTMMainTabWindow.hpp"
 #endif
 
@@ -900,7 +900,7 @@ void
 QTMTabWidget::resizeOthers (int current) {
 BEGIN_SLOT
 
-#if QT_VERSION >= 0x050000
+#if QT_VERSION >= 0x060000
   if (qobject_cast<QTMMainTabWindow*>(window())) {
     return;
   }
@@ -1446,4 +1446,3 @@ inline QTMTreeModel*
 QTMTreeView::tmModel() const {
   return static_cast<QTMTreeModel*> (model());
 }
-

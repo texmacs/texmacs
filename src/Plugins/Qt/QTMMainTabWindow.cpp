@@ -13,6 +13,9 @@
 ******************************************************************************/
 
 #include "QTMMainTabWindow.hpp"
+
+#if QT_VERSION >= 0x060000
+
 #include "QTMOnscreenKeyboard.hpp"
 #include "QTMApplication.hpp"
 
@@ -1013,3 +1016,5 @@ void QTMMainTabWindow::onBackButtonProviderDestroyed(QObject *provider) {
 void QTMMainTabWindow::onKeyboardVisibilityChanged(bool visible) {
   if (mKeyboardDock != nullptr) mKeyboardDock->setVisible(visible);
 }
+
+#endif // QT_VERSION >= 0x060000

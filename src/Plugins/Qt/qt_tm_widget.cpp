@@ -578,11 +578,15 @@ void
 qt_tm_widget_rep::update_visibility () {
 #define XOR(exp1,exp2) (((!exp1) && (exp2)) || ((exp1) && (!exp2)))
 
-  auto has_toolbar_actions = [] (QTMToolbar* tb) {
+  auto has_toolbar_actions = [] (QWidget* tb) {
     if (!tb) return false;
+#if QT_VERSION >= 0x060000
     // QTMToolbar always contains the two navigation buttons.
     // Additional tool buttons correspond to actual toolbar actions.
     return tb->findChildren<QToolButton*> ().count() > 2;
+#else
+    return !tb->actions ().isEmpty ();
+#endif
   };
 
   bool old_mainVisibility = mainToolBar ? mainToolBar->isVisible() : false;
