@@ -71,7 +71,8 @@ GUILE_BIN = @GUILE_BIN@
 GLUE = cd Scheme/Glue; ./build-glue
 TOUCH = touch
 MOC = @MOC@
-MOCFLAGS = @QT_CPPFLAGS@ $(subst -isystem,-I,$(filter-out -std=%,$(CXXQT)))
+# moc only understands preprocessor and include/framework search flags.
+MOCFLAGS = @QT_CPPFLAGS@ $(filter -D% -I% -F%,$(subst -isystem,-I,$(CXXQT)))
 QT_PLUGIN_DIR = @QT_PLUGIN_DIR@
 
 ###############################################################################

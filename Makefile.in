@@ -508,6 +508,7 @@ MACOS_BUNDLE: TEXMACS
 
 MACOS_PACKAGE: MACOS_BUNDLE
 	$(RM) $(MACOS_PACKAGE_DMG)
+	@if [ -d /Volumes/TeXmacs ]; then hdiutil detach /Volumes/TeXmacs >/dev/null 2>&1 || true; fi
 	hdiutil create -srcfolder $(MACOS_PACKAGE_APP) $(MACOS_PACKAGE_DMG)
 	$(MKDIR) $(MACOS_PACKAGE_DIR)
 	$(MV) $(MACOS_PACKAGE_DMG) $(MACOS_PACKAGE_DIR)

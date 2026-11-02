@@ -248,7 +248,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
 #endif // QT_VERSION < 0x060000
  
 #if QT_VERSION >= 0x060000
-  if (!use_native_menubar) {
+  if (tmapp()->useNewToolbar() && !use_native_menubar) {
     menuToolBar   = new QTMToolbar ("menu toolbar", QSize (), mw);
   }
 
@@ -393,7 +393,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   leftTools->setObjectName ("leftTools");
 
 #if QT_VERSION >= 0x060000
-  if (!use_native_menubar) {
+  if (menuToolBar) {
     menuToolBar->setObjectName ("menuToolBar");
     menuToolBar->setFixedHeight (32);
     central_layout->addWidget (menuToolBar);
@@ -578,6 +578,13 @@ void
 qt_tm_widget_rep::update_visibility () {
 #define XOR(exp1,exp2) (((!exp1) && (exp2)) || ((exp1) && (!exp2)))
 
+  auto has_toolbar_actions = [] (QTMToolbar* tb) {
+    if (!tb) return false;
+    // QTMToolbar always contains the two navigation buttons.
+    // Additional tool buttons correspond to actual toolbar actions.
+    return tb->findChildren<QToolButton*> ().count() > 2;
+  };
+
   bool old_mainVisibility = mainToolBar ? mainToolBar->isVisible() : false;
   bool old_modeVisibility = modeToolBar ? modeToolBar->isVisible() : false;
   bool old_focusVisibility = focusToolBar ? focusToolBar->isVisible() : false;
@@ -592,10 +599,10 @@ qt_tm_widget_rep::update_visibility () {
   bool old_statusVisibility = statusBar ? statusBar->isVisible() : false;
 #endif
 
-  bool new_mainVisibility = visibility[1] && visibility[0];
-  bool new_modeVisibility = visibility[2] && visibility[0];
-  bool new_focusVisibility = visibility[3] && visibility[0];
-  bool new_userVisibility = visibility[4] && visibility[0];
+  bool new_mainVisibility = visibility[1] && visibility[0] && has_toolbar_actions(mainToolBar);
+  bool new_modeVisibility = visibility[2] && visibility[0] && has_toolbar_actions(modeToolBar);
+  bool new_focusVisibility = visibility[3] && visibility[0] && has_toolbar_actions(focusToolBar);
+  bool new_userVisibility = visibility[4] && visibility[0] && has_toolbar_actions(userToolBar);
   bool new_statusVisibility = visibility[5];
   bool new_sideVisibility = visibility[6];
   bool new_leftVisibility = visibility[7];
@@ -618,8 +625,15 @@ qt_tm_widget_rep::update_visibility () {
     bottomTools->setVisible (new_bottomVisibility);
   if (extraTools && XOR(old_extraVisibility,  new_extraVisibility) )
     extraTools->setVisible (new_extraVisibility);
-  if (mainwindow() && mainwindow()->statusBar() && XOR(old_statusVisibility,  new_statusVisibility) )
-    mainwindow()->statusBar()->setVisible (new_statusVisibility);
+  if (XOR(old_statusVisibility,  new_statusVisibility)) {
+#if QT_VERSION < 0x060000
+    if (mainwindow() && mainwindow()->statusBar())
+      mainwindow()->statusBar()->setVisible (new_statusVisibility);
+#else
+    if (statusBar)
+      statusBar->setVisible (new_statusVisibility);
+#endif
+  }
 #if !defined(Q_OS_MAC) || QT_VERSION >= 0x060000
   if (!tmapp()->useNewToolbar() && mainwindow()
       && !use_native_menubar && mainwindow()->menuBar()) {
