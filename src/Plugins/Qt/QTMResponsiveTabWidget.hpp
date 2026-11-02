@@ -21,6 +21,7 @@
 
 class QStackedWidget;
 class QListWidget;
+class QListWidgetItem;
 class QPushButton;
 class QHBoxLayout;
 class QBoxLayout;
@@ -34,10 +35,14 @@ class QTMHorizontalTextTabBar : public QTabBar {
 public:
   explicit QTMHorizontalTextTabBar(QWidget* parent = nullptr);
   int addCustomTab(const QIcon &icon, const QString &text);
+  void setCustomTabIcon(int index, const QIcon &icon);
   QSize tabSizeHint(int index) const override;
 
 public slots:
   void updateLabelColors(int index);
+
+private slots:
+  void onTabMovedNoArgs();
 };
 
 // This widget allows dragging the window by clicking and dragging 
@@ -62,9 +67,11 @@ class QTMResponsiveTabWidget : public QWidget {
 
 public:
   explicit QTMResponsiveTabWidget(QWidget *parent = nullptr);
+  ~QTMResponsiveTabWidget() override;
 
   void addTab(QWidget* widget, const QString& title, 
               const QIcon& icon = QIcon());
+  void setTabIcon(int index, const QIcon& icon);
   int count() const;
   void setCurrentIndex(int index);
   int currentIndex() const;
@@ -78,9 +85,11 @@ signals:
 
 protected:
   void showEvent(QShowEvent* event) override;
+  void hideEvent(QHideEvent* event) override;
   void changeEvent(QEvent *event) override;
 
 private slots:
+  void onListItemClicked(QListWidgetItem *item);
   void onTabSelected(int index);
   void onListSelected(int index);
   void onBackClicked();
@@ -95,7 +104,6 @@ private:
   bool needsBackButton() const;
   bool goBack();
 
-  QPointer<QPushButton> mBackBtn;
   QPointer<QPushButton> mAddTabBtn;
   QPointer<QPushButton> mMinBtn;
   QPointer<QPushButton> mMaxBtn;
