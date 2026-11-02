@@ -1,4 +1,3 @@
-
 /******************************************************************************
  * MODULE     : QTMWindow.hpp
  * DESCRIPTION: QT Texmacs window class
@@ -12,34 +11,23 @@
 #ifndef QTMWINDOW_HPP
 #define QTMWINDOW_HPP
 
+#include <QtGlobal>
+
+#if QT_VERSION >= 0x060000
+#include "QTMMainTab.hpp"
+#endif
+
+#include <QWidget>
 #include <QMainWindow>
+#include "basic.hpp"
 
-#include "qt_tm_widget.hpp"
+#if QT_VERSION < 0x060000
 
-
-/*! The interface that any QWidget must implement to become a window in TeXmacs.
- 
- The underlying QWidget for a qt_window_widget_rep is of this type. We use it
- to inform the texmacs widget that the window has been closed. Because windows
- can be closed externally to TeXmacs, i.e. with the close button that the
- window manager provides, we must handle QCloseEvent and send the appropriate
- texmacs message to the owning texmacs widget (which is of type
- qt_window_widget_rep). This will allow it to call the associated texmacs
- quit command (and do anything else it requires).
- 
- FIXME: Currently, we are bypassing this mechanism using QObject::connect()
- inside qt_window_widget's constructor. However, for QTMWindows, we do use it.
- 
- NOTE: I would like to have a base class common to QTMPlainWindow and QTMWindow
- to enforce the data type for a qt_window_widget. But we cannot "virtual
- inherit" QWidget to do this in a nicer way because QMainWindow does not
- inherit virtually from QWidget.
- */
+/*! The underlying QWidget for a qt_simple_widget_rep. */
 class QTMPlainWindow : public QWidget {
   Q_OBJECT
   
 public:
-
   QTMPlainWindow (QWidget* parent) 
   : QWidget (parent) { 
     if (DEBUG_QT) debug_qt << "Creating QTMPlainWindow" << LF;
@@ -55,19 +43,13 @@ protected:
   virtual void  closeEvent (QCloseEvent* event);
   virtual void   moveEvent (QMoveEvent* event);
   virtual void resizeEvent (QResizeEvent* event);
-
 };
 
-/*! The underlying QWidget for a qt_tm_widget_rep.
- 
- \sa QTMPlainWindow
- 
- */
+/*! The underlying QWidget for a qt_tm_widget_rep. */
 class QTMWindow: public QMainWindow {
   Q_OBJECT
   
 public:
-  
   QTMWindow (QWidget* parent)
   : QMainWindow (parent) { 
     if (DEBUG_QT) debug_qt << "Creating QTMWindow" << LF;
@@ -85,12 +67,7 @@ protected:
   virtual void resizeEvent (QResizeEvent* event);
 };
 
-
-/*! The underlying QWidget for a qt_popup_widget.
- 
- This is just a container QWidget that disappears after the mouse leaves it.
- As usual, it takes ownership of its contents.
- */
+/*! The underlying QWidget for a qt_popup_widget. */
 class QTMPopupWidget : public QWidget {
   Q_OBJECT
   
@@ -106,5 +83,62 @@ protected:
   virtual void keyPressEvent  (QKeyEvent* event);
 };
 
+#else // QT_VERSION >= 0x060000
+
+/*! The underlying QWidget for a qt_simple_widget_rep. */
+class QTMPlainWindow : public QTMMainTab {
+  Q_OBJECT
+  
+public:
+  QTMPlainWindow (QWidget* parent) 
+  : QTMMainTab (parent) { 
+    if (DEBUG_QT) debug_qt << "Creating QTMPlainWindow" << LF;
+  }
+  virtual ~QTMPlainWindow () {
+    if (DEBUG_QT) debug_qt << "Deleting QTMPlainWindow" << LF;
+  }
+  
+protected:
+  virtual void  closeEvent (QCloseEvent* event) override;
+  virtual void   moveEvent (QMoveEvent* event) override;
+  virtual void resizeEvent (QResizeEvent* event) override;
+  virtual void   showEvent (QShowEvent* event) override;
+};
+
+/*! The underlying QWidget for a qt_tm_widget_rep. */
+class QTMWindow: public QTMMainTab {
+  Q_OBJECT
+  
+public:
+  QTMWindow (QWidget* parent)
+  : QTMMainTab (parent) { 
+    if (DEBUG_QT) debug_qt << "Creating QTMWindow" << LF;
+  }
+  virtual ~QTMWindow () {
+    if (DEBUG_QT) debug_qt << "Deleting QTMWindow" << LF;
+  }
+  
+protected:
+  virtual void  closeEvent (QCloseEvent* event) override;
+  virtual void   moveEvent (QMoveEvent* event) override;
+  virtual void resizeEvent (QResizeEvent* event) override;
+  virtual void   showEvent (QShowEvent* event) override;
+};
+
+/*! The underlying QWidget for a qt_popup_widget. */
+class QTMPopupWidget : public QTMMainTab {
+  Q_OBJECT
+  
+public:
+  QTMPopupWidget (QWidget* contents);
+  
+protected:
+  virtual void closeEvent (QCloseEvent* event) override;
+  virtual void mouseMoveEvent (QMouseEvent* event) override;
+  virtual void keyPressEvent  (QKeyEvent* event) override;
+};
+
+#endif // QT_VERSION >= 0x060000
 
 #endif // QTMWINDOW_HPP
+

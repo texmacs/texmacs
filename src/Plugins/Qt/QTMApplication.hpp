@@ -25,6 +25,9 @@
 #include "QTMKeyboard.hpp"
 #include "QTMOnscreenKeyboard.hpp"
 #include "QTMIconManager.hpp"
+#if QT_VERSION >= 0x060000
+#include "QTMMainTabWindow.hpp"
+#endif
 
 void init_palette (QApplication* app);
 void init_style_sheet (QApplication* app);
@@ -101,6 +104,12 @@ public:
   inline bool useTabWindow() {
     return mUseTabWindow;
   }
+
+#if QT_VERSION >= 0x060000
+  inline QTMMainTabWindow &mainTabWindow() {
+    return *QTMMainTabWindow::topTabWindow();
+  }
+#endif
 
   inline QTMOnscreenKeyboard* onscreenKeyboard() {
     return mOnscreenKeyboard;

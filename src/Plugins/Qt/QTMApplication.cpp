@@ -36,6 +36,10 @@ void QTMApplication::load() {
 
   mOnscreenKeyboard = new QTMOnscreenKeyboard();
   mOnscreenKeyboard->hide();
+
+#if QT_VERSION >= 0x060000
+  if (mUseTabWindow) new QTMMainTabWindow();
+#endif
 }
 
 void QTMApplication::init_theme () {

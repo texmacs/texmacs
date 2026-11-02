@@ -79,13 +79,23 @@ qt_window_widget_rep::qt_window_widget_rep (QWidget* _wid, string name,
     g_next_window_as_popup = false;
   }
   
-    // Try to connect only if the QWidget has a closed() signal
-    // We need this for the QDockWidgets we use in side tools (see qt_tm_widget_rep)
+#if QT_VERSION >= 0x060000
+  QPointer<QTMMainTab> mainTab = qobject_cast<QTMMainTab *>(qwid);
+  if (mainTab) {
+    QTMCommand* qtmcmd = new QTMCommand (mainTab, quit);
+    QObject::connect(mainTab, SIGNAL (requestClose()), qtmcmd, SLOT (apply()), Qt::UniqueConnection);
+  } else if (qwid->metaObject() -> 
+      indexOfSignal (QMetaObject::normalizedSignature ("closed()").constData ()) != -1) {
+    QTMCommand* qtmcmd = new QTMCommand (qwid, quit);
+    QObject::connect(qwid, SIGNAL (closed()), qtmcmd, SLOT (apply()));
+  }
+#else
   if (qwid->metaObject() -> 
       indexOfSignal (QMetaObject::normalizedSignature ("closed()").constData ()) != -1) {
     QTMCommand* qtmcmd = new QTMCommand (qwid, quit);
     QObject::connect(qwid, SIGNAL (closed()), qtmcmd, SLOT (apply()));
   }
+#endif
 
   if (!has_resizable_children (_wid))
     qwid->setFixedSize (qwid->sizeHint());
@@ -128,7 +138,16 @@ qt_window_widget_rep::~qt_window_widget_rep ()
 widget
 qt_window_widget_rep::popup_window_widget (string s)
 {
+#if QT_VERSION >= 0x060000
+  QPointer<QTMMainTab> mainTab = qobject_cast<QTMMainTab *>(qwid);
+  if (mainTab) {
+    mainTab->setWindowOrTabTitle (to_qstring (s));
+  } else {
+    qwid->setWindowTitle (to_qstring (s));
+  }
+#else
   qwid->setWindowTitle (to_qstring (s));
+#endif
   qwid->setWindowModality (Qt::NonModal);
   qwid->setWindowFlags (Qt::Popup);
   return this;
@@ -183,8 +202,17 @@ qt_window_widget_rep::send (slot s, blackbox val) {
       check_type<coord2>(val, s);
       coord2 p = open_box<coord2> (val);
       if (qwid) {
+#if QT_VERSION >= 0x060000
+        QPointer<QTMMainTab> mainTab = qobject_cast<QTMMainTab *>(qwid);
         QSize size = to_qsize (p);
-        qwid->resize (size);
+        if (!tmapp ()->useTabWindow () || !mainTab) {
+          qwid->resize (size);
+        } else {
+          mainTab->resizeWindowOrTab (size);
+        }
+#else
+        qwid->resize (to_qsize (p));
+#endif
       }
     }
       break; 
@@ -212,18 +240,32 @@ qt_window_widget_rep::send (slot s, blackbox val) {
     {
       check_type<bool> (val, s);
       bool flag = open_box<bool> (val);
+#if QT_VERSION >= 0x060000
+      QTMMainTab *mainTab = qobject_cast<QTMMainTab *>(qwid);
+      if (qwid) {
+        bool showAsPopup = qwid->property ("tmWindowMode").toString () == "popup";
+        if (!flag) {
+          if (mainTab && mainTab->parentTabWindow () != nullptr) {
+            mainTab->closeWindowOrTab ();
+          } else {
+            qwid->hide ();
+          }
+        } else if (!tmapp ()->useTabWindow () || showAsPopup || !mainTab) {
+          qwid->show ();
+          qwid->raise ();
+        } else {
+          tmapp ()->mainTabWindow ().showWidget (mainTab);
+        }
+      }
+#else
       if (qwid) {
         if (flag) {
-          //QWidget* master = QApplication::activeWindow ();
           qwid->show();
-          //qwid->activateWindow();
-          //WEIRD: in Ubuntu uncommenting the above line causes the main window 
-          //to be opened in the background.
           qwid->raise();
-          //QApplication::setActiveWindow (master);
         }
         else qwid->hide();
       }
+#endif
     }
       break;
     case SLOT_MOUSE_GRAB:
@@ -241,8 +283,18 @@ qt_window_widget_rep::send (slot s, blackbox val) {
     {   
       check_type<string> (val, s);
       string name = open_box<string> (val);
-        // The [*] is for QWidget::setWindowModified()
+#if QT_VERSION >= 0x060000
+      QTMMainTab *mainTab = qobject_cast<QTMMainTab *>(qwid);
+      if (qwid) {
+        if (!tmapp ()->useTabWindow () || !mainTab) {
+          qwid->setWindowTitle (to_qstring (name * "[*]"));
+        } else {
+          mainTab->setWindowOrTabTitle (to_qstring (name));
+        }
+      }
+#else
       if (qwid) qwid->setWindowTitle (to_qstring (name * "[*]"));
+#endif
     }
       break;
     case SLOT_MODIFIED:
@@ -333,15 +385,19 @@ qt_popup_widget_rep::qt_popup_widget_rep (widget wid, command _quit)
   
   qwid = new QTMPopupWidget(concrete(wid)->as_qwidget(nullptr));
 
+#if QT_VERSION >= 0x060000
+  QPointer<QTMMainTab> mainTab = qobject_cast<QTMMainTab *>(qwid);
+  if (mainTab) {
+    QTMCommand* qtmcmd = new QTMCommand(qwid, quit);
+    QObject::connect(mainTab, SIGNAL (requestClose()), qtmcmd, SLOT (apply()), Qt::UniqueConnection);
+  }
+#else
   if (qwid->metaObject() ->
       indexOfSignal (QMetaObject::normalizedSignature ("closed()").constData ()) != -1) {
-  QTMCommand* qtmcmd = new QTMCommand(qwid, quit);
-#if QT_VERSION < 0x060000
-  QObject::connect(qobject_cast<QTMPopupWidget*>(qwid), SIGNAL (closed()), qtmcmd, SLOT (apply()));
-#else
-  QObject::connect(qobject_cast<QTMPopupWidget*>(qwid), &QTMPopupWidget::closed, qtmcmd, &QTMCommand::apply);
-#endif
+    QTMCommand* qtmcmd = new QTMCommand(qwid, quit);
+    QObject::connect(qobject_cast<QTMPopupWidget*>(qwid), SIGNAL (closed()), qtmcmd, SLOT (apply()));
   }
+#endif
 }
 
 /*!
@@ -353,14 +409,31 @@ qt_popup_widget_rep::~qt_popup_widget_rep () {
 
 widget
 qt_popup_widget_rep::popup_window_widget(string s) {
-  qwid->setWindowTitle (to_qstring (s)); // useless for Qt::Popup
-
+#if QT_VERSION >= 0x060000
+  QPointer<QTMMainTab> mainTab = qobject_cast<QTMMainTab *>(qwid);
+  if (mainTab) {
+    mainTab->setWindowOrTabTitle (to_qstring (s));
+  } else {
+    qwid->setWindowTitle (to_qstring (s));
+  }
+#else
+  qwid->setWindowTitle (to_qstring (s));
+#endif
   return this;
 }
 
 widget
 qt_popup_widget_rep::tooltip_window_widget (string s) {
+#if QT_VERSION >= 0x060000
+  QPointer<QTMMainTab> mainTab = qobject_cast<QTMMainTab *>(qwid);
+  if (mainTab) {
+    mainTab->setWindowOrTabTitle (to_qstring (s));
+  } else {
+    qwid->setWindowTitle (to_qstring (s));
+  }
+#else
   qwid->setWindowTitle (to_qstring (s));
+#endif
   qwid->setWindowModality (Qt::NonModal);
   qwid->setWindowFlags (Qt::ToolTip);
   return this;
@@ -375,7 +448,16 @@ qt_popup_widget_rep::send (slot s, blackbox val) {
     case SLOT_SIZE:
     {
       check_type<coord2>(val, s);
+#if QT_VERSION >= 0x060000
+      QPointer<QTMMainTab> mainTab = qobject_cast<QTMMainTab *>(qwid);
+      if (!tmapp ()->useTabWindow () || !mainTab) {
+        qwid->resize (to_qsize (open_box<coord2> (val)));
+      } else {
+        mainTab->resizeWindowOrTab (to_qsize (open_box<coord2> (val)));
+      }
+#else
       qwid->resize (to_qsize (open_box<coord2> (val)));
+#endif
     }
       break;
       
