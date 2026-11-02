@@ -20,6 +20,7 @@
 #include <QHBoxLayout>
 #include <QToolButton>
 #include <QList>
+#include <QHash>
 #include <QPointer>
 
 class QTMToolbar : public QWidget {
@@ -43,9 +44,9 @@ public:
   void addRightSpacer ();
 
   QList<QTMToolbar*> getAllToolbarsFromMainWindow () const;
-  QList<QToolButton*> getAllButtonsFromAllToolbars () const;
-  void resetAllButtons(QToolButton* except = nullptr);
-  void resetButton(QToolButton* button);
+  QList<QPointer<QToolButton>> getAllButtonsFromAllToolbars () const;
+  void resetAllButtons(QPointer<QToolButton> except = nullptr);
+  void resetButton(QPointer<QToolButton> button);
 
   void setIconSize(const QSize& size); // Sets the icon size for the toolbar
   int toolbarMargin() const { return mToolbarMargin; }
@@ -74,6 +75,7 @@ private:
   QPointer<QPushButton> mLeftBtn;
   QPointer<QPushButton> mRightBtn;
   QPointer<QMenu>   mCurrentMenu;
+  QHash<QMenu*, QPointer<QToolButton>> mMenuButtons;
   QPointer<QToolButton> mPendingResetButton;
   int mIconWidth;
   int mIconHeight;

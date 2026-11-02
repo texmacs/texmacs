@@ -271,9 +271,7 @@ void QTMToolbar::addAction (QAction* action) {
     if (action->menu()) {
       button->setPopupMode (QToolButton::InstantPopup);
       QMenu *actionMenu = action->menu();
-      actionMenu->setProperty(
-          "tmToolbarButton",
-          QVariant::fromValue<QObject*>(button));
+      mMenuButtons[actionMenu] = button;
       connect (actionMenu, &QMenu::aboutToShow,
                this, &QTMToolbar::onActionMenuAboutToShow);
       connect (actionMenu, &QMenu::aboutToHide,
@@ -440,10 +438,10 @@ bool QTMToolbar::eventFilter (QObject* watched, QEvent* event) {
   QMenu *menu = qobject_cast<QMenu*> (watched);
   if (menu && mCurrentMenu == menu && event->type() == QEvent::MouseMove) {
 
-    QToolButton *currentButton = nullptr;
+    QPointer<QToolButton> currentButton;
     // look for the button that opened the menu
     for (int i = 0; i < mLayout->count(); i++) {
-      QToolButton* button = qobject_cast<QToolButton*>(mLayout->itemAt(i)->widget());
+      QPointer<QToolButton> button = qobject_cast<QToolButton*>(mLayout->itemAt(i)->widget());
       if (!button) continue;
       QAction* action = button->defaultAction();
       if (!action) continue;
@@ -458,7 +456,7 @@ bool QTMToolbar::eventFilter (QObject* watched, QEvent* event) {
     // look if the mouse is hovering a QToolButton. for that, get all the children of the QTMToolbar
     QPoint globalPos = QCursor::pos();
     for (int i = 0; i < mLayout->count(); i++) {
-      QToolButton* button = qobject_cast<QToolButton*>(mLayout->itemAt(i)->widget());
+      QPointer<QToolButton> button = qobject_cast<QToolButton*>(mLayout->itemAt(i)->widget());
       if (!button) continue;
       // get the action of the button
       QAction* action = button->defaultAction();
@@ -479,9 +477,9 @@ bool QTMToolbar::eventFilter (QObject* watched, QEvent* event) {
         // send a mouse click event to the hovered button (with globalPos)
         QPoint buttonLocalPos = button->mapFromGlobal(globalPos);
         QMouseEvent bePress (QEvent::MouseButtonPress, buttonLocalPos, globalPos, Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
-        QCoreApplication::sendEvent (button, &bePress);
+        QCoreApplication::sendEvent (button.data(), &bePress);
         QMouseEvent beRelease (QEvent::MouseButtonRelease, buttonLocalPos, globalPos, Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
-        QCoreApplication::sendEvent (button, &beRelease);
+        QCoreApplication::sendEvent (button.data(), &beRelease);
 
         mCurrentMenu = action->menu();
         return true;
@@ -532,12 +530,11 @@ void QTMToolbar::onActionMenuAboutToShow() {
   QMenu *menu = qobject_cast<QMenu *>(sender());
   if (!menu) return;
 
-  QToolButton *button =
-      qobject_cast<QToolButton *>(menu->property("tmToolbarButton").value<QObject*>());
+  QPointer<QToolButton> button = mMenuButtons.value(menu);
   if (!button) return;
 
   mCurrentMenu = menu;
-  resetAllButtons(button);
+  resetAllButtons(button.data());
 }
 
 void QTMToolbar::onActionMenuAboutToHide() {
@@ -549,13 +546,13 @@ void QTMToolbar::onActionMenuAboutToHide() {
     QTMWidget::setFocusToLast();
   }
 
-  mPendingResetButton =
-      qobject_cast<QToolButton *>(menu->property("tmToolbarButton").value<QObject*>());
+  mPendingResetButton = mMenuButtons.value(menu);
+  mMenuButtons.remove(menu);
   QMetaObject::invokeMethod(this, "deferredResetButton", Qt::QueuedConnection);
 }
 
 void QTMToolbar::deferredResetButton() {
-  QToolButton *button = mPendingResetButton.data();
+  QPointer<QToolButton> button = mPendingResetButton;
   mPendingResetButton = nullptr;
   if (!button) return;
   resetButton(button);
@@ -577,14 +574,14 @@ QList<QTMToolbar*> QTMToolbar::getAllToolbarsFromMainWindow () const {
   return toolbars;
 }
 
-QList<QToolButton*> QTMToolbar::getAllButtonsFromAllToolbars () const {
-  QList<QToolButton*> buttons;
+QList<QPointer<QToolButton>> QTMToolbar::getAllButtonsFromAllToolbars () const {
+  QList<QPointer<QToolButton>> buttons;
 #if QT_VERSION >= 0x050000
   QList<QTMToolbar*> toolbars = getAllToolbarsFromMainWindow();
   for (QTMToolbar* tb : toolbars) {
     if (!tb->mLayout) continue;
     for (int i = 0; i < tb->mLayout->count(); i++) {
-      QToolButton* button = qobject_cast<QToolButton*>(tb->mLayout->itemAt(i)->widget());
+      QPointer<QToolButton> button = qobject_cast<QToolButton*>(tb->mLayout->itemAt(i)->widget());
       if (button) {
         buttons.append(button);
       }
@@ -594,17 +591,17 @@ QList<QToolButton*> QTMToolbar::getAllButtonsFromAllToolbars () const {
   return buttons;
 }
 
-void QTMToolbar::resetAllButtons(QToolButton* except) {
+void QTMToolbar::resetAllButtons(QPointer<QToolButton> except) {
 #if QT_VERSION >= 0x050000
-  QList<QToolButton*> buttons = getAllButtonsFromAllToolbars();
-  for (QToolButton* button : buttons) {
-    if (button == except) continue;
+  QList<QPointer<QToolButton>> buttons = getAllButtonsFromAllToolbars();
+  for (QPointer<QToolButton> button : buttons) {
+    if (!button || button == except) continue;
     resetButton(button);
   }
 #endif // QT_VERSION >= 0x050000
 }
 
-void QTMToolbar::resetButton(QToolButton* button) {
+void QTMToolbar::resetButton(QPointer<QToolButton> button) {
 #if QT_VERSION >= 0x050000
   if (!button) return;
   button->setDown (false);

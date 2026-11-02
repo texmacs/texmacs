@@ -407,7 +407,13 @@ QTMLazyMenu::transferActions (QList<QAction*>* from) {
 void
 QTMLazyMenu::force () {
 BEGIN_SLOT
-  QList<QAction*>* list = concrete (promise_widget())->get_qactionlist();
+  if (is_nil (promise_widget)) return;
+  widget w = promise_widget();
+  if (is_nil (w)) return;
+  if (w.rep == NULL) return;
+  qt_widget qtw = concrete (w);
+  if (qtw.rep == NULL) return;
+  QList<QAction*>* list = qtw->get_qactionlist();
   transferActions (list);
 END_SLOT
 }
