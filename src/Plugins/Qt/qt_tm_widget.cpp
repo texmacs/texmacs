@@ -19,6 +19,9 @@
 #include <QMenuBar>
 #include <QLayoutItem>
 #include <QPushButton>
+#include <QScrollArea>
+#include <QScroller>
+#include <QScrollBar>
 #include "QTMApplication.hpp"
 
 #include "config.h"
@@ -44,7 +47,7 @@
 int menu_count = 0;  // zero if no menu is currently being displayed
 list<qt_tm_widget_rep*> waiting_widgets;
 
-#if DISABLE_QTMTOOLBAR
+#if QT_VERSION < 0x060000
 static void
 replaceActions (QWidget* dest,  QList<QAction*>* src) {
   //NOTE: the parent hierarchy of the actions is not modified while installing
@@ -89,15 +92,19 @@ replaceButtons (QToolBar* dest, QList<QAction*>* src) {
 
 void
 QTMInteractiveInputHelper::commit (int result) {
+  QPointer<QObject> safeSender = sender();
+  if (!safeSender) return;
+
   if (wid && result == QDialog::Accepted) {
     QString  item = "#f";
-    QComboBox* cb = sender()->findChild<QComboBox*> ("input");
+    QComboBox* cb = safeSender->findChild<QComboBox*> ("input");
     if (cb)  item = cb->currentText();
     static_cast<qt_input_text_widget_rep*>(wid->int_input.rep)->input =
       from_qstring (item);
     static_cast<qt_input_text_widget_rep*>(wid->int_input.rep)->cmd ();
   }
-  sender()->deleteLater();
+
+  if (safeSender) safeSender->deleteLater();
 }
 
 
@@ -128,6 +135,12 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   // general setup for main window
 
   QMainWindow* mw= mainwindow ();
+#if QT_VERSION >= 0x060000
+  QWidget *mw_central = new QWidget (mw);
+  QVBoxLayout* central_layout = new QVBoxLayout (mw_central);
+  central_layout->setContentsMargins (0, 0, 0, 0);
+  central_layout->setSpacing (0);
+#endif
   if (tm_style_sheet == "") {
     mw->setStyle (qtmstyle ());
     if (!tmapp()->useNewToolbar())
@@ -158,7 +171,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   }
 
 #if QT_VERSION >= 0x060000 && !defined(OS_MACOS)
-  mw->setWindowIcon(tmapp()->icon_manager().getIcon("TeXmacs"));
+  tmapp()->icon_manager().setWindowIcon(mw, "TeXmacs");
 #endif
  
   // there is a bug in the early implementation of toolbars in Qt 4.6
@@ -173,7 +186,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   mw->setFocusPolicy (Qt::NoFocus);
   
   // status bar
-  
+#if QT_VERSION < 0x060000
   QStatusBar* bar= new QStatusBar(mw);
   leftLabel= new QLabel (qt_translate ("Welcome to TeXmacs"), mw);
   rightLabel= new QLabel (qt_translate ("Booting"), mw);
@@ -189,7 +202,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   QObject::connect (keyboardButton, &QPushButton::clicked, []() {
     tmapp()->toggleOnScreenKeyboardVisibility();
   });
-#endif
+#endif // OS_ANDROID
   bar->addWidget (leftLabel, 1);
   bar->addPermanentWidget (rightLabel);
   if (tm_style_sheet == "")
@@ -211,16 +224,16 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
 #ifdef Q_OS_LINUX
   int min_h= (int) floor (28 * retina_scale);
   bar->setMinimumHeight (min_h);
-#else
+#else // Q_OS_LINUX
 #if (QT_VERSION >= 0x050000)
   if (tm_style_sheet != "") {
     int min_h= (int) floor (28 * retina_scale);
 #ifdef OS_ANDROID
     min_h *= 1.5;
-#endif
+#endif // OS_ANDROID
     bar->setMinimumHeight (min_h);
   }
-#else
+#else // QT_VERSION >= 0x050000
   double status_scale=
     (((double) retina_icons) > retina_scale? 1.5: retina_scale);
   if (status_scale > 1.0) {
@@ -228,26 +241,27 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
     int min_h= (int) floor (std_h * status_scale);
     bar->setMinimumHeight (min_h);
   }
-#endif
-#endif
+#endif // QT_VERSION >= 0x050000 
+#endif // Q_OS_LINUX
 
   mw->setStatusBar (bar);
+#endif // QT_VERSION < 0x060000
  
-#if !DISABLE_QTMTOOLBAR
-  if (tmapp()->useNewToolbar() && !use_native_menubar) {
+#if QT_VERSION >= 0x060000
+  if (!use_native_menubar) {
     menuToolBar   = new QTMToolbar ("menu toolbar", QSize (), mw);
   }
 
-  mainToolBar   = new QTMToolbar ("main toolbar", QSize (26, 32), mw);
-  modeToolBar   = new QTMToolbar ("mode toolbar", QSize (21, 24), mw);
-  focusToolBar  = new QTMToolbar ("focus toolbar", QSize (16, 20), mw);
+  mainToolBar   = new QTMToolbar ("main toolbar", QSize (), mw);
+  modeToolBar   = new QTMToolbar ("mode toolbar", QSize (), mw);
+  focusToolBar  = new QTMToolbar ("focus toolbar", QSize (), mw);
   userToolBar   = new QTMToolbar ("user toolbar", QSize(), mw);
 #else
   mainToolBar   = new QToolBar ("main toolbar", mw);
   modeToolBar   = new QToolBar ("mode toolbar", mw);
   focusToolBar  = new QToolBar ("focus toolbar", mw);
   userToolBar   = new QToolBar ("user toolbar", mw);
-#endif
+#endif // QT_VERSION >= 0x060000
 
   bottomTools   = new QDockWidget ("bottom tools", mw);
   extraTools    = new QDockWidget ("extra tools", mw);
@@ -287,7 +301,8 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
     bottomTools->setStyle (qtmstyle ());
     extraTools->setStyle (qtmstyle ());
   }
-    
+
+#if QT_VERSION < 0x060000
   {
     // set proper sizes for icons
     QImage *pxm = xpm_image ("tm_new.xpm");
@@ -318,32 +333,32 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   mainToolBar->setFixedHeight (toolbarHeight + 8 * retina_icons);
   modeToolBar->setFixedHeight (toolbarHeight + 4 * retina_icons);
   focusToolBar->setFixedHeight (toolbarHeight);
-#  else
+#else // defined (Q_OS_MAC) || defined (Q_OS_WIN)
   int toolbarHeight= 30;
   mainToolBar->setFixedHeight (toolbarHeight + 8);
   modeToolBar->setFixedHeight (toolbarHeight + 4);
   focusToolBar->setFixedHeight (toolbarHeight);
-#  endif
-#else
-#  ifdef Q_OS_MAC
+#endif // defined (Q_OS_MAC) || defined (Q_OS_WIN)
+#else // QT_VERSION >= 0x050000
+#ifdef Q_OS_MAC
   if (retina_icons > 1) {
     int toolbarHeight= 30;
     mainToolBar->setFixedHeight (toolbarHeight + 8);
     modeToolBar->setFixedHeight (toolbarHeight + 4);
     focusToolBar->setFixedHeight (toolbarHeight);
   }
-#  else
+#else // Q_OS_MAC
   int toolbarHeight= 30 * retina_icons;
   mainToolBar->setFixedHeight (toolbarHeight + 8);
   modeToolBar->setFixedHeight (toolbarHeight + 4);
   focusToolBar->setFixedHeight (toolbarHeight);  
-#  endif
-#endif
+#endif // Q_OS_MAC
+#endif // (QT_VERSION >= 0x050000)
   if (tm_style_sheet != "") {
     double scale= retina_scale;
 #if (QT_VERSION < 0x050000 && defined (Q_OS_MAC))
     scale= max (scale, 0.6 * ((double) retina_icons));
-#endif
+#endif // (QT_VERSION < 0x050000 && defined (Q_OS_MAC))
     int h1= (int) floor (38 * scale + 0.5);
     int h2= (int) floor (34 * scale + 0.5);
     int h3= (int) floor (30 * scale + 0.5);
@@ -366,6 +381,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   bl->addWidget (q);
   
   mw->setCentralWidget (cw);
+#endif // QT_VERSION < 0x060000
 
   mainToolBar->setObjectName ("mainToolBar");
   modeToolBar->setObjectName ("modeToolBar");
@@ -376,14 +392,32 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   sideTools->setObjectName ("sideTools");
   leftTools->setObjectName ("leftTools");
 
-#if !DISABLE_QTMTOOLBAR
-  if (tmapp()->useNewToolbar() && !use_native_menubar) {
+#if QT_VERSION >= 0x060000
+  if (!use_native_menubar) {
     menuToolBar->setObjectName ("menuToolBar");
-    mw->addToolBar (menuToolBar);
-    mw->addToolBarBreak ();
-    menuToolBar->setMovable (false);
+    menuToolBar->setFixedHeight (32);
+    central_layout->addWidget (menuToolBar);
   }
-#endif
+
+  central_layout->addWidget (mainToolBar);
+  central_layout->addWidget (modeToolBar);
+  central_layout->addWidget (focusToolBar);
+  central_layout->addWidget (userToolBar);
+
+
+
+  mainWidget = new QWidget(mw);
+  mainLayout = new QVBoxLayout(mainWidget);
+  mainLayout->setContentsMargins(0, 0, 0, 0);
+  mainLayout->setSpacing(0);
+  mainWidget->setLayout(mainLayout);
+  central_layout->addWidget(mainWidget);
+
+
+  QWidget* q = main_widget->as_qwidget(mainWidget); // force creation of QWidget  
+  mainLayout->addWidget (q);
+
+#else // QT_VERSION >= 0x060000
 
   mw->addToolBar (mainToolBar);
   mw->addToolBarBreak ();
@@ -393,6 +427,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   mw->addToolBarBreak ();
   mw->addToolBar (userToolBar);
   mw->addToolBarBreak ();
+#endif
 
   sideTools->setAllowedAreas (Qt::AllDockWidgetAreas);
   sideTools->setFeatures (QDockWidget::DockWidgetMovable |
@@ -443,15 +478,50 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   leftTools->setVisible (false);
   bottomTools->setVisible (false);
   extraTools->setVisible (false);
+#if QT_VERSION < 0x060000
   mainwindow()->statusBar()->setVisible (true);
 #if !defined(Q_OS_MAC)
   if (!tmapp()->useNewToolbar())
     mainwindow()->menuBar()->setVisible (false);
 #endif
+#endif
   QPalette pal;
   QColor bgcol= to_qcolor (tm_background);
   pal.setColor (QPalette::Mid, bgcol);
   mainwindow()->setPalette(pal);
+
+#if QT_VERSION >= 0x060000
+  statusBar = new QWidget(mw);
+  statusBar->setObjectName("statusBar");
+  QHBoxLayout *statusBarLayout = new QHBoxLayout(statusBar);
+  statusBarLayout->setContentsMargins(0, 0, 0, 0);
+  statusBarLayout->setSpacing(0);
+  leftLabel = new QLabel(qt_translate("Welcome to TeXmacs"), statusBar);
+  rightLabel = new QLabel(qt_translate("Booting"), statusBar);
+  leftLabel->setMinimumWidth (0);
+  rightLabel->setMinimumWidth (0);
+  leftLabel->setSizePolicy (QSizePolicy::Ignored, QSizePolicy::Preferred);
+  rightLabel->setSizePolicy (QSizePolicy::Minimum, QSizePolicy::Preferred);
+  rightLabel->setAlignment (Qt::AlignRight | Qt::AlignVCenter);
+
+  QPushButton *keyboardButton = new QPushButton ("", statusBar);
+  keyboardButton->setObjectName("keyboardToggleButton");
+  keyboardButton->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Expanding);
+  tmapp()->icon_manager().setPushButtonIcon (keyboardButton, "tm_prefs_keyboard");
+  QObject::connect (keyboardButton, &QPushButton::clicked,
+                    tmapp(), &QTMApplication::toggleOnScreenKeyboardVisibility);
+
+  statusBarLayout->addWidget (keyboardButton);
+  statusBarLayout->addWidget(leftLabel, 1);
+  statusBarLayout->addWidget(rightLabel);
+
+  central_layout->addWidget(statusBar);
+  
+
+  mw->setCentralWidget (mw_central);
+
+  mw->statusBar()->setVisible (false);
+#endif
 }
 
 qt_tm_widget_rep::~qt_tm_widget_rep () {
@@ -516,7 +586,11 @@ qt_tm_widget_rep::update_visibility () {
   bool old_leftVisibility = leftTools ? leftTools->isVisible() : false;
   bool old_bottomVisibility = bottomTools ? bottomTools->isVisible() : false;
   bool old_extraVisibility = extraTools ? extraTools->isVisible() : false;
+#if QT_VERSION < 0x060000
   bool old_statusVisibility = (mainwindow() && mainwindow()->statusBar()) ? mainwindow()->statusBar()->isVisible() : false;
+#else
+  bool old_statusVisibility = statusBar ? statusBar->isVisible() : false;
+#endif
 
   bool new_mainVisibility = visibility[1] && visibility[0];
   bool new_modeVisibility = visibility[2] && visibility[0];
@@ -873,7 +947,7 @@ qt_tm_widget_rep::query (slot s, int type_id) {
 
 void
 qt_tm_widget_rep::install_main_menu () {
-#if !DISABLE_QTMTOOLBAR
+#if QT_VERSION >= 0x060000
   if (!tmapp()->useNewToolbar() || use_native_menubar) {
 #endif
 
@@ -905,7 +979,7 @@ qt_tm_widget_rep::install_main_menu () {
       }
     }
 
-#if !DISABLE_QTMTOOLBAR
+#if QT_VERSION >= 0x060000
   } else {
 
     if (main_menu_widget == waiting_main_menu_widget) return;
@@ -922,17 +996,10 @@ qt_tm_widget_rep::install_main_menu () {
       QAction* a = (*src)[i];
       if (a->menu()) {
         dest->addAction(a->menu()->menuAction());
-  #if DISABLE_QTMTOOLBAR
-        QObject::connect (a->menu(),         SIGNAL (aboutToShow()),
-                          the_gui->gui_helper, SLOT (aboutToShowMainMenu()));
-        QObject::connect (a->menu(),         SIGNAL (aboutToHide()),
-                          the_gui->gui_helper, SLOT (aboutToHideMainMenu()));
-  #else
         QObject::connect (a->menu(), &QMenu::aboutToShow,
                           the_gui->gui_helper, &QTMGuiHelper::aboutToShowMainMenu);
         QObject::connect (a->menu(), &QMenu::aboutToHide,
                           the_gui->gui_helper, &QTMGuiHelper::aboutToHideMainMenu);
-  #endif
       }
     }
     dest->addRightSpacer();
@@ -955,10 +1022,19 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
     case SLOT_SCROLLABLE:
     {
       check_type_void (index, s);
+
+#if QT_VERSION >= 0x060000
+      if (!mainWidget || !mainLayout)
+        return;
+#endif
       
       QWidget* q = main_widget->qwid;
       if (q) q->hide();
+#if QT_VERSION < 0x060000
       QLayout* l = centralwidget()->layout();
+#else
+      QLayout* l = mainLayout;
+#endif
       if (l && q) l->removeWidget(q);
 
       q = concrete(w)->as_qwidget(mainwindow());   // force creation of the new QWidget
@@ -995,7 +1071,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       main_icons_widget = concrete (w);
       QList<QAction*>* list = main_icons_widget->get_qactionlist();
       if (list && mainToolBar) {
-#if !DISABLE_QTMTOOLBAR
+#if QT_VERSION >= 0x060000
         mainToolBar->replaceButtons (list);
 #else
         replaceButtons (mainToolBar, list);
@@ -1011,7 +1087,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       mode_icons_widget = concrete (w);
       QList<QAction*>* list = mode_icons_widget->get_qactionlist();
       if (list && modeToolBar) {
-#if !DISABLE_QTMTOOLBAR
+#if QT_VERSION >= 0x060000
         modeToolBar->replaceButtons (list);
 #else
         replaceButtons (modeToolBar, list);
@@ -1043,7 +1119,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
         focus_icons_widget = concrete (w);
         QList<QAction*>* list = focus_icons_widget->get_qactionlist();
         if (list && focusToolBar) {
-#if !DISABLE_QTMTOOLBAR
+#if QT_VERSION >= 0x060000
           focusToolBar->replaceButtons (list);
 #else
           replaceButtons (focusToolBar, list);
@@ -1060,7 +1136,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       user_icons_widget = concrete (w);
       QList<QAction*>* list = user_icons_widget->get_qactionlist();
       if (list) {
-#if !DISABLE_QTMTOOLBAR
+#if QT_VERSION >= 0x060000
         userToolBar->replaceButtons (list);
 #else
         replaceButtons (userToolBar, list);
@@ -1127,7 +1203,16 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       check_type_void (index, s);
     {
       bottom_tools_widget = concrete (w);
-      QWidget* new_qwidget = bottom_tools_widget->as_qwidget(mainwindow());
+      QScrollArea* new_qwidget = new QScrollArea();
+      QWidget* new_qwidget_content = bottom_tools_widget->as_qwidget(new_qwidget);
+      new_qwidget->setWidgetResizable (true);
+      new_qwidget->setWidget (new_qwidget_content);
+      new_qwidget->setFrameStyle (QFrame::NoFrame);
+
+      new_qwidget->setAttribute(Qt::WA_AcceptTouchEvents);
+      new_qwidget->setAttribute(Qt::WA_TouchPadAcceptSingleTouchEvents);
+      QScroller::grabGesture(new_qwidget, QScroller::TouchGesture);
+
       if (bottomTools) {
           QWidget* old_qwidget = bottomTools->widget();
           if (old_qwidget) old_qwidget->deleteLater();
@@ -1198,8 +1283,6 @@ qt_tm_widget_rep::set_full_screen(bool flag) {
       pal.setColor(QPalette::Mid, QColor (0, 0, 0));
       mainwindow()->setPalette(pal);
       mainwindow()->setStyleSheet ("* { background: #000000; }");
-//      mainwindow()->window()->setContentsMargins(0,0,0,0);
-      //win->showFullScreen();
        win->setWindowState(win->windowState() | Qt::WindowFullScreen);
     }
     else {

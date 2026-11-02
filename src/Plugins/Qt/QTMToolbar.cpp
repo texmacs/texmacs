@@ -24,81 +24,123 @@
 #include <QScrollerProperties>
 #endif // QT_VERSION >= 0x050000
 
-#ifdef OS_ANDROID
-#define QTMTOOLBAR_MARGIN 8
-#else
-#define QTMTOOLBAR_MARGIN 4
-#endif
-
 QTMToolbar::QTMToolbar (const QString& title, QSize iconSize, QWidget* parent)
-  : QToolBar (title, parent)
-{  
+  : QWidget (parent)
+{
+  setObjectName ("qtmToolbar");
+  
 #if QT_VERSION >= 0x050000
-  // strong focus
+  mToolbarMargin= 4;
+  mIconWidth= iconSize.width();
+  mIconHeight= iconSize.height();
+#ifdef OS_ANDROID
+  mToolbarMargin= 8;
+#endif
   setFocusPolicy (Qt::StrongFocus);
 
   if (!iconSize.isNull()) {
     setIconSize (iconSize);
-    setFixedHeight (iconSize.height() + QTMTOOLBAR_MARGIN * 2);
   }
 
-  setMovable (false);
+  QHBoxLayout* layout = new QHBoxLayout (this);
+  layout->setContentsMargins (0, 0, 0, 0);
+  layout->setSpacing (0);
+  setLayout (layout);
+  
+  mLeftBtn = new QPushButton (this);
+  mLeftBtn->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Expanding);
+  mLeftBtn->setText (QString::fromUtf8("<"));
+  mLeftBtn->setObjectName ("toolbarLeftButton");
+  connect (mLeftBtn, &QPushButton::clicked,
+           this, &QTMToolbar::onLeftButtonClicked);
+  layout->addWidget (mLeftBtn);
 
-  if (tmapp()->useNewToolbar()) {
-    mLeftBtn = new QToolButton (this);
-    mLeftBtn->setText (QString::fromUtf8("<"));
-    mLeftBtn->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Expanding);
-    mLeftBtn->setFixedWidth (16);
-    mLeftBtn->setAutoRepeat (true);
-    mLeftBtn->setAutoRepeatDelay (250);
-    mLeftBtn->setAutoRepeatInterval (50);
-    connect (mLeftBtn, &QToolButton::clicked, [this]() { scrollBy (-scrollStep()); });
-    mLeftAct = addWidget (mLeftBtn);
+  mScrollArea = new QScrollArea (this);
+  mScrollArea->setFrameShape (QFrame::NoFrame);
+  mScrollArea->setWidgetResizable (true);
+  mScrollArea->setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
+  mScrollArea->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
 
-    mScrollArea = new QScrollArea (this);
-    mScrollArea->setFrameShape (QFrame::NoFrame);
-    mScrollArea->setWidgetResizable (true);
-    mScrollArea->setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
-    mScrollArea->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
+  QWidget* w = new QWidget (mScrollArea);
+  mLayout = new QHBoxLayout (w);
+  mLayout->setSizeConstraint (QLayout::SetMinimumSize);
+  mLayout->setContentsMargins (0, 0, 0, 0);
+  mLayout->setSpacing (0);
+  w->setLayout (mLayout);
+  mScrollArea->setWidget (w);
 
-    QWidget* w = new QWidget (mScrollArea);
-    mLayout = new QHBoxLayout (w);
-    mLayout->setSizeConstraint (QLayout::SetMinimumSize);
-    mLayout->setContentsMargins (0, 0, 0, 0);
-    mLayout->setSpacing (0);
-    w->setLayout (mLayout);
-    mScrollArea->setWidget (w);
-    //w->setStyleSheet ("background: transparent;");
-    w->setAttribute (Qt::WA_TranslucentBackground);
+  QScrollerProperties props = QScroller::scroller(mScrollArea->viewport())->scrollerProperties();
+  props.setScrollMetric(QScrollerProperties::VerticalOvershootPolicy,   QScrollerProperties::OvershootAlwaysOff);
+  props.setScrollMetric(QScrollerProperties::HorizontalOvershootPolicy, QScrollerProperties::OvershootAlwaysOff);
+  QScroller::scroller(mScrollArea->viewport())->setScrollerProperties(props);
+  QScroller::grabGesture (mScrollArea->viewport(), QScroller::LeftMouseButtonGesture);
 
-    QScrollerProperties props = QScroller::scroller(mScrollArea->viewport())->scrollerProperties();
-    props.setScrollMetric(QScrollerProperties::VerticalOvershootPolicy,   QScrollerProperties::OvershootAlwaysOff);
-    props.setScrollMetric(QScrollerProperties::HorizontalOvershootPolicy, QScrollerProperties::OvershootAlwaysOff);
-    QScroller::scroller(mScrollArea->viewport())->setScrollerProperties(props);
-    QScroller::grabGesture (mScrollArea->viewport(), QScroller::LeftMouseButtonGesture);
+  layout->addWidget (mScrollArea);
 
-    addWidget (mScrollArea);
+  mRightBtn = new QPushButton (this);
+  mRightBtn->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Expanding);
+  mRightBtn->setText (QString::fromUtf8(">"));
+  mRightBtn->setObjectName ("toolbarRightButton");
+  connect (mRightBtn, &QPushButton::clicked,
+           this, &QTMToolbar::onRightButtonClicked);
+  layout->addWidget (mRightBtn);
 
-    mRightBtn = new QToolButton (this);
-    mRightBtn->setText (QString::fromUtf8(">"));
-    mRightBtn->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Expanding);
-    mRightBtn->setFixedWidth (16);
-    mRightBtn->setAutoRepeat (true);
-    mRightBtn->setAutoRepeatDelay (250);
-    mRightBtn->setAutoRepeatInterval (50);
-    connect (mRightBtn, &QToolButton::clicked, [this]() { scrollBy (+scrollStep()); });
-    mRightAct = addWidget (mRightBtn);
-
-    mScrollArea->viewport()->installEventFilter (this);
-    w->installEventFilter (this);
-    connect (mScrollArea->horizontalScrollBar(), &QScrollBar::valueChanged, this, &QTMToolbar::updateNavButtons);
-    
-    updateNavButtons();
-  }
+  mScrollArea->viewport()->installEventFilter (this);
+  w->installEventFilter (this);
+  connect (mScrollArea->horizontalScrollBar(), &QScrollBar::valueChanged, this, &QTMToolbar::updateNavButtons);
+  
+  updateNavButtons();
+  
 #endif // QT_VERSION >= 0x050000
 }
 
 QTMToolbar::~QTMToolbar () {
+}
+
+void QTMToolbar::setToolbarMargin (int margin) {
+  if (margin < 0) margin = 0;
+  if (mToolbarMargin == margin) return;
+  mToolbarMargin = margin;
+  updateToolbarMetrics ();
+}
+
+void QTMToolbar::setIconWidth (int width) {
+  if (width < 0) width = 0;
+  if (mIconWidth == width) return;
+  mIconWidth = width;
+  updateToolbarMetrics ();
+}
+
+void QTMToolbar::setIconHeight (int height) {
+  if (height < 0) height = 0;
+  if (mIconHeight == height) return;
+  mIconHeight = height;
+  updateToolbarMetrics ();
+}
+
+void
+QTMToolbar::updateToolbarMetrics () {
+  QSize iconSize (mIconWidth, mIconHeight);
+  int requiredHeight = mIconHeight > 0 ? mIconHeight + mToolbarMargin * 2 : 0;
+
+  if (mLayout) {
+    for (int i = 0; i < mLayout->count(); i++) {
+      QWidget* actionWidget = mLayout->itemAt(i)->widget();
+      QToolButton* button = qobject_cast<QToolButton*> (actionWidget);
+      if (!button) continue;
+      button->setIconSize (iconSize);
+      if (button->icon().isNull()) {
+        button->setContentsMargins (mToolbarMargin, mToolbarMargin,
+                                    mToolbarMargin, mToolbarMargin);
+      }
+      requiredHeight = qMax (requiredHeight,
+                             button->sizeHint().height() + mToolbarMargin * 2);
+    }
+  }
+
+  if (requiredHeight > 0) {
+    setFixedHeight (requiredHeight);
+  }
 }
 
 void QTMToolbar::replaceActions (QList<QAction*>* src) {
@@ -107,27 +149,20 @@ void QTMToolbar::replaceActions (QList<QAction*>* src) {
     FAILED ("replaceActions expects valid objects");
   setUpdatesEnabled (false);
 
-  if (tmapp()->useNewToolbar()) {
-    while (mLayout && mLayout->count() > 0) {
-      QWidget* w = mLayout->itemAt(0)->widget();
-      mLayout->removeWidget(w);
-      w->hide();
-      w->setParent(nullptr);
-      w->deleteLater();
-    }
-  } else {
-    clear ();
-    addSeparator ();
+  while (mLayout && mLayout->count() > 0) {
+    QWidget* w = mLayout->itemAt(0)->widget();
+    mLayout->removeWidget(w);
+    w->hide();
+    w->setParent(nullptr);
+    w->deleteLater();
   }
   for (int i = 0; i < src->count(); i++) {
     QAction* a = (*src)[i];
     addAction(a);
   }
   setUpdatesEnabled (true);
-  if (tmapp()->useNewToolbar()) {
-    addRightSpacer();
-    updateNavButtons();
-  }
+  addRightSpacer();
+  updateNavButtons();
 #endif // QT_VERSION >= 0x050000
 }
 
@@ -136,36 +171,29 @@ void QTMToolbar::replaceButtons (QList<QAction*>* src) {
   if (src == NULL)
     FAILED ("replaceButtons expects valid objects");
   setUpdatesEnabled (false);
-  if (tmapp()->useNewToolbar()) {
-    while (mLayout && mLayout->count() > 0) {
-      QWidget* w = mLayout->itemAt(0)->widget();
-      mLayout->removeWidget(w);
-      w->hide();
-      w->setParent(nullptr);
-      w->deleteLater();
-    }
-  } else {
-    clear ();
-    addSeparator ();
+
+  while (mLayout && mLayout->count() > 0) {
+    QWidget* w = mLayout->itemAt(0)->widget();
+    mLayout->removeWidget(w);
+    w->hide();
+    w->setParent(nullptr);
+    w->deleteLater();
   }
+
   for (int i = 0; i < src->count(); i++) {
     QAction* a = (*src)[i];
     addAction(a);
   }
   setUpdatesEnabled (true);
-  if (tmapp()->useNewToolbar()) {
-    addRightSpacer();
-    updateNavButtons();
-  }
+
+  addRightSpacer();
+  updateNavButtons();
+  
 #endif // QT_VERSION >= 0x050000
 }
 
 void QTMToolbar::addSeparator () {
 #if QT_VERSION >= 0x050000
-  if (!tmapp()->useNewToolbar()) {
-    QToolBar::addSeparator();
-    return;
-  }
 
   if (!mLayout) return;
 
@@ -214,7 +242,7 @@ void QTMToolbar::addAction (QAction* action) {
   if (action->isSeparator()) {
     addSeparator();
     return;
-  } else if (tmapp()->useNewToolbar()) {
+  } else {
     addSmallSeparator();
   }
 
@@ -231,37 +259,24 @@ void QTMToolbar::addAction (QAction* action) {
   if (button) {
 
     // if the action contains a icon, set a fixed icon size
-    if (!action->icon().isNull()) {
-      button->setIconSize (iconSize());
-    }
+    button->setIconSize (QSize (mIconWidth, mIconHeight));
     
 #if QT_VERSION >= 0x050000
     // on click finish, set the focus to the last focused widget
-    connect (button, &QToolButton::clicked, []() {
-      QTMWidget::setFocusToLast();
-    });
+    connect (button, &QToolButton::clicked,
+             this, &QTMToolbar::onAnyButtonClicked);
 
     // if the action is a menu, the tool button should be a menu button
     if (action->menu()) {
       button->setPopupMode (QToolButton::InstantPopup);
       QMenu *actionMenu = action->menu();
-      QPointer<QMenu> safeMenu = actionMenu;
-      QPointer<QToolButton> safeButton = button;
-      connect (actionMenu, &QMenu::aboutToShow, this, [this, safeMenu, safeButton]() {
-        if (!safeMenu || !safeButton) return;
-        mCurrentMenu = safeMenu;
-        resetAllButtons(safeButton);
-      });
-      connect (actionMenu, &QMenu::aboutToHide, this, [this, safeMenu, safeButton]() {
-        if (!safeMenu) return;
-        if (mCurrentMenu == safeMenu) {
-          mCurrentMenu = nullptr;
-          QTMWidget::setFocusToLast();
-        }
-        if (!safeButton) return;
-        mPendingResetButton = safeButton;
-        QMetaObject::invokeMethod (this, "resetPendingButton", Qt::QueuedConnection);
-      });
+      actionMenu->setProperty(
+          "tmToolbarButton",
+          QVariant::fromValue<QObject*>(button));
+      connect (actionMenu, &QMenu::aboutToShow,
+               this, &QTMToolbar::onActionMenuAboutToShow);
+      connect (actionMenu, &QMenu::aboutToHide,
+               this, &QTMToolbar::onActionMenuAboutToHide);
       actionMenu->installEventFilter (this);
     }
 #else
@@ -274,23 +289,22 @@ void QTMToolbar::addAction (QAction* action) {
     // if the action contains only text, add a margin to the button
     if (action->icon().isNull()) {
       button->setToolButtonStyle (Qt::ToolButtonTextOnly);
-      button->setContentsMargins (QTMTOOLBAR_MARGIN, QTMTOOLBAR_MARGIN, QTMTOOLBAR_MARGIN, QTMTOOLBAR_MARGIN);
+      button->setContentsMargins (mToolbarMargin, mToolbarMargin,
+                                  mToolbarMargin, mToolbarMargin);
     }
     
     // if the fixed height is lower than the required height, set the fixed height
-    int requiredHeight = button->sizeHint().height() + QTMTOOLBAR_MARGIN * 2;
+    int requiredHeight = button->sizeHint().height() + mToolbarMargin * 2;
     if (height() < requiredHeight) {
-      setFixedHeight (requiredHeight);
+     // setFixedHeight (requiredHeight);
     }
   }
   
   // add the button to the toolbar, and on Android to the scrollable layout
-  if (tmapp()->useNewToolbar() && mLayout) {
+  if (mLayout) {
     actionWidget->setSizePolicy (QSizePolicy::Preferred, QSizePolicy::Expanding);
     mLayout->addWidget (actionWidget);
     updateNavButtons();
-  } else {
-    QToolBar::addWidget (actionWidget);
   }
 #else
   QToolBar::addAction (action);
@@ -299,8 +313,7 @@ void QTMToolbar::addAction (QAction* action) {
 
 void QTMToolbar::removeAction (QAction* action) {
 #if QT_VERSION >= 0x050000
-  if (!tmapp()->useNewToolbar() || !mLayout) {
-    QToolBar::removeAction(action);
+  if (!mLayout) {
     return;
   }
   for (int i = 0; i < mLayout->count(); i++) {
@@ -319,8 +332,8 @@ void QTMToolbar::removeAction (QAction* action) {
 
 void QTMToolbar::clear () {
 #if QT_VERSION >= 0x050000
-  if (!tmapp()->useNewToolbar() || !mLayout) {
-    QToolBar::clear();
+  if (!mLayout) {
+    //QToolBar::clear();
     return;
   }
   while (mLayout->count() > 0) {
@@ -338,7 +351,8 @@ void QTMToolbar::clear () {
 
 int QTMToolbar::scrollStep () const {
 #if QT_VERSION >= 0x050000
-  int byIcon = iconSize().isValid() ? iconSize().width() : 64;
+  //int byIcon = iconSize().isValid() ? iconSize().width() : 64;
+  int byIcon = 64;
   return byIcon;
 #else
   return 0;
@@ -358,37 +372,37 @@ void QTMToolbar::scrollBy (int dx) {
 
 void QTMToolbar::setRightActVisible (bool v) {
 #if QT_VERSION >= 0x050000
-  if (!mRightAct || !mRightBtn) return;
+  if (!mRightBtn) return;
   if (v) {
-    mRightAct->setEnabled(true);
-    //mRightBtn->setText (QString::fromUtf8(">"));
-    mRightBtn->setStyleSheet ("");
+    mRightBtn->setText (QString::fromUtf8(">"));
+    mRightBtn->setProperty("tmenabled", "true");
   } else {
-    mRightAct->setEnabled(false);
-    //mRightBtn->setText (QString::fromUtf8(""));
-    mRightBtn->setStyleSheet ("color: transparent;");
+    // mRightBtn->setText ("");
+    mRightBtn->setProperty("tmenabled", "false");
   }
+  mRightBtn->style()->unpolish(mRightBtn);
+  mRightBtn->style()->polish(mRightBtn);
 #endif
 }
 
 void QTMToolbar::setLeftActVisible (bool v) {
 #if QT_VERSION >= 0x050000
-  if (!mLeftAct || !mLeftBtn) return;
+  if (!mLeftBtn) return;
   if (v) {
-    mLeftAct->setEnabled(true);
-    //mLeftBtn->setText (QString::fromUtf8("<"));
-    mLeftBtn->setStyleSheet ("");
+    mLeftBtn->setText (QString::fromUtf8("<"));
+    mLeftBtn->setProperty("tmenabled", "true");
   } else {
-    mLeftAct->setEnabled(false);
-    //mLeftBtn->setText (QString::fromUtf8(""));
-    mLeftBtn->setStyleSheet ("color: transparent;");
+    // mLeftBtn->setText ("");
+    mLeftBtn->setProperty("tmenabled", "false");
   }
+  mLeftBtn->style()->unpolish(mLeftBtn);
+  mLeftBtn->style()->polish(mLeftBtn);
 #endif // QT_VERSION >= 0x050000
 }
 
 void QTMToolbar::updateNavButtons () {
 #if QT_VERSION >= 0x050000
-  if (!mScrollArea || !mLeftBtn || !mRightBtn || !mLeftAct || !mRightAct) return;
+  if (!mScrollArea || !mLeftBtn || !mRightBtn) return;
 
   QWidget* content = mScrollArea->widget();
   if (!content) {
@@ -419,7 +433,6 @@ void QTMToolbar::updateNavButtons () {
 
 bool QTMToolbar::eventFilter (QObject* watched, QEvent* event) {
 #if QT_VERSION >= 0x050000
-  if (!tmapp()->useNewToolbar()) return false;
   if (!mScrollArea || !mLayout) return false;
 
 #ifndef OS_ANDROID
@@ -502,10 +515,54 @@ bool QTMToolbar::eventFilter (QObject* watched, QEvent* event) {
   return false;
 }
 
+void QTMToolbar::onLeftButtonClicked() {
+  scrollBy(-scrollStep());
+}
+
+void QTMToolbar::onRightButtonClicked() {
+  scrollBy(+scrollStep());
+}
+
+void QTMToolbar::onAnyButtonClicked() {
+  QTMWidget::setFocusToLast();
+}
+
+void QTMToolbar::onActionMenuAboutToShow() {
+  QMenu *menu = qobject_cast<QMenu *>(sender());
+  if (!menu) return;
+
+  QToolButton *button =
+      qobject_cast<QToolButton *>(menu->property("tmToolbarButton").value<QObject*>());
+  if (!button) return;
+
+  mCurrentMenu = menu;
+  resetAllButtons(button);
+}
+
+void QTMToolbar::onActionMenuAboutToHide() {
+  QMenu *menu = qobject_cast<QMenu *>(sender());
+  if (!menu) return;
+
+  if (mCurrentMenu == menu) {
+    mCurrentMenu = nullptr;
+    QTMWidget::setFocusToLast();
+  }
+
+  mPendingResetButton =
+      qobject_cast<QToolButton *>(menu->property("tmToolbarButton").value<QObject*>());
+  QMetaObject::invokeMethod(this, "deferredResetButton", Qt::QueuedConnection);
+}
+
+void QTMToolbar::deferredResetButton() {
+  QToolButton *button = mPendingResetButton.data();
+  mPendingResetButton = nullptr;
+  if (!button) return;
+  resetButton(button);
+}
+
 QList<QTMToolbar*> QTMToolbar::getAllToolbarsFromMainWindow () const {
   QList<QTMToolbar*> toolbars;
 #if QT_VERSION >= 0x050000
-  if (!tmapp()->useNewToolbar()) return toolbars;
   QWidget* mainWindow = parentWidget(); // todo
   if (!mainWindow) return toolbars;
   QList<QToolBar*> allToolbars = mainWindow->findChildren<QToolBar*>();
@@ -522,7 +579,6 @@ QList<QTMToolbar*> QTMToolbar::getAllToolbarsFromMainWindow () const {
 QList<QToolButton*> QTMToolbar::getAllButtonsFromAllToolbars () const {
   QList<QToolButton*> buttons;
 #if QT_VERSION >= 0x050000
-  if (!tmapp()->useNewToolbar()) return buttons;
   QList<QTMToolbar*> toolbars = getAllToolbarsFromMainWindow();
   for (QTMToolbar* tb : toolbars) {
     if (!tb->mLayout) continue;
@@ -555,20 +611,8 @@ void QTMToolbar::resetButton(QToolButton* button) {
 #endif // QT_VERSION >= 0x050000
 }
 
-void QTMToolbar::resetPendingButton() {
-#if QT_VERSION >= 0x050000
-  if (!mPendingResetButton) return;
-  resetButton(mPendingResetButton);
-  mPendingResetButton = nullptr;
-#endif // QT_VERSION >= 0x050000
+void QTMToolbar::setIconSize(const QSize& size) {
+  if (size.width() >= 0) mIconWidth = size.width();
+  if (size.height() >= 0) mIconHeight = size.height();
+  updateToolbarMetrics ();
 }
-
-/*
-QMenu* QTMToolbar::currentMenu () const {
-  QWidget *activePopup = QApplication::activePopupWidget();
-  if (!activePopup) return nullptr;
-  QMenu *menu = qobject_cast<QMenu*> (activePopup);
-  if (!menu) return nullptr;
-  return menu;
-}
-  */

@@ -11,6 +11,8 @@
 #ifndef QTMDELAYEDMETHODCALL_HPP
 #define QTMDELAYEDMETHODCALL_HPP
 
+#include <QtGlobal>
+
 #if QT_VERSION >= 0x060000
 
 #include "qt_utilities.hpp"

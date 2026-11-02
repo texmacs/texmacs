@@ -28,12 +28,6 @@
 #include <QLayout>
 #include <QPointer>
 
-#if QT_VERSION >= 0x050000
-#define DISABLE_QTMTOOLBAR 0
-#else
-#define DISABLE_QTMTOOLBAR 1
-#endif
-
 class QLabel; 
 class QTMInteractivePrompt;
 
@@ -61,7 +55,10 @@ class qt_tm_widget_rep: public qt_window_widget_rep {
    */
   QPointer<QLabel>          rightLabel;
   QPointer<QLabel>           leftLabel;
-#if !DISABLE_QTMTOOLBAR
+#if QT_VERSION >= 0x060000
+  QPointer<QWidget>         mainWidget;
+  QPointer<QVBoxLayout>     mainLayout;
+  QPointer<QWidget>         statusBar;
   QPointer<QTMToolbar>     menuToolBar;
   QPointer<QTMToolbar>     mainToolBar;
   QPointer<QTMToolbar>     modeToolBar;
