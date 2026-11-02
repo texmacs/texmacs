@@ -314,6 +314,8 @@ class QTMTabWidget : public QTabWidget {
 
 public:
   QTMTabWidget (QWidget* p = NULL);
+  QSize sizeHint () const override;
+  QSize minimumSizeHint () const override;
 
 public slots:
   void resizeOthers(int index);

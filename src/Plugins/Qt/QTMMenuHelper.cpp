@@ -27,6 +27,10 @@
 #include <QCompleter>
 #include <QKeyEvent>
 #include <QApplication>
+#include <QTabBar>
+#include <QScrollBar>
+#include <QScrollArea>
+#include <QTimer>
 
 /******************************************************************************
  * QTMCommand
@@ -826,6 +830,60 @@ QTMTabWidget::QTMTabWidget (QWidget *p) : QTabWidget(p) {
 #endif
 }
 
+QSize
+QTMTabWidget::sizeHint () const {
+  int max_w = 0;
+  int max_h = 0;
+  for (int i = 0; i < count (); ++i) {
+    if (QWidget* w = widget (i)) {
+      if (w->layout ()) {
+        w->layout ()->activate ();
+      }
+      QSize s = w->sizeHint ();
+      QSize ms = w->minimumSizeHint ();
+      int tab_w = std::max (s.isValid () ? s.width () : 0,
+                            ms.isValid () ? ms.width () : 0);
+      int tab_h = std::max (s.isValid () ? s.height () : 0,
+                            ms.isValid () ? ms.height () : 0);
+      max_w = std::max (max_w, tab_w);
+      max_h = std::max (max_h, tab_h);
+    }
+  }
+  QSize tb = tabBar () ? tabBar ()->sizeHint () : QSize (0, 0);
+  int w = std::max (max_w, tb.width ());
+  int h = max_h + tb.height ();
+  if (w > 0 && h > 0) {
+    return QSize (w + 12, h + 12);
+  }
+  return QTabWidget::sizeHint ();
+}
+
+QSize
+QTMTabWidget::minimumSizeHint () const {
+  int max_w = 0;
+  int max_h = 0;
+  for (int i = 0; i < count (); ++i) {
+    if (QWidget* w = widget (i)) {
+      if (w->layout ()) {
+        w->layout ()->activate ();
+      }
+      QSize ms = w->minimumSizeHint ();
+      QSize s = w->sizeHint ();
+      int tab_w = ms.isValid () && ms.width () > 0 ? ms.width () : (s.isValid () ? s.width () : 0);
+      int tab_h = ms.isValid () && ms.height () > 0 ? ms.height () : (s.isValid () ? s.height () : 0);
+      max_w = std::max (max_w, tab_w);
+      max_h = std::max (max_h, tab_h);
+    }
+  }
+  QSize tb = tabBar () ? tabBar ()->sizeHint () : QSize (0, 0);
+  int w = std::max (max_w, tb.width ());
+  int h = max_h + tb.height ();
+  if (w > 0 && h > 0) {
+    return QSize (w + 12, h + 12);
+  }
+  return QTabWidget::minimumSizeHint ();
+}
+
 /*! Resizes the widget to the size of the tab given by the index.
  
  In particular, we must tell all parent widgets to adjustSize() as well as
@@ -838,23 +896,50 @@ QTMTabWidget::resizeOthers (int current) {
 BEGIN_SLOT
 
   for (int i = 0; i < count(); ++i) {
-    if (i != current)
-      widget(i)->setSizePolicy (QSizePolicy::Ignored, QSizePolicy::Ignored);
-    else
-      widget(i)->setSizePolicy (QSizePolicy::Minimum, QSizePolicy::Minimum);
+    widget(i)->setSizePolicy (QSizePolicy::Preferred, QSizePolicy::Preferred);
   }
   
-    // FIXME? this could loop indefinitely if parents are cyclic.
+  if (current >= 0 && current < count () && widget (current)) {
+    widget (current)->updateGeometry ();
+    if (widget (current)->layout ()) {
+      widget (current)->layout ()->setAlignment (Qt::AlignTop);
+      widget (current)->layout ()->invalidate ();
+      widget (current)->layout ()->activate ();
+    }
+  }
+
+  updateGeometry ();
+
+  // Reset vertical scrollbar to top when switching tabs
   QWidget* p = this;
-  while (p != window()) {
-    p->adjustSize();
+  while (p && p != window()) {
+    if (QScrollArea* sa = qobject_cast<QScrollArea*> (p)) {
+      if (sa->verticalScrollBar ()) {
+        sa->verticalScrollBar ()->setValue (0);
+      }
+      break;
+    }
     p = p->parentWidget();
   }
-  p->adjustSize();
 
-  if (window()->minimumSize()!=QSize (0,0) && 
-      window()->maximumSize() != QSize (QWIDGETSIZE_MAX, QWIDGETSIZE_MAX))
-    window()->setFixedSize (window()->sizeHint());
+  QTimer::singleShot (0, this, [this, current] () {
+    if (current >= 0 && current < count () && widget (current)) {
+      if (widget (current)->layout ()) {
+        widget (current)->layout ()->invalidate ();
+        widget (current)->layout ()->activate ();
+      }
+    }
+    QWidget* parent = parentWidget ();
+    while (parent) {
+      if (QScrollArea* sa = qobject_cast<QScrollArea*> (parent)) {
+        if (sa->verticalScrollBar ()) {
+          sa->verticalScrollBar ()->setValue (0);
+        }
+        break;
+      }
+      parent = parent->parentWidget ();
+    }
+  });
 END_SLOT
 }
 

@@ -25,6 +25,14 @@
 #include "window.hpp"
 #include <QWidget>
 #include <QWidgetItem>
+#include <QScrollArea>
+#include <QScrollBar>
+#include <QScroller>
+#include <QTimer>
+#include <QResizeEvent>
+#include <QShowEvent>
+#include <QDebug>
+#include <algorithm>
 #include "QTMMenuHelper.hpp"
 #include "QTMWindow.hpp"
 
@@ -208,6 +216,87 @@ qt_widget_rep::get_qactionlist() {
  \param quit A command to be executed when the window closes.
  \return The new qt_window_widget.
 */
+class QTMContentHost : public QWidget {
+public:
+  using QWidget::QWidget;
+
+  QSize sizeHint () const override {
+    if (layout ()) {
+      layout ()->activate ();
+      return layout ()->sizeHint ();
+    }
+    return QWidget::sizeHint ();
+  }
+
+  QSize minimumSizeHint () const override {
+    if (layout ()) {
+      layout ()->activate ();
+      QSize ms = layout ()->minimumSize ();
+      if (ms.isValid () && (ms.width () > 0 || ms.height () > 0)) {
+        return ms;
+      }
+    }
+    return sizeHint ();
+  }
+};
+
+/*! A QScrollArea for plain windows (dialogs, preferences) that propagates
+    the content's preferred size so dialogs don't shrink to a default 256x192 box,
+    while still providing scrollbars whenever the window is smaller than the content. */
+class QTMPlainScrollArea : public QScrollArea {
+public:
+  QTMPlainScrollArea (QWidget* parent = nullptr) : QScrollArea (parent) {
+    setSizeAdjustPolicy (QAbstractScrollArea::AdjustToContents);
+  }
+
+  QSize sizeHint () const override {
+    if (widget ()) {
+      if (widget ()->layout ()) {
+        widget ()->layout ()->activate ();
+      }
+      QSize s = widget ()->sizeHint ();
+      if (s.isValid () && s.width () > 0 && s.height () > 0) {
+        return QSize (s.width () + 4, s.height () + 4);
+      }
+    }
+    return QScrollArea::sizeHint ();
+  }
+
+  QSize minimumSizeHint () const override {
+    return QSize (200, 150);
+  }
+
+  void updateContentGeometry () {
+    if (widget ()) {
+      if (widget ()->layout ()) {
+        widget ()->layout ()->activate ();
+      }
+      QSize vs = viewport ()->size ();
+      if (vs.isValid () && vs.width () > 0 && vs.height () > 0) {
+        if (widgetResizable ()) {
+          QSize min = widget ()->minimumSizeHint ();
+          QSize max = widget ()->maximumSize ();
+          QSize target = vs.boundedTo (max).expandedTo (min);
+          widget ()->setGeometry (QRect (QPoint (0, 0), target));
+        }
+      }
+    }
+  }
+
+protected:
+  void showEvent (QShowEvent* ev) override {
+    QScrollArea::showEvent (ev);
+    updateContentGeometry ();
+  }
+
+  void resizeEvent (QResizeEvent* ev) override {
+    QScrollArea::resizeEvent (ev);
+    if (widget () && widget ()->layout ()) {
+      widget ()->layout ()->activate ();
+    }
+  }
+};
+
 widget
 qt_widget_rep::plain_window_widget (string name, command quit, int border) {
   if (DEBUG_QT_WIDGETS)
@@ -215,29 +304,43 @@ qt_widget_rep::plain_window_widget (string name, command quit, int border) {
                   << type_as_string() << LF;
 
   QTMPlainWindow* win = new QTMPlainWindow (nullptr);
-  QLayoutItem*     li = as_qlayoutitem(win);
+  QTMContentHost* contentHost = new QTMContentHost(win);
+  QLayoutItem*     li = as_qlayoutitem(contentHost);
   if (li) {
     QLayout* l = li->layout();
     if (! l) {
-      l = new QVBoxLayout (win);
+      l = new QVBoxLayout (contentHost);
       l->addItem (li); // Layout owns the QLayoutItem
     }
-    win->setLayout (l);// Transfers ownership of QWidgets in QLayoutItems to win
+    contentHost->setLayout (l); // Transfers ownership of QWidgets in QLayoutItems to contentHost
   } else {
-    QWidget* qw = as_qwidget(win);
+    QWidget* qw = as_qwidget(contentHost);
     if (qw) {
-      QLayout* l = new QVBoxLayout (win);
-      win->setLayout (l); // And the QLayout to the QTMPlainWindow.
-      l->addWidget (qw);  // qw now belongs to the QWidget with the layout (win)
+      QLayout* l = new QVBoxLayout (contentHost);
+      contentHost->setLayout (l); // And the QLayout to the content host.
+      l->addWidget (qw);  // qw now belongs to the QWidget with the layout
     } else {
       FAILED ("attempt to create a window around a nil QWidget");
     }
   }
-  
+
   int l,t,r,b;
-  win->layout()->getContentsMargins (&l, &t, &r, &b);
-  win->layout()->setContentsMargins (l+border, t+border, r+border, b+border);
-  win->setWindowTitle (to_qstring (name));  // HACK: remove me (see bug#40837)
+  contentHost->layout()->getContentsMargins (&l, &t, &r, &b);
+  contentHost->layout()->setContentsMargins (l+border, t+border, r+border, b+border);
+
+  QTMPlainScrollArea *scrollArea = new QTMPlainScrollArea(win);
+  scrollArea->setWidget(contentHost);
+  scrollArea->setWidgetResizable(true);
+  scrollArea->setFrameShape(QFrame::NoFrame);
+  scrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+  scrollArea->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+  win->setCentralWidget(scrollArea);
+
+  scrollArea->setAttribute(Qt::WA_AcceptTouchEvents);
+  scrollArea->setAttribute(Qt::WA_TouchPadAcceptSingleTouchEvents);
+  QScroller::grabGesture(scrollArea, QScroller::TouchGesture);
+  
+  win->setWindowOrTabTitle (to_qstring (name));  // HACK: remove me (see bug#40837)
   
   qt_window_widget_rep* wid = tm_new<qt_window_widget_rep> (win, name, quit);
   wid->add_child (this);
