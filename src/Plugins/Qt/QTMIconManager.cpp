@@ -17,6 +17,7 @@
 
 
 #include "QTMIconManager.hpp"
+#include "QTMResponsiveTabWidget.hpp"
 #include "qt_picture.hpp"
 #include "qt_utilities.hpp"
 #include "sys_utils.hpp"
@@ -244,6 +245,18 @@ void QTMIconManager::setTabIcon(QPointer<QTabWidget> tabwidget, int index, url f
   if (tabwidget) {
     QIcon icon= this->getIcon (file_name);
     tabwidget->setTabIcon (index, icon);
+  }
+}
+
+void QTMIconManager::setTabIcon(QPointer<QTMResponsiveTabWidget> tabbar, int index, url file_name) {
+  if (get_env ("TEXMACS_PIXMAP_PATH") == "") {
+    QTimer::singleShot (1, [this, tabbar, index, file_name]() {
+      setTabIcon(tabbar, index, file_name);
+    });
+  }
+  if (tabbar) {
+    QIcon icon= this->getIcon (file_name);
+    tabbar->setTabIcon (index, icon);
   }
 }
 

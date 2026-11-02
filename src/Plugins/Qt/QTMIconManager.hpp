@@ -30,6 +30,8 @@
 #include "url.hpp"
 #include "gui.hpp"
 
+class QTMResponsiveTabWidget;
+
 class QTMIconManager {
 
 public:
@@ -42,6 +44,7 @@ public:
   void setActionIcon (QPointer<QAction> action, url file_name);
   void setWindowIcon (QPointer<QMainWindow> window, url file_name);
   void setTabIcon (QPointer<QTabWidget> tabwidget, int index, url file_name);
+  void setTabIcon (QPointer<QTMResponsiveTabWidget> tabbar, int index, url file_name);
   void setToolButtonIcon (QPointer<QToolButton> button, url file_name);
 
   static inline bool is_dark_mode () {
