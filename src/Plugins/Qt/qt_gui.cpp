@@ -481,9 +481,12 @@ qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
     waitWindow->setLayout (layout);
     QLabel* iconLabel = new QLabel (waitWindow);
     layout->addWidget (iconLabel);
-    QIcon icon = tmapp ()->icon_manager ().getIcon ("TeXmacs");
-    QPixmap pm = icon.pixmap (256, 256);
-    iconLabel->setPixmap (pm);
+#if QT_VERSION >= 0x060000
+    tmapp()->icon_manager().setLabelPixmap (iconLabel, "TeXmacs", 256, 256);
+#else
+    QImage* im = xpm_image ("TeXmacs");
+    if (im) iconLabel->setPixmap (as_pixmap (*im));
+#endif
     iconLabel->setAlignment (Qt::AlignCenter);
     iconLabel->setFixedSize (32, 32);
     iconLabel->setScaledContents (true);
@@ -683,7 +686,32 @@ gui_version () {
 
 bool
 qt_support_functionality (string s) {
-  (void) s;
+  if (s == "tab") {
+#if QT_VERSION >= 0x060000 && defined(OS_MINGW)
+    return (tmapp () != nullptr) ? tmapp ()->useTabWindow () : false;
+#else
+    return false;
+#endif
+  }
+  if (s == "tab-capable") {
+#if QT_VERSION >= 0x060000 && defined(OS_MINGW)
+    return true;
+#else
+    return false;
+#endif
+  }
+  if (s == "density") {
+#if QT_VERSION >= 0x060000 && defined(OS_MINGW)
+    return (tmapp () != nullptr) ? tmapp ()->useTabWindow () : false;
+#else
+    return false;
+#endif
+  }
+#ifndef OS_ANDROID
+  if (s == "multiwindow") {
+    return (tmapp () != nullptr) ? !tmapp ()->useTabWindow () : true;
+  }
+#endif
   return false;
 }
 

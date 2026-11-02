@@ -98,6 +98,14 @@ public:
     return mUseNewToolbar;
   }
 
+  inline bool useTabWindow() {
+    return mUseTabWindow;
+  }
+
+  inline QTMOnscreenKeyboard* onscreenKeyboard() {
+    return mOnscreenKeyboard;
+  }
+
   void toggleOnScreenKeyboardVisibility();
 
   void notify_preference (string var);
@@ -116,6 +124,7 @@ private:
   QTMKeyboard mKeyboard;
   QTMOnscreenKeyboard *mOnscreenKeyboard;
   bool mUseNewToolbar;
+  bool mUseTabWindow;
   QFileSystemWatcher* mCssWatcher = nullptr;
   QString mCurrentCssPath;
   QTMLocalServer mLocalServer;
