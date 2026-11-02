@@ -270,6 +270,7 @@ QTMMainTabWindow::QTMMainTabWindow() {
 }
 
 void QTMMainTabWindow::resizeEvent(QResizeEvent *event) {
+  Q_UNUSED(event);
   QMainWindow::resizeEvent(event);
 
 #ifdef OS_MACOS
@@ -290,6 +291,7 @@ void QTMMainTabWindow::resizeEvent(QResizeEvent *event) {
 }
 
 void QTMMainTabWindow::showEvent(QShowEvent *event) {
+  Q_UNUSED(event);
 #ifdef OS_MACOS
   applyMacOSUnifiedBar(this);
 #endif

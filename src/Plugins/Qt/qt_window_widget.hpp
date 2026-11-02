@@ -49,17 +49,17 @@ public:
   qt_window_widget_rep (QWidget* _wid, string name, command q, bool fake=false);
   ~qt_window_widget_rep ();
 
-  virtual inline string get_nickname () { return orig_name; }
-  virtual widget popup_window_widget (string s);
+  inline string get_nickname () override { return orig_name; }
+  virtual widget popup_window_widget (string s) override;
   virtual QWidget* as_qwidget (QWidget* parent_widget = nullptr) override {
     (void) parent_widget;
     return qwid;
   }
 
-  virtual void      send (slot s, blackbox val);
-  virtual blackbox query (slot s, int type_id);
-  virtual widget    read (slot s, blackbox index);
-  virtual void    notify (slot s, blackbox new_val);
+  void      send (slot s, blackbox val) override;
+  blackbox query (slot s, int type_id) override;
+  widget    read (slot s, blackbox index) override;
+  void    notify (slot s, blackbox new_val) override;
 	
   static widget_rep* widget_from_qwidget (QWidget* qwid);
 
@@ -75,11 +75,11 @@ public:
   qt_popup_widget_rep (widget wid, command q);
   ~qt_popup_widget_rep ();
   
-  virtual widget popup_window_widget (string s);
-  virtual widget tooltip_window_widget (string s);
+  widget popup_window_widget (string s) override;
+  widget tooltip_window_widget (string s) override;
 
-  virtual void      send (slot s, blackbox val);
-  virtual blackbox query (slot s, int type_id);
+  void      send (slot s, blackbox val) override;
+  blackbox query (slot s, int type_id) override;
 };
 
 #endif // defined QT_WINDOW_WIDGET_HPP

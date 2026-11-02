@@ -27,6 +27,7 @@
 QTMToolbar::QTMToolbar (const QString& title, QSize iconSize, QWidget* parent)
   : QWidget (parent)
 {
+  Q_UNUSED(title);
   setObjectName ("qtmToolbar");
   
 #if QT_VERSION >= 0x050000
