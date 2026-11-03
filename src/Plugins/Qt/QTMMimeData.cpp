@@ -43,10 +43,10 @@ QTMMimeData::formats () const {
   // Decreasing priority order.
   static QStringList l0 = {
     "application/x-texmacs-clipboard",
-    "application/x-texmacs-pid"
+    "application/x-texmacs-pid",
+    "text/html"
   };
-  static QStringList l1 = {  
-    "text/html",
+  static QStringList l1 = {
     "application/x-tex",
     "text/x-tex",
     "text/plain;charset=utf-8", // always asked (by Qt?), even if not defined

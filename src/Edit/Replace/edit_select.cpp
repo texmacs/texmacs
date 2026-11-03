@@ -23,23 +23,13 @@
 ******************************************************************************/
 
 struct lazy_clipboard {
-  edit_select_rep* ed;
-  editor_rep* edt;
-  string mode;
   tree t, txt, html, tex;
   string image, image_format;
-  path tp;
   lazy_clipboard () {}
 
   void
-  bind (edit_select_rep* _ed, string m, tree _t, path p) {
-    ed= _ed;
-    edt= dynamic_cast<editor_rep*> (ed);
-    mode= m;
+  bind (edit_select_rep* ed, string mode, tree _t, path tp) {
     t= copy (_t);
-    tp= p;
-    txt= html= tex= tree ();
-    image= image_format= string ();
     if (is_func (t, IMAGE, 5)) {
       array<tree> a= A(t);
       if (is_atomic (a[0])) {
@@ -57,37 +47,18 @@ struct lazy_clipboard {
 	  image_format= as_string (a[1]);
 	}
       }
+      if (occurs (".", image_format))
+	image_format= suffix (url_system (cork_to_utf8 (image_format)));
+      txt= tex= tree ();
     }
-    if (occurs (".", image_format))
-      image_format= suffix (url_system (cork_to_utf8 (image_format)));
-  }
-  tree
-  get_verbatim () {
-    if (ed != NULL && txt == tree ()) 
+    else {
       txt= ed->exec_verbatim (t, tp);
-    return txt;
-  }
-  tree
-  get_html () {
-    if (ed != NULL && html == tree ())
-      html= mode == "math" ? 
-	ed->exec_html (compound ("math", t)) : ed->exec_html (t, tp);
-    return html;
-  }
-  tree
-  get_latex () {
-    if (ed != NULL && tex == tree ())
       tex= mode == "math" ? 
 	ed->exec_latex (compound ("math", t)) : ed->exec_latex (t, tp);
-    return html;
-  }
-  void
-  unbind (editor_rep* e) {
-    if (e != edt) return;
-    txt= get_verbatim ();
-    html= get_html ();
-    tex= get_latex ();
-    edt= ed= NULL;
+      image= image_format= string ();
+    }
+    html= mode == "math" ? 
+      ed->exec_html (compound ("math", t)) : ed->exec_html (t, tp);
   }
 };
 
@@ -102,24 +73,19 @@ bind_default_clipboard (edit_select_rep* e, string m, tree t, path p) {
   return get_lazy_default_clipboard ().bind (e, m, t, p);
 }
 
-void
-unbind_default_clipboard (editor_rep* e) {
-  return get_lazy_default_clipboard ().unbind (e);
-}
-
 tree
 get_default_clipboard_verbatim () {
-  return get_lazy_default_clipboard ().get_verbatim ();
+  return get_lazy_default_clipboard ().txt;
 }
 
 tree
 get_default_clipboard_html () {
-  return get_lazy_default_clipboard ().get_html ();
+  return get_lazy_default_clipboard ().html;
 }
 
 tree
 get_default_clipboard_latex () {
-  return get_lazy_default_clipboard ().get_latex ();
+  return get_lazy_default_clipboard ().tex;
 }
 
 string
@@ -171,9 +137,7 @@ edit_select_rep::edit_select_rep ():
   selecting (false), shift_selecting (false), mid_p (),
   selection_import ("default"), selection_export ("default"),
   focus_p (), focus_hold (false) {}
-edit_select_rep::~edit_select_rep () {
-  if (get_lazy_default_clipboard ().ed == this)
-    get_lazy_default_clipboard ().ed= NULL; }
+edit_select_rep::~edit_select_rep () {}
 
 /******************************************************************************
 * Semantic selections

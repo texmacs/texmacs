@@ -607,12 +607,8 @@ edit_interface_rep::compute_env_rects (path p, rectangles& rs, bool recurse) {
 * handling changes
 ******************************************************************************/
 
-void unbind_default_clipboard (editor_rep*);
-
 void
 edit_interface_rep::notify_change (int env_set, int env_unset) {
-  if (env_change & THE_ENVIRONMENT) 
-    unbind_default_clipboard (dynamic_cast<editor_rep*> (this));
   env_change= (env_change | env_set) & (~env_unset);
   needs_update ();
   if ((env_set & (THE_TREE | THE_SELECTION | THE_CURSOR)) != 0)
