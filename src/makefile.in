@@ -72,7 +72,8 @@ GLUE = cd Scheme/Glue; ./build-glue
 TOUCH = touch
 MOC = @MOC@
 # moc only understands preprocessor and include/framework search flags.
-MOCFLAGS = @QT_CPPFLAGS@ $(filter -D% -I% -F%,$(subst -isystem,-I,$(CXXQT)))
+MOC_QT_VERSION = $(if $(findstring Qt6,$(LDQT)),-DQT_VERSION=0x060000,$(if $(findstring Qt5,$(LDQT)),-DQT_VERSION=0x050000,))
+MOCFLAGS = @QT_CPPFLAGS@ $(MOC_QT_VERSION) $(filter -D% -I% -F%,$(subst -isystem ,-I,$(CXXQT)))
 QT_PLUGIN_DIR = @QT_PLUGIN_DIR@
 
 ###############################################################################
