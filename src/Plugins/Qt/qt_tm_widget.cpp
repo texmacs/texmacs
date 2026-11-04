@@ -800,20 +800,39 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       check_type<bool>(val, s);
 
       if (open_box<bool> (val) == true) {
+#if QT_VERSION >= 0x060000
+        prompt = new QTMInteractivePrompt (int_prompt, int_input, statusBar);
+        if (statusBar && statusBar->layout()) {
+          if (leftLabel) leftLabel->hide();
+          if (rightLabel) rightLabel->hide();
+          if (QHBoxLayout* l = qobject_cast<QHBoxLayout*> (statusBar->layout()))
+            l->addWidget (prompt, 1);
+          else
+            statusBar->layout()->addWidget (prompt);
+        }
+#else
         prompt = new QTMInteractivePrompt (int_prompt, int_input, mainwindow());
         if (mainwindow() && mainwindow()->statusBar()) {
             if (leftLabel) mainwindow()->statusBar()->removeWidget (leftLabel);
             if (rightLabel) mainwindow()->statusBar()->removeWidget (rightLabel);
             if (prompt) mainwindow()->statusBar()->addWidget (prompt, 1);
         }
+#endif
         if (prompt) prompt->start();
       } else {
         if (prompt) prompt->end();
+#if QT_VERSION >= 0x060000
+        if (statusBar && statusBar->layout() && prompt) {
+          statusBar->layout()->removeWidget (prompt);
+          prompt->hide();
+        }
+#else
         if (mainwindow() && mainwindow()->statusBar()) {
             if (prompt) mainwindow()->statusBar()->removeWidget (prompt);
-            if (leftLabel) mainwindow()->statusBar()->addWidget (leftLabel);
+            if (leftLabel) mainwindow()->statusBar()->addWidget (leftLabel, 1);
             if (rightLabel) mainwindow()->statusBar()->addPermanentWidget (rightLabel);
         }
+#endif
         if (leftLabel) leftLabel->show();
         if (rightLabel) rightLabel->show();
         if (prompt) prompt->deleteLater();

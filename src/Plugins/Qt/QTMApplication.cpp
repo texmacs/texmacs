@@ -78,7 +78,8 @@ void QTMApplication::init_theme () {
       tm_style_density= "$TEXMACS_PATH/misc/themes/standard-density-large.css";
 
     if (mCssWatcher != nullptr) {
-      mCssWatcher->removePaths (mCssWatcher->files ());
+      if (!mCssWatcher->files ().isEmpty ())
+        mCssWatcher->removePaths (mCssWatcher->files ());
       QString qcss_path= utf8_to_qstring (concretize (url_system (tm_style_sheet)));
       mCssWatcher->addPath(qcss_path);
       QString qdensity_path= utf8_to_qstring (concretize (url_system (tm_style_density)));
