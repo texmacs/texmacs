@@ -383,7 +383,6 @@ qt_gui_rep::set_selection (string key, tree t, string s, string format) {
   cb->clear (mode);
   c_string _s (s);
   int N_s= N(s);
-  cb->setText (QString::fromLatin1 (_s, N_s), mode);
   if (format == "default") {
     // use our customized QMimeData to advertize all mimetype we can do;
     // data of desired form is evaluated only when receiving a request
