@@ -721,3 +721,10 @@ foreach (size IN ITEMS 16 22 24 32 48 64 128 256 512)
   install (FILES TeXmacs/misc/images/texmacs-${size}.png RENAME TeXmacs.png
     DESTINATION share/icons/hicolor/${size}x${size}/apps/)
 endforeach ()
+
+### --------------------------------------------------------------------
+### Testing
+### --------------------------------------------------------------------
+
+enable_testing ()
+add_test (NAME unit_tests COMMAND texmacs --run-tests)

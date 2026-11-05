@@ -456,6 +456,11 @@ set_global_options  (int argc, char** argv)  {
           extra_init_cmd << "(run-test-suite "
                          << scm_quote (argv[i]) << "delayed-quit)";
       }
+      else if (s == "-run-tests") {
+        headless_mode= true;
+        exec_exit= false;
+        my_init_cmds= my_init_cmds * " (run-unit-tests)";
+      }
       else if (starts (s, "-psn"));
       else {
         cout << "\n";
@@ -471,6 +476,7 @@ set_global_options  (int argc, char** argv)  {
         cout << "  -p         Get the TeXmacs path\n";
         cout << "  -q         Shortcut for -x \"(quit-TeXmacs)\"\n";
         cout << "  -r         Reverse video mode\n";
+        cout << "  --run-tests  Run unit test suite in headless mode and exit\n";
         cout << "  -s         Suppress information messages\n";
         cout << "  -S         Rerun TeXmacs setup program before starting\n";
         cout << "  -v         Display current TeXmacs version\n";
@@ -745,7 +751,8 @@ immediate_options (int argc, char** argv) {
 #ifdef QTTEXMACS
     else if (s == "-headless" || s == "-H" || s == "-C" ||
 	     s == "-build-website" || s == "-W" ||
-	     s == "-update-website" || s == "-U")
+	     s == "-update-website" || s == "-U" ||
+	     s == "-run-tests")
       headless_mode= true;
 #endif
     else if (s == "-log-file" && i + 1 < argc) {
@@ -868,12 +875,6 @@ texmacs_entrypoint (int argc, char** argv) {
   bench_start ("initialize texmacs");
   init_texmacs ();
   bench_cumul ("initialize texmacs");
-#ifdef ENABLE_TESTS
-  test_routines ();
-#endif
-//#ifdef EXPERIMENTAL
-//  test_environments ();
-//#endif
   start_scheme (argc, argv, TeXmacs_main);
 #ifdef QTTEXMACS
   if (headless_mode)

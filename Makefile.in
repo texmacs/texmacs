@@ -109,11 +109,15 @@ SAFE_TEXMACS_REV:
 
 .PHONY: TEXMACS STATIC_TEXMACS DEPS GLUE EXPERIMENTAL
 
+CHECK: TEXMACS
+	$(tmdir)/bin/texmacs.bin --run-tests
+
 deps: DEPS
 clean: CLEAN
 distclean: DISTCLEAN
+check: CHECK
 
-.PHONY: deps install uninstall clean distclean
+.PHONY: deps install uninstall clean distclean check CHECK
 
 ###############################################################################
 # Plugins
