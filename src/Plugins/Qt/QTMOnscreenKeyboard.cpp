@@ -11,6 +11,7 @@
 #include "QTMOnscreenKeyboard.hpp"
 
 #include "scheme.hpp"
+#include "boot.hpp"
 #include "qt_utilities.hpp"
 #include "QTMWidget.hpp"
 
@@ -18,17 +19,21 @@
 #include <QHBoxLayout>
 #include <QPushButton>
 #include <QResizeEvent>
+#include <QMoveEvent>
+#include <QCloseEvent>
 #include <QTimer>
 
 #include <cmath>
 #include <cstdio>
 
-QTMOnscreenKeyboard::QTMOnscreenKeyboard() {
+QTMOnscreenKeyboard::QTMOnscreenKeyboard()
+  : mWasShown(false), mRestoringSize(false),
+    mLastReportedVisibility(false), mLastPos(-1, -1) {
+	setWindowTitle("On-screen Keyboard");
 	QSizePolicy sp_retain = sizePolicy();
 	sp_retain.setRetainSizeWhenHidden(true);
 	setSizePolicy(sp_retain);
 
-	
 	mLayout = new QVBoxLayout(this);
 	mLayout->setContentsMargins(0, 0, 0, 0);
 	mLayout->setSpacing(0);
@@ -36,13 +41,186 @@ QTMOnscreenKeyboard::QTMOnscreenKeyboard() {
 	QTimer::singleShot(10, this, SLOT(initializeKeyboard()));
 }
 
+void QTMOnscreenKeyboard::loadPreferences() {
+	if (hasValidSize()) return;
+	string sh = get_user_preference ("height onscreen-keyboard", "");
+	string sw = get_user_preference ("width onscreen-keyboard", "");
+	string sx = get_user_preference ("abscissa onscreen-keyboard", "");
+	string sy = get_user_preference ("ordinate onscreen-keyboard", "");
+	if (sh != "") {
+		int h = as_int (sh);
+		int w = sw != "" ? as_int (sw) : 0;
+		if (isValidKeyboardHeight(h)) {
+			mLastSize = QSize (w > 50 ? w : 450, h);
+		}
+	}
+	if (sx != "" && sy != "") {
+		int x = as_int (sx);
+		int y = as_int (sy);
+		if (x >= 0 && y >= 0) {
+			mLastPos = QPoint (x, y);
+		}
+	}
+}
+
+void QTMOnscreenKeyboard::savePreferences() {
+	if (!mWasShown || mRestoringSize) return;
+	if (height() >= 100) {
+		mLastSize = size();
+		set_user_preference ("height onscreen-keyboard", as_string (height()));
+		if (isWindow()) {
+			if (width() > 50) {
+				set_user_preference ("width onscreen-keyboard", as_string (width()));
+			}
+			QPoint p = pos();
+			if (p.x() >= 0 && p.y() >= 0) {
+				mLastPos = p;
+				set_user_preference ("abscissa onscreen-keyboard", as_string (p.x()));
+				set_user_preference ("ordinate onscreen-keyboard", as_string (p.y()));
+			}
+		}
+		save_user_preferences ();
+	}
+}
+
+int QTMOnscreenKeyboard::lastHeight() {
+	loadPreferences();
+	if (hasValidSize()) {
+		return mLastSize.height();
+	}
+	if (mKeyboardSizeHint.isValid() && mKeyboardSizeHint.height() >= 100) {
+		return mKeyboardSizeHint.height();
+	}
+	return 200;
+}
+
+QSize QTMOnscreenKeyboard::lastSize() {
+	loadPreferences();
+	if (hasValidSize()) {
+		return mLastSize;
+	}
+	if (mKeyboardSizeHint.isValid()) {
+		return mKeyboardSizeHint;
+	}
+	return QSize(450, 200);
+}
+
+void QTMOnscreenKeyboard::reportVisibility(bool visible) {
+	if (mLastReportedVisibility == visible) return;
+	mLastReportedVisibility = visible;
+	emit visibilityChanged(visible);
+}
+
+void QTMOnscreenKeyboard::show() {
+	setVisible(true);
+}
+
+void QTMOnscreenKeyboard::hide() {
+	setVisible(false);
+}
+
+void QTMOnscreenKeyboard::setVisible(bool visible) {
+	if (visible == isVisible()) return;
+
+	if (visible) {
+		loadPreferences();
+		mRestoringSize = true;
+		if (isWindow()) {
+			if (hasValidSize()) {
+				resize(mLastSize);
+			}
+			if (mLastPos.x() >= 0 && mLastPos.y() >= 0) {
+				move(mLastPos);
+			}
+		}
+	} else {
+		if (mWasShown && !mRestoringSize && height() >= 100) {
+			savePreferences();
+		}
+	}
+
+	reportVisibility(visible);
+	QWidget::setVisible(visible);
+
+	if (visible) {
+		mWasShown = true;
+		QTimer::singleShot(300, this, [this]() {
+			mRestoringSize = false;
+		});
+	}
+}
+
 void QTMOnscreenKeyboard::resizeEvent(QResizeEvent* event) {
 	(void)event;
     QTM_CALL_DELAYED(onResizeEvent);
 }
 
+void QTMOnscreenKeyboard::moveEvent(QMoveEvent* event) {
+	QWidget::moveEvent(event);
+	if (mWasShown && !mRestoringSize && isWindow() && isVisible()) {
+		QTM_CALL_DELAYED(onResizeEvent);
+	}
+}
+
+void QTMOnscreenKeyboard::closeEvent(QCloseEvent* event) {
+	hide();
+	event->accept();
+}
+
 void QTMOnscreenKeyboard::onResizeEvent() {
 	updateKeyboardZoom();
+	if (mWasShown && !mRestoringSize && isVisible() && height() >= 100) {
+		savePreferences();
+	}
+}
+
+void QTMOnscreenKeyboard::showEvent(QShowEvent* event) {
+	loadPreferences();
+	if (isWindow()) {
+		if (hasValidSize()) {
+			resize(mLastSize);
+		}
+		if (mLastPos.x() >= 0 && mLastPos.y() >= 0) {
+			move(mLastPos);
+		}
+	}
+	QWidget::showEvent(event);
+	reportVisibility(true);
+	mWasShown = true;
+	QTimer::singleShot(300, this, [this]() {
+		mRestoringSize = false;
+	});
+}
+
+void QTMOnscreenKeyboard::hideEvent(QHideEvent* event) {
+	if (mWasShown && !mRestoringSize && height() >= 100) {
+		savePreferences();
+	}
+	QWidget::hideEvent(event);
+	reportVisibility(false);
+}
+
+QSize QTMOnscreenKeyboard::sizeHint() const {
+	if (hasValidSize()) {
+		int w = (mLastSize.width() > 50) ? mLastSize.width() :
+				(mKeyboardSizeHint.isValid() ? mKeyboardSizeHint.width() : 450);
+		return QSize(w, mLastSize.height());
+	}
+	string sh = get_user_preference ("height onscreen-keyboard", "");
+	string sw = get_user_preference ("width onscreen-keyboard", "");
+	if (sh != "") {
+		int h = as_int (sh);
+		int w = sw != "" ? as_int (sw) : 0;
+		if (isValidKeyboardHeight(h)) {
+			return QSize(w > 50 ? w : 450, h);
+		}
+	}
+	if (mKeyboardSizeHint.isValid()) return mKeyboardSizeHint;
+	return QSize(450, 200);
+}
+
+QSize QTMOnscreenKeyboard::minimumSizeHint() const {
+	return QSize(200, 60);
 }
 
 void QTMOnscreenKeyboard::updateKeyboardZoom() {
@@ -255,6 +433,12 @@ void QTMOnscreenKeyboard::rebuildKeyboard() {
 		const int hintHeight = max(200, N(mRows) * 44 + 10);
 		mKeyboardSizeHint = QSize(hintWidth, hintHeight);
 		//setMinimumSize(mKeyboardSizeHint);
+	}
+	if (!hasValidSize()) {
+		loadPreferences();
+		if (!hasValidSize()) {
+			mLastSize = mKeyboardSizeHint;
+		}
 	}
 
 	updateButtonGeometry();

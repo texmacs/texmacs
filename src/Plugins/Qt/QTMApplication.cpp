@@ -142,6 +142,11 @@ void QTMApplication::onCssFileChanged(const QString &path) {
 }
 
 void QTMApplication::toggleOnScreenKeyboardVisibility() {
+#if QT_VERSION >= 0x060000
+  if (mUseTabWindow && QTMMainTabWindow::topTabWindow()) {
+    QTMMainTabWindow::topTabWindow()->attachKeyboard();
+  }
+#endif
   if (mOnscreenKeyboard) {
     if (mOnscreenKeyboard->isVisible()) {
       mOnscreenKeyboard->hide();

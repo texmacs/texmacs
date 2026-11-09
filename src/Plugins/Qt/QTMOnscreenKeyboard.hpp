@@ -49,19 +49,25 @@ public:
    */
   QTMOnscreenKeyboard();
 
-  inline void show() {
-    emit visibilityChanged(true);
-    QWidget::show();
+  void show();
+  void hide();
+  void setVisible(bool visible) override;
+
+  QSize sizeHint() const override;
+  QSize minimumSizeHint() const override;
+
+  void loadPreferences();
+  void savePreferences();
+
+  QSize lastSize();
+  int lastHeight();
+
+  inline static bool isValidKeyboardHeight(int h) {
+    return h >= 100 && h != 108;
   }
 
-  inline void hide() {
-    emit visibilityChanged(false);
-    QWidget::hide();
-  }
-
-  inline void setVisible(bool visible) override {
-    emit visibilityChanged(visible);
-    QWidget::setVisible(visible);
+  inline bool hasValidSize() const {
+    return mLastSize.isValid() && isValidKeyboardHeight(mLastSize.height());
   }
 
 signals:
@@ -86,21 +92,16 @@ protected:
    * @brief Resize handler used to update button geometry.
    */
   void resizeEvent(QResizeEvent* event) override;
+  void moveEvent(QMoveEvent* event) override;
+  void closeEvent(QCloseEvent* event) override;
 
   /**
    * @brief Delayed resize callback.
    */
   void onResizeEvent();
 
-  inline void showEvent(QShowEvent* event) override {
-    QWidget::showEvent(event);
-    emit visibilityChanged(true);
-  }
-
-  inline void hideEvent(QHideEvent* event) override {
-    QWidget::hideEvent(event);
-    emit visibilityChanged(false);
-  }
+  void showEvent(QShowEvent* event) override;
+  void hideEvent(QHideEvent* event) override;
 
 private:
   /**
@@ -160,10 +161,17 @@ private:
    */
   void rebuildKeyboard();
 
+  void reportVisibility(bool visible);
+
 private:
+  bool mWasShown;
+  bool mRestoringSize;
+  bool mLastReportedVisibility;
+  QPoint mLastPos;
   QPointer<QVBoxLayout> mLayout;
   QList<QPointer<QPushButton>> mButtons;
   QSize mKeyboardSizeHint;
+  QSize mLastSize;
   KeyboardRows mRows;
 
   QTM_DECL_DELAYED(onResizeEvent);

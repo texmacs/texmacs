@@ -89,6 +89,8 @@ public:
     return gTopTabWindow.data();
   }
 
+  void attachKeyboard();
+
   void registerBackButtonProvider(QWidget *provider,
                                   const std::function<void()> &onBack);
   void unregisterBackButtonProvider(QWidget *provider);
@@ -142,7 +144,6 @@ private slots:
   void onTabBarCountChange();
   void onTabMoved(int from, int to);
   void refreshBackButtonState();
-  void attachKeyboard();
 
 private:
   static QPointer<QTMMainTabWindow> gTopTabWindow;

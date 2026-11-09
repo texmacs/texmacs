@@ -285,7 +285,7 @@ void QTMMainTabWindow::resizeEvent(QResizeEvent *event) {
 
   // update the dock max height if exist
   if (mKeyboardDock != nullptr) {
-    mKeyboardDock->setMaximumHeight(height() / 3);
+    mKeyboardDock->setMaximumHeight(max(150, height() * 3 / 4));
   }
   
 }
@@ -295,6 +295,7 @@ void QTMMainTabWindow::showEvent(QShowEvent *event) {
 #ifdef OS_MACOS
   applyMacOSUnifiedBar(this);
 #endif
+  attachKeyboard();
 }
 
 void QTMMainTabWindow::closeEvent(QCloseEvent *event) {
@@ -927,10 +928,10 @@ void QTMMainTabWindow::attachKeyboard() {
     mKeyboardDock->setAllowedAreas(Qt::BottomDockWidgetArea);
     mKeyboardDock->setFeatures(QDockWidget::NoDockWidgetFeatures);
     mKeyboardDock->setTitleBarWidget(new QWidget(mKeyboardDock));
+    mKeyboardDock->setMinimumHeight(60);
     addDockWidget(Qt::BottomDockWidgetArea, mKeyboardDock);
 
-    // limit the size of the dock widget to 1/3 of the window height
-    mKeyboardDock->setMaximumHeight(height() / 3);
+    mKeyboardDock->setMaximumHeight(max(150, height() * 3 / 4));
 
     connect(keyboard, &QTMOnscreenKeyboard::visibilityChanged,
             this, &QTMMainTabWindow::onKeyboardVisibilityChanged);
@@ -939,18 +940,27 @@ void QTMMainTabWindow::attachKeyboard() {
   QWidget *parentWidget = keyboard->parentWidget();
 
   if (parentWidget != mKeyboardDock) {
-    QTMMainTabWindow *otherWindow = qobject_cast<QTMMainTabWindow *>(parentWidget);
+    QDockWidget *otherDock = qobject_cast<QDockWidget *>(parentWidget);
     bool isVisible = false;
-    if (otherWindow != nullptr) {
-      if (otherWindow->mKeyboardDock != nullptr) {
-        isVisible = otherWindow->mKeyboardDock->isVisible();
-        otherWindow->mKeyboardDock->hide();
-      }
+    if (otherDock != nullptr) {
+      isVisible = otherDock->isVisible();
+      otherDock->hide();
     }
     mKeyboardDock->setWidget(keyboard);
     if (isVisible) {
       mKeyboardDock->show();
       keyboard->show();
+      int h = keyboard->lastHeight();
+      if (h <= 0) h = keyboard->sizeHint().height();
+      if (h > 0) {
+        int maxH = max(150, height() * 3 / 4);
+        if (h > maxH && maxH > 0) h = maxH;
+        QList<QDockWidget*> docks;
+        docks.append(mKeyboardDock.data());
+        QList<int> sizes;
+        sizes.append(h);
+        resizeDocks(docks, sizes, Qt::Vertical);
+      }
     } else {
       mKeyboardDock->hide();
     }
@@ -1016,7 +1026,38 @@ void QTMMainTabWindow::onBackButtonProviderDestroyed(QObject *provider) {
 }
 
 void QTMMainTabWindow::onKeyboardVisibilityChanged(bool visible) {
-  if (mKeyboardDock != nullptr) mKeyboardDock->setVisible(visible);
+  if (mKeyboardDock == nullptr) return;
+  if (mKeyboardDock->isVisible() == visible) return;
+
+  mKeyboardDock->setVisible(visible);
+  if (visible) {
+    QTMOnscreenKeyboard* keyboard = tmapp()->onscreenKeyboard();
+    int h = keyboard ? keyboard->lastHeight() : 0;
+    if (h <= 0 && keyboard) {
+      h = keyboard->sizeHint().height();
+    }
+    if (h > 0) {
+      int maxH = max(150, height() * 3 / 4);
+      if (h > maxH && maxH > 0) h = maxH;
+      QList<QDockWidget*> docks;
+      docks.append(mKeyboardDock.data());
+      QList<int> sizes;
+      sizes.append(h);
+      resizeDocks(docks, sizes, Qt::Vertical);
+
+      QTimer::singleShot(0, this, [this, h]() {
+        if (mKeyboardDock && mKeyboardDock->isVisible()) {
+          int maxH = max(150, height() * 3 / 4);
+          int targetH = (maxH > 0 && h > maxH) ? maxH : h;
+          QList<QDockWidget*> docks;
+          docks.append(mKeyboardDock.data());
+          QList<int> sizes;
+          sizes.append(targetH);
+          resizeDocks(docks, sizes, Qt::Vertical);
+        }
+      });
+    }
+  }
 }
 
 #endif // QT_VERSION >= 0x060000
