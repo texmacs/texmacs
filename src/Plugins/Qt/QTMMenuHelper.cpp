@@ -259,7 +259,16 @@ QTMMinibarAction::createWidget (QWidget* parent) {
     QAction* sa= actions[i];
     if (QWidgetAction * wa = qobject_cast<QWidgetAction*> (sa)) {
       QWidget *w = wa->requestWidget (wid);
-      l->addWidget(w);
+      bool is_input = (qobject_cast<QLineEdit*> (w) != nullptr) ||
+                      (w->findChild<QLineEdit*> () != nullptr) ||
+                      (qobject_cast<QComboBox*> (w) != nullptr) ||
+                      (w->findChild<QComboBox*> () != nullptr);
+      if (is_input) {
+        w->setSizePolicy (QSizePolicy::Preferred, QSizePolicy::Fixed);
+        l->addWidget (w, 0, Qt::AlignVCenter);
+      } else {
+        l->addWidget (w);
+      }
     } else if (sa->text().isNull() && sa->icon().isNull()) {
       l->addSpacing(8);
     } else {

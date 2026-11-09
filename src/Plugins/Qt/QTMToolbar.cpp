@@ -17,6 +17,8 @@
 #include <QToolButton>
 #include <QMenu>
 #include <QWidgetAction>
+#include <QLineEdit>
+#include <QComboBox>
 #include <QFrame>
 #include <QScrollBar>
 #include <QEvent>
@@ -301,8 +303,23 @@ void QTMToolbar::addAction (QAction* action) {
   
   // add the button to the toolbar, and on Android to the scrollable layout
   if (mLayout) {
-    actionWidget->setSizePolicy (QSizePolicy::Preferred, QSizePolicy::Expanding);
-    mLayout->addWidget (actionWidget);
+    if (button) {
+      actionWidget->setSizePolicy (QSizePolicy::Preferred, QSizePolicy::Expanding);
+      mLayout->addWidget (actionWidget);
+    } else {
+      bool is_input = (qobject_cast<QLineEdit*> (actionWidget) != nullptr) ||
+                      (actionWidget->findChild<QLineEdit*> () != nullptr) ||
+                      (qobject_cast<QComboBox*> (actionWidget) != nullptr) ||
+                      (actionWidget->findChild<QComboBox*> () != nullptr);
+      if (is_input) {
+        actionWidget->setSizePolicy (QSizePolicy::Preferred, QSizePolicy::Fixed);
+        mLayout->addWidget (actionWidget, 0, Qt::AlignVCenter);
+        addSmallSeparator ();
+      } else {
+        actionWidget->setSizePolicy (QSizePolicy::Preferred, QSizePolicy::Expanding);
+        mLayout->addWidget (actionWidget);
+      }
+    }
     updateNavButtons();
   }
 #else

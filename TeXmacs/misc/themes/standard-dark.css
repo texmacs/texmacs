@@ -166,6 +166,11 @@ QLineEdit:focus, QStatusBar QWidget QLineEdit:focus, #focusToolBar QWidget QLine
     border-radius: 5px;
 }
 
+#focusToolBar QLineEdit, #focusToolBar QWidget QLineEdit,
+#userToolBar QLineEdit, #userToolBar QWidget QLineEdit {
+    margin: 3px 4px;
+}
+
 /****************************************************************************
 * Lists
 ****************************************************************************/
