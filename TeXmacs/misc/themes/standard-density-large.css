@@ -13,6 +13,13 @@ QTabBar#mainTabWindowTabs::tab {
     margin: 4px 2px;
 }
 
+#focusToolBar QLineEdit, #focusToolBar QWidget QLineEdit,
+#userToolBar QLineEdit, #userToolBar QWidget QLineEdit,
+#focusToolBar QComboBox, #focusToolBar QWidget QComboBox,
+#userToolBar QComboBox, #userToolBar QWidget QComboBox {
+    margin: 4px 4px;
+}
+
 #mainToolBar {
     qproperty-iconWidth: 26;
     qproperty-iconHeight: 32;

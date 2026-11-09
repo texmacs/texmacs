@@ -221,8 +221,10 @@ QLineEdit:focus, QStatusBar QWidget QLineEdit:focus, #focusToolBar QWidget QLine
 }
 
 #focusToolBar QLineEdit, #focusToolBar QWidget QLineEdit,
-#userToolBar QLineEdit, #userToolBar QWidget QLineEdit {
-    margin: 3px 4px;
+#userToolBar QLineEdit, #userToolBar QWidget QLineEdit,
+#focusToolBar QComboBox, #focusToolBar QWidget QComboBox,
+#userToolBar QComboBox, #userToolBar QWidget QComboBox {
+    margin: 2px 4px;
 }
 
 /****************************************************************************
