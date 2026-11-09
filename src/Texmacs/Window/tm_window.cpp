@@ -93,7 +93,8 @@ notify_window_resize (string name, SI ww, SI hh) {
     //cout << "Resize " << name << ": " << old_w << ", " << old_h
     //<< " --> " << w << ", " << h << "\n";
     if (old_w == "" || old_h == "" ||
-        resize_accept (as_int (old_w), as_int (old_h), w, h)) {
+        (name == "TeXmacs" ? resize_accept (as_int (old_w), as_int (old_h), w, h)
+                           : (as_int (old_w) != w || as_int (old_h) != h))) {
       set_user_preference ("width " * name, as_string (w));
       set_user_preference ("height " * name, as_string (h));
     }

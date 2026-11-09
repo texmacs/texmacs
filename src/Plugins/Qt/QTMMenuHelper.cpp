@@ -844,6 +844,11 @@ QTMTabWidget::QTMTabWidget (QWidget *p) : QTabWidget(p) {
 
 QSize
 QTMTabWidget::sizeHint () const {
+#if QT_VERSION >= 0x060000
+  if (qobject_cast<QTMMainTabWindow*>(window())) {
+    return QTabWidget::sizeHint ();
+  }
+#endif
   int max_w = 0;
   int max_h = 0;
   for (int i = 0; i < count (); ++i) {
@@ -872,6 +877,11 @@ QTMTabWidget::sizeHint () const {
 
 QSize
 QTMTabWidget::minimumSizeHint () const {
+#if QT_VERSION >= 0x060000
+  if (qobject_cast<QTMMainTabWindow*>(window())) {
+    return QTabWidget::minimumSizeHint ();
+  }
+#endif
   int max_w = 0;
   int max_h = 0;
   for (int i = 0; i < count (); ++i) {
@@ -881,8 +891,10 @@ QTMTabWidget::minimumSizeHint () const {
       }
       QSize ms = w->minimumSizeHint ();
       QSize s = w->sizeHint ();
-      int tab_w = ms.isValid () && ms.width () > 0 ? ms.width () : (s.isValid () ? s.width () : 0);
-      int tab_h = ms.isValid () && ms.height () > 0 ? ms.height () : (s.isValid () ? s.height () : 0);
+      int tab_w = std::max (s.isValid () ? s.width () : 0,
+                            ms.isValid () ? ms.width () : 0);
+      int tab_h = std::max (s.isValid () ? s.height () : 0,
+                            ms.isValid () ? ms.height () : 0);
       max_w = std::max (max_w, tab_w);
       max_h = std::max (max_h, tab_h);
     }
@@ -928,10 +940,18 @@ BEGIN_SLOT
 
   updateGeometry ();
 
-  // Reset vertical scrollbar to top when switching tabs
+  // Reset vertical scrollbar to top and notify enclosing scroll area
   QWidget* p = this;
   while (p && p != window()) {
     if (QScrollArea* sa = qobject_cast<QScrollArea*> (p)) {
+      if (sa->widget ()) {
+        sa->widget ()->updateGeometry ();
+        if (sa->widget ()->layout ()) {
+          sa->widget ()->layout ()->invalidate ();
+          sa->widget ()->layout ()->activate ();
+        }
+      }
+      sa->updateGeometry ();
       if (sa->verticalScrollBar ()) {
         sa->verticalScrollBar ()->setValue (0);
       }
@@ -947,9 +967,18 @@ BEGIN_SLOT
         widget (current)->layout ()->activate ();
       }
     }
+    updateGeometry ();
     QWidget* parent = parentWidget ();
-    while (parent) {
+    while (parent && parent != window()) {
       if (QScrollArea* sa = qobject_cast<QScrollArea*> (parent)) {
+        if (sa->widget ()) {
+          sa->widget ()->updateGeometry ();
+          if (sa->widget ()->layout ()) {
+            sa->widget ()->layout ()->invalidate ();
+            sa->widget ()->layout ()->activate ();
+          }
+        }
+        sa->updateGeometry ();
         if (sa->verticalScrollBar ()) {
           sa->verticalScrollBar ()->setValue (0);
         }

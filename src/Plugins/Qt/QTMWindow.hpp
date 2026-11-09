@@ -73,14 +73,18 @@ class QTMPopupWidget : public QWidget {
   
 public:
   QTMPopupWidget (QWidget* contents);
+  virtual ~QTMPopupWidget () {}
+
+  QSize sizeHint () const override;
 
 signals:
   void closed();
+  void requestClose();
   
 protected:
-  virtual void closeEvent (QCloseEvent* event);
-  virtual void mouseMoveEvent (QMouseEvent* event);
-  virtual void keyPressEvent  (QKeyEvent* event);
+  virtual void closeEvent (QCloseEvent* event) override;
+  virtual void mouseMoveEvent (QMouseEvent* event) override;
+  virtual void keyPressEvent  (QKeyEvent* event) override;
 };
 
 #else // QT_VERSION >= 0x060000
@@ -126,12 +130,19 @@ protected:
 };
 
 /*! The underlying QWidget for a qt_popup_widget. */
-class QTMPopupWidget : public QTMMainTab {
+class QTMPopupWidget : public QWidget {
   Q_OBJECT
   
 public:
   QTMPopupWidget (QWidget* contents);
-  
+  virtual ~QTMPopupWidget () {}
+
+  QSize sizeHint () const override;
+
+signals:
+  void closed ();
+  void requestClose ();
+
 protected:
   virtual void closeEvent (QCloseEvent* event) override;
   virtual void mouseMoveEvent (QMouseEvent* event) override;

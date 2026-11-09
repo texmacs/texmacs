@@ -38,7 +38,7 @@ void QTMPlainWindow::moveEvent (QMoveEvent* event)
 void QTMPlainWindow::resizeEvent (QResizeEvent* event)
 {
   string name= from_qstring (windowTitle ());
-  coord2 sz= from_qsize (frameSize());
+  coord2 sz= from_qsize (size());
   notify_window_resize (name, sz.x1, sz.x2);
   QWidget::resizeEvent (event);
 }
@@ -73,18 +73,29 @@ void QTMWindow::resizeEvent (QResizeEvent * event)
   QMainWindow::resizeEvent (event);
 }
 
-QTMPopupWidget::QTMPopupWidget(QWidget* contents) {
-  QHBoxLayout* l = new QHBoxLayout();
+QTMPopupWidget::QTMPopupWidget(QWidget* contents) : QWidget(nullptr) {
+  QHBoxLayout* l = new QHBoxLayout(this);
   l->addWidget (contents);
   l->setContentsMargins (0,0,0,0);
   l->setEnabled (false);
   setLayout (l);
 
-  resize (contents->size());
+  QSize sh = contents ? contents->sizeHint() : QSize();
+  if (sh.isValid() && sh.width() > 0 && sh.height() > 0) {
+    contents->resize (sh);
+    resize (sh);
+  } else if (contents) {
+    resize (contents->size());
+  }
   setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
   setWindowFlags (Qt::Popup);
   setAttribute (Qt::WA_NoSystemBackground);
   setMouseTracking (true);
+}
+
+QSize QTMPopupWidget::sizeHint () const {
+  if (layout ()) return layout ()->sizeHint ();
+  return QWidget::sizeHint ();
 }
 
 void
@@ -92,6 +103,7 @@ QTMPopupWidget::mouseMoveEvent(QMouseEvent* event) {
   if (! this->rect().contains(QCursor::pos())) {
     hide();
     emit closed();
+    emit requestClose();
   }
   event->ignore();
 }
@@ -101,6 +113,7 @@ QTMPopupWidget::keyPressEvent(QKeyEvent* event) {
   (void) event;
   hide();
   emit closed();
+  emit requestClose();
 }
 
 void
@@ -109,6 +122,7 @@ QTMPopupWidget::closeEvent (QCloseEvent* event)
   if (DEBUG_QT_WIDGETS) debug_widgets << "Close QTMPopupWidget" << LF;
   event->ignore ();
   emit closed();
+  emit requestClose();
 }
 
 #else // QT_VERSION >= 0x060000
@@ -130,7 +144,7 @@ QTMPlainWindow::moveEvent (QMoveEvent* event) {
 void 
 QTMPlainWindow::resizeEvent (QResizeEvent* event) {
   string name= from_qstring (windowTitle());
-  coord2 sz= from_qsize (frameSize());
+  coord2 sz= from_qsize (size());
   notify_window_resize (name, sz.x1, sz.x2);
   QMainWindow::resizeEvent (event);
 }
@@ -182,18 +196,29 @@ QTMWindow::showEvent (QShowEvent* event) {
   QMainWindow::showEvent (event);
 }
 
-QTMPopupWidget::QTMPopupWidget(QWidget* contents) {
-  QWidget* central = new QWidget(this);
-  QHBoxLayout* l = new QHBoxLayout(central);
-  l->addWidget(contents);
-  l->setContentsMargins(0, 0, 0, 0);
-  l->setEnabled(false);
-  setCentralWidget(central);
+QTMPopupWidget::QTMPopupWidget(QWidget* contents) : QWidget(nullptr) {
+  QHBoxLayout* l = new QHBoxLayout(this);
+  l->addWidget (contents);
+  l->setContentsMargins (0,0,0,0);
+  l->setEnabled (false);
+  setLayout (l);
 
-  resize (contents->size());
+  QSize sh = contents ? contents->sizeHint() : QSize();
+  if (sh.isValid() && sh.width() > 0 && sh.height() > 0) {
+    contents->resize (sh);
+    resize (sh);
+  } else if (contents) {
+    resize (contents->size());
+  }
+  setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
   setWindowFlags (Qt::Popup);
+  setAttribute (Qt::WA_NoSystemBackground);
   setMouseTracking (true);
-  installEventFilter (this);
+}
+
+QSize QTMPopupWidget::sizeHint () const {
+  if (layout ()) return layout ()->sizeHint ();
+  return QWidget::sizeHint ();
 }
 
 void 
@@ -201,6 +226,7 @@ QTMPopupWidget::mouseMoveEvent (QMouseEvent* event) {
   (void) event;
   if (! this->rect().contains(QCursor::pos())) {
     hide();
+    emit closed();
     emit requestClose();
   }
 }
@@ -209,12 +235,14 @@ void
 QTMPopupWidget::keyPressEvent (QKeyEvent* event) {
   (void) event;
   hide();
+  emit closed();
   emit requestClose();
 }
 
 void 
 QTMPopupWidget::closeEvent (QCloseEvent* event) {
   event->ignore ();
+  emit closed();
   emit requestClose();
 }
 

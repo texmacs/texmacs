@@ -230,13 +230,6 @@ public:
   }
 
   QSize minimumSizeHint () const override {
-    if (layout ()) {
-      layout ()->activate ();
-      QSize ms = layout ()->minimumSize ();
-      if (ms.isValid () && (ms.width () > 0 || ms.height () > 0)) {
-        return ms;
-      }
-    }
     return sizeHint ();
   }
 };
@@ -285,6 +278,13 @@ public:
   }
 
 protected:
+  bool eventFilter (QObject* o, QEvent* e) override {
+    if (o == widget () && e->type () == QEvent::LayoutRequest) {
+      updateContentGeometry ();
+    }
+    return QScrollArea::eventFilter (o, e);
+  }
+
   void showEvent (QShowEvent* ev) override {
     QScrollArea::showEvent (ev);
     updateContentGeometry ();
@@ -292,9 +292,7 @@ protected:
 
   void resizeEvent (QResizeEvent* ev) override {
     QScrollArea::resizeEvent (ev);
-    if (widget () && widget ()->layout ()) {
-      widget ()->layout ()->activate ();
-    }
+    updateContentGeometry ();
   }
 };
 

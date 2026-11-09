@@ -177,7 +177,7 @@ qt_window_widget_rep::has_resizable_children (QWidget* w, bool ret) {
   if (!w) return false;
   
     // Hack: these must always be resizable
-  if (qobject_cast<QMainWindow*> (w) || qobject_cast<QDockWidget*> (w))
+  if (qobject_cast<QMainWindow*> (w) || qobject_cast<QDockWidget*> (w) || qobject_cast<QScrollArea*> (w))
     return true;
 
   ret = (w->minimumSize() != QSize (0,0) &&
@@ -385,19 +385,11 @@ qt_popup_widget_rep::qt_popup_widget_rep (widget wid, command _quit)
   
   qwid = new QTMPopupWidget(concrete(wid)->as_qwidget(nullptr));
 
-#if QT_VERSION >= 0x060000
-  QPointer<QTMMainTab> mainTab = qobject_cast<QTMMainTab *>(qwid);
-  if (mainTab) {
-    QTMCommand* qtmcmd = new QTMCommand(qwid, quit);
-    QObject::connect(mainTab, SIGNAL (requestClose()), qtmcmd, SLOT (apply()), Qt::UniqueConnection);
-  }
-#else
   if (qwid->metaObject() ->
       indexOfSignal (QMetaObject::normalizedSignature ("closed()").constData ()) != -1) {
     QTMCommand* qtmcmd = new QTMCommand(qwid, quit);
     QObject::connect(qobject_cast<QTMPopupWidget*>(qwid), SIGNAL (closed()), qtmcmd, SLOT (apply()));
   }
-#endif
 }
 
 /*!
@@ -436,6 +428,10 @@ qt_popup_widget_rep::tooltip_window_widget (string s) {
 #endif
   qwid->setWindowModality (Qt::NonModal);
   qwid->setWindowFlags (Qt::ToolTip);
+  QSize sh = qwid->sizeHint ();
+  if (sh.isValid () && sh.width () > 0 && sh.height () > 0) {
+    qwid->setFixedSize (sh);
+  }
   return this;
 }
 

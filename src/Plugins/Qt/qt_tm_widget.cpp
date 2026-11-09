@@ -448,7 +448,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   bottomTools->setFloating (false);
   bottomTools->setTitleBarWidget (new QWidget()); // Disables title bar
   //bottomTools->setMinimumHeight (10);             // Avoids warning
-  bottomTools->setContentsMargins (3, 6, 3, -2);  // Hacks hacks hacks... :(
+  bottomTools->setContentsMargins (0, 0, 0, 0);
   mw->addDockWidget (Qt::BottomDockWidgetArea, bottomTools);
 
   extraTools->setAllowedAreas (Qt::BottomDockWidgetArea);
@@ -1240,6 +1240,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       check_type_void (index, s);
     {
       bottom_tools_widget = concrete (w);
+#ifdef OS_ANDROID
       QScrollArea* new_qwidget = new QScrollArea();
       QWidget* new_qwidget_content = bottom_tools_widget->as_qwidget(new_qwidget);
       new_qwidget->setWidgetResizable (true);
@@ -1249,6 +1250,9 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       new_qwidget->setAttribute(Qt::WA_AcceptTouchEvents);
       new_qwidget->setAttribute(Qt::WA_TouchPadAcceptSingleTouchEvents);
       QScroller::grabGesture(new_qwidget, QScroller::TouchGesture);
+#else
+      QWidget* new_qwidget = bottom_tools_widget->as_qwidget(mainwindow());
+#endif
 
       if (bottomTools) {
           QWidget* old_qwidget = bottomTools->widget();
@@ -1257,9 +1261,9 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       }
       update_visibility();
 #if (QT_VERSION >= 0x050000)
-      if (extraTools && mainwindow()) {
+      if (bottomTools && mainwindow()) {
           QList<QDockWidget*> l1;
-          l1.append ((QDockWidget*) extraTools);
+          l1.append ((QDockWidget*) bottomTools);
           QList<int> l2;
           l2.append (1);
           mainwindow()->resizeDocks (l1, l2, Qt::Vertical);

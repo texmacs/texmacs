@@ -63,7 +63,10 @@ qt_simple_widget_rep::as_qwidget (QWidget* parent_widget) {
   if (scrollarea()) scrollarea()->editor_flag= is_editor_widget ();
   if (!is_editor_widget ()) {
     if (canvas()) canvas()->resize (sz);
-    if (scrollarea()) scrollarea()->setExtents (QRect (QPoint(0,0), sz));
+    if (scrollarea()) {
+      scrollarea()->resize (sz);
+      scrollarea()->setExtents (QRect (QPoint(0,0), sz));
+    }
   }
   all_widgets->insert((pointer) this);
   if (canvas()) backing_pos = canvas()->origin ();
