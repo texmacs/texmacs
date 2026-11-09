@@ -9,6 +9,10 @@ QTabBar#mainTabWindowTabs::tab {
     qproperty-toolbarMargin: 3;
 }
 
+#mainToolBar QToolButton, #modeToolBar QToolButton, #focusToolBar QToolButton, #userToolBar QToolButton, #menuToolBar QToolButton {
+    margin: 1px 1px;
+}
+
 #mainToolBar {
     qproperty-iconWidth: 26;
     qproperty-iconHeight: 32;

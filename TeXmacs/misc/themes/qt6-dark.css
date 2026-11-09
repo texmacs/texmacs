@@ -74,6 +74,10 @@ Nomingw #toolbarSeparator {
     border-left: 1px solid #505050;
 }
 
+#toolbarSeparator {
+    margin: 4px 0px;
+}
+
 Nomingw QToolBar, Nomingw #mainToolBar QWidget, Nomingw #mainToolBar QToolButton, Nomingw #mainToolBar QPushButton {
     background: #2C2C2C;
     border: none;
@@ -371,9 +375,25 @@ QPushButton:focus {
 
 QToolButton,
 #mainToolBar QToolButton,
-#modeToolBar QToolButton {
+#modeToolBar QToolButton,
+#focusToolBar QToolButton,
+#userToolBar QToolButton {
     padding-left: 0px;
     padding-right: 0px;
+}
+
+#menuToolBar QToolButton {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+QToolButton,
+#mainToolBar QToolButton,
+#modeToolBar QToolButton,
+#focusToolBar QToolButton,
+#userToolBar QToolButton,
+#menuToolBar QToolButton {
+    margin: 2px 1px;
 }
 
 Qt4QToolButton {
@@ -384,6 +404,7 @@ QToolButton:hover,
 #mainToolBar QToolButton:hover,
 #modeToolBar QToolButton:hover,
 #focusToolBar QToolButton:hover,
+#userToolBar QToolButton:hover,
 #menuToolBar QToolButton:hover {
     background: #585858;
     border: 0px;
@@ -398,6 +419,8 @@ QToolButton:checked,
 #modeToolBar QToolButton:checked,
 #focusToolBar QToolButton:pressed,
 #focusToolBar QToolButton:checked,
+#userToolBar QToolButton:pressed,
+#userToolBar QToolButton:checked,
 #menuToolBar QToolButton:pressed,
 #menuToolBar QToolButton:checked
 {
@@ -408,7 +431,10 @@ QToolButton:checked,
 
 QToolButton::menu-indicator,
 #mainToolBar QToolButton::menu-indicator,
-#modeToolBar QToolButton::menu-indicator {
+#modeToolBar QToolButton::menu-indicator,
+#focusToolBar QToolButton::menu-indicator,
+#userToolBar QToolButton::menu-indicator,
+#menuToolBar QToolButton::menu-indicator {
     border: none;
     background: none;
     image: none;
@@ -416,7 +442,10 @@ QToolButton::menu-indicator,
 
 QToolButton::disabled,
 #mainToolBar QToolButton:disabled,
-#modeToolBar QToolButton:disabled {
+#modeToolBar QToolButton:disabled,
+#focusToolBar QToolButton:disabled,
+#userToolBar QToolButton:disabled,
+#menuToolBar QToolButton:disabled {
     color: #909090;
 }
 
@@ -987,7 +1016,9 @@ QMainWindow::separator:pressed {
 #toolbarLeftButton, #toolbarRightButton {
     border: none;
     border-radius: 0px;
-    width: 8px;
+    width: 20px;
+    margin: 0px;
+    padding: 0px;
 }
 
 #toolbarLeftButton[tmenabled="true"]:hover, #toolbarRightButton[tmenabled="true"]:hover {
