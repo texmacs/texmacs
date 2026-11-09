@@ -78,23 +78,57 @@ Nomingw #toolbarSeparator {
     margin: 4px 0px;
 }
 
-Nomingw QToolBar, Nomingw #mainToolBar QWidget, Nomingw #mainToolBar QToolButton, Nomingw #mainToolBar QPushButton {
+Nomingw #mainToolBar, Nomingw QToolBar, Nomingw #mainToolBar QPushButton {
     background: #C0C0C0;
     border: none;
 }
 
-Nomingw #modeToolBar, Nomingw #modeToolBar QWidget, Nomingw #modeToolBar QToolButton, Nomingw #modeToolBar QPushButton {
+Nomingw #modeToolBar, Nomingw #modeToolBar QPushButton {
     background: #D4D4D4;
     border: none;
 }
 
-Nomingw #focusToolBar, Nomingw #focusToolBar QWidget, Nomingw #focusToolBar QToolButton, Nomingw #focusToolBar QPushButton {
+Nomingw #focusToolBar, Nomingw #focusToolBar QPushButton {
     background: #E8E8E8;
     border: none;
 }
 
-Nomingw #userToolBar, Nomingw #userToolBar QWidget, Nomingw #userToolBar QToolButton, Nomingw #userToolBar QPushButton {
+Nomingw #userToolBar, Nomingw #userToolBar QPushButton {
     background: #F8F8F8;
+    border: none;
+}
+
+Nomingw QTMToolbar QScrollArea,
+Nomingw QTMToolbar #toolbarScrollArea,
+Nomingw QTMToolbar #toolbarViewport,
+Nomingw QTMToolbar #toolbarContent,
+Nomingw QTMToolbar #toolbarContentWidget,
+Nomingw #mainToolBar QScrollArea,
+Nomingw #mainToolBar #toolbarScrollArea,
+Nomingw #mainToolBar #toolbarViewport,
+Nomingw #mainToolBar #toolbarContent,
+Nomingw #mainToolBar #toolbarContentWidget,
+Nomingw #modeToolBar QScrollArea,
+Nomingw #modeToolBar #toolbarScrollArea,
+Nomingw #modeToolBar #toolbarViewport,
+Nomingw #modeToolBar #toolbarContent,
+Nomingw #modeToolBar #toolbarContentWidget,
+Nomingw #focusToolBar QScrollArea,
+Nomingw #focusToolBar #toolbarScrollArea,
+Nomingw #focusToolBar #toolbarViewport,
+Nomingw #focusToolBar #toolbarContent,
+Nomingw #focusToolBar #toolbarContentWidget,
+Nomingw #userToolBar QScrollArea,
+Nomingw #userToolBar #toolbarScrollArea,
+Nomingw #userToolBar #toolbarViewport,
+Nomingw #userToolBar #toolbarContent,
+Nomingw #userToolBar #toolbarContentWidget,
+Nomingw #menuToolBar QScrollArea,
+Nomingw #menuToolBar #toolbarScrollArea,
+Nomingw #menuToolBar #toolbarViewport,
+Nomingw #menuToolBar #toolbarContent,
+Nomingw #menuToolBar #toolbarContentWidget {
+    background: transparent;
     border: none;
 }
 
@@ -102,6 +136,7 @@ Mingw #toolbarSeparator {
     border-left: 1px solid rgba(192,192,192,0.7);
 }
 
+Mingw #mainToolBar,
 Mingw #mainToolBar > QWidget {
     background: rgba(192,192,192,0.7);
     border-bottom: 1px solid rgba(192,192,192,0.7);
@@ -111,6 +146,7 @@ Mingw #mainToolBar QWidget > QWidget {
     background: transparent;
 }
 
+Mingw #modeToolBar,
 Mingw #modeToolBar > QWidget {
     background: rgba(212,212,212,0.7);
     border-bottom: 1px solid rgba(192,192,192,0.7);
@@ -120,6 +156,7 @@ Mingw #modeToolBar QWidget > QWidget {
     background: transparent;
 }
 
+Mingw #focusToolBar,
 Mingw #focusToolBar > QWidget {
     background: rgba(232,232,232,0.7);
     border-bottom: 1px solid rgba(192,192,192,0.7);
@@ -129,11 +166,13 @@ Mingw #focusToolBar QWidget > QWidget {
     background: transparent;
 }
 
-Mingw #userToolBar {
+Mingw #userToolBar,
+Mingw #userToolBar > QWidget {
     background: rgba(248,248,248,0.7);
     border-bottom: 1px solid rgba(192,192,192,0.7);
 }
 
+Mingw #userToolBar QWidget > QWidget,
 Mingw #userToolBar QToolButton {
     background: transparent;
 }
@@ -393,6 +432,8 @@ QToolButton,
 #userToolBar QToolButton,
 #menuToolBar QToolButton {
     margin: 2px 1px;
+    background: transparent;
+    border: none;
 }
 
 Qt4QToolButton {

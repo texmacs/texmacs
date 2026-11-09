@@ -24,13 +24,27 @@
 #include <QEvent>
 #include <QScroller>
 #include <QScrollerProperties>
+#include <QPainter>
+#include <QStyleOption>
 #endif // QT_VERSION >= 0x050000
+
+static QString
+toolbarTitleToObjectName (const QString& title) {
+  if (title == "main toolbar") return "mainToolBar";
+  if (title == "mode toolbar") return "modeToolBar";
+  if (title == "focus toolbar") return "focusToolBar";
+  if (title == "user toolbar") return "userToolBar";
+  if (title == "menu toolbar") return "menuToolBar";
+  QString s = title;
+  s.replace (" toolbar", "ToolBar");
+  return s.isEmpty () ? QString ("qtmToolbar") : s;
+}
 
 QTMToolbar::QTMToolbar (const QString& title, QSize iconSize, QWidget* parent)
   : QWidget (parent)
 {
-  Q_UNUSED(title);
-  setObjectName ("qtmToolbar");
+  setObjectName (toolbarTitleToObjectName (title));
+  setAttribute (Qt::WA_StyledBackground, true);
   
 #if QT_VERSION >= 0x050000
   mToolbarMargin= 4;
@@ -59,12 +73,17 @@ QTMToolbar::QTMToolbar (const QString& title, QSize iconSize, QWidget* parent)
   layout->addWidget (mLeftBtn);
 
   mScrollArea = new QScrollArea (this);
+  mScrollArea->setObjectName ("toolbarScrollArea");
   mScrollArea->setFrameShape (QFrame::NoFrame);
   mScrollArea->setWidgetResizable (true);
   mScrollArea->setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
   mScrollArea->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
+  if (mScrollArea->viewport()) {
+    mScrollArea->viewport()->setObjectName ("toolbarViewport");
+  }
 
   QWidget* w = new QWidget (mScrollArea);
+  w->setObjectName ("toolbarContent");
   mLayout = new QHBoxLayout (w);
   mLayout->setSizeConstraint (QLayout::SetMinimumSize);
   mLayout->setContentsMargins (0, 0, 0, 0);

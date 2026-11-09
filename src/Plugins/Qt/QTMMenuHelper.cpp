@@ -250,6 +250,7 @@ QTMMinibarAction::createWidget (QWidget* parent) {
   
   if (DEBUG_QT_WIDGETS) debug_widgets << "QTMMinibarAction::createWidget\n";
   QWidget* wid= new QWidget (parent);
+  wid->setObjectName ("toolbarContentWidget");
   QBoxLayout* l= new QBoxLayout (QBoxLayout::LeftToRight, wid);
   wid->setLayout (l);
     //  l->setSizeConstraint (QLayout::SetFixedSize);

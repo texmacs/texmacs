@@ -345,6 +345,8 @@ QToolButton,
 #userToolBar QToolButton,
 #menuToolBar QToolButton {
     margin: 2px 1px;
+    background: transparent;
+    border: none;
 }
 
 Qt4QToolButton {

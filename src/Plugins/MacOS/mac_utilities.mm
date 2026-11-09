@@ -574,7 +574,17 @@ void applyMacOSUnifiedBar(QWidget* widget) {
   NSView* nativeView = reinterpret_cast<NSView*>(widget->winId());
   NSWindow* nativeWindow = [nativeView window];
 
-  [nativeWindow setStyleMask:[nativeWindow styleMask] | NSFullSizeContentViewWindowMask | NSWindowTitleHidden];
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
+#endif
+  NSUInteger mask = [nativeWindow styleMask] |
+                    NSFullSizeContentViewWindowMask |
+                    NSWindowTitleHidden;
+  [nativeWindow setStyleMask:mask];
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif
   [nativeWindow setTitlebarAppearsTransparent:YES];
 
   //[nativeWindow setMovableByWindowBackground:YES];

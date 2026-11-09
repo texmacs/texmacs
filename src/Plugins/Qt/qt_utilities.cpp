@@ -679,8 +679,14 @@ private:
 
 void
 qt_apply_tm_style (QWidget* qwid, int style) {
-  QString sheet = "* {" + parse_tm_style (style) + "}";
-  qwid->setStyleSheet (sheet);
+  QString parsed = parse_tm_style (style);
+  if (!parsed.trimmed ().isEmpty ()) {
+    QString sheet = "* {" + parsed + "}";
+    qwid->setStyleSheet (sheet);
+  } else {
+    if (!qwid->styleSheet ().isEmpty ())
+      qwid->setStyleSheet ("");
+  }
   qwid->setEnabled (! (style & WIDGET_STYLE_INERT));
 
   if (!qwid->property("tm_theme_connected").toBool()) {
@@ -1037,7 +1043,7 @@ scale_px (string s) {
   return r;
 }
 
-static url
+[[maybe_unused]] static url
 resolve_style_sheet_file (string style_sheet) {
   url css (style_sheet);
   if (!exists (css)) {

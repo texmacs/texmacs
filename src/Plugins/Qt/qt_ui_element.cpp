@@ -965,7 +965,8 @@ qt_ui_element_rep::as_qwidget (QWidget* parent_widget) {
         qt_apply_tm_style (b, y.x2, y.x3);
         qwid = b;
       }
-      qwid->setStyle (qtmstyle());
+      if (tm_style_sheet == "")
+        qwid->setStyle (qtmstyle());
 
     }
       break;
@@ -1006,7 +1007,8 @@ qt_ui_element_rep::as_qwidget (QWidget* parent_widget) {
         b->setFlat (! (style & WIDGET_STYLE_BUTTON));
         qwid = b;
       }
-      qwid->setStyle (qtmstyle());
+      if (tm_style_sheet == "")
+        qwid->setStyle (qtmstyle());
       qt_apply_tm_style (qwid, style);
       qwid->setEnabled (! (style & WIDGET_STYLE_INERT));
       qwid->setFocusPolicy (Qt::StrongFocus);

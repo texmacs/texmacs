@@ -249,13 +249,18 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
  
 #if QT_VERSION >= 0x060000
   if (tmapp()->useNewToolbar() && !use_native_menubar) {
-    menuToolBar   = new QTMToolbar ("menu toolbar", QSize (), mw);
+    menuToolBar   = new QTMToolbar ("menuToolBar", QSize (), mw);
+    menuToolBar->setObjectName ("menuToolBar");
   }
 
-  mainToolBar   = new QTMToolbar ("main toolbar", QSize (), mw);
-  modeToolBar   = new QTMToolbar ("mode toolbar", QSize (), mw);
-  focusToolBar  = new QTMToolbar ("focus toolbar", QSize (), mw);
-  userToolBar   = new QTMToolbar ("user toolbar", QSize(), mw);
+  mainToolBar   = new QTMToolbar ("mainToolBar", QSize (), mw);
+  mainToolBar->setObjectName ("mainToolBar");
+  modeToolBar   = new QTMToolbar ("modeToolBar", QSize (), mw);
+  modeToolBar->setObjectName ("modeToolBar");
+  focusToolBar  = new QTMToolbar ("focusToolBar", QSize (), mw);
+  focusToolBar->setObjectName ("focusToolBar");
+  userToolBar   = new QTMToolbar ("userToolBar", QSize(), mw);
+  userToolBar->setObjectName ("userToolBar");
 #else
   mainToolBar   = new QToolBar ("main toolbar", mw);
   modeToolBar   = new QToolBar ("mode toolbar", mw);
