@@ -88,14 +88,14 @@ QToolBar::separator {
     margin: 4px 8px;
 }
 
-QStatusBar {
+QStatusBar, #statusBar {
     background: #C0C0C0;
     padding: 2px;
     padding-left: 5px;
     padding-right: 5px;
 }
 
-QStatusBar::item, QStatusBar QWidget {
+QStatusBar::item, QStatusBar QWidget, #statusBar QWidget {
     background: #C0C0C0;
     border: 0px;
 }
@@ -842,6 +842,17 @@ QTMSettingGroup QTMSettingSelect QComboBox {
 /****************************************************************************
 * QTMMainTabWindow
 ****************************************************************************/
+
+MingwQTMMainTabWindow {
+    background-color: rgba(240, 240, 240, 0.5);
+}
+
+MingwQDockWidget#OnscreenKeyboardDock,
+MingwQDockWidget#OnscreenKeyboardDock > QWidget,
+MingwQTMOnscreenKeyboard {
+    background-color: rgba(242, 242, 242, 0.7);
+    border: none;
+}
 
 QTabWidget#mainTabWindowTabs QTabBar::tab {
     height: 30px;

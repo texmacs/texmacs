@@ -33,6 +33,7 @@ QTMOnscreenKeyboard::QTMOnscreenKeyboard()
 	QSizePolicy sp_retain = sizePolicy();
 	sp_retain.setRetainSizeWhenHidden(true);
 	setSizePolicy(sp_retain);
+	setAttribute(Qt::WA_StyledBackground, true);
 
 	mLayout = new QVBoxLayout(this);
 	mLayout->setContentsMargins(0, 0, 0, 0);

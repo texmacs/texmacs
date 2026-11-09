@@ -221,6 +221,7 @@ QTMMainTabWindow::QTMMainTabWindow() {
     We let Qt delete the tab window when the user close it.
   */
   setAttribute(Qt::WA_DeleteOnClose);
+  setAttribute(Qt::WA_StyledBackground, true);
 
   // remove the border and padding
   setDefaultStyle();

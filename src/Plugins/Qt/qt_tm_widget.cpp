@@ -493,6 +493,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
 #if QT_VERSION >= 0x060000
   statusBar = new QWidget(mw);
   statusBar->setObjectName("statusBar");
+  statusBar->setAttribute(Qt::WA_StyledBackground, true);
   QHBoxLayout *statusBarLayout = new QHBoxLayout(statusBar);
   statusBarLayout->setContentsMargins(0, 0, 0, 0);
   statusBarLayout->setSpacing(0);

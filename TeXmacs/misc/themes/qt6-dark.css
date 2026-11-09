@@ -145,14 +145,14 @@ QToolBar::separator {
     margin: 4px 8px;
 }
 
-QStatusBar {
+QStatusBar, #statusBar {
     background: rgba(44,44,44,0.7);
     padding: 2px;
     padding-left: 5px;
     padding-right: 5px;
 }
 
-QStatusBar::item, QStatusBar QWidget {
+QStatusBar::item, QStatusBar QWidget, #statusBar QWidget {
     border: 0px;
 }
 
@@ -948,6 +948,17 @@ QTMSettingGroup QTMSettingSelect QComboBox {
 * QTMMainTabWindow
 ****************************************************************************/
 
+MingwQTMMainTabWindow {
+    background-color: rgba(32, 32, 32, 0.5);
+}
+
+MingwQDockWidget#OnscreenKeyboardDock,
+MingwQDockWidget#OnscreenKeyboardDock > QWidget,
+MingwQTMOnscreenKeyboard {
+    background-color: rgba(25, 25, 25, 0.7);
+    border: none;
+}
+
 QPushButton#BackButton {
     background-color: rgba(0, 0, 0, 0.35);
     color: #E0E0E0;
@@ -1004,15 +1015,15 @@ QTabWidget#mainTabWindowTabs::pane {
 }
 
 QMainWindow::separator {
-    background: rgba(0, 0, 0, 0.1);
+    background: rgba(0, 0, 0, 0.35);
 }
 
 QMainWindow::separator:hover {
-    background: rgba(0, 0, 0, 0.4);
+    background: rgba(0, 0, 0, 0.6);
 }
 
 QMainWindow::separator:pressed {
-    background: rgba(0, 0, 0, 0.7);
+    background: rgba(0, 0, 0, 0.85);
 }
 
 #toolbarLeftButton, #toolbarRightButton {
