@@ -193,6 +193,8 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   leftLabel->setFrameStyle (QFrame::NoFrame);
   rightLabel->setFrameStyle (QFrame::NoFrame);
   leftLabel->setIndent (8);
+  leftLabel->setSizePolicy (QSizePolicy::Ignored, QSizePolicy::Preferred);
+  rightLabel->setSizePolicy (QSizePolicy::Minimum, QSizePolicy::Ignored);
 
 #ifdef OS_ANDROID
   QPushButton *keyboardButton = new QPushButton ("", bar);
@@ -507,7 +509,7 @@ qt_tm_widget_rep::qt_tm_widget_rep(int mask, command _quit)
   leftLabel->setMinimumWidth (0);
   rightLabel->setMinimumWidth (0);
   leftLabel->setSizePolicy (QSizePolicy::Ignored, QSizePolicy::Preferred);
-  rightLabel->setSizePolicy (QSizePolicy::Minimum, QSizePolicy::Preferred);
+  rightLabel->setSizePolicy (QSizePolicy::Minimum, QSizePolicy::Ignored);
   rightLabel->setAlignment (Qt::AlignRight | Qt::AlignVCenter);
 
   QPushButton *keyboardButton = new QPushButton ("", statusBar);
