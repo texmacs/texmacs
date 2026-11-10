@@ -1,9 +1,16 @@
 <TeXmacs|2.1.5>
 
-<style|<tuple|tmdoc|old-spacing|old-dots|old-lengths>>
+<style|<tuple|tmdoc>>
 
 <\body>
   <tmdoc-title|The <name|LanguageTool> plug-in>
+
+  <\traverse>
+    <branch|Setting up the LanguageTool plug-in|languagetool-setup.en.tm>
+
+    <branch|Using LanguageTool for grammar
+    checking|languagetool-abstract.en.tm>
+  </traverse>
 
   <tmdoc-copyright|2026|Grégoire Lecerf>
 
