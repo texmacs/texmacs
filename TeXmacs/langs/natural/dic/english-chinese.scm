@@ -35,6 +35,8 @@
 ("advanced" "高级")
 ("advanced layout features" "高级布局特性")
 ("after" "之后")
+("agent" "智能体")
+("agents" "智能体")
 ("albanian" "阿尔巴尼亚语")
 ("algorithm" "算法")
 ("align cell to the bottom" "单元格向下对齐")

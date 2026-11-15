@@ -11,6 +11,8 @@
 ("address" "adress")
 ("advanced" "avancerad")
 ("after" "efter")
+("agent" "agent")
+("agents" "agenter")
 ("all" "allt")
 ("alpha release" "alpha version")
 ("appendix" "appendix")

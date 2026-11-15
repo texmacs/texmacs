@@ -31,6 +31,8 @@
 ("advanced" "avanzado")
 ("advanced layout features" "funciones de composición avanzadas")
 ("after" "después de")
+("agent" "agente")
+("agents" "agentes")
 ("albanian" "albanés")
 ("algorithm" "algoritmo")
 ("align cell to the bottom" "alinear celda por abajo")

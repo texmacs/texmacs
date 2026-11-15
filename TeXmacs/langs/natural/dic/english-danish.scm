@@ -27,6 +27,8 @@
 ("advanced" "avanceret")
 ("advanced layout features" "avancerede layout funktioner")
 ("after" "efter")
+("agent" "agent")
+("agents" "agenter")
 ("albanian" "albansk")
 ("algorithm" "algoritme")
 ("align cell to the bottom" "justér celle med bund")

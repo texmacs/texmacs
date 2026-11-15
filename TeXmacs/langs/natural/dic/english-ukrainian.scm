@@ -55,6 +55,8 @@
 ("advanced layout features" "розширені можливості розміщення")
 ("affiliation" "афіліація")
 ("after" "після")
+("agent" "агент")
+("agents" "агенти")
 ("albanian" "албанська")
 ("algorithm" "алгоритм")
 ("align cell to the bottom" "вирівняти комірку вниз")

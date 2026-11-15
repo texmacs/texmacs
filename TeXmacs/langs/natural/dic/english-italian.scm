@@ -55,6 +55,8 @@
 ("advanced layout features" "caratteristiche di impaginazione avanzate")
 ("affiliation" "affiliazione")
 ("after" "dopo")
+("agent" "agente")
+("agents" "agenti")
 ("albanian" "albanese")
 ("algorithm" "algoritmo")
 ("algorithms" "algoritmi")

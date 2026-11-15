@@ -58,6 +58,8 @@
 ("advanced layout features" "geavanceerde pagina-opmaak")
 ("affiliation" "aansluiting")
 ("after" "na")
+("agent" "agent")
+("agents" "agenten")
 ("albanian" "albanees")
 ("algorithm" "algoritme")
 ("algorithms" "algoritmen")

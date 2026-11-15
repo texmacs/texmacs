@@ -51,6 +51,8 @@
 ("advanced layout features" "προηγμένες λειτουργίες διάταξης")
 ("affiliation" "υπαγωγή")
 ("after" "μετά")
+("agent" "πράκτορας")
+("agents" "πράκτορες")
 ("albanian" "αλβανικά")
 ("algorithm" "αλγόριθμος")
 ("align cell to the bottom" "στοίχιση κελιού κάτω")

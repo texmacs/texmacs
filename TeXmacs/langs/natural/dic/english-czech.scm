@@ -27,6 +27,8 @@
 ("advanced" "pokro£ilé")
 ("advanced layout features" "pokro£ilé vlastnosti rozloºení")
 ("after" "po")
+("agent" "agent")
+("agents" "agenti")
 ("albanian" "albánský")
 ("algorithm" "algoritmus")
 ("align cell to the bottom" "zarovnat bu¬ku dol·")

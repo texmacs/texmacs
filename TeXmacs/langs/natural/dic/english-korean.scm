@@ -27,6 +27,8 @@
 ("advanced" "고급")
 ("advanced layout features" "고급 레이아웃 설정")
 ("after" "")
+("agent" "에이전트")
+("agents" "에이전트")
 ("albanian" "알바니아어")
 ("algorithm" "알고리듬")
 ("align cell to the bottom" "")

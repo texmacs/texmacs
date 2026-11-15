@@ -35,6 +35,8 @@
 ("advanced" "fortgeschritten")
 ("advanced layout features" "fortgeschrittene Layout-Eigenschaften")
 ("after" "nach")
+("agent" "Agent")
+("agents" "Agenten")
 ("algorithm" "Algorithmus")
 ("align cell to the bottom" "Zelle nach unten ausrichten")
 ("align cell to the left" "Zelle nach links ausrichten")

@@ -29,6 +29,8 @@
 ("advanced" "haladó")
 ("advanced layout features" "haladó elrendezési beállítások")
 ("after" "ez után")
+("agent" "ágens")
+("agents" "ágensek")
 ("albanian" "albán")
 ("algorithm" "algoritmus")
 ("align cell to the bottom" "cella igazítása alulra")

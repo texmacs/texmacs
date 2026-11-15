@@ -22,6 +22,8 @@
 ("advanced layout features" "napredna postavitev")
 ("advanced" "napredno")
 ("after" "po")
+("agent" "agent")
+("agents" "agenti")
 ("albanian" "albansko")
 ("algorithm" "algoritem")
 ("align cell to the bottom" "poravnaj celico na dno")

@@ -35,6 +35,8 @@
 ("advanced" "進階")
 ("advanced layout features" "進階布局特徵")
 ("after" "之後")
+("agent" "智能体")
+("agents" "智能体")
 ("albanian" "")
 ("algorithm" "演算法")
 ("align cell to the bottom" "向下對齊")

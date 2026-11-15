@@ -27,6 +27,8 @@
 ("advanced" "за експерти")
 ("advanced layout features" "layout за експерти")
 ("after" "след")
+("agent" "агент")
+("agents" "агенти")
 ("albanian" "албански")
 ("algorithm" "алгоритъм")
 ("align cell to the bottom" "изравни клетката отдолу")

@@ -54,6 +54,8 @@
 ("advanced layout features" "napredna svojstva prijeloma")
 ("affiliation" "pripadnost")
 ("after" "nakon")
+("agent" "agent")
+("agents" "agenti")
 ("albanian" "albanski")
 ("algorithm" "algoritam")
 ("align cell to the bottom" "poravnavanje ¢elije na dnu")

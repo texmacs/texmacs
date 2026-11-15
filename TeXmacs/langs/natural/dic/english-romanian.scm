@@ -26,6 +26,8 @@
 ("advanced" "avansat")
 ("advanced layout features" "caracteristici avansate de a³ezare în pagin ")
 ("after" "dup ")
+("agent" "agent")
+("agents" "agen i")
 ("albanian" "albanez ")
 ("algorithm" "algoritm")
 ("align cell to the bottom" "aliniere celul  jos")

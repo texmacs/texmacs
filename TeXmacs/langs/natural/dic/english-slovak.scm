@@ -53,6 +53,8 @@
 ("advanced layout features" "pokročilé vlastnosti rozloženia")
 ("affiliation" "afiliácia")
 ("after" "po")
+("agent" "agent")
+("agents" "agenti")
 ("albanian" "albánčina")
 ("algorithm" "algoritmus")
 ("algorithms" "algoritmy")

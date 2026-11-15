@@ -27,6 +27,8 @@
 ("advanced" "edistynyt")
 ("advanced layout features" "edistyneet asetteluominaisuudet")
 ("after" "jälkeen")
+("agent" "tekoälyagentti")
+("agents" "tekoälyagentit")
 ("algorithm" "algoritmi")
 ("align cell to the bottom" "tasaa solu alareunaan")
 ("align cell to the left" "tasaa solu vasemmalle")
