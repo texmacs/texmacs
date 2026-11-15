@@ -118,3 +118,28 @@
       ("Detailed" (version-set-grain "detailed"))
       ("Block" (version-set-grain "block"))
       ("Rough" (version-set-grain "rough"))))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Focus
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(tm-menu (standard-focus-icons t)
+  (:require (version-context? t))
+  (dynamic (focus-ancestor-icons t))
+  (minibar (dynamic (focus-move-icons t)))
+  //
+  ((balloon (icon "tm_retain_old.xpm")
+            "Retain old version")
+   (version-retain 0))
+  ((balloon (icon "tm_remove.xpm")
+            "Retain current version")
+   (version-retain 'current))
+  ((balloon (icon "tm_retain_new.xpm")
+            "Retain new version")
+   (version-retain 1))
+  //
+  (minibar (dynamic (focus-tag-icons t)))
+  (dynamic (focus-hidden-icons t))
+  (dynamic (focus-extra-icons t))
+  (dynamic (focus-label-icons t))
+  //)
