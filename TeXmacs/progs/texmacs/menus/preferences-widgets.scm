@@ -756,8 +756,10 @@
   ===
   (aligned
     (meti (hlist // (text "Show differences after text corrections"))
-      (toggle (set-boolean-preference
-	       "ai-correct show differences" answer)
+      (toggle (begin (set-boolean-preference
+		      "ai-correct show differences" answer)
+		     (when answer
+		       (set-boolean-preference "versioning tool" #t)))
 	      (get-boolean-preference
 	       "ai-correct show differences")))
     (meti (hlist // (text "Explain text corrections"))
