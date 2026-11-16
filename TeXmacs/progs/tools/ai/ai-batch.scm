@@ -12,7 +12,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (texmacs-module (tools ai ai-batch)
-  (version version-compare))
+  (:use (version version-compare)
+	(tools ai ai-widgets)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Pre- and post-processing
@@ -43,17 +44,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (define (open-comments c)
-  (let* ((doc
-	  `(document
-	     (style "generic")
-	     (body (document
-		     (strong ,(pretty-time (current-time)))
-		     ,@(map tree->stree c)))))
-	 (aux "Comments from AI about corrections")
-	 (name (aux-name aux)))
-    (aux-set-document aux doc)
-    (if (not (buffer->window name))
-	(load-buffer-main name :new-window))))
+  (with doc
+      `(document
+	 ;(small (em ,(pretty-time (current-time))))
+	 ,@(map tree->stree c))
+    (open-ai-correct doc)))
 
 (tm-define (ai-correct model)
   (when (selection-active-any?)
@@ -69,8 +64,7 @@
 		  (with d (compare-versions (tree->stree t) (tree->stree s))
 		    (insert (stree->tree d)))
 		  (insert s))
-	      (when (and (> (length c) 0)
-			 (get-boolean-preference "ai-correct explain"))
+	      (when (get-boolean-preference "ai-correct explain")
 		(open-comments c)))))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

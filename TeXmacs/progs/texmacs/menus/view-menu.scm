@@ -26,6 +26,7 @@
 (tm-define toolbar-replace-active? #f)
 (tm-define toolbar-spell-active? #f)
 (tm-define toolbar-correct-active? #f)
+(tm-define toolbar-ai-correct-active? #f)
 (tm-define toolbar-db-active? #f)
 (tm-define toolbar-animate-active? #f)
 
@@ -34,6 +35,7 @@
       toolbar-replace-active?
       toolbar-spell-active?
       toolbar-correct-active?
+      toolbar-ai-correct-active?
       toolbar-db-active?
       toolbar-animate-active?))
 
@@ -51,17 +53,23 @@
            (not toolbar-search-active?)
            (not toolbar-replace-active?))
       (link correct-toolbar))
+  (if (and toolbar-ai-correct-active?
+           (not toolbar-search-active?)
+           (not toolbar-replace-active?))
+      (link ai-correct-toolbar))
   (if (and toolbar-db-active?
            (not toolbar-search-active?)
            (not toolbar-replace-active?)
            (not toolbar-spell-active?)
-	   (not toolbar-correct-active?))
+	   (not toolbar-correct-active?)
+	   (not toolbar-ai-correct-active?))
       (link db-toolbar))
   (if (and toolbar-animate-active?
            (not toolbar-search-active?)
            (not toolbar-replace-active?)
            (not toolbar-spell-active?)
 	   (not toolbar-correct-active?)
+	   (not toolbar-ai-correct-active?)
            (not toolbar-db-active?))
       (link animate-toolbar)))
 
@@ -79,18 +87,24 @@
          (and toolbar-correct-active?
               (not toolbar-search-active?)
               (not toolbar-replace-active?)))
+        ((== which "ai-correct")
+         (and toolbar-ai-correct-active?
+              (not toolbar-search-active?)
+              (not toolbar-replace-active?)))
         ((== which "database")
          (and toolbar-db-active?
               (not toolbar-search-active?)
               (not toolbar-replace-active?)
               (not toolbar-spell-active?)
-	      (not toolbar-correct-active?)))
+	      (not toolbar-correct-active?)
+	      (not toolbar-ai-correct-active?)))
         ((== which "animate")
          (and toolbar-animate-active?
               (not toolbar-search-active?)
               (not toolbar-replace-active?)
               (not toolbar-spell-active?)
               (not toolbar-correct-active?)
+              (not toolbar-ai-correct-active?)
               (not toolbar-db-active?)))
         (else #f)))
 
@@ -99,6 +113,7 @@
   (set! toolbar-replace-active? #f)
   (set! toolbar-spell-active? #f)
   (set! toolbar-correct-active? #f)
+  (set! toolbar-ai-correct-active? #f)
   (set! toolbar-db-active? #f)
   (set! toolbar-animate-active? #f)
   (cond ((== which "search")
@@ -109,6 +124,8 @@
          (set! toolbar-spell-active? val))
         ((== which "correct")
          (set! toolbar-correct-active? val))
+        ((== which "ai-correct")
+         (set! toolbar-ai-correct-active? val))
         ((== which "database")
          (set! toolbar-db-active? val))
         ((== which "animate")
