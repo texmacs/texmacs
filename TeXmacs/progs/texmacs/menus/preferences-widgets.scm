@@ -958,7 +958,9 @@
         (toggle (set-boolean-preference "continuous spell checking" answer)
                 (get-boolean-preference "continuous spell checking")))
       (meti (hlist // (text "grammar checking"))
-        (toggle (set-boolean-preference "grammar checking" answer)
+        (toggle (begin
+		  (set-boolean-preference "grammar checking" answer)
+		  (reinit-plugin-cache))
                 (get-boolean-preference "grammar checking")))
       (meti (hlist // (text "Fast environments"))
         (toggle (set-boolean-preference "fast environments" answer)
