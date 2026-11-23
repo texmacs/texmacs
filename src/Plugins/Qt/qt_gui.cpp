@@ -231,15 +231,15 @@ qt_gui_rep::get_max_size (SI& width, SI& height) {
 }
 
 qt_gui_rep::~qt_gui_rep()  {
-  delete gui_helper;
+  if (gui_helper) delete gui_helper.data();
 #if QT_VERSION >= 0x060000
   if (waitWindow) waitWindow->deleteLater();  
 #else
   while (waitDialogs.count()) {
-    waitDialogs.last()->deleteLater();
+    if (waitDialogs.last()) waitDialogs.last()->deleteLater();
     waitDialogs.removeLast();
   }
-  if (waitWindow) delete waitWindow;  
+  if (waitWindow) delete waitWindow.data();  
     // delete updatetimer; we do not need this given that gui_helper is the
     // parent of updatetimer
 #endif
@@ -456,11 +456,14 @@ void qt_gui_rep::set_mouse_pointer (string curs_name, string mask_name)
 
 #if QT_VERSION >= 0x060000
 static void
-center_waitWindow (widget w, QDialog* waitWindow) {
+center_waitWindow (widget w, QPointer<QDialog> waitWindow) {
+  if (!waitWindow) return;
   qt_window_widget_rep* wid = static_cast<qt_window_widget_rep*> (w.rep);
+  if (!wid || !wid->qwid || !wid->qwid->window()) return;
   QSize sz = waitWindow->geometry ().size ();
   QRect rect = QRect (QPoint (0,0), sz);
   qApp->processEvents (QEventLoop::ExcludeUserInputEvents);
+  if (!waitWindow || !wid->qwid || !wid->qwid->window()) return;
   QPoint pt = wid->qwid->window ()->geometry ().center ();
   rect.moveCenter (pt);
   waitWindow->move (rect.topLeft ());
@@ -517,8 +520,8 @@ qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
     QTMWidget::setFocusToLast();
   }
   qt_window_widget_rep* wid= static_cast<qt_window_widget_rep*> (w.rep);
-  wid->qwid->activateWindow ();
-  send_keyboard_focus (wid);
+  if (wid && wid->qwid) wid->qwid->activateWindow ();
+  if (wid) send_keyboard_focus (wid);
   need_update ();
 }
 #else
@@ -538,7 +541,8 @@ qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
     //FIXME: we must center the wait widget wrt the current active window
   
   if (!waitWindow) {
-    waitWindow = new QWidget (wid->qwid->window());
+    QWidget* parentWin = (wid && wid->qwid) ? wid->qwid->window() : nullptr;
+    waitWindow = new QWidget (parentWin);
     waitWindow->setWindowFlags (Qt::Window | Qt::FramelessWindowHint
 				| Qt::WindowStaysOnTopHint);
     QStackedLayout *layout = new QStackedLayout();
@@ -546,8 +550,8 @@ qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
     waitWindow->setLayout (layout);
   }
   
-  if (waitDialogs.count()) {
-    waitWindow->layout()->removeWidget (waitDialogs.last());
+  if (waitDialogs.count() && waitDialogs.last()) {
+    waitWindow->layout()->removeWidget (waitDialogs.last().data());
   }
   
   if (N(message)) {
@@ -563,13 +567,14 @@ qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
   } else {
       // pop the next wait message from the list
     if (waitDialogs.count()) {
-      waitDialogs.last()->deleteLater();
+      if (waitDialogs.last()) waitDialogs.last()->deleteLater();
       waitDialogs.removeLast();
     }
   }
   
   if (waitDialogs.count()) {
-    waitWindow->layout()->addWidget (waitDialogs.last());
+    if (waitDialogs.last())
+      waitWindow->layout()->addWidget (waitDialogs.last().data());
     waitWindow->updateGeometry();
     {
       QSize sz = waitWindow->geometry().size();
@@ -578,9 +583,11 @@ qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
         // processEvents is needed to let Qt update windows coordinates in the case
       qApp->processEvents (QEventLoop::ExcludeUserInputEvents);
         //ENDHACK
-      QPoint pt = wid->qwid->window()->geometry().center();
-      rect.moveCenter (pt);
-      waitWindow->move (rect.topLeft());
+      if (wid && wid->qwid && wid->qwid->window()) {
+        QPoint pt = wid->qwid->window()->geometry().center();
+        rect.moveCenter (pt);
+        waitWindow->move (rect.topLeft());
+      }
       
     }
     waitWindow->show();
@@ -590,8 +597,8 @@ qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
     waitWindow->close();
   }
 
-  wid->qwid->activateWindow ();
-  send_keyboard_focus (wid);
+  if (wid && wid->qwid) wid->qwid->activateWindow ();
+  if (wid) send_keyboard_focus (wid);
     // next time we do update the dialog will disappear
   need_update();
 }
@@ -948,14 +955,15 @@ qt_gui_rep::update () {
 
   if (waitDialogs.count()) {
 #if QT_VERSION >= 0x060000
-    waitWindow->close();
-    waitLabel->setText ("");
+    if (waitWindow) waitWindow->close();
+    if (waitLabel) waitLabel->setText ("");
     waitDialogs.clear ();
 #else
-    waitWindow->layout()->removeWidget (waitDialogs.last());
-    waitWindow->close();
+    if (waitWindow && waitDialogs.last())
+      waitWindow->layout()->removeWidget (waitDialogs.last().data());
+    if (waitWindow) waitWindow->close();
     while (waitDialogs.count()) {
-      waitDialogs.last()->deleteLater();
+      if (waitDialogs.last()) waitDialogs.last()->deleteLater();
       waitDialogs.removeLast();
     }
 #endif

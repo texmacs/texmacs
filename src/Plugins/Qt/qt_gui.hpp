@@ -16,6 +16,10 @@
 #include <QTimer>
 #include <QLabel>
 #include <QList>
+#include <QPointer>
+#if QT_VERSION >= 0x060000
+#include <QDialog>
+#endif
 
 #include "qt_simple_widget.hpp"
 #include "tm_timer.hpp"
@@ -122,14 +126,14 @@ class QTMGuiHelper;
 class qt_gui_rep {
   bool           interrupted;
   time_t      interrupt_time;
-  QTimer*        updatetimer;
+  QPointer<QTimer> updatetimer;
 #if QT_VERSION >= 0x060000
-  QDialog*        waitWindow;
-  QLabel*          waitLabel;
+  QPointer<QDialog> waitWindow;
+  QPointer<QLabel>  waitLabel;
   QList<QString> waitDialogs;
 #else
-  QWidget*        waitWindow;
-  QList<QLabel*> waitDialogs;
+  QPointer<QWidget> waitWindow;
+  QList<QPointer<QLabel>> waitDialogs;
 #endif
   widget          _popup_wid;
   time_t      popup_wid_time; //!< 0 means not to show _popup_wid
@@ -137,7 +141,7 @@ class qt_gui_rep {
   hashmap<string,tree>   selection_t;
   hashmap<string,string> selection_s;
   
-  QTranslator* q_translator;
+  QPointer<QTranslator> q_translator;
   
   time_t time_credit;        // interval to interrupt long redrawings
   time_t timeout_time;       // new redraw interruption
@@ -151,7 +155,7 @@ class qt_gui_rep {
   command_queue delayed_commands;
 
 public:
-  QTMGuiHelper*  gui_helper;
+  QPointer<QTMGuiHelper> gui_helper;
 
 public:
   qt_gui_rep (int &argc, char **argv);
