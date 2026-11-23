@@ -165,7 +165,7 @@ QTMMimeData::retrieveData (const QString &qmimeType, QVariant::Type type) const
     if (enc == "utf-8" || enc == "UTF-8" || enc == "cork")
       return utf8_to_qstring (st);
     else {
-      c_string _st;
+      c_string _st (st);
       return QString::fromLatin1 (_st, N(st));
     }
   }
