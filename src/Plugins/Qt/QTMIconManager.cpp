@@ -204,8 +204,10 @@ void QTMIconManager::setLabelPixmap(QPointer<QLabel> label, url file_name, int w
     if (width > 0 && height > 0) {
       QPixmap pixmap= icon.pixmap (width, height);
       label->setPixmap (pixmap);
-    } else {
+    } else if (!icon.availableSizes().isEmpty()) {
       label->setPixmap (icon.pixmap (icon.availableSizes().last()));
+    } else {
+      label->setPixmap (icon.pixmap (24, 24));
     }
   }
 }
