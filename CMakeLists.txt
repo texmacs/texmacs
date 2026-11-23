@@ -130,17 +130,19 @@ else ()
 endif ()
 
 # Add local prefix path if available
-if (DEFINED ENV{WORKING_DIR_WIN})
-  list (APPEND CMAKE_PREFIX_PATH "$ENV{WORKING_DIR_WIN}/local")
-  link_directories ("$ENV{WORKING_DIR_WIN}/local/lib")
-elseif (DEFINED ENV{WORKING_DIR})
-  list (APPEND CMAKE_PREFIX_PATH "$ENV{WORKING_DIR}/local")
-  link_directories ("$ENV{WORKING_DIR}/local/lib")
-endif ()
-if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../../local")
-  get_filename_component (_LOCAL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../local" ABSOLUTE)
-  list (APPEND CMAKE_PREFIX_PATH "${_LOCAL_DIR}")
-  link_directories ("${_LOCAL_DIR}/lib")
+if (WIN32)
+  if (DEFINED ENV{WORKING_DIR_WIN})
+    list (APPEND CMAKE_PREFIX_PATH "$ENV{WORKING_DIR_WIN}/local")
+    link_directories ("$ENV{WORKING_DIR_WIN}/local/lib")
+  elseif (DEFINED ENV{WORKING_DIR})
+    list (APPEND CMAKE_PREFIX_PATH "$ENV{WORKING_DIR}/local")
+    link_directories ("$ENV{WORKING_DIR}/local/lib")
+  endif ()
+  if (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/../../local")
+    get_filename_component (_LOCAL_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../local" ABSOLUTE)
+    list (APPEND CMAKE_PREFIX_PATH "${_LOCAL_DIR}")
+    link_directories ("${_LOCAL_DIR}/lib")
+  endif ()
 endif ()
 
 list (APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
@@ -232,13 +234,10 @@ if (SCHEME_IMPL STREQUAL "embedded18" OR SCHEME_IMPL STREQUAL "tm-guile188")
   set (guile_str_size_t "size_t")
   set (Guile_LIBRARIES guile)
   set (Guile_INCLUDE_DIRS
-    ${CMAKE_CURRENT_SOURCE_DIR}/tm-guile188
-    ${CMAKE_CURRENT_SOURCE_DIR}/tm-guile188/libguile
-    ${CMAKE_CURRENT_SOURCE_DIR}/tm-guile188/srfi
     ${CMAKE_CURRENT_BINARY_DIR}/tm-guile188
     ${CMAKE_CURRENT_BINARY_DIR}/tm-guile188/libguile
-    ${GUILE_BUILD_DIR}/include
-    ${GUILE_BUILD_DIR}/include/libguile
+    ${CMAKE_CURRENT_SOURCE_DIR}/tm-guile188
+    ${CMAKE_CURRENT_SOURCE_DIR}/tm-guile188/srfi
   )
 else ()
   pkg_search_module (Guile REQUIRED guile-1.8 guile-3.0 guile-2.2 guile-2.0)
@@ -550,6 +549,7 @@ set (TeXmacs_All_SRCS
 ### --------------------------------------------------------------------
 
 set (TeXmacs_Include_Dirs
+  ${CMAKE_CURRENT_BINARY_DIR}/src/System
   ${CMAKE_CURRENT_SOURCE_DIR}/src
   ${CMAKE_CURRENT_SOURCE_DIR}/src/Data/Convert
   ${CMAKE_CURRENT_SOURCE_DIR}/src/Data/Document
@@ -607,7 +607,6 @@ set (TeXmacs_Include_Dirs
   ${CMAKE_CURRENT_SOURCE_DIR}/src/Typeset/Concat
   ${CMAKE_CURRENT_SOURCE_DIR}/src/Typeset/Page
   ${CMAKE_CURRENT_SOURCE_DIR}/TeXmacs/include
-  ${CMAKE_CURRENT_BINARY_DIR}/src/System
   ${Guile_INCLUDE_DIRS}
   ${FREETYPE_INCLUDE_DIRS}
   ${PNG_INCLUDE_DIRS}
