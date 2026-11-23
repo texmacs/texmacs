@@ -86,14 +86,16 @@ tm_frame_rep::dialogue_start (string name, widget wid) {
     dialogue_wid= wid;
     dialogue_win= plain_window_widget (dialogue_wid, name);
 
-    widget win= concrete_window () -> win;
-    SI ox, oy, dx, dy, ex= 0, ey= 0;
-    get_position (win, ox, oy);
-    get_size (win, dx, dy);
-    get_size (dialogue_win, ex, ey);
-    ox += (dx - ex) >> 1;
-    oy -= (dy - ey) >> 1;
-    set_position (dialogue_win, ox, oy);
+    if (has_current_window ()) {
+      widget win= concrete_window () -> win;
+      SI ox, oy, dx, dy, ex= 0, ey= 0;
+      get_position (win, ox, oy);
+      get_size (win, dx, dy);
+      get_size (dialogue_win, ex, ey);
+      ox += (dx - ex) >> 1;
+      oy -= (dy - ey) >> 1;
+      set_position (dialogue_win, ox, oy);
+    }
     set_visibility (dialogue_win, true);
   }
 }
@@ -241,7 +243,8 @@ tm_frame_rep::interactive (object fun, scheme_tree p) {
     if (ret != "" && ret != "<unspecified>" && ret != "#<unspecified>")
       set_message (verbatim (ret), "interactive command");
   }
-  else if (get_preference ("interactive questions") == "popup" ||
+  else if (!has_current_window () ||
+           get_preference ("interactive questions") == "popup" ||
            N(p) > 1 ||
 	   (is_aux_buffer (get_current_buffer_safe ()) &&
             !is_rooted_tmfs (get_current_buffer_safe (), "part"))) {

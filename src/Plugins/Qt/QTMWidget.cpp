@@ -825,7 +825,11 @@ QTMWidget *QTMWidget::getLastFocusedWidget() {
 }
 
 void QTMWidget::setFocusToLast() {
-  if (!last_focused_widget) return;
+  if (!last_focused_widget ||
+      last_focused_widget->isHidden () ||
+      (last_focused_widget->window () &&
+       last_focused_widget->window ()->isHidden ()))
+    return;
 
   last_focused_widget->setFocus();
   

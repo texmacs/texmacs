@@ -230,31 +230,37 @@ tm_frame_rep::get_window_zoom_factor () {
 
 void
 tm_frame_rep::get_visible (SI& x1, SI& y1, SI& x2, SI& y2) {
+  if (!has_current_window ()) { x1= y1= x2= y2= 0; return; }
   concrete_window () -> get_visible (x1, y1, x2, y2);
 }
 
 void
 tm_frame_rep::set_scrollbars (int sb) {
+  if (!has_current_window ()) return;
   concrete_window () -> set_scrollbars (sb);
 }
 
 void
 tm_frame_rep::scroll_where (SI& x, SI& y) {
+  if (!has_current_window ()) { x= y= 0; return; }
   concrete_window () -> get_scroll_pos (x, y);
 }
 
 void
 tm_frame_rep::scroll_to (SI x, SI y) {
+  if (!has_current_window ()) return;
   concrete_window () -> set_scroll_pos (x, y);
 }
 
 void
 tm_frame_rep::get_extents (SI& x1, SI& y1, SI& x2, SI& y2) {
+  if (!has_current_window ()) { x1= y1= x2= y2= 0; return; }
   concrete_window () -> get_extents (x1, y1, x2, y2);
 }
 
 void
 tm_frame_rep::set_extents (SI x1, SI y1, SI x2, SI y2) {
+  if (!has_current_window ()) return;
   concrete_window () -> set_extents (x1, y1, x2, y2);
 }
 

@@ -949,6 +949,30 @@ qt_gui_rep::update () {
   static int count_events    = 0;
   static int max_proc_events = 40;
 
+  struct UpdateStateGuard {
+    bool completed;
+    qt_gui_rep* gui;
+    int& count_events;
+    time_t std_delay;
+    UpdateStateGuard (qt_gui_rep* g, int& ce, time_t d)
+      : completed (false), gui (g), count_events (ce), std_delay (d) {}
+    ~UpdateStateGuard () {
+      if (!completed) {
+        keyboard_events       = 0;
+        keyboard_special      = 0;
+        count_events          = 0;
+        gui->interrupted      = false;
+        gui->updating         = false;
+        if (gui->updatetimer != nullptr)
+          gui->updatetimer->start (std_delay);
+      }
+    }
+  } guard (this, count_events, std_delay);
+
+  bool postpone_treatment = false;
+#ifdef USE_EXCEPTIONS
+  try {
+#endif
   time_t     now = texmacs_time();
   needing_update = false;
   time_credit    = 9 / (waiting_events.size() + 1);
@@ -1000,7 +1024,7 @@ qt_gui_rep::update () {
   }
 
   // Repaint invalid regions and redraw
-  bool postpone_treatment= (keyboard_events > 0 && keyboard_special == 0);
+  postpone_treatment= (keyboard_events > 0 && keyboard_special == 0);
   keyboard_events = 0;
   keyboard_special= 0;
   count_events    = 0;
@@ -1012,6 +1036,17 @@ qt_gui_rep::update () {
     if (the_interpose_handler) the_interpose_handler();
     qt_simple_widget_rep::repaint_all ();
   }
+#ifdef USE_EXCEPTIONS
+  }
+  catch (string s) {
+    the_exception    = s;
+    keyboard_events  = 0;
+    keyboard_special = 0;
+    count_events     = 0;
+    interrupted      = false;
+    handle_exceptions ();
+  }
+#endif
   
   if (waiting_events.size() > 0) needing_update = true;
   if (interrupted)               needing_update = true;
@@ -1024,6 +1059,7 @@ qt_gui_rep::update () {
  
   updatetimer->start (delay);
   updating = false;
+  guard.completed = true;
   
     // FIXME: we need to ensure that the interpose_handler is run at regular
     //        intervals (1/6th of sec) so that informations on the footbar are

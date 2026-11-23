@@ -13,6 +13,7 @@
 #include "analyze.hpp"
 #include "tm_buffer.hpp"
 #include "archiver.hpp"
+#include "tm_window.hpp"
 
 #ifdef Q_OS_MAC
 #include "Plugins/Qt/QTMApplication.hpp"
@@ -441,7 +442,13 @@ edit_interface_rep::handle_keyboard_focus (bool has_focus, time_t t) {
   notify_change (THE_FREEZE);
   notify_change (THE_FOCUS);
   if (got_focus) {
+    url prev_view= get_current_view_safe ();
     focus_on_this_editor ();
+    if (!has_current_window ()) {
+      set_current_view (prev_view);
+      got_focus= false;
+      return;
+    }
     notify_change (THE_DECORATIONS);
   }
   call ("keyboard-focus", object (has_focus), object ((double) t));
