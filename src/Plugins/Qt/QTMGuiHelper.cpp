@@ -87,8 +87,9 @@ BEGIN_SLOT
   if (!is_nil (waiting_widgets)) {
     if (DEBUG_QT)
       debug_qt << "Installing postponed menu" << LF;
-    waiting_widgets->item->install_main_menu();
+    qt_tm_widget_rep* wid = waiting_widgets->item;
     waiting_widgets = waiting_widgets->next;
+    wid->install_main_menu();
   }
 END_SLOT
 }
