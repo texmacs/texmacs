@@ -225,12 +225,14 @@ qt_simple_widget_rep::send (slot s, blackbox val) {
     case SLOT_SCROLL_POSITION:
     {
       check_type<coord2>(val, s);
-      coord2  p = open_box<coord2> (val);
-      QPoint qp = to_qpoint (p);
-      QSize  sz = canvas()->surface()->size();
-      qp -= QPoint (sz.width() / 2, sz.height() / 2);
-        // NOTE: adjust because child is centered
-      if (scrollarea()) scrollarea()->setOrigin (qp);
+      if (canvas() && canvas()->surface() && scrollarea()) {
+        coord2  p = open_box<coord2> (val);
+        QPoint qp = to_qpoint (p);
+        QSize  sz = canvas()->surface()->size();
+        qp -= QPoint (sz.width() / 2, sz.height() / 2);
+          // NOTE: adjust because child is centered
+        scrollarea()->setOrigin (qp);
+      }
       else cout << "qt_simple_widget_rep::send: cannot set scroll position, scrollarea() is null" << LF;
     }
       break;

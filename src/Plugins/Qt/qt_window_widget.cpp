@@ -126,7 +126,7 @@ qt_window_widget_rep::qt_window_widget_rep (QWidget* _wid, string name,
  */
 qt_window_widget_rep::~qt_window_widget_rep ()
 {
-  qwid->setProperty ("texmacs_window_widget", QVariant());
+  if (qwid) qwid->setProperty ("texmacs_window_widget", QVariant());
   if (!fake) nr_windows--;
   if (DEBUG_QT)
     debug_qt << "Deleting qt_window_widget " << id << "\n";
@@ -330,6 +330,7 @@ qt_window_widget_rep::query (slot s, int type_id) {
     case SLOT_POSITION:
     {
       check_type_id<coord2> (type_id, s);
+      if (!qwid) return close_box<coord2> (coord2 (0, 0));
       QRect g;
         // FIXME: dock widgets are embedded into qt_window_widget_reps as a temporary hack
         // because of this the underlying widget is not always a top level window
@@ -342,6 +343,7 @@ qt_window_widget_rep::query (slot s, int type_id) {
     case SLOT_SIZE:
     {
       check_type_id<coord2> (type_id, s);
+      if (!qwid) return close_box<coord2> (coord2 (640, 400));
       QSize sz = qwid->frameSize();
       return close_box<coord2> (from_qsize (sz));
     }
