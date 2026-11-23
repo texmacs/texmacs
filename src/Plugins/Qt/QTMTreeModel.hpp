@@ -13,6 +13,7 @@
 #define QTMTREEMODEL_HPP
 
 #include <QAbstractItemModel>
+#include <QPointer>
 
 #include "tree.hpp"
 #include "hashmap.hpp"
@@ -35,7 +36,7 @@ class QTMTreeModel;
         in done(). This is wasteful and will scale very badly.
  */
 class qt_tree_observer_rep : public observer_rep {
-  QTMTreeModel* model;
+  QPointer<QTMTreeModel> model;
 
 public:
   explicit qt_tree_observer_rep (QTMTreeModel* _model)

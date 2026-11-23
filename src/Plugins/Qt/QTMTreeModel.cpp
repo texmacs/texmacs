@@ -38,8 +38,12 @@ QTMTreeModel*
 QTMTreeModel::instance (const tree& data, const tree& roles, QObject* parent) {
   tree& t = const_cast<tree&> (data);
   if (!is_nil (data) && !is_nil (t->obs) &&
-      t->obs->get_type () == OBSERVER_WIDGET)
-    return static_cast<qt_tree_observer_rep*> (t->obs.rep)->model;
+      t->obs->get_type () == OBSERVER_WIDGET) {
+    qt_tree_observer_rep* obs = static_cast<qt_tree_observer_rep*> (t->obs.rep);
+    if (obs->model) return obs->model.data();
+    obs->model = new QTMTreeModel (data, roles, parent);
+    return obs->model.data();
+  }
   else
     return new QTMTreeModel (data, roles, parent);
 }
@@ -256,7 +260,7 @@ QTMTreeModel::parse_roles (const tree& roles) {
  ******************************************************************************/
 
 qt_tree_observer_rep::~qt_tree_observer_rep () {
-  delete model;
+  if (model) delete model.data();
 }
 
 void

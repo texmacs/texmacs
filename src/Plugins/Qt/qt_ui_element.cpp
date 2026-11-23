@@ -231,7 +231,7 @@ qt_ui_element_rep::qt_ui_element_rep (types _type, blackbox _load)
 qt_ui_element_rep::~qt_ui_element_rep() {
   if (cachedActionList) {
     while (!cachedActionList->empty()) {
-      QAction *a = cachedActionList->takeFirst();
+      QPointer<QAction> a = cachedActionList->takeFirst();
       //if (a) delete a;
       if (a) a->deleteLater();
     }
@@ -282,9 +282,19 @@ qt_ui_element_rep::make_popup_widget () {
 
 QList<QAction*>*
 qt_ui_element_rep::get_qactionlist() {
-    if (cachedActionList) return cachedActionList;
+    if (cachedActionList) {
+      unwrappedActionList.clear();
+      for (int i = 0; i < cachedActionList->count(); i++) {
+        if ((*cachedActionList)[i])
+          unwrappedActionList.append((*cachedActionList)[i].data());
+      }
+      if (!unwrappedActionList.isEmpty() || cachedActionList->isEmpty())
+        return &unwrappedActionList;
+      delete cachedActionList;
+      cachedActionList = NULL;
+    }
     
-    QList<QAction*> *list = new QList<QAction *>();
+    QList<QPointer<QAction>> *list = new QList<QPointer<QAction>>();
     
     switch (type) {
         case vertical_menu:
@@ -306,7 +316,12 @@ qt_ui_element_rep::get_qactionlist() {
           break;
     }
     cachedActionList = list;
-    return list;
+    unwrappedActionList.clear();
+    for (int i = 0; i < cachedActionList->count(); i++) {
+      if ((*cachedActionList)[i])
+        unwrappedActionList.append((*cachedActionList)[i].data());
+    }
+    return &unwrappedActionList;
 }
 
 /*! For the refresh_widget

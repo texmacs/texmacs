@@ -40,7 +40,7 @@
  TeXmacs and Qt since qt_menu_rep is sometimes cached at TeXmacs level.
  */
 class qt_menu_rep: public qt_widget_rep {
-  QAction*     qact;
+  QPointer<QAction> qact;
   qt_widget content;
 
 public:

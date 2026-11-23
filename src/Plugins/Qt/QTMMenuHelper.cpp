@@ -209,6 +209,7 @@ QTMTileAction::createWidget (QWidget* parent)
   int row = 0, col = 0;
   for (int    i = 0; i < actions.count(); i++) {
     QAction* sa = actions[i];
+    if (!sa) continue;
     QToolButton* tb= new QTMMenuButton (wid);
     tb->setDefaultAction (sa);
 #if QT_VERSION < 0x060000
@@ -258,6 +259,7 @@ QTMMinibarAction::createWidget (QWidget* parent) {
   l->setSpacing (0);
   for (int i=0; i < actions.count(); i++) {
     QAction* sa= actions[i];
+    if (!sa) continue;
     if (QWidgetAction * wa = qobject_cast<QWidgetAction*> (sa)) {
       QWidget *w = wa->requestWidget (wid);
       w->setSizePolicy (QSizePolicy::Preferred, QSizePolicy::Expanding);
@@ -961,16 +963,18 @@ BEGIN_SLOT
     p = p->parentWidget();
   }
 
-  QTimer::singleShot (0, this, [this, current] () {
-    if (current >= 0 && current < count () && widget (current)) {
-      if (widget (current)->layout ()) {
-        widget (current)->layout ()->invalidate ();
-        widget (current)->layout ()->activate ();
+  QPointer<QTMTabWidget> self (this);
+  QTimer::singleShot (0, this, [self, current] () {
+    if (!self) return;
+    if (current >= 0 && current < self->count () && self->widget (current)) {
+      if (self->widget (current)->layout ()) {
+        self->widget (current)->layout ()->invalidate ();
+        self->widget (current)->layout ()->activate ();
       }
     }
-    updateGeometry ();
-    QWidget* parent = parentWidget ();
-    while (parent && parent != window()) {
+    self->updateGeometry ();
+    QWidget* parent = self->parentWidget ();
+    while (parent && parent != self->window()) {
       if (QScrollArea* sa = qobject_cast<QScrollArea*> (parent)) {
         if (sa->widget ()) {
           sa->widget ()->updateGeometry ();
@@ -1284,19 +1288,22 @@ QTMComboBox::event (QEvent* ev) {
 void QTMScrollArea::setWidgetAndConnect (QWidget* w) {
   setWidget (w);
  
-  listViews = w->findChildren<QTMListView*>();
+  listViews.clear();
+  for (QTMListView* lv : w->findChildren<QTMListView*>())
+    listViews.append(lv);
   
-  for (QTMListView* listView : listViews) {
+  for (const QPointer<QTMListView>& listView : listViews) {
+    if (!listView) continue;
     
-    connect(listView, &QObject::destroyed,
+    connect(listView.data(), &QObject::destroyed,
         this, &QTMScrollArea::onTrackedListViewDestroyed);
 
     if (!listView->isScrollable()) {
 #if QT_VERSION < 0x060000
-      QObject::connect (listView, SIGNAL (selectionHasChanged (const QItemSelection&)),
+      QObject::connect (listView.data(), SIGNAL (selectionHasChanged (const QItemSelection&)),
                         this,  SLOT (scrollToSelection (const QItemSelection&)));
 #else
-      QObject::connect (listView, &QTMListView::selectionHasChanged,
+      QObject::connect (listView.data(), &QTMListView::selectionHasChanged,
                         this, &QTMScrollArea::scrollToSelection);
 #endif
     }
@@ -1304,9 +1311,8 @@ void QTMScrollArea::setWidgetAndConnect (QWidget* w) {
 }
 
 void QTMScrollArea::onTrackedListViewDestroyed(QObject *obj) {
-  QTMListView *listView = qobject_cast<QTMListView *>(obj);
-  if (listView == nullptr) return;
-  listViews.removeAll(listView);
+  (void) obj;
+  listViews.removeAll(nullptr);
 }
 
 /*! Scrolls the area to a given index in a QTMListView. */
@@ -1337,6 +1343,7 @@ END_SLOT
 void
 QTMScrollArea::showEvent (QShowEvent* ev) {
   for (ListViewsIterator it = listViews.begin(); it != listViews.end(); ++it) {
+    if (!(*it) || !(*it)->selectionModel()) continue;
     QItemSelection sel = (*it)->selectionModel()->selection();
     (*it)->selectionChanged (sel, sel);
   }

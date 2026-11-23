@@ -54,7 +54,8 @@ class qt_ui_element_rep: public qt_widget_rep {
     // deletion of all the nested widgets within.
   blackbox                  load;
   QPointer<QAction> cachedAction;
-  QList<QAction*>* cachedActionList;
+  QList<QPointer<QAction>>* cachedActionList;
+  QList<QAction*>           unwrappedActionList;
     
 public:  
   qt_ui_element_rep (types _type, blackbox _load);

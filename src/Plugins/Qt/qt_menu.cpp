@@ -22,7 +22,7 @@ qt_menu_rep::qt_menu_rep (qt_widget _content)
  default owns its actions.
  */
 qt_menu_rep::~qt_menu_rep () {
-  delete qact;
+  if (qact) delete qact.data();
 }
 
 QMenu*

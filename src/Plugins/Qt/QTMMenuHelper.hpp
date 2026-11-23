@@ -121,7 +121,7 @@ protected slots:
 class QTMAction : public QAction {
   Q_OBJECT
   
-  QTimer* _timer;
+  QPointer<QTimer> _timer;
   QPoint    _pos;
   string     str;
   
@@ -167,7 +167,7 @@ protected:
 class QTMTileAction: public QWidgetAction {
   Q_OBJECT
 
-  QVector <QAction*> actions;
+  QVector <QPointer<QAction>> actions;
   int                   cols;
   
 public:
@@ -181,7 +181,7 @@ public:
 class QTMMinibarAction : public QWidgetAction {
   Q_OBJECT
 
-  QVector <QAction*> actions;
+  QVector <QPointer<QAction>> actions;
 
 public:
   QTMMinibarAction (array<widget>& arr, QObject* parent=NULL);
@@ -391,8 +391,8 @@ class QTMListView : public QListView {
 
   friend class QTMScrollArea;
 
-  QStringListModel*      stringModel;
-  QSortFilterProxyModel* filterModel;
+  QPointer<QStringListModel>      stringModel;
+  QPointer<QSortFilterProxyModel> filterModel;
   int style;
 public:
   QTMListView (const command& cmd, const QStringList& vals, const QStringList&,
@@ -472,9 +472,9 @@ private slots:
 class QTMScrollArea : public QScrollArea {
   Q_OBJECT
   
-  QList<QTMListView*> listViews;
+  QList<QPointer<QTMListView>> listViews;
   
-  typedef QList<QTMListView*>::iterator ListViewsIterator;
+  typedef QList<QPointer<QTMListView>>::iterator ListViewsIterator;
 
 public:
   QTMScrollArea (QWidget* p = NULL) : QScrollArea(p) { };
