@@ -1071,6 +1071,9 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
 #if QT_VERSION >= 0x060000
       if (!mainWidget || !mainLayout)
         return;
+#else
+      if (!mainwindow() || !centralwidget() || !centralwidget()->layout())
+        return;
 #endif
       
       QWidget* q = main_widget->qwid;
@@ -1081,6 +1084,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
       QLayout* l = mainLayout;
 #endif
       if (l && q) l->removeWidget(q);
+      if (q) q->deleteLater();
 
       q = concrete(w)->as_qwidget(mainwindow());   // force creation of the new QWidget
       if (l && q) l->addWidget(q);
@@ -1180,7 +1184,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
     {   
       user_icons_widget = concrete (w);
       QList<QAction*>* list = user_icons_widget->get_qactionlist();
-      if (list) {
+      if (list && userToolBar) {
 #if QT_VERSION >= 0x060000
         userToolBar->replaceButtons (list);
 #else
@@ -1325,6 +1329,7 @@ void set_standard_style_sheet (QWidget* w);
 void
 qt_tm_widget_rep::set_full_screen(bool flag) {
   full_screen = flag;
+  if (!mainwindow()) return;
   QWidget *win = mainwindow()->window();  
   if (win) {
     if (flag ) {
