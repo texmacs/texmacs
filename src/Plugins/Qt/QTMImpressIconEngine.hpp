@@ -17,6 +17,7 @@
 #if QT_VERSION >= 0x060000
 
 #include <QIconEngine>
+#include "qt_widget.hpp"
 
 class qt_simple_widget_rep;
 
@@ -85,7 +86,7 @@ public:
   virtual QIconEngine *clone () const override;
 
 private:
-  qt_simple_widget_rep *wid;
+  qt_widget wid;
   QSize iconSize;
 };
 

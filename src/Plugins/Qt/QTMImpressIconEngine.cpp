@@ -24,7 +24,7 @@ QTMImpressIconEngine::QTMImpressIconEngine (qt_simple_widget_rep* w)
   : wid (w) {
   // get a size hint from the widget that will be used to center the icon
   SI sizeHintW, sizeHintH;
-  wid->handle_get_size_hint (sizeHintW, sizeHintH);
+  w->handle_get_size_hint (sizeHintW, sizeHintH);
   iconSize = to_qsize (sizeHintW, sizeHintH);
 }
 
@@ -32,6 +32,8 @@ void
 QTMImpressIconEngine::paint (QPainter *painter, const QRect &rect,
 			     QIcon::Mode mode, QIcon::State state) {
   (void) mode; (void) state;
+  if (is_nil (wid)) return;
+  qt_simple_widget_rep* simple_wid = static_cast<qt_simple_widget_rep*> (wid.rep);
   double pixel_ratio= painter->device ()->devicePixelRatio ();
   painter->scale (1/pixel_ratio, 1/pixel_ratio);
   SI pw= painter->device ()->width ();
@@ -56,7 +58,7 @@ QTMImpressIconEngine::paint (QPainter *painter, const QRect &rect,
   ren.encode (r->x2, r->y2);
   ren.set_clipping (r->x1, r->y2, r->x2, r->y1); 
   the_gui->set_check_events (false);
-  wid->handle_repaint (&ren, r->x1, r->y2, r->x2, r->y1);
+  simple_wid->handle_repaint (&ren, r->x1, r->y2, r->x2, r->y1);
   the_gui->set_check_events (true);
   ren.end ();
 }
@@ -82,7 +84,7 @@ QTMImpressIconEngine::actualSize (const QSize &size,
 
 QIconEngine*
 QTMImpressIconEngine::clone () const {
-  return new QTMImpressIconEngine (wid);
+  return new QTMImpressIconEngine (static_cast<qt_simple_widget_rep*> (wid.rep));
 }
 
 #endif
