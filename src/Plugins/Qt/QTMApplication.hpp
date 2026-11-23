@@ -131,10 +131,10 @@ private:
   QTMIconManager mIconManager;
 #endif
   QTMKeyboard mKeyboard;
-  QTMOnscreenKeyboard *mOnscreenKeyboard;
+  QPointer<QTMOnscreenKeyboard> mOnscreenKeyboard;
   bool mUseNewToolbar;
   bool mUseTabWindow;
-  QFileSystemWatcher* mCssWatcher = nullptr;
+  QPointer<QFileSystemWatcher> mCssWatcher = nullptr;
   QString mCurrentCssPath;
   QTMLocalServer mLocalServer;
 };

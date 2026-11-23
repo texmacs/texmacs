@@ -19,6 +19,8 @@
 
 #include <QObject>
 #include <QTimer>
+#include <QPointer>
+#include <type_traits>
 
 class QTMDelayedMethodCall {
 
@@ -43,8 +45,10 @@ public:
   }
 
   inline ~QTMDelayedMethodCall () {
-    timer->stop();
-    delete timer;
+    if (timer) {
+      timer->stop();
+      delete timer.data();
+    }
   }
 
   QTMDelayedMethodCall (const QTMDelayedMethodCall&) = delete;
@@ -69,11 +73,11 @@ public:
 private:
     int delay_ms;
     bool is_first_call;
-    QTimer* timer;
+    QPointer<QTimer> timer;
 };
 
 #define QTM_DECL_DELAYED(Method) \
-    QTMDelayedMethodCall delayed##Method{ [this]() { this->Method(); } }
+    QTMDelayedMethodCall delayed##Method{ this, &std::remove_reference<decltype(*this)>::type::Method }
 
 #define QTM_CALL_DELAYED(Method) \
     delayed##Method()

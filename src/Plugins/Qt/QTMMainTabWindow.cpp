@@ -528,11 +528,14 @@ void QTMMainTabWindow::closeTab(int index) {
   // If the close is cancelled upstream, allow retry after a short delay.
   QTimer *resetTimer = new QTimer(tab);
   resetTimer->setSingleShot(true);
-  resetTimer->setProperty(
-      "tmCloseResetTab",
-      QVariant::fromValue<qulonglong>(reinterpret_cast<qulonglong>(tab)));
+  QPointer<QTMMainTab> safeTab(tab);
   connect(resetTimer, &QTimer::timeout,
-          this, &QTMMainTabWindow::onCloseResetTimeout);
+          this, [this, safeTab, resetTimer]() {
+    if (safeTab && mStackedLayout && mStackedLayout->indexOf(safeTab) != -1) {
+      safeTab->setProperty("tmCloseRequestPending", false);
+    }
+    resetTimer->deleteLater();
+  });
   resetTimer->start(1500);
 
   // Ask the owner to run its close workflow (save prompt, cancellation, etc.).
@@ -1046,15 +1049,16 @@ void QTMMainTabWindow::onKeyboardVisibilityChanged(bool visible) {
       sizes.append(h);
       resizeDocks(docks, sizes, Qt::Vertical);
 
-      QTimer::singleShot(0, this, [this, h]() {
-        if (mKeyboardDock && mKeyboardDock->isVisible()) {
-          int maxH = max(150, height() * 3 / 4);
+      QPointer<QTMMainTabWindow> self(this);
+      QTimer::singleShot(0, this, [self, h]() {
+        if (self && self->mKeyboardDock && self->mKeyboardDock->isVisible()) {
+          int maxH = max(150, self->height() * 3 / 4);
           int targetH = (maxH > 0 && h > maxH) ? maxH : h;
           QList<QDockWidget*> docks;
-          docks.append(mKeyboardDock.data());
+          docks.append(self->mKeyboardDock.data());
           QList<int> sizes;
           sizes.append(targetH);
-          resizeDocks(docks, sizes, Qt::Vertical);
+          self->resizeDocks(docks, sizes, Qt::Vertical);
         }
       });
     }

@@ -145,8 +145,9 @@ void QTMOnscreenKeyboard::setVisible(bool visible) {
 
 	if (visible) {
 		mWasShown = true;
-		QTimer::singleShot(300, this, [this]() {
-			mRestoringSize = false;
+		QPointer<QTMOnscreenKeyboard> self(this);
+		QTimer::singleShot(300, this, [self]() {
+			if (self) self->mRestoringSize = false;
 		});
 	}
 }
@@ -188,8 +189,9 @@ void QTMOnscreenKeyboard::showEvent(QShowEvent* event) {
 	QWidget::showEvent(event);
 	reportVisibility(true);
 	mWasShown = true;
-	QTimer::singleShot(300, this, [this]() {
-		mRestoringSize = false;
+	QPointer<QTMOnscreenKeyboard> self(this);
+	QTimer::singleShot(300, this, [self]() {
+		if (self) self->mRestoringSize = false;
 	});
 }
 
