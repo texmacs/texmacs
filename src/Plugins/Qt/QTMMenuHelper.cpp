@@ -401,10 +401,12 @@ QTMLazyMenu::transferActions (QList<QAction*>* from) {
   while (!list.isEmpty()) {
     QAction* a = list.takeFirst();
     removeAction (a);
+    if (a && a->parent () == this)
+      a->deleteLater ();
   }
   while (!from->isEmpty()) {
     QAction* a = from->takeFirst();
-    addAction (a);
+    if (a) addAction (a);
   }
 }
 
@@ -418,7 +420,9 @@ BEGIN_SLOT
   qt_widget qtw = concrete (w);
   if (qtw.rep == NULL) return;
   QList<QAction*>* list = qtw->get_qactionlist();
+  if (list == NULL) return;
   transferActions (list);
+  active_widget = qtw;
 END_SLOT
 }
 
