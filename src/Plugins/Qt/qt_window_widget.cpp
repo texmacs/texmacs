@@ -429,7 +429,9 @@ qt_popup_widget_rep::tooltip_window_widget (string s) {
   qwid->setWindowTitle (to_qstring (s));
 #endif
   qwid->setWindowModality (Qt::NonModal);
-  qwid->setWindowFlags (Qt::ToolTip);
+  qwid->setAttribute (Qt::WA_ShowWithoutActivating);
+  qwid->setAttribute (Qt::WA_TransparentForMouseEvents);
+  qwid->setWindowFlags (Qt::ToolTip | Qt::WindowDoesNotAcceptFocus | Qt::WindowTransparentForInput);
   QSize sh = qwid->sizeHint ();
   if (sh.isValid () && sh.width () > 0 && sh.height () > 0) {
     qwid->setFixedSize (sh);

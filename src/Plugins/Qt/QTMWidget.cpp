@@ -61,8 +61,12 @@ QTMWidget::QTMWidget (QWidget* _parent, qt_widget _tmwid)
   ignoreNextTouchEvents (false)
 {
   setObjectName (to_qstring ("QTMWidget" * as_string (QTMWcounter++)));// What is this for? (maybe only debugging?)
-  setFocusPolicy (Qt::StrongFocus);
-  setAttribute (Qt::WA_InputMethodEnabled);
+  if (is_nil (tmwid) || tm_widget()->is_editor_widget ()) {
+    setFocusPolicy (Qt::StrongFocus);
+    setAttribute (Qt::WA_InputMethodEnabled);
+  } else {
+    setFocusPolicy (Qt::NoFocus);
+  }
 #ifdef OS_ANDROID
   setAttribute(Qt::WA_AcceptTouchEvents);
   setAttribute(Qt::WA_TouchPadAcceptSingleTouchEvents);
@@ -139,8 +143,12 @@ QTMWidget::resizeEvent (QResizeEvent* event) {
 
 void
 QTMWidget::resizeEventBis () {
+  if (is_nil (tmwid) || !surface()) return;
   coord2 s = from_qsize (surface()->size());
   the_gui -> process_resize (tm_widget(), s.x1, s.x2);
+  if (!tm_widget()->is_editor_widget ()) {
+    tm_widget()->invalidate_all ();
+  }
 }
 
 /*!
@@ -848,7 +856,7 @@ void QTMWidget::setFocusToLast() {
 void
 QTMWidget::focusInEvent (QFocusEvent * event) {
 #if QT_VERSION >= 0x050000
-  if (!is_nil (tmwid)) {
+  if (!is_nil (tmwid) && tm_widget()->is_editor_widget ()) {
     last_focused_widget = this;
   }
 #endif
@@ -883,6 +891,13 @@ QTMWidget::sizeHint () const {
   SI w = 0, h = 0;
   if (!is_nil (tmwid)) tm_widget()->handle_get_size_hint (w, h);
   return to_qsize (w, h);
+}
+
+QSize
+QTMWidget::minimumSizeHint () const {
+  if (!is_nil (tmwid) && !tm_widget()->is_editor_widget ())
+    return sizeHint ();
+  return QTMScrollView::minimumSizeHint ();
 }
 
 void 

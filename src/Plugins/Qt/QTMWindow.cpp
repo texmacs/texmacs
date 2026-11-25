@@ -94,6 +94,13 @@ QTMPopupWidget::QTMPopupWidget(QWidget* contents) : QWidget(nullptr) {
 }
 
 QSize QTMPopupWidget::sizeHint () const {
+  if (layout () && layout ()->count () > 0) {
+    if (QWidget* w = layout ()->itemAt (0)->widget ()) {
+      QSize sh = w->sizeHint ();
+      if (sh.isValid () && sh.width () > 0 && sh.height () > 0) return sh;
+      return w->size ();
+    }
+  }
   if (layout ()) return layout ()->sizeHint ();
   return QWidget::sizeHint ();
 }
@@ -217,6 +224,13 @@ QTMPopupWidget::QTMPopupWidget(QWidget* contents) : QWidget(nullptr) {
 }
 
 QSize QTMPopupWidget::sizeHint () const {
+  if (layout () && layout ()->count () > 0) {
+    if (QWidget* w = layout ()->itemAt (0)->widget ()) {
+      QSize sh = w->sizeHint ();
+      if (sh.isValid () && sh.width () > 0 && sh.height () > 0) return sh;
+      return w->size ();
+    }
+  }
   if (layout ()) return layout ()->sizeHint ();
   return QWidget::sizeHint ();
 }

@@ -45,6 +45,7 @@ public:
   virtual bool isEmbedded () const;
   
   virtual QSize	sizeHint () const override;
+  virtual QSize	minimumSizeHint () const override;
   virtual void scrollContentsBy (int dx, int dy) override;
 
   void setCursorPos (QPoint pos) { cursor_pos = pos; }

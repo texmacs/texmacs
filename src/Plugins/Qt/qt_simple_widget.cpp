@@ -62,11 +62,15 @@ qt_simple_widget_rep::as_qwidget (QWidget* parent_widget) {
   QSize sz = to_qsize (width, height);
   if (scrollarea()) scrollarea()->editor_flag= is_editor_widget ();
   if (!is_editor_widget ()) {
-    if (canvas()) canvas()->resize (sz);
     if (scrollarea()) {
+      scrollarea()->setHorizontalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
+      scrollarea()->setVerticalScrollBarPolicy (Qt::ScrollBarAlwaysOff);
+      if (scrollarea()->viewport()) scrollarea()->viewport()->resize (sz);
+      if (scrollarea()->surface())  scrollarea()->surface()->resize (sz);
       scrollarea()->resize (sz);
       scrollarea()->setExtents (QRect (QPoint(0,0), sz));
     }
+    if (canvas()) canvas()->resize (sz);
   }
   all_widgets->insert((pointer) this);
   if (canvas()) backing_pos = canvas()->origin ();
