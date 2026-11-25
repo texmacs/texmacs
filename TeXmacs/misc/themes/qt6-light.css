@@ -999,6 +999,19 @@ QMainWindow::separator:pressed {
     border: 1px solid rgba(255, 255, 255, 0.7);
 }
 
+#onscreenKeyboardButton[tmActive="true"] {
+    background: #4A90D9;
+    color: #FFFFFF;
+    border: 1px solid #2A6AB0;
+    font-weight: bold;
+}
+
+#onscreenKeyboardButton[tmActive="true"]:hover {
+    background: #3A80C9;
+    color: #FFFFFF;
+    border: 1px solid #205A9A;
+}
+
 #keyboardToggleButton {
     background: rgba(255, 255, 255, 0.2);
     border: none;

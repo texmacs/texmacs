@@ -38,6 +38,8 @@ class QTMOnscreenKeyboard : public QWidget {
     double widthUnits;
     QString label;
     QString cmd;
+    bool isModifier = false;
+    bool isActive = false;
   };
 
   using RowData = array<KeyData>;
@@ -155,6 +157,11 @@ private:
    * @brief Update existing key widgets from parsed rows.
    */
   void updateInPlace();
+
+  /**
+   * @brief Apply active modifier highlighting to a key button.
+   */
+  void applyButtonActiveState(QPushButton* button, bool active);
 
   /**
    * @brief Rebuild the keyboard widget tree from parsed rows.

@@ -10,6 +10,7 @@
 
 #include "QTMOnscreenKeyboard.hpp"
 
+#include "gui.hpp"
 #include "scheme.hpp"
 #include "boot.hpp"
 #include "qt_utilities.hpp"
@@ -21,6 +22,7 @@
 #include <QResizeEvent>
 #include <QMoveEvent>
 #include <QCloseEvent>
+#include <QStyle>
 #include <QTimer>
 
 #include <cmath>
@@ -258,6 +260,7 @@ void QTMOnscreenKeyboard::updateButtonGeometry() {
         //key->setMinimumHeight(minHeight);
         QFont f = key->font();
         f.setPointSize(max(8, fontSize));
+        f.setBold(key->property("tmActive").toString() == "true");
         key->setFont(f);
     }
 }
@@ -281,7 +284,7 @@ void QTMOnscreenKeyboard::onKeyboardButtonClicked(QPushButton* key) {
 }
 
 bool QTMOnscreenKeyboard::hasActiveEmuModifier() const {
-	const char* mods[] = { "fn", "shift", "ctrl", "alt", "cmd", "lock" };
+	const char* mods[] = { "fn", "shift", "ctrl", "alt", "cmd" };
 	for (const char* mod : mods) {
 		try {
 			object active = call("emu-active-modifier?", object(mod));
@@ -312,6 +315,16 @@ QTMOnscreenKeyboard::parseKeyData(array<object> key) const {
 	string cmd = is_string(key[2])? as_string(key[2]): string("");
 	data.label = to_qstring(label);
 	data.cmd = to_qstring(cmd);
+	data.isModifier = (N(key) >= 4 && is_string(key[3]) && as_string(key[3]) == "modifier");
+	data.isActive = false;
+	if (N(key) >= 5 && is_bool(key[4])) {
+		data.isActive = as_bool(key[4]);
+	} else if (data.isModifier && N(label) > 0) {
+		try {
+			object active = call("emu-active-modifier?", object(label));
+			data.isActive = is_bool(active) && as_bool(active);
+		} catch (string&) {}
+	}
 	return data;
 }
 
@@ -374,6 +387,37 @@ bool QTMOnscreenKeyboard::checkCanUpdateInPlace() {
 	return true;
 }
 
+void QTMOnscreenKeyboard::applyButtonActiveState(QPushButton* button, bool active) {
+	if (button == nullptr) return;
+	QString newVal = active ? QString("true") : QString("false");
+	bool changed = (button->property("tmActive").toString() != newVal);
+	if (changed) {
+		button->setProperty("tmActive", newVal);
+	}
+	if (tm_style_sheet == "") {
+		QString fallback = active
+			? QString("QPushButton { background-color: palette(highlight); color: palette(highlighted-text); font-weight: bold; }")
+			: QString("");
+		if (button->styleSheet() != fallback) {
+			button->setStyleSheet(fallback);
+		}
+	} else if (!button->styleSheet().isEmpty()) {
+		button->setStyleSheet("");
+	}
+	QFont f = button->font();
+	if (f.bold() != active) {
+		f.setBold(active);
+		button->setFont(f);
+	}
+	if (changed) {
+		if (button->style()) {
+			button->style()->unpolish(button);
+			button->style()->polish(button);
+		}
+		button->update();
+	}
+}
+
 void QTMOnscreenKeyboard::updateInPlace() {
 	for (int i=0; i<N(mRows); ++i) {
 		mLayout->setStretch(i, 1);
@@ -389,6 +433,7 @@ void QTMOnscreenKeyboard::updateInPlace() {
 			if (button->property("tm-cmd").toString() != keyData.cmd) {
 				button->setProperty("tm-cmd", keyData.cmd);
 			}
+			applyButtonActiveState(button, keyData.isActive);
 			int stretch = max(1, (int) round(keyData.widthUnits * 100.0));
 			if (rowLayout->stretch(k) != stretch) {
 				rowLayout->setStretch(k, stretch);
@@ -416,9 +461,11 @@ void QTMOnscreenKeyboard::rebuildKeyboard() {
 
 			QPushButton* button = new QPushButton(keyData.label, rowWidget);
 			button->setObjectName("onscreenKeyboardButton");
+			button->setFocusPolicy(Qt::NoFocus);
 			mButtons << button;
 			button->setProperty("tm-cmd", keyData.cmd);
 			button->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+			applyButtonActiveState(button, keyData.isActive);
 			connect(button, &QPushButton::pressed, this,
 				&QTMOnscreenKeyboard::onKeyboardButtonClickedFromSender);
 

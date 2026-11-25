@@ -1100,6 +1100,19 @@ QMainWindow::separator:pressed {
     border: 1px solid rgba(0, 0, 0, 0.7);
 }
 
+#onscreenKeyboardButton[tmActive="true"] {
+    background: #2C6080;
+    color: #FFFFFF;
+    border: 1px solid #60A0D0;
+    font-weight: bold;
+}
+
+#onscreenKeyboardButton[tmActive="true"]:hover {
+    background: #367298;
+    color: #FFFFFF;
+    border: 1px solid #80C0F0;
+}
+
 #keyboardToggleButton {
     background: rgba(0, 0, 0, 0.2);
     border: none;

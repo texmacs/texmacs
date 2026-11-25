@@ -110,12 +110,13 @@
 
 ;; Convertit une touche du layout TeXmacs (std-key/extended-key/mod-key)
 ;; vers un format plus simple consomme par le clavier Qt:
-;;   (width label cmd kind)
+;;   (width label cmd kind active)
 ;; ou:
-;;   width : nombre de colonnes relatives
-;;   label : texte affiche sur le bouton
-;;   cmd   : code Scheme a executer au clic
-;;   kind  : metadata (std/extended/modifier), utile pour debug/evolutions
+;;   width  : nombre de colonnes relatives
+;;   label  : texte affiche sur le bouton
+;;   cmd    : code Scheme a executer au clic
+;;   kind   : metadata (std/extended/modifier), utile pour debug/evolutions
+;;   active : booleen indiquant si le modificateur est actif
 ;;
 ;; Important:
 ;; - label et cmd sont gardes "bruts" (pas object->string), sinon on ajoute
@@ -124,22 +125,23 @@
   (cond ((tm-func? t 'std-key 2)
          (let* ((label (tm->stree (tree-ref t 0)))
                 (cmd   (tm->stree (tree-ref t 1))))
-      (list 1.0 label cmd "std")))
+      (list 1.0 label cmd "std" #f)))
         ((tm-func? t 'std-key 3)
          (let* ((label (tm->stree (tree-ref t 0)))
                 (cmd   (tm->stree (tree-ref t 1)))
                 (w     (custom-keyboard-number (tm->stree (tree-ref t 2)) 1.0)))
-      (list w label cmd "std")))
+      (list w label cmd "std" #f)))
         ((tm-func? t 'extended-key 3)
          (let* ((label (tm->stree (tree-ref t 0)))
                 (cmd   (tm->stree (tree-ref t 1)))
                 (w     (custom-keyboard-number (tm->stree (tree-ref t 2)) 1.0)))
-      (list w label cmd "extended")))
+      (list w label cmd "extended" #f)))
         ((tm-func? t 'mod-key 2)
          (let* ((label (tm->stree (tree-ref t 0)))
                 (w     (custom-keyboard-number (tm->stree (tree-ref t 1)) 1.0))
-                (cmd   (custom-keyboard->command label)))
-      (list w label cmd "modifier")))
+                (cmd   (custom-keyboard->command label))
+                (active (and (string? label) (emu-active-modifier? label) #t)))
+      (list w label cmd "modifier" active)))
         (else #f)))
 
 ;; Filtre les entrees invalides (#f) produites pendant le mapping.

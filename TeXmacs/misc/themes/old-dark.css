@@ -524,3 +524,16 @@ MingwQComboBox::drop_down {
 MingwQComboBox::down_arrow {
     border-image: url("$TEXMACS_PATH/misc/pixmaps/modern/16x16/focus/tm_similar_next_x4.png") 7 7 7 7 stretch stretch;
 }
+
+#onscreenKeyboardButton[tmActive="true"] {
+    background: #2C6080;
+    color: #FFFFFF;
+    border: 1px solid #60A0D0;
+    font-weight: bold;
+}
+
+#onscreenKeyboardButton[tmActive="true"]:hover {
+    background: #367298;
+    color: #FFFFFF;
+    border: 1px solid #80C0F0;
+}

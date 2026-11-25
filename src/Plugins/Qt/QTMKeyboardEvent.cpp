@@ -43,7 +43,7 @@ void QTMKeyboardEvent::printDebugInformations() const {
 #else
   debug_qt << "count: " << mEvent.text().count() << LF;
 #endif
-  debug_qt << "unic : " << mEvent.text().data()[0].unicode() << LF;
+  debug_qt << "unic : " << (mEvent.text().isEmpty() ? 0 : mEvent.text().data()[0].unicode()) << LF;
 
 #ifdef OS_MINGW
   debug_qt << "nativeScanCode: " << mEvent.nativeScanCode() << LF; 

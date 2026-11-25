@@ -98,7 +98,6 @@
 (define (emu-update-modifiers)
   (emu-update-modifier "fn")
   (emu-update-modifier "shift")
-  (emu-update-modifier "fn")
   (emu-update-modifier "ctrl")
   (emu-update-modifier "alt")
   (emu-update-modifier "cmd")
@@ -124,8 +123,10 @@
       (if (emu-active-modifier? "cmd")
           (set! s (string-append "M-" s)))
       (key-press s)
-      (when (not (emu-active-modifier? "lock"))
+      (with lock? (emu-active-modifier? "lock")
         (set! emu-modifier-table (make-ahash-table))
+        (when lock?
+          (ahash-set! emu-modifier-table "lock" #t))
         (emu-update-modifiers)))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

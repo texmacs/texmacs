@@ -949,3 +949,16 @@ QPushButton#mainTabWindowMaxButton[tmWindowControlStyle="mac"]:hover {
 #toolbarLeftButton[tmenabled="false"], #toolbarRightButton[tmenabled="false"] {
     color: transparent;
 }
+
+#onscreenKeyboardButton[tmActive="true"] {
+    background: #4A90D9;
+    color: #FFFFFF;
+    border: 1px solid #2A6AB0;
+    font-weight: bold;
+}
+
+#onscreenKeyboardButton[tmActive="true"]:hover {
+    background: #3A80C9;
+    color: #FFFFFF;
+    border: 1px solid #205A9A;
+}
