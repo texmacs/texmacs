@@ -31,18 +31,10 @@
 ;; Check LanguageTool support
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(define lantool-support :uninit)
-
 (tm-define (supports-lantool?)
-  (and (get-boolean-preference "grammar checking")  
-       (if (!= lantool-support :uninit) lantool-support
-           (with val
-	       (http-post-query (lantool-server)
-		'("Content-Type" "application/x-www-form-urlencoded")
-		'("language" "en-US"
-		  "text" "Some text with a error."))
-             (set! lantool-support (string-occurs? "{\"software\":{" val))
-             lantool-support))))
+  (and (get-boolean-preference "grammar checking")
+       (string? (get-preference "languagetool server"))
+       (!= (get-preference "languagetool server") "")))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Checking a chunk of text with LanguageTool

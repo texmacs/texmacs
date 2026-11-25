@@ -71,6 +71,7 @@ qt_http_post (string& ret, string url, array<string> headers_attr,
   if (reply->error () != QNetworkReply::NoError) {
     io_error << "qt_http_post, in reply from " << url << ": "
 	     << from_qstring_utf8 (reply->errorString ()) << LF;
+    delete reply;
     return -3;
   }
   ret= from_qstring_utf8 (QString (reply->readAll ()));
@@ -235,10 +236,12 @@ QTMHTTPHandler_callback::onFinished () {
   if (reply == NULL)
     call (callback, string (""));
   else {
-    if (reply->error() != QNetworkReply::NoError)
+    if (reply->error() != QNetworkReply::NoError) {
       io_error << "http_post from "
 	       << from_qstring_utf8 (reply->url ().host ()) << ": "
 	       << from_qstring_utf8 (reply->errorString ()) << LF;
+      call (callback, string (""));
+    }
     else {
       string buffer= from_qstring_utf8 (QString (reply->readAll ()));
       call (callback, buffer);
