@@ -41,6 +41,7 @@ class QTMSurface : public QWidget {
     QTMScrollView* sv;
 public:
     QTMSurface(QWidget* p, QTMScrollView* _sv) : QWidget (p), sv (_sv) { }
+    void detach() { sv = nullptr; }
     
 protected:
 #if QT_VERSION >= 0x060000
@@ -51,14 +52,17 @@ protected:
             paintEvent(pe);
             return true;
         }
+        if (!sv) return QWidget::event(event);
         return sv->surfaceEvent(event) ? true : QWidget::event(event);
     }  
 
     void paintEvent (QPaintEvent* event) override {
+      if (!sv) return;
       sv->surfacePaintEvent (event, this);
     }
 #else
     virtual bool event(QEvent *event) {
+        if (!sv) return QWidget::event(event);
         return sv->surfaceEvent(event) ? true : QWidget::event(event);
     }  
 #endif
@@ -108,6 +112,18 @@ QTMScrollView::QTMScrollView (QWidget *_parent):
   properties.setScrollMetric(QScrollerProperties::HorizontalOvershootPolicy, QScrollerProperties::OvershootAlwaysOff);
   QScroller::scroller(this)->setScrollerProperties(properties);
 #endif
+}
+
+QTMScrollView::~QTMScrollView () {
+  detachSurface ();
+}
+
+void
+QTMScrollView::detachSurface () {
+  if (p_surface) {
+    if (QTMSurface* s = static_cast<QTMSurface*> (p_surface.data ()))
+      s->detach ();
+  }
 }
 
 void 

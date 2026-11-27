@@ -116,17 +116,17 @@ qt_renderer_rep::begin (void* handle) {
 #endif
   QPaintDevice *device = static_cast<QPaintDevice*>(handle);
   if (!painter->begin (device) && DEBUG_QT) {
-    if (headless_mode)
-      debug_qt << "qt_renderer_rep::begin(): uninitialized QImage of size "
-	       << ((QImage*) handle)->width() << " x "
-	       << ((QImage*) handle)->height() << LF;
-    else
-      debug_qt << "qt_renderer_rep::begin(): uninitialized QPixmap of size "
-	       << ((QPixmap*) handle)->width() << " x "
-	       << ((QPixmap*) handle)->height() << LF;
+    debug_qt << "qt_renderer_rep::begin(): failed on paint device of size "
+             << (device ? device->width() : 0) << " x "
+             << (device ? device->height() : 0) << LF;
   }
-  w = painter->device()->width();
-  h = painter->device()->height();
+  if (painter->device()) {
+    w = painter->device()->width();
+    h = painter->device()->height();
+  } else {
+    w = 0;
+    h = 0;
+  }
 }
 
 void
@@ -336,7 +336,7 @@ void
 qt_renderer_rep::lines (array<SI> x, array<SI> y) {
   int i, n= N(x);
   if ((N(y) != n) || (n<2)) return;
-  STACK_NEW_ARRAY (pnt, QPointF, n);
+  QPolygonF pnt (n);
   for (i=0; i<n; i++)
 #ifdef __arm__
 // for compiling in Raspbian
@@ -357,8 +357,7 @@ qt_renderer_rep::lines (array<SI> x, array<SI> y) {
   painter->setPen (p);
 
   painter->setRenderHints (QPainter::Antialiasing);
-  painter->drawPolyline (pnt, n);
-  STACK_DELETE_ARRAY (pnt);
+  painter->drawPolyline (pnt.constData (), n);
 }
 
 void
@@ -731,7 +730,9 @@ qt_renderer_rep::new_shadow (renderer& ren) {
   get_extents (mw, mh);
   if (ren != NULL) {
     ren->get_extents (sw, sh);
-    if (sw != mw || sh != mh || ren->pixel_ratio != pixel_ratio) {
+    qt_proxy_renderer_rep* proxy = dynamic_cast<qt_proxy_renderer_rep*>(ren);
+    if (!proxy || proxy->base != this || proxy->painter != painter ||
+        sw != mw || sh != mh || ren->pixel_ratio != pixel_ratio) {
       delete_shadow (ren);
       ren= NULL;
     }
@@ -788,8 +789,8 @@ qt_renderer_rep::put_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
   // FIXME: we should use the routine fetch later
   ASSERT (ren != NULL, "invalid renderer");
   if (ren->is_printer ()) return;
-  if (painter == static_cast<qt_renderer_rep*>(ren)->painter) return;
-  qt_shadow_renderer_rep* shadow= static_cast<qt_shadow_renderer_rep*>(ren);
+  qt_shadow_renderer_rep* shadow= dynamic_cast<qt_shadow_renderer_rep*>(ren);
+  if (!shadow || painter == shadow->painter) return;
   outer_round (x1, y1, x2, y2);
   x1= max (x1, cx1- ox);
   y1= max (y1, cy1- oy);
@@ -802,10 +803,13 @@ qt_renderer_rep::put_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
     //    cout << "qt_shadow_renderer_rep::put_shadow " 
     //         << rectangle(x1,y2,x2,y1) << LF;
     //    painter->setCompositionMode(QPainter::CompositionMode_Source);
-    if (headless_mode)
-      painter->drawImage (rect, *(shadow->px.QImage_ptr ()), rect);
-    else
-      painter->drawPixmap (rect, *(shadow->px.QPixmap_ptr ()), rect);
+    if (headless_mode) {
+      if (QImage* im = shadow->px.QImage_ptr ())
+        painter->drawImage (rect, *im, rect);
+    } else {
+      if (QPixmap* pm = shadow->px.QPixmap_ptr ())
+        painter->drawPixmap (rect, *pm, rect);
+    }
     //  XCopyArea (dpy, shadow->win, win, gc, x1, y2, x2-x1, y1-y2, x1, y2);
   }
 }
@@ -834,21 +838,26 @@ qt_proxy_renderer_rep::new_shadow (renderer& ren) {
   get_extents (mw, mh);
   if (ren != NULL) {
     ren->get_extents (sw, sh);
-    if (sw != mw || sh != mh || ren->pixel_ratio != pixel_ratio) {
+    qt_shadow_renderer_rep* shadow = dynamic_cast<qt_shadow_renderer_rep*>(ren);
+    if (!shadow || sw != mw || sh != mh || ren->pixel_ratio != pixel_ratio) {
       delete_shadow (ren);
       ren= NULL;
     }
     else 
-      static_cast<qt_shadow_renderer_rep*>(ren)->end();
+      shadow->end();
     // cout << "Old: " << sw << ", " << sh << "\n";
+  }
+  if (mw <= 0 || mh <= 0) {
+    if (ren != NULL) delete_shadow (ren);
+    return;
   }
   if (ren == NULL) {
     QTMPixmapOrImage px (mw, mh);
     ren= (renderer) tm_new<qt_shadow_renderer_rep> (px, pixel_ratio);
   }
   // cout << "Create " << mw << ", " << mh << "\n";
-  static_cast<qt_shadow_renderer_rep*>(ren)->begin(
-    static_cast<qt_shadow_renderer_rep*>(ren)->px.rep);
+  if (qt_shadow_renderer_rep* shadow = dynamic_cast<qt_shadow_renderer_rep*>(ren))
+    shadow->begin(shadow->px.rep);
 }
 
 void 
@@ -877,14 +886,12 @@ qt_proxy_renderer_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
     shadow->painter->setClipRect(rect);
 
     //    shadow->painter->setCompositionMode(QPainter::CompositionMode_Source);
-    if (headless_mode) {
-      QImage *_image = static_cast<QImage*>(painter->device());
-      if (_image)
-	shadow->painter->drawImage (rect, *_image, rect);
-    } else {
-      QPixmap *_pixmap = static_cast<QPixmap*>(painter->device()); 
-      if (_pixmap)
-	shadow->painter->drawPixmap (rect, *_pixmap, rect);
+    QPaintDevice *dev = painter ? painter->device() : nullptr;
+    if (dev) {
+      if (dev->devType() == QInternal::Image)
+        shadow->painter->drawImage (rect, *static_cast<QImage*>(dev), rect);
+      else if (dev->devType() == QInternal::Pixmap)
+        shadow->painter->drawPixmap (rect, *static_cast<QPixmap*>(dev), rect);
     }
     //    cout << "qt_shadow_renderer_rep::get_shadow " 
     //         << rectangle(x1,y2,x2,y1) << LF;
@@ -915,7 +922,8 @@ qt_shadow_renderer_rep::get_shadow (renderer ren, SI x1, SI y1, SI x2, SI y2) {
   // FIXME: we should use the routine fetch later
   ASSERT (ren != NULL, "invalid renderer");
   if (ren->is_printer ()) return;
-  qt_shadow_renderer_rep* shadow= static_cast<qt_shadow_renderer_rep*>(ren);
+  qt_shadow_renderer_rep* shadow= dynamic_cast<qt_shadow_renderer_rep*>(ren);
+  if (!shadow) return;
   shadow->master= this;
   outer_round (x1, y1, x2, y2);
   x1= max (x1, cx1- ox);

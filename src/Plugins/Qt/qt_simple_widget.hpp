@@ -94,7 +94,7 @@ public:
 
   void reset_all() {
     backing_pos = QPoint(); // reset the origin
-    *backingPixmap = QPixmap(); // reset the backing store
+    if (backingPixmap != NULL) *backingPixmap = QPixmap(); // reset the backing store
     invalidate_all(); // invalidate the whole canvas
   }
 

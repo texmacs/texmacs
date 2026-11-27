@@ -79,8 +79,7 @@ QImage* get_image (url u, int w, int h, tree eff, SI pixel);
 
 class qt_shadow_renderer_rep: public qt_renderer_rep {
 public:
-  QTMPixmapOrImage px;   
-  qt_renderer_rep *master;
+  QTMPixmapOrImage px;
   
 public:
   qt_shadow_renderer_rep (QTMPixmapOrImage _px, double pixel_ratio);

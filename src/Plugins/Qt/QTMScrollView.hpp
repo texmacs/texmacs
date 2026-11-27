@@ -43,6 +43,7 @@ class QTMScrollView : public QAbstractScrollArea {
 public:
   
   QTMScrollView (QWidget *_parent = NULL);
+  virtual ~QTMScrollView ();
 
   QPoint  origin () { return p_origin; }
   void setOrigin (QPoint newOrigin);
@@ -60,6 +61,7 @@ public:
   
 protected:
   
+  void detachSurface ();
   void updateScrollBars();
   void scrollContentsBy (int dx, int dy);
   void onResizeEvent ();
@@ -70,7 +72,7 @@ protected:
   virtual bool event (QEvent *e);
 
 #if QT_VERSION >= 0x060000
-  virtual void surfacePaintEvent (QPaintEvent *e, QWidget *surface) = 0;
+  virtual void surfacePaintEvent (QPaintEvent *e, QWidget *surface) { (void) e; (void) surface; }
 #endif
 
   friend class QTMSurface;

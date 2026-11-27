@@ -100,11 +100,12 @@ QTMWidget::~QTMWidget () {
   if (DEBUG_QT)
     debug_qt << "Destroying " << from_qstring(objectName()) << " of widget "
              << (tm_widget() ? tm_widget()->type_as_string() : "NULL") << LF;
+  detachSurface ();
 }
 
 bool
 QTMWidget::isEmbedded () const {
-  return tm_widget() -> is_embedded_widget ();
+  return !is_nil (tmwid) && tm_widget() -> is_embedded_widget ();
 }
 
 qt_simple_widget_rep*
@@ -163,6 +164,7 @@ QTMWidget::resizeEventBis () {
 void
 QTMWidget::surfacePaintEvent (QPaintEvent *event, QWidget *surfaceWidget) {
   (void) surfaceWidget;
+  if (is_nil (tmwid) || !surface() || !tm_widget()->backingPixmap) return;
   if (checkDprChange()) return;
   QPainter p (surface());
   qreal pixel_ratio= lastPixelRatio;
@@ -181,6 +183,7 @@ QTMWidget::surfacePaintEvent (QPaintEvent *event, QWidget *surfaceWidget) {
 
 bool
 QTMWidget::checkDprChange() {
+  if (!surface()) return false;
   double currentPixelRatio= surface()->devicePixelRatio();
   if (lastPixelRatio == 0.0) {
     lastPixelRatio = currentPixelRatio;;
@@ -219,6 +222,8 @@ QTMWidget::devicePixelRatioChanged () {
 #if REDRAW_EVERYTHING
 void
 QTMWidget::paintEvent (QPaintEvent* event) {
+  (void) event;
+  if (is_nil (tmwid) || !surface() || !tm_widget()->backingPixmap) return;
   QPainter p (surface());
   p.drawPixmap (QRect (0, 0, surface()->width(), surface()->height()),
                 *(tm_widget()->backingPixmap),
@@ -228,6 +233,7 @@ QTMWidget::paintEvent (QPaintEvent* event) {
 #else
 void
 QTMWidget::paintEvent (QPaintEvent* event) {
+  if (is_nil (tmwid) || !surface() || !tm_widget()->backingPixmap) return;
   QPainter p (surface());
   QVector<QRect> rects = event->region().rects();
   for (int i = 0; i < rects.count(); ++i) {
@@ -420,6 +426,7 @@ QTMWidget::inputMethodEvent (QInputMethodEvent* event) {
 
 QVariant 
 QTMWidget::inputMethodQuery (Qt::InputMethodQuery query) const {
+  if (is_nil (tmwid) || !surface()) return QWidget::inputMethodQuery (query);
   switch (query) {
 #if QT_VERSION < 0x060000
     case Qt::ImMicroFocus : {
@@ -442,7 +449,7 @@ QTMWidget::inputMethodQuery (Qt::InputMethodQuery query) const {
 
 void
 QTMWidget::mousePressEvent (QMouseEvent* event) {
-  if (is_nil (tmwid)) return;
+  if (is_nil (tmwid) || !surface()) return;
   QPoint point = event->pos() + origin();
   coord2 pt = from_qpoint(point);
   unsigned int mstate= mouse_state (event, false);
@@ -454,7 +461,7 @@ QTMWidget::mousePressEvent (QMouseEvent* event) {
 
 void
 QTMWidget::mouseReleaseEvent (QMouseEvent* event) {
-  if (is_nil (tmwid)) return;
+  if (is_nil (tmwid) || !surface()) return;
   QPoint point = event->pos() + origin();
   coord2 pt = from_qpoint(point);
   unsigned int mstate = mouse_state (event, true);
@@ -466,7 +473,7 @@ QTMWidget::mouseReleaseEvent (QMouseEvent* event) {
 
 void
 QTMWidget::mouseMoveEvent (QMouseEvent* event) {
-  if (is_nil (tmwid)) return;
+  if (is_nil (tmwid) || !surface()) return;
   QPoint point = event->pos() + origin();
   coord2 pt = from_qpoint(point);
   unsigned int mstate = mouse_state (event, false);
@@ -501,7 +508,7 @@ QTMWidget::tabletEvent (QTabletEvent* event) {
   // for testing purposes
   // cout << "tablet name= " << from_qstring(event->pointingDevice ()->name ()) << "\n";
 #endif
-  if (is_nil (tmwid)) return;
+  if (is_nil (tmwid) || !surface()) return;
   unsigned int mstate = tablet_state (event, true);
   string s= "move";
   if (event->button() != 0) {
@@ -559,7 +566,7 @@ QTMWidget::tabletEvent (QTabletEvent* event) {
 
 void
 QTMWidget::gestureEvent (QGestureEvent* event) {
-  if (is_nil (tmwid)) return;
+  if (is_nil (tmwid) || !surface()) return;
 
 #ifdef OS_ANDROID
   static QTime lastPinchTime = QTime::currentTime();
@@ -841,7 +848,7 @@ void QTMWidget::setFocusToLast() {
 
   last_focused_widget->setFocus();
   
-  if (is_nil (last_focused_widget->tmwid)) return;
+  if (!last_focused_widget || is_nil (last_focused_widget->tmwid)) return;
 
   if (DEBUG_QT)
     debug_qt << "FOCUSIN: " 
@@ -876,7 +883,7 @@ QTMWidget::focusInEvent (QFocusEvent * event) {
 
 void
 QTMWidget::focusOutEvent (QFocusEvent * event) {
-  if (is_nil (tmwid)) return;
+  if (is_nil (tmwid) || !surface()) return;
   
   if (DEBUG_QT)
     debug_qt << "FOCUSOUT: " << tm_widget()->type_as_string() << LF;
@@ -903,7 +910,7 @@ QTMWidget::minimumSizeHint () const {
 void 
 QTMWidget::dragEnterEvent (QDragEnterEvent *event)
 {
-  if (is_nil (tmwid)) return;
+  if (is_nil (tmwid) || !surface()) return;
   const QMimeData *md = event->mimeData();
 
   if (md->hasText() ||
@@ -923,7 +930,7 @@ hashmap<int, tree> payloads;
  
 void
 QTMWidget::dropEvent (QDropEvent *event) {
-  if (is_nil (tmwid)) return;
+  if (is_nil (tmwid) || !surface()) return;
 
 #if QT_VERSION >= 0x060000
   QPoint point = event->position ().toPoint () + origin ();
@@ -1065,7 +1072,7 @@ wheel_state (QWheelEvent* event) {
 
 void
 QTMWidget::wheelEvent(QWheelEvent *event) {
-  if (is_nil (tmwid)) return; 
+  if (is_nil (tmwid) || !surface()) return; 
   if (as_bool (call ("wheel-capture?"))) {
 #if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
     QPointF pos  = event->position();

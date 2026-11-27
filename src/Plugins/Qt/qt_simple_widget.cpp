@@ -40,7 +40,7 @@ extern const QX11Info *qt_x11Info (const QPaintDevice *pd);
 
 
 qt_simple_widget_rep::qt_simple_widget_rep ()
-  : qt_widget_rep (simple_widget),  sequencer (0) {
+  : qt_widget_rep (simple_widget),  sequencer (0), backing_valid (false) {
   backingPixmap= headless_mode ? NULL : new QPixmap ();
 }
 
@@ -382,7 +382,7 @@ qt_simple_widget_rep::query (slot s, int type_id) {
         return close_box<coord4>(coord4(0,0,0,0));
       }
 #else
-      if (canvas()) {
+      if (canvas() && canvas()->surface()) {
         QSize sz = canvas()->surface()->size();     // sz.setWidth(sz.width()-2);
         QPoint pos = backing_pos;
         return close_box<coord4> (from_qrect(QRect(pos, sz)));
@@ -425,6 +425,7 @@ impress (qt_simple_widget_rep* wid) {
   wid->handle_get_size_hint (width, height);
   QSize s = to_qsize (width, height);
   QSize phys_s = s; phys_s *= retina_factor;
+  if (phys_s.isEmpty ()) return QPixmap ();
   QPixmap pxm (phys_s);
   if (DEBUG_QT)
     debug_qt << "impress (" << s.width() << "," << s.height() << ")\n";
@@ -503,8 +504,8 @@ qt_simple_widget_rep::invalidate_rect (int x1, int y1, int x2, int y2) {
 
 void
 qt_simple_widget_rep::invalidate_all () {
-  if (!canvas()) {
-    cout << "qt_simple_widget_rep::invalidate_all: cannot invalidate all, canvas() is null" << LF;
+  if (!canvas() || !canvas()->surface()) {
+    cout << "qt_simple_widget_rep::invalidate_all: cannot invalidate all, canvas() or surface() is null" << LF;
     return;
   }
   QSize sz = canvas()->surface()->size();
@@ -570,8 +571,9 @@ qt_simple_widget_rep::get_renderer() {
  */
 void
 qt_simple_widget_rep::repaint_invalid_regions () {
-  if (!canvas()) {
-    cout << "qt_simple_widget_rep::repaint_invalid_regions: cannot repaint invalid regions, canvas() is null" << LF;
+  if (!canvas() || !canvas()->surface() || backingPixmap == NULL) {
+    if (!canvas() || !canvas()->surface())
+      cout << "qt_simple_widget_rep::repaint_invalid_regions: cannot repaint invalid regions, canvas() is null" << LF;
     return;
   }
 #if QT_VERSION >= 0x060000
@@ -684,7 +686,7 @@ qt_simple_widget_rep::repaint_invalid_regions () {
   // repaint invalid rectangles
   {
     rectangles new_regions;
-    if (!is_nil (invalid_regions)) {
+    if (!is_nil (invalid_regions) && !backingPixmap->isNull()) {
       rectangle lub= least_upper_bound (invalid_regions);
       if (area (lub) < 1.2 * area (invalid_regions))
         invalid_regions= rectangles (lub);
@@ -726,7 +728,7 @@ qt_simple_widget_rep::repaint_invalid_regions () {
   }
   
   // propagate immediately the changes to the screen
-  if (!qrgn.isEmpty ()) {
+  if (!qrgn.isEmpty () && canvas() && canvas()->surface()) {
     canvas()->surface()->repaint (qrgn);
     backing_valid= true;
   }
@@ -736,9 +738,16 @@ hashset<pointer> qt_simple_widget_rep::all_widgets;
 
 void
 qt_simple_widget_rep::repaint_all () {
+  QList<QPointer<QTMWidget>> canvases;
   iterator<pointer> i = iterate(qt_simple_widget_rep::all_widgets);
   while (i->busy()) {
     qt_simple_widget_rep *w = static_cast<qt_simple_widget_rep*>(i->next());
-    if (w->canvas() && w->canvas()->isVisible()) w->repaint_invalid_regions();
+    if (w->canvas() && w->canvas()->isVisible())
+      canvases.append(QPointer<QTMWidget>(w->canvas()));
+  }
+  for (int k = 0; k < canvases.size(); ++k) {
+    QTMWidget *c = canvases[k].data();
+    if (c && c->isVisible() && c->tm_widget())
+      c->tm_widget()->repaint_invalid_regions();
   }
 }
