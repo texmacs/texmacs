@@ -136,6 +136,17 @@ static int findCloseButtonTabIndex(QTabBar* tabBar, QPushButton* closeBtn) {
 
 
 QTMMainTabWindow::~QTMMainTabWindow() {
+  for (QTMMainTab *tab : findChildren<QTMMainTab *>()) {
+    disconnect(tab, nullptr, this, nullptr);
+  }
+  if (mKeyboardDock != nullptr && !headless_mode && tmapp() != nullptr) {
+    QTMOnscreenKeyboard* keyboard = tmapp()->onscreenKeyboard();
+    if (keyboard != nullptr && mKeyboardDock->widget() == keyboard) {
+      keyboard->hide();
+      keyboard->setParent(nullptr);
+      mKeyboardDock->setWidget(nullptr);
+    }
+  }
   if (gTopTabWindow == this) gTopTabWindow = nullptr;
 }
 
@@ -357,7 +368,7 @@ bool QTMMainTabWindow::eventFilterWindow(QObject *obj, QEvent *event) {
   }
 
   // 1. Detect Mouse Press in empty tab space (frameless fallback only)
-  if (isFrameless && event->type() == QEvent::MouseButtonPress) {
+  if (isFrameless && mTabBar != nullptr && event->type() == QEvent::MouseButtonPress) {
     QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
     int x = mouseEvent->pos().x();
     int y = mouseEvent->pos().y();
@@ -393,7 +404,7 @@ bool QTMMainTabWindow::eventFilterWindow(QObject *obj, QEvent *event) {
   }
 
   // 4. Double click logic for "new-document*"
-  if (event->type() == QEvent::MouseButtonDblClick) {
+  if (mTabBar != nullptr && event->type() == QEvent::MouseButtonDblClick) {
      QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event);
      if (mouseEvent->pos().x() > mTabBar->width() && 
        mouseEvent->pos().y() < mTabBar->height()) {
@@ -449,6 +460,19 @@ bool QTMMainTabWindow::eventFilter(QObject *obj, QEvent *event) {
 void QTMMainTabWindow::showWidget(QTMMainTab *widget) {
   if (widget == nullptr || mTabBar == nullptr || mStackedLayout == nullptr) return;
 
+  const int existingIndex = mStackedLayout->indexOf(widget);
+  if (existingIndex != -1) {
+    mTabBar->setCurrentIndex(existingIndex);
+    mStackedLayout->setCurrentWidget(widget);
+    activateWindow();
+    raise();
+    return;
+  }
+
+  if (QPointer<QTMMainTabWindow> oldParent = widget->parentTabWindow()) {
+    if (oldParent != this) oldParent->removeWidget(widget);
+  }
+
   widget->setProperty("tmCloseRequestPending", false);
   widget->setMinimumSize(0, 0);
   widget->setMaximumSize(QWIDGETSIZE_MAX, QWIDGETSIZE_MAX);
@@ -461,13 +485,13 @@ void QTMMainTabWindow::showWidget(QTMMainTab *widget) {
 
   
     connect(widget, &QTMMainTab::windowOrTabClosed,
-      this, &QTMMainTabWindow::onWindowOrTabClosed);
+      this, &QTMMainTabWindow::onWindowOrTabClosed, Qt::UniqueConnection);
 
     connect(widget, &QTMMainTab::tabTitleChanged,
-      this, &QTMMainTabWindow::onTabTitleChangedFromSender);
+      this, &QTMMainTabWindow::onTabTitleChangedFromSender, Qt::UniqueConnection);
 
     connect(widget, &QTMMainTab::tabIconChanged,
-      this, &QTMMainTabWindow::onTabIconChangedFromSender);
+      this, &QTMMainTabWindow::onTabIconChangedFromSender, Qt::UniqueConnection);
 
   // Create a custom close button for this tab
   QPushButton* closeBtn = new QPushButton(mTabBar);
@@ -494,14 +518,18 @@ void QTMMainTabWindow::showWidget(QTMMainTab *widget) {
 
 void QTMMainTabWindow::removeWidget(QTMMainTab *widget) {
   if (widget == nullptr || mTabBar == nullptr || mStackedLayout == nullptr) return;
+  disconnect(widget, nullptr, this, nullptr);
   const int index = mStackedLayout->indexOf(widget);
   if (index == -1) return;
 
   QWidget* closeButton = mTabBar->tabButton(index, QTabBar::RightSide);
   mTabBar->removeTab(index);
   mStackedLayout->removeWidget(widget);
-  widget->hide();
-  widget->setProperty("tmCloseRequestPending", false);
+  if (!widget->isBeingDestroyed()) {
+    widget->hide();
+    widget->setParent(nullptr);
+    widget->setProperty("tmCloseRequestPending", false);
+  }
   if (closeButton != nullptr) closeButton->deleteLater();
 
   if (mTabBar->count() > 0 && mTabBar->currentIndex() == -1) {
@@ -552,7 +580,7 @@ void QTMMainTabWindow::closeAndSetTopTabWindow() {
   gTopTabWindow = nullptr;
   for (QWidget *widget : QApplication::topLevelWidgets()) {
     QTMMainTabWindow *tabWindow = qobject_cast<QTMMainTabWindow *>(widget);
-    if (tabWindow && tabWindow != this) {
+    if (tabWindow && tabWindow != this && tabWindow->isVisible()) {
       gTopTabWindow = tabWindow;
       break;
     }
@@ -691,16 +719,27 @@ void QTMMainTabWindow::handleTabBarMouseMove(QMouseEvent *event) {
     if (x >= tabBarWidth + TabDragThresholdPx || y >= tabBarHeight + TabDragThresholdPx ||
         x < -TabDragThresholdPx || y < -TabDragThresholdPx) {
       // Detach tab into new window
+      if (mDragState.movingTabIndex < 0 ||
+          mDragState.movingTabIndex >= mStackedLayout->count() ||
+          mDragState.movingTabIndex >= mTabBar->count()) {
+        mDragState.reset();
+        return;
+      }
+      QTMMainTab *widgetToMove =
+        qobject_cast<QTMMainTab *>(mStackedLayout->widget(mDragState.movingTabIndex));
+      if (widgetToMove == nullptr) {
+        mDragState.reset();
+        return;
+      }
       mDragState.newTabWindow = new QTMMainTabWindow();
-        QTMMainTab *widgetToMove =
-          qobject_cast<QTMMainTab *>(mStackedLayout->widget(mDragState.movingTabIndex));
-        if (widgetToMove == nullptr) return;
+      disconnect(widgetToMove, nullptr, this, nullptr);
       QWidget* closeButton = mTabBar->tabButton(mDragState.movingTabIndex, QTabBar::RightSide);
       mTabBar->removeTab(mDragState.movingTabIndex);
       mStackedLayout->removeWidget(widgetToMove);
       widgetToMove->setParent(nullptr);
       if (closeButton != nullptr) closeButton->deleteLater();
       mDragState.newTabWindow->showWidget(widgetToMove);
+      onTabBarCountChange();
       mDragState.isMovingTab = false;
       mDragState.isMovingWindow = true;
       mDragState.movingWindowStartPos = event_global_pos(event);
@@ -708,7 +747,10 @@ void QTMMainTabWindow::handleTabBarMouseMove(QMouseEvent *event) {
     } else if (x >= 0 && y >= 0 && x < tabBarWidth && y < tabBarHeight) {
       // Reorder tabs inside the same bar while dragging.
       const int hoverTabIndex = mTabBar->tabAt(QPoint(x, y));
-      if (hoverTabIndex != -1 && hoverTabIndex != mDragState.movingTabIndex) {
+      if (hoverTabIndex != -1 &&
+          mDragState.movingTabIndex >= 0 &&
+          mDragState.movingTabIndex < mTabBar->count() &&
+          hoverTabIndex != mDragState.movingTabIndex) {
         mTabBar->moveTab(mDragState.movingTabIndex, hoverTabIndex);
         mDragState.movingTabIndex = hoverTabIndex;
       }
@@ -736,7 +778,7 @@ void QTMMainTabWindow::updateDropTargetHover(QMouseEvent *event) {
   
   for (QWidget *tabWidget : QApplication::topLevelWidgets()) {
     tabWindow = qobject_cast<QTMMainTabWindow *>(tabWidget);
-    if (tabWindow == nullptr) continue;
+    if (tabWindow == nullptr || !tabWindow->isVisible() || tabWindow->mTabBar == nullptr) continue;
 
     QPoint globalPos = event_global_pos(event);
     QPoint localPos = tabWindow->mapFromGlobal(globalPos);
@@ -762,27 +804,31 @@ void QTMMainTabWindow::handleTabBarMouseRelease() {
   
   if (mDragState.targetTabWindow != nullptr) {
     if (DEBUG_QT_WIDGETS) cout << "move the tab to the target tab window" << LF;
-    QTMMainTabWindow *sourceTabWindow = mDragState.newTabWindow;
-    if (sourceTabWindow == nullptr) sourceTabWindow = this;
-    if (sourceTabWindow->mTabBar == nullptr ||
+    QPointer<QTMMainTabWindow> sourceTabWindow = mDragState.newTabWindow;
+    if (!sourceTabWindow) sourceTabWindow = this;
+    if (!sourceTabWindow || sourceTabWindow->mTabBar == nullptr ||
         sourceTabWindow->mStackedLayout == nullptr) {
       mDragState.targetTabWindow->setDefaultStyle();
-      mDragState.targetTabWindow = nullptr;
-      mDragState.newTabWindow = nullptr;
+      mDragState.reset();
       return;
     }
 
     const int sourceIndex = mDragState.movingTabIndex;
-    if (sourceIndex < 0 || sourceIndex >= sourceTabWindow->mStackedLayout->count()) {
+    if (sourceIndex < 0 || sourceIndex >= sourceTabWindow->mStackedLayout->count() ||
+        sourceIndex >= sourceTabWindow->mTabBar->count()) {
       mDragState.targetTabWindow->setDefaultStyle();
-      mDragState.targetTabWindow = nullptr;
-      mDragState.newTabWindow = nullptr;
+      mDragState.reset();
       return;
     }
 
     QTMMainTab *widgetToMove = qobject_cast<QTMMainTab *>(
       sourceTabWindow->mStackedLayout->widget(sourceIndex));
-    if (widgetToMove == nullptr) return;
+    if (widgetToMove == nullptr) {
+      mDragState.targetTabWindow->setDefaultStyle();
+      mDragState.reset();
+      return;
+    }
+    disconnect(widgetToMove, nullptr, sourceTabWindow.data(), nullptr);
     QWidget* closeButton = sourceTabWindow->mTabBar->tabButton(sourceIndex, QTabBar::RightSide);
     sourceTabWindow->mTabBar->removeTab(sourceIndex);
     sourceTabWindow->mStackedLayout->removeWidget(widgetToMove);
@@ -793,10 +839,12 @@ void QTMMainTabWindow::handleTabBarMouseRelease() {
     mDragState.targetTabWindow->activateWindow();
     mDragState.targetTabWindow = nullptr;
     
-    sourceTabWindow->onTabBarCountChange();
-    if (sourceTabWindow->mTabBar->count() == 0) {
-      if (DEBUG_QT_WIDGETS) cout << "close the tab window" << LF;
-      sourceTabWindow->closeAndSetTopTabWindow();
+    if (sourceTabWindow) {
+      sourceTabWindow->onTabBarCountChange();
+      if (sourceTabWindow->mTabBar && sourceTabWindow->mTabBar->count() == 0) {
+        if (DEBUG_QT_WIDGETS) cout << "close the tab window" << LF;
+        sourceTabWindow->closeAndSetTopTabWindow();
+      }
     }
   }
 
@@ -811,6 +859,7 @@ bool QTMMainTabWindow::nativeEvent(const QByteArray &eventType, void *message, l
 #endif
 #if defined(OS_MINGW)
     MSG* msg = static_cast<MSG*>(message);
+    if (!msg || !result) return false;
     HWND hwnd = msg->hwnd;
 
     if (msg->message == WM_NCHITTEST) {
@@ -855,13 +904,15 @@ bool QTMMainTabWindow::nativeEvent(const QByteArray &eventType, void *message, l
         }
 
         // 4. Gérer le déplacement de la fenêtre (HTCAPTION)
-        int tabBarWidth = mTabBar->width();
-        int tabBarHeight = mTabBar->height();
-        
-        // Si on est en haut (dans la barre) ET à droite des onglets
-        if (localY < tabBarHeight && localX > tabBarWidth) {
-            *result = HTCAPTION;
-            return true;
+        if (mTabBar != nullptr) {
+            int tabBarWidth = mTabBar->width();
+            int tabBarHeight = mTabBar->height();
+            
+            // Si on est en haut (dans la barre) ET à droite des onglets
+            if (localY < tabBarHeight && localX > tabBarWidth) {
+                *result = HTCAPTION;
+                return true;
+            }
         }
 
         // Sinon, c'est un clic normal dans l'application
@@ -881,6 +932,7 @@ bool QTMMainTabWindow::nativeEvent(const QByteArray &eventType, void *message, l
 
 
 void QTMMainTabWindow::onTabBarCountChange() {
+  if (mTabBar == nullptr) return;
   if (mTabBar->count() <= 1) {
     mTabBar->setProperty("tmSingleTab", true);
     mTabBar->style()->unpolish(mTabBar);
@@ -907,7 +959,7 @@ void QTMMainTabWindow::onTabBarCountChange() {
 }
 
 void QTMMainTabWindow::onTabMoved(int from, int to) {
-  if (mStackedLayout == nullptr) return;
+  if (mStackedLayout == nullptr || mTabBar == nullptr) return;
   if (from == to) return;
   if (from < 0 || to < 0) return;
   if (from >= mStackedLayout->count() || to >= mStackedLayout->count()) return;
@@ -973,15 +1025,17 @@ void QTMMainTabWindow::attachKeyboard() {
 
 void QTMMainTabWindow::onBackButtonClicked() {
   refreshBackButtonState();
+  QPointer<QTMMainTabWindow> self(this);
   for (int i = mBackButtonProviders.count() - 1; i >= 0; --i) {
     const BackButtonProvider &entry = mBackButtonProviders.at(i);
     if (entry.provider == nullptr) continue;
     if (!entry.visible) continue;
     if (!entry.provider->isVisibleTo(this)) continue;
-    if (entry.onBack) entry.onBack();
+    std::function<void()> callback = entry.onBack;
+    if (callback) callback();
     break;
   }
-  refreshBackButtonState();
+  if (self) self->refreshBackButtonState();
 }
 
 void QTMMainTabWindow::onCurrentTabChanged(int index) {
@@ -1026,7 +1080,13 @@ void QTMMainTabWindow::onCloseResetTimeout() {
 }
 
 void QTMMainTabWindow::onBackButtonProviderDestroyed(QObject *provider) {
-  unregisterBackButtonProvider(qobject_cast<QWidget *>(provider));
+  for (int i = mBackButtonProviders.count() - 1; i >= 0; --i) {
+    const BackButtonProvider &entry = mBackButtonProviders.at(i);
+    if (entry.provider.isNull() || static_cast<QObject *>(entry.provider.data()) == provider) {
+      mBackButtonProviders.removeAt(i);
+    }
+  }
+  refreshBackButtonState();
 }
 
 void QTMMainTabWindow::onKeyboardVisibilityChanged(bool visible) {

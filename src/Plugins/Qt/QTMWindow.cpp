@@ -45,8 +45,8 @@ void QTMPlainWindow::resizeEvent (QResizeEvent* event)
 
 void QTMWindow::closeEvent (QCloseEvent* event)
 {
-  widget tmwid = qt_window_widget_rep::widget_from_qwidget(this);
-  string name= ( !is_nil(tmwid) ? concrete(tmwid)->get_nickname () : "QTMWindow");
+  widget_rep* rep = qt_window_widget_rep::widget_from_qwidget(this);
+  string name= (rep != NULL ? static_cast<qt_widget_rep*>(rep)->get_nickname () : "QTMWindow");
   if (DEBUG_QT_WIDGETS) debug_widgets << "Close QTMWindow " << name << LF;
   event->ignore ();
 #if defined(OS_MACOS)
@@ -57,8 +57,8 @@ void QTMWindow::closeEvent (QCloseEvent* event)
 
 void QTMWindow::moveEvent (QMoveEvent * event)
 {
-  widget tmwid = qt_window_widget_rep::widget_from_qwidget(this);
-  string name= ( !is_nil(tmwid) ? concrete(tmwid)->get_nickname () : "QTMWindow");
+  widget_rep* rep = qt_window_widget_rep::widget_from_qwidget(this);
+  string name= (rep != NULL ? static_cast<qt_widget_rep*>(rep)->get_nickname () : "QTMWindow");
   coord2 pt = from_qpoint (frameGeometry().topLeft());
   notify_window_move (name, pt.x1, pt.x2);
   QMainWindow::moveEvent (event);
@@ -66,8 +66,8 @@ void QTMWindow::moveEvent (QMoveEvent * event)
 
 void QTMWindow::resizeEvent (QResizeEvent * event)
 {
-  widget tmwid = qt_window_widget_rep::widget_from_qwidget(this);
-  string name= ( !is_nil(tmwid) ? concrete(tmwid)->get_nickname () : "QTMWindow");
+  widget_rep* rep = qt_window_widget_rep::widget_from_qwidget(this);
+  string name= (rep != NULL ? static_cast<qt_widget_rep*>(rep)->get_nickname () : "QTMWindow");
   coord2 sz = from_qsize (frameSize());
   notify_window_resize (name, sz.x1, sz.x2);
   QMainWindow::resizeEvent (event);
@@ -75,7 +75,7 @@ void QTMWindow::resizeEvent (QResizeEvent * event)
 
 QTMPopupWidget::QTMPopupWidget(QWidget* contents) : QWidget(nullptr) {
   QHBoxLayout* l = new QHBoxLayout(this);
-  l->addWidget (contents);
+  if (contents) l->addWidget (contents);
   l->setContentsMargins (0,0,0,0);
   l->setEnabled (false);
   setLayout (l);
@@ -170,8 +170,8 @@ QTMPlainWindow::showEvent (QShowEvent* event) {
 
 void 
 QTMWindow::closeEvent (QCloseEvent* event) {
-  widget tmwid = qt_window_widget_rep::widget_from_qwidget(this);
-  string name= ( !is_nil(tmwid) ? concrete(tmwid)->get_nickname () : "QTMWindow");
+  widget_rep* rep = qt_window_widget_rep::widget_from_qwidget(this);
+  string name= (rep != NULL ? static_cast<qt_widget_rep*>(rep)->get_nickname () : "QTMWindow");
   if (DEBUG_QT_WIDGETS) debug_widgets << "Close QTMWindow " << name << LF;
   event->ignore ();
 #if defined(OS_MACOS)
@@ -182,8 +182,8 @@ QTMWindow::closeEvent (QCloseEvent* event) {
 
 void 
 QTMWindow::moveEvent (QMoveEvent* event) {
-  widget tmwid = qt_window_widget_rep::widget_from_qwidget(this);
-  string name= ( !is_nil(tmwid) ? concrete(tmwid)->get_nickname () : "QTMWindow");
+  widget_rep* rep = qt_window_widget_rep::widget_from_qwidget(this);
+  string name= (rep != NULL ? static_cast<qt_widget_rep*>(rep)->get_nickname () : "QTMWindow");
   coord2 pos= from_qpoint (frameGeometry().topLeft());
   notify_window_move (name, pos.x1, pos.x2);
   QMainWindow::moveEvent (event);
@@ -191,8 +191,8 @@ QTMWindow::moveEvent (QMoveEvent* event) {
 
 void 
 QTMWindow::resizeEvent (QResizeEvent* event) {
-  widget tmwid = qt_window_widget_rep::widget_from_qwidget(this);
-  string name= ( !is_nil(tmwid) ? concrete(tmwid)->get_nickname () : "QTMWindow");
+  widget_rep* rep = qt_window_widget_rep::widget_from_qwidget(this);
+  string name= (rep != NULL ? static_cast<qt_widget_rep*>(rep)->get_nickname () : "QTMWindow");
   coord2 sz= from_qsize (frameSize());
   notify_window_resize (name, sz.x1, sz.x2);
   QMainWindow::resizeEvent (event);
@@ -205,7 +205,7 @@ QTMWindow::showEvent (QShowEvent* event) {
 
 QTMPopupWidget::QTMPopupWidget(QWidget* contents) : QWidget(nullptr) {
   QHBoxLayout* l = new QHBoxLayout(this);
-  l->addWidget (contents);
+  if (contents) l->addWidget (contents);
   l->setContentsMargins (0,0,0,0);
   l->setEnabled (false);
   setLayout (l);

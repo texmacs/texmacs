@@ -69,7 +69,7 @@ ensure_visible_position (const QPoint& p,
  */
 qt_window_widget_rep::qt_window_widget_rep (QWidget* _wid, string name,
                                             command _quit, bool _fake)
-: qt_widget_rep (window_widget, _wid), orig_name(name), quit(_quit), fake(_fake)
+: qt_widget_rep (window_widget, _wid), win_id (0), orig_name(name), quit(_quit), fake(_fake)
 {
   qwid->setProperty ("texmacs_window_widget",
                      QVariant::fromValue ((void*) this));
@@ -138,6 +138,7 @@ qt_window_widget_rep::~qt_window_widget_rep ()
 widget
 qt_window_widget_rep::popup_window_widget (string s)
 {
+  if (!qwid) return this;
 #if QT_VERSION >= 0x060000
   QPointer<QTMMainTab> mainTab = qobject_cast<QTMMainTab *>(qwid);
   if (mainTab) {
@@ -205,7 +206,8 @@ qt_window_widget_rep::send (slot s, blackbox val) {
 #if QT_VERSION >= 0x060000
         QPointer<QTMMainTab> mainTab = qobject_cast<QTMMainTab *>(qwid);
         QSize size = to_qsize (p);
-        if (!tmapp ()->useTabWindow () || !mainTab) {
+        QTMApplication* app = headless_mode ? nullptr : tmapp ();
+        if (!app || !app->useTabWindow () || !mainTab) {
           qwid->resize (size);
         } else {
           mainTab->resizeWindowOrTab (size);
@@ -243,6 +245,7 @@ qt_window_widget_rep::send (slot s, blackbox val) {
 #if QT_VERSION >= 0x060000
       QTMMainTab *mainTab = qobject_cast<QTMMainTab *>(qwid);
       if (qwid) {
+        QTMApplication* app = headless_mode ? nullptr : tmapp ();
         bool showAsPopup = qwid->property ("tmWindowMode").toString () == "popup";
         if (!flag) {
           if (mainTab && mainTab->parentTabWindow () != nullptr) {
@@ -250,11 +253,11 @@ qt_window_widget_rep::send (slot s, blackbox val) {
           } else {
             qwid->hide ();
           }
-        } else if (!tmapp ()->useTabWindow () || showAsPopup || !mainTab) {
+        } else if (!app || !app->useTabWindow () || showAsPopup || !mainTab) {
           qwid->show ();
           qwid->raise ();
         } else {
-          tmapp ()->mainTabWindow ().showWidget (mainTab);
+          app->mainTabWindow ().showWidget (mainTab);
         }
       }
 #else
@@ -286,7 +289,8 @@ qt_window_widget_rep::send (slot s, blackbox val) {
 #if QT_VERSION >= 0x060000
       QTMMainTab *mainTab = qobject_cast<QTMMainTab *>(qwid);
       if (qwid) {
-        if (!tmapp ()->useTabWindow () || !mainTab) {
+        QTMApplication* app = headless_mode ? nullptr : tmapp ();
+        if (!app || !app->useTabWindow () || !mainTab) {
           qwid->setWindowTitle (to_qstring (name * "[*]"));
         } else {
           mainTab->setWindowOrTabTitle (to_qstring (name));
@@ -385,9 +389,10 @@ qt_window_widget_rep::notify (slot s, blackbox new_val) {
 qt_popup_widget_rep::qt_popup_widget_rep (widget wid, command _quit)
 : qt_widget_rep(qt_widget_rep::popup_widget, 0), quit(_quit) {
   
-  qwid = new QTMPopupWidget(concrete(wid)->as_qwidget(nullptr));
+  QWidget* content = is_nil (wid) ? nullptr : concrete(wid)->as_qwidget(nullptr);
+  qwid = new QTMPopupWidget(content);
 
-  if (qwid->metaObject() ->
+  if (qwid && qwid->metaObject() ->
       indexOfSignal (QMetaObject::normalizedSignature ("closed()").constData ()) != -1) {
     QTMCommand* qtmcmd = new QTMCommand(qwid, quit);
     QObject::connect(qobject_cast<QTMPopupWidget*>(qwid), SIGNAL (closed()), qtmcmd, SLOT (apply()));
@@ -403,6 +408,7 @@ qt_popup_widget_rep::~qt_popup_widget_rep () {
 
 widget
 qt_popup_widget_rep::popup_window_widget(string s) {
+  if (!qwid) return this;
 #if QT_VERSION >= 0x060000
   QPointer<QTMMainTab> mainTab = qobject_cast<QTMMainTab *>(qwid);
   if (mainTab) {
@@ -418,6 +424,7 @@ qt_popup_widget_rep::popup_window_widget(string s) {
 
 widget
 qt_popup_widget_rep::tooltip_window_widget (string s) {
+  if (!qwid) return this;
 #if QT_VERSION >= 0x060000
   QPointer<QTMMainTab> mainTab = qobject_cast<QTMMainTab *>(qwid);
   if (mainTab) {
@@ -448,9 +455,11 @@ qt_popup_widget_rep::send (slot s, blackbox val) {
     case SLOT_SIZE:
     {
       check_type<coord2>(val, s);
+      if (!qwid) break;
 #if QT_VERSION >= 0x060000
       QPointer<QTMMainTab> mainTab = qobject_cast<QTMMainTab *>(qwid);
-      if (!tmapp ()->useTabWindow () || !mainTab) {
+      QTMApplication* app = headless_mode ? nullptr : tmapp ();
+      if (!app || !app->useTabWindow () || !mainTab) {
         qwid->resize (to_qsize (open_box<coord2> (val)));
       } else {
         mainTab->resizeWindowOrTab (to_qsize (open_box<coord2> (val)));
@@ -464,6 +473,7 @@ qt_popup_widget_rep::send (slot s, blackbox val) {
     case SLOT_POSITION:
     {
       check_type<coord2>(val, s);
+      if (!qwid) break;
       if (get_user_preference("disable texmacs window positioning") == "on") {
         break;
       }
@@ -478,7 +488,7 @@ qt_popup_widget_rep::send (slot s, blackbox val) {
     case SLOT_VISIBILITY:
     {
       check_type<bool> (val, s);
-      qwid->setVisible(open_box<bool> (val));
+      if (qwid) qwid->setVisible(open_box<bool> (val));
     }
       break;
       
@@ -486,6 +496,7 @@ qt_popup_widget_rep::send (slot s, blackbox val) {
     case SLOT_MOUSE_GRAB:
     {   
       check_type<bool> (val, s);
+      if (!qwid) break;
       bool flag = open_box<bool> (val);  // true= get grab, false= release grab
       
       qwid->hide();
@@ -512,11 +523,13 @@ qt_popup_widget_rep::query (slot s, int type_id) {
     case SLOT_POSITION:
     {
       check_type_id<coord2> (type_id, s);
+      if (!qwid) return close_box<coord2> (coord2 (0, 0));
       return close_box<coord2> (from_qpoint (qwid->pos()));
     }
     case SLOT_SIZE:
     {
       check_type_id<coord2> (type_id, s);
+      if (!qwid) return close_box<coord2> (coord2 (640, 400));
       return close_box<coord2> (from_qsize (qwid->size()));
     }
     default:

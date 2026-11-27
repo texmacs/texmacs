@@ -697,7 +697,8 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
     case SLOT_SCROLL_POSITION:
     case SLOT_ZOOM_FACTOR:
     case SLOT_MOUSE_GRAB:
-      main_widget->send(s, val);
+      if (!is_nil (main_widget))
+        main_widget->send(s, val);
       return;
     case SLOT_KEYBOARD_FOCUS:
     {
@@ -808,25 +809,32 @@ qt_tm_widget_rep::send (slot s, blackbox val) {
       check_type<bool>(val, s);
 
       if (open_box<bool> (val) == true) {
+        if (!is_nil (int_prompt) && !is_nil (int_input)) {
+          if (prompt) {
+            prompt->hide();
+            prompt->deleteLater();
+            prompt = nullptr;
+          }
 #if QT_VERSION >= 0x060000
-        prompt = new QTMInteractivePrompt (int_prompt, int_input, statusBar);
-        if (statusBar && statusBar->layout()) {
-          if (leftLabel) leftLabel->hide();
-          if (rightLabel) rightLabel->hide();
-          if (QHBoxLayout* l = qobject_cast<QHBoxLayout*> (statusBar->layout()))
-            l->addWidget (prompt, 1);
-          else
-            statusBar->layout()->addWidget (prompt);
-        }
+          prompt = new QTMInteractivePrompt (int_prompt, int_input, statusBar);
+          if (statusBar && statusBar->layout()) {
+            if (leftLabel) leftLabel->hide();
+            if (rightLabel) rightLabel->hide();
+            if (QHBoxLayout* l = qobject_cast<QHBoxLayout*> (statusBar->layout()))
+              l->addWidget (prompt, 1);
+            else
+              statusBar->layout()->addWidget (prompt);
+          }
 #else
-        prompt = new QTMInteractivePrompt (int_prompt, int_input, mainwindow());
-        if (mainwindow() && mainwindow()->statusBar()) {
-            if (leftLabel) mainwindow()->statusBar()->removeWidget (leftLabel);
-            if (rightLabel) mainwindow()->statusBar()->removeWidget (rightLabel);
-            if (prompt) mainwindow()->statusBar()->addWidget (prompt, 1);
-        }
+          prompt = new QTMInteractivePrompt (int_prompt, int_input, mainwindow());
+          if (mainwindow() && mainwindow()->statusBar()) {
+              if (leftLabel) mainwindow()->statusBar()->removeWidget (leftLabel);
+              if (rightLabel) mainwindow()->statusBar()->removeWidget (rightLabel);
+              if (prompt) mainwindow()->statusBar()->addWidget (prompt, 1);
+          }
 #endif
-        if (prompt) prompt->start();
+          if (prompt) prompt->start();
+        }
       } else {
         if (prompt) prompt->end();
 #if QT_VERSION >= 0x060000
@@ -998,6 +1006,7 @@ qt_tm_widget_rep::install_main_menu () {
 
     if (main_menu_widget == waiting_main_menu_widget) return;
     main_menu_widget = waiting_main_menu_widget;
+    if (is_nil (main_menu_widget)) return;
     QList<QAction*>* src = main_menu_widget->get_qactionlist();
     if (!src || !mainwindow() || !mainwindow()->menuBar()) return;
     QMenuBar* dest = mainwindow()->menuBar();
@@ -1034,6 +1043,7 @@ qt_tm_widget_rep::install_main_menu () {
 
     if (main_menu_widget == waiting_main_menu_widget) return;
     main_menu_widget = waiting_main_menu_widget;
+    if (is_nil (main_menu_widget)) return;
     QList<QAction*>* src = main_menu_widget->get_qactionlist();
     if (!src || !menuToolBar) return;
     QTMToolbar* dest = menuToolBar;
@@ -1074,6 +1084,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
     case SLOT_SCROLLABLE:
     {
       check_type_void (index, s);
+      if (is_nil (w)) return;
 
 #if QT_VERSION >= 0x060000
       if (!mainWidget || !mainLayout)
@@ -1083,7 +1094,7 @@ qt_tm_widget_rep::write (slot s, blackbox index, widget w) {
         return;
 #endif
       
-      QWidget* q = main_widget->qwid;
+      QWidget* q = is_nil (main_widget) ? nullptr : main_widget->qwid.data();
       if (q) q->hide();
 #if QT_VERSION < 0x060000
       QLayout* l = centralwidget()->layout();
@@ -1389,7 +1400,8 @@ qt_tm_embedded_widget_rep::send (slot s, blackbox val) {
     case SLOT_SCROLL_POSITION:
     case SLOT_ZOOM_FACTOR:
     case SLOT_MOUSE_GRAB:
-      main_widget->send(s, val);
+      if (!is_nil (main_widget))
+        main_widget->send(s, val);
       return;
 
        /// FIXME: decide what to do with these for embedded widgets

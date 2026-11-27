@@ -171,13 +171,7 @@ void QTMToolbar::replaceActions (QList<QAction*>* src) {
     FAILED ("replaceActions expects valid objects");
   setUpdatesEnabled (false);
 
-  while (mLayout && mLayout->count() > 0) {
-    QWidget* w = mLayout->itemAt(0)->widget();
-    mLayout->removeWidget(w);
-    w->hide();
-    w->setParent(nullptr);
-    w->deleteLater();
-  }
+  clear();
   for (int i = 0; i < src->count(); i++) {
     QAction* a = (*src)[i];
     addAction(a);
@@ -194,13 +188,7 @@ void QTMToolbar::replaceButtons (QList<QAction*>* src) {
     FAILED ("replaceButtons expects valid objects");
   setUpdatesEnabled (false);
 
-  while (mLayout && mLayout->count() > 0) {
-    QWidget* w = mLayout->itemAt(0)->widget();
-    mLayout->removeWidget(w);
-    w->hide();
-    w->setParent(nullptr);
-    w->deleteLater();
-  }
+  clear();
 
   for (int i = 0; i < src->count(); i++) {
     QAction* a = (*src)[i];
@@ -258,6 +246,7 @@ void QTMToolbar::addRightSpacer () {
 
 void QTMToolbar::addAction (QAction* action) {
 #if QT_VERSION >= 0x050000
+  if (!action) return;
   // create the tool button
   QWidget *actionWidget = nullptr;
   
@@ -294,9 +283,9 @@ void QTMToolbar::addAction (QAction* action) {
       QMenu *actionMenu = action->menu();
       mMenuButtons[actionMenu] = button;
       connect (actionMenu, &QMenu::aboutToShow,
-               this, &QTMToolbar::onActionMenuAboutToShow);
+               this, &QTMToolbar::onActionMenuAboutToShow, Qt::UniqueConnection);
       connect (actionMenu, &QMenu::aboutToHide,
-               this, &QTMToolbar::onActionMenuAboutToHide);
+               this, &QTMToolbar::onActionMenuAboutToHide, Qt::UniqueConnection);
       actionMenu->installEventFilter (this);
     }
 #else
@@ -357,12 +346,25 @@ void QTMToolbar::clear () {
     return;
   }
   while (mLayout->count() > 0) {
-    QWidget* w = mLayout->itemAt(0)->widget();
-    mLayout->removeWidget(w);
-    w->hide();
-    w->setParent(nullptr);
-    w->deleteLater();
+    QLayoutItem* item = mLayout->takeAt(0);
+    if (!item) break;
+    if (QWidget* w = item->widget()) {
+      if (QToolButton* btn = qobject_cast<QToolButton*>(w)) {
+        if (QAction* act = btn->defaultAction()) {
+          if (QMenu* m = act->menu()) {
+            m->removeEventFilter(this);
+            disconnect(m, nullptr, this, nullptr);
+          }
+        }
+      }
+      w->hide();
+      w->setParent(nullptr);
+      w->deleteLater();
+    }
+    delete item;
   }
+  mMenuButtons.clear();
+  mCurrentMenu = nullptr;
   updateNavButtons();
 #else
   QToolBar::clear();
@@ -488,21 +490,35 @@ bool QTMToolbar::eventFilter (QObject* watched, QEvent* event) {
       QPoint buttonPos = button->mapFromGlobal(globalPos);
       if (button->rect().contains(buttonPos)) {
         
+        QPointer<QTMToolbar> self(this);
+        QPointer<QMenu> safeMenu(menu);
+        QPointer<QAction> safeAction(action);
+
         // send a mouse click event outside to close the current menu
         QPoint outsidePos = menu->mapToGlobal(QPoint(-9999, -9999));
         QMouseEvent mePress (QEvent::MouseButtonPress, QPoint(-9999, -9999), outsidePos, Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
-        QCoreApplication::sendEvent (menu, &mePress);
-        QMouseEvent meRelease (QEvent::MouseButtonRelease, QPoint(-9999, -9999), outsidePos, Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
-        QCoreApplication::sendEvent (menu, &meRelease);
+        QCoreApplication::sendEvent (safeMenu.data(), &mePress);
+        if (safeMenu) {
+          QMouseEvent meRelease (QEvent::MouseButtonRelease, QPoint(-9999, -9999), outsidePos, Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+          QCoreApplication::sendEvent (safeMenu.data(), &meRelease);
+        }
+
+        if (!self || !button) return true;
 
         // send a mouse click event to the hovered button (with globalPos)
         QPoint buttonLocalPos = button->mapFromGlobal(globalPos);
         QMouseEvent bePress (QEvent::MouseButtonPress, buttonLocalPos, globalPos, Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
         QCoreApplication::sendEvent (button.data(), &bePress);
-        QMouseEvent beRelease (QEvent::MouseButtonRelease, buttonLocalPos, globalPos, Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
-        QCoreApplication::sendEvent (button.data(), &beRelease);
+        if (button) {
+          QMouseEvent beRelease (QEvent::MouseButtonRelease, buttonLocalPos, globalPos, Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+          QCoreApplication::sendEvent (button.data(), &beRelease);
+        }
 
-        mCurrentMenu = action->menu();
+        if (self && safeAction && safeAction->menu() && safeAction->menu()->isVisible()) {
+          self->mCurrentMenu = safeAction->menu();
+        } else if (self) {
+          self->mCurrentMenu = nullptr;
+        }
         return true;
       }
     }

@@ -33,6 +33,7 @@ public:
   void setWindowOrTabIcon (const QIcon &icon);
   void resizeWindowOrTab (const QSize &size);
   void closeWindowOrTab ();
+  bool isBeingDestroyed () const { return mBeingDestroyed; }
 
 signals:
   void requestClose ();
@@ -43,6 +44,7 @@ signals:
 private:
   QString mTitle;
   QIcon   mIcon;
+  bool    mBeingDestroyed = false;
 };
 
 #endif // QT_VERSION >= 0x060000

@@ -511,6 +511,7 @@ void QTMResponsiveTabWidget::onBackClicked() {
 
 void QTMResponsiveTabWidget::onTabMoved(int from, int to) {
   if (mIsUpdating) return;
+  if (from < 0 || from >= mPages.size() || to < 0 || to >= mPages.size() || from == to) return;
   mIsUpdating = true;
 
   mPages.move(from, to);

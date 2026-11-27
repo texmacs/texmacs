@@ -35,6 +35,7 @@ QTMMainTab::QTMMainTab (QWidget *parent) : QMainWindow (parent) {
 }
 
 QTMMainTab::~QTMMainTab () {
+  mBeingDestroyed = true;
   emit windowOrTabClosed ();
 }
 
@@ -70,8 +71,9 @@ QTMMainTab::resizeWindowOrTab (const QSize &size) {
 
 void
 QTMMainTab::closeWindowOrTab () {
+  const bool wasInTabWindow = (findParentTabWindow (this) != nullptr);
   emit windowOrTabClosed ();
-  if (findParentTabWindow (this) == nullptr) {
+  if (!wasInTabWindow) {
     close ();
   }
 }

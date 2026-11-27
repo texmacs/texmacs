@@ -130,13 +130,13 @@ protected:
     return qobject_cast<QMainWindow*> (qwid); 
   }
   QWidget* centralwidget () {
-    return mainwindow()->centralWidget();
+    return mainwindow() ? mainwindow()->centralWidget() : nullptr;
   }
   QTMScrollView* scrollarea () {
-    return qobject_cast<QTMScrollView*> (main_widget->qwid);
+    return is_nil (main_widget) ? nullptr : qobject_cast<QTMScrollView*> (main_widget->qwid);
   }
   QTMWidget* canvas () {
-    return qobject_cast<QTMWidget*> (main_widget->qwid);
+    return is_nil (main_widget) ? nullptr : qobject_cast<QTMWidget*> (main_widget->qwid);
   }
 };
 

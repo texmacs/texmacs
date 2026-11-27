@@ -133,8 +133,8 @@ qt_widget_rep::send (slot s, blackbox val) {
     case SLOT_NAME:
     {
         // CHECK ME!
-      widget win = qt_window_widget_rep::widget_from_qwidget (qwid);
-      if (! is_nil (win)) win->send (SLOT_NAME, val);
+      widget_rep* win = qt_window_widget_rep::widget_from_qwidget (qwid);
+      if (win != NULL) win->send (SLOT_NAME, val);
     }
       break;
     case SLOT_DESTROY:
@@ -161,14 +161,14 @@ qt_widget_rep::send (slot s, blackbox val) {
   * A new QWidget is built on each call.
 
  */
-inline QWidget*
+QWidget*
 qt_widget_rep::as_qwidget (QWidget* parent_widget) {
   (void) parent_widget;
   if (DEBUG_QT_WIDGETS)
     debug_widgets << "qt_widget_rep::as_qwidget() for "
                   << type_as_string() << LF;
   // throw an error?
-  throw "qt_widget_rep::as_qwidget() called on base class";
+  FAILED ("qt_widget_rep::as_qwidget() called on base class");
   return qwid;
 }
 
@@ -189,7 +189,7 @@ qt_widget_rep::as_qaction() {
 
  The policy is to give ownership of the object to the caller.
 */
-inline QLayoutItem*
+QLayoutItem*
 qt_widget_rep::as_qlayoutitem (QWidget* parent_widget) {
   return new QWidgetItem (as_qwidget (parent_widget)); 
 }
@@ -323,9 +323,11 @@ qt_widget_rep::plain_window_widget (string name, command quit, int border) {
     }
   }
 
-  int l,t,r,b;
-  contentHost->layout()->getContentsMargins (&l, &t, &r, &b);
-  contentHost->layout()->setContentsMargins (l+border, t+border, r+border, b+border);
+  if (QLayout* hostLayout = contentHost->layout()) {
+    int l,t,r,b;
+    hostLayout->getContentsMargins (&l, &t, &r, &b);
+    hostLayout->setContentsMargins (l+border, t+border, r+border, b+border);
+  }
 
   QTMPlainScrollArea *scrollArea = new QTMPlainScrollArea(win);
   scrollArea->setWidget(contentHost);
@@ -386,6 +388,7 @@ qt_widget_rep::tooltip_window_widget (string s) {
 }
 
 tm_ostream& operator << (tm_ostream& out, qt_widget w) {
+  if (is_nil (w)) return out << "nil";
   return out << "qt_widget of type: " << w.rep->type_as_string();
 }
  
@@ -407,6 +410,7 @@ tm_ostream& operator << (tm_ostream& out, qt_widget w) {
 widget
 plain_window_widget (widget w, string name, command q) {
   if (headless_mode) return headless_widget ();
+  if (is_nil (w)) return widget ();
   widget win= concrete(w)->plain_window_widget (name, q);
   if (name != "popup") {
     SI xx, yy, ww, hh;
@@ -426,12 +430,14 @@ plain_window_widget (widget w, string name, command q) {
 widget
 popup_window_widget (widget w, string s) {
   if (headless_mode) return headless_widget ();
+  if (is_nil (w)) return widget ();
   return concrete(w)->popup_window_widget (s);
 }
 
 widget
 tooltip_window_widget (widget w, string s) {
   if (headless_mode) return headless_widget ();
+  if (is_nil (w)) return widget ();
   return concrete(w)->tooltip_window_widget (s);
 }
 
@@ -451,6 +457,7 @@ tooltip_window_widget (widget w, string s) {
 widget
 popup_widget (widget w) {
   if (headless_mode) return headless_widget ();
+  if (is_nil (w)) return widget ();
   return concrete(w)->make_popup_widget();
 }
 
@@ -463,7 +470,7 @@ popup_widget (widget w) {
  */
 void
 destroy_window_widget (widget w) {
-  if (headless_mode) return;
+  if (headless_mode || is_nil (w)) return;
   if (DEBUG_QT_WIDGETS)
     debug_widgets << "destroy_window_widget() on "
                   << static_cast<qt_widget_rep*>(w.rep)->type_as_string() << LF;
@@ -724,6 +731,7 @@ widget glue_widget (bool hx, bool vx, SI w, SI h) {
   return abstract (wid);
 }
 widget glue_widget (tree col, bool hx, bool vx, SI w, SI h) {
+  if (headless_mode) return headless_widget ();
   return tm_new<qt_glue_widget_rep> (col, hx, vx, w, h);
 }
 widget inputs_list_widget (command call_back, array<string> prompts) {
