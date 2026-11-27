@@ -130,7 +130,7 @@ void QTMApplication::notify_preference (string var) {
 }
 
 void qt_notify_preference (string var) {
-  QTMApplication* app= static_cast<QTMApplication*> (QApplication::instance ());
+  QTMApplication* app= qobject_cast<QTMApplication*> (QCoreApplication::instance ());
   if (app) app->notify_preference (var);
 }
 
@@ -170,7 +170,7 @@ QTMLocalServer::QTMLocalServer (): QObject (NULL) {
 #endif
   if (headless_mode) return;
   url f= "$TEXMACS_HOME_PATH/system/tmp/localserver.lock";
-  FILE* lock_file= texmacs_fopen (concretize (f), "w", false);
+  lock_file= texmacs_fopen (concretize (f), "w", false);
   if (lock_file == NULL) {
     //qCritical () << "QTMLocalServer failed to open lock file";
     return;

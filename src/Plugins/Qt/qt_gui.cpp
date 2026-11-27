@@ -138,7 +138,8 @@ needing_update (false)
   timeout_time = texmacs_time () + time_credit;
   
   gui_helper = new QTMGuiHelper (this);
-  qApp->installEventFilter (gui_helper);
+  if (QCoreApplication* app = QCoreApplication::instance ())
+    app->installEventFilter (gui_helper);
   
 #if defined(QT_MAC_USE_COCOA) \
   || (defined(OS_MACOS) && QT_VERSION >= 0x060000)
@@ -214,12 +215,16 @@ needing_update (false)
 /* important routines */
 void
 qt_gui_rep::get_extents (SI& width, SI& height) {
-  coord2 size = headless_mode ? coord2 (480, 320)
+  coord2 size (480 * PIXEL, 320 * PIXEL);
+  if (!headless_mode) {
 #if QT_VERSION < 0x060000
-    : from_qsize (QApplication::desktop()->size());
+    if (QApplication::desktop ())
+      size = from_qsize (QApplication::desktop ()->size ());
 #else
-    : from_qsize (QGuiApplication::primaryScreen()->size()); // todo : improve this
+    if (QScreen* scr = QGuiApplication::primaryScreen ())
+      size = from_qsize (scr->size ()); // todo : improve this
 #endif
+  }
   width  = size.x1;
   height = size.x2;
 }
@@ -259,11 +264,11 @@ qt_gui_rep::get_selection (string key, tree& t, string& s, string format) {
   QClipboard::Mode mode = QClipboard::Clipboard;
   bool direct_selection= (key == "extern");
   if (direct_selection) key= "primary";
-  if (key == "primary" || (key == "mouse" && cb->supportsSelection ()))
+  const bool has_selection = (cb && cb->supportsSelection ());
+  if (key == "primary" || (key == "mouse" && has_selection))
     if (key == "mouse") mode = QClipboard::Selection;
   
-  QString originalText = cb->text (mode);
-  const QMimeData *md = cb->mimeData (mode);
+  const QMimeData *md = cb ? cb->mimeData (mode) : nullptr;
   QByteArray buf;
   string input_format;
   
@@ -271,9 +276,9 @@ qt_gui_rep::get_selection (string key, tree& t, string& s, string format) {
   t = "none";
   // Knowing when we owns (or not) the content is not clear
   bool owns = (format != "temp" && format != "wrapbuf" && key != "primary") &&
-  !(key == "mouse" && cb->supportsSelection ());
+  !(key == "mouse" && has_selection);
   
-  if (!owns && md->hasFormat ("application/x-texmacs-pid")) {
+  if (!owns && md && md->hasFormat ("application/x-texmacs-pid")) {
     buf = md->data ("application/x-texmacs-pid");
     if (!(buf.isEmpty())) {
       owns = string (buf.constData(), buf.size())
@@ -287,6 +292,7 @@ qt_gui_rep::get_selection (string key, tree& t, string& s, string format) {
     s = copy (selection_s [key]);
     return true;
   }
+  if (!md) return false;
   
   if (DEBUG_QT)
     debug_qt << "get_selection format: ["  << format << "] mime-types: [" 
@@ -375,6 +381,7 @@ qt_gui_rep::set_selection (string key, tree t, string s, string format) {
   selection_t (key)= copy (t); // tuple ("texmacs", selection_tree, mode, lan)
   selection_s (key)= copy (s);
   QClipboard *cb = QApplication::clipboard ();
+  if (!cb) return true;
   QClipboard::Mode mode = QClipboard::Clipboard;
   if (key == "primary");
   else if (key == "mouse" && cb->supportsSelection())
@@ -429,6 +436,7 @@ qt_gui_rep::clear_selection (string key) {
   selection_s->reset (key);
   
   QClipboard *cb = QApplication::clipboard();
+  if (!cb) return;
   QClipboard::Mode mode = QClipboard::Clipboard;
   if (key == "primary");
   else if (key == "mouse" && cb->supportsSelection())
@@ -458,7 +466,7 @@ void qt_gui_rep::set_mouse_pointer (string curs_name, string mask_name)
 static void
 center_waitWindow (widget w, QPointer<QDialog> waitWindow) {
   if (!waitWindow) return;
-  qt_window_widget_rep* wid = static_cast<qt_window_widget_rep*> (w.rep);
+  qt_widget_rep* wid = static_cast<qt_widget_rep*> (w.rep);
   if (!wid || !wid->qwid || !wid->qwid->window()) return;
   QSize sz = waitWindow->geometry ().size ();
   QRect rect = QRect (QPoint (0,0), sz);
@@ -509,17 +517,19 @@ qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
     QString msg= waitDialogs.first();
     if (waitDialogs.count() >= 2)
       msg= msg + QString ("\n") + waitDialogs.last ();
-    waitLabel->setText (msg);
+    if (waitLabel) waitLabel->setText (msg);
     center_waitWindow (w, waitWindow);
-    waitWindow->updateGeometry ();
-    waitWindow->show ();
+    if (waitWindow) {
+      waitWindow->updateGeometry ();
+      waitWindow->show ();
+    }
     qApp->processEvents (QEventLoop::ExcludeUserInputEvents);
   } else {
-    waitLabel->setText ("");
-    waitWindow->close ();
+    if (waitLabel) waitLabel->setText ("");
+    if (waitWindow) waitWindow->close ();
     QTMWidget::setFocusToLast();
   }
-  qt_window_widget_rep* wid= static_cast<qt_window_widget_rep*> (w.rep);
+  qt_widget_rep* wid= static_cast<qt_widget_rep*> (w.rep);
   if (wid && wid->qwid) wid->qwid->activateWindow ();
   if (wid) send_keyboard_focus (wid);
   need_update ();
@@ -531,7 +541,7 @@ qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
   if (DEBUG_QT)
     debug_qt << "show_wait_indicator \"" << message << "\"\"" << arg << "\"\n";
   
-  qt_window_widget_rep* wid = static_cast<qt_window_widget_rep*> (w.rep);
+  qt_widget_rep* wid = static_cast<qt_widget_rep*> (w.rep);
   
     // we move the texmacs window during an operation.
     // We need to disable updates of the window to avoid erasure of the canvas
@@ -583,18 +593,18 @@ qt_gui_rep::show_wait_indicator (widget w, string message, string arg)  {
         // processEvents is needed to let Qt update windows coordinates in the case
       qApp->processEvents (QEventLoop::ExcludeUserInputEvents);
         //ENDHACK
-      if (wid && wid->qwid && wid->qwid->window()) {
+      if (waitWindow && wid && wid->qwid && wid->qwid->window()) {
         QPoint pt = wid->qwid->window()->geometry().center();
         rect.moveCenter (pt);
         waitWindow->move (rect.topLeft());
       }
       
     }
-    waitWindow->show();
+    if (waitWindow) waitWindow->show();
     qApp->processEvents (QEventLoop::ExcludeUserInputEvents);
-    waitWindow->repaint();
+    if (waitWindow) waitWindow->repaint();
   } else {
-    waitWindow->close();
+    if (waitWindow) waitWindow->close();
   }
 
   if (wid && wid->qwid) wid->qwid->activateWindow ();
@@ -692,9 +702,12 @@ gui_version () {
 
 bool
 qt_support_functionality (string s) {
+  QTMApplication* app = headless_mode
+    ? nullptr
+    : qobject_cast<QTMApplication*> (QCoreApplication::instance ());
   if (s == "tab") {
 #if QT_VERSION >= 0x060000 && defined(OS_MINGW)
-    return (tmapp () != nullptr) ? tmapp ()->useTabWindow () : false;
+    return (app != nullptr) ? app->useTabWindow () : false;
 #else
     return false;
 #endif
@@ -708,14 +721,14 @@ qt_support_functionality (string s) {
   }
   if (s == "density") {
 #if QT_VERSION >= 0x060000 && defined(OS_MINGW)
-    return (tmapp () != nullptr) ? tmapp ()->useTabWindow () : false;
+    return (app != nullptr) ? app->useTabWindow () : false;
 #else
     return false;
 #endif
   }
 #ifndef OS_ANDROID
   if (s == "multiwindow") {
-    return (tmapp () != nullptr) ? !tmapp ()->useTabWindow () : true;
+    return (app != nullptr) ? !app->useTabWindow () : true;
   }
 #endif
   return false;
@@ -794,14 +807,14 @@ qt_gui_rep::process_queued_events (int max) {
       case qp_type::QP_COMMAND :
       {
         command cmd = open_box <command> (ev.x2) ;
-        cmd->apply();
+        if (!is_nil (cmd)) cmd->apply();
       }
         break;
       case qp_type::QP_COMMAND_ARGS :
       {
         typedef pair<command, object> T;
         T x = open_box <T> (ev.x2);
-        x.x1->apply (x.x2);
+        if (!is_nil (x.x1)) x.x1->apply (x.x2);
       }
         break;
       case qp_type::QP_DELAYED_COMMANDS :
@@ -995,7 +1008,8 @@ qt_gui_rep::update () {
     
   if (popup_wid_time > 0 && now > popup_wid_time) {
     popup_wid_time = 0;
-    _popup_wid->send (SLOT_VISIBILITY, close_box<bool> (true));
+    if (!is_nil (_popup_wid))
+      _popup_wid->send (SLOT_VISIBILITY, close_box<bool> (true));
   }
   
     // 2.
@@ -1127,13 +1141,17 @@ qt_gui_rep::show_help_balloon (widget wid, SI x, SI y) {
   if (popup_wid_time > 0) return;
   
   _popup_wid = popup_window_widget (wid, "Balloon");
-  SI winx, winy;
+  SI winx = 0, winy = 0;
   // HACK around wrong? reporting of window widget for embedded texmacs-inputs:
   // call get_window on the current window (concrete_window()->win is set to
   // the texmacs-input widget whenever there is one)
-  get_position (get_window (concrete_window()->win), winx, winy);
-  set_position (_popup_wid, x+winx, y+winy);
-  popup_wid_time = texmacs_time() + 66;
+  widget win = get_window (concrete_window()->win);
+  if (is_nil (win)) win = concrete_window()->win;
+  if (!is_nil (win)) get_position (win, winx, winy);
+  if (!is_nil (_popup_wid)) {
+    set_position (_popup_wid, x+winx, y+winy);
+    popup_wid_time = texmacs_time() + 66;
+  }
     // update() will eventually show the widget
 }
 
@@ -1203,6 +1221,7 @@ qt_gui_rep::put_graphics_on_clipboard (url file) {
   if ((extension == "bmp") || (extension == "png") ||
       (extension == "jpg") || (extension == "jpeg")) {
     QClipboard *clipboard = QApplication::clipboard();
+    if (!clipboard) return false;
     c_string tmp (concretize (file));
     clipboard->setImage (QImage (QString (tmp)));
   }
@@ -1210,6 +1229,8 @@ qt_gui_rep::put_graphics_on_clipboard (url file) {
       // vector formats
       // Are there applications receiving eps, pdf,... through the clipboard?
       // I have not experimented with EMF/WMF (windows) or SVM (Ooo)
+    QClipboard *clipboard = QApplication::clipboard();
+    if (!clipboard) return false;
     QString mime ="image/*"; // generic image format;
     if (extension == "eps") mime = "application/postscript";
     if (extension == "pdf") mime = "application/pdf";
@@ -1230,7 +1251,6 @@ qt_gui_rep::put_graphics_on_clipboard (url file) {
     QMimeData *mymimeData = new QMimeData;
     mymimeData->setData (mime, rawdata);
     
-    QClipboard *clipboard = QApplication::clipboard();
     clipboard->setMimeData (mymimeData);// default mode = QClipboard::Clipboard
   }
   return true;

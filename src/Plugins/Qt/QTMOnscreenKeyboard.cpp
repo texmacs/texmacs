@@ -271,14 +271,15 @@ void QTMOnscreenKeyboard::onKeyboardButtonClicked(QPushButton* key) {
     if (cmd.isEmpty()) return;
 	bool refreshLayout = shouldRefreshLayoutAfterCommand(cmd);
 
+    QPointer<QTMOnscreenKeyboard> self(this);
     try {
 		eval(string(cmd.toUtf8().constData()));
     } catch (string& err) {
         cout << "custom-keyboard key command failed: " << err << LF;
     }
 
-	if (refreshLayout)
-	  QTimer::singleShot(0, this, SLOT(initializeKeyboard()));
+	if (self && refreshLayout)
+	  QTimer::singleShot(0, self.data(), SLOT(initializeKeyboard()));
 
 	QTMWidget::setFocusToLast();
 }

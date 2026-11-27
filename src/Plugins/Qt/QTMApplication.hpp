@@ -107,7 +107,9 @@ public:
 
 #if QT_VERSION >= 0x060000
   inline QTMMainTabWindow &mainTabWindow() {
-    return *QTMMainTabWindow::topTabWindow();
+    QTMMainTabWindow* win = QTMMainTabWindow::topTabWindow();
+    if (!win) win = new QTMMainTabWindow();
+    return *win;
   }
 #endif
 
@@ -127,13 +129,13 @@ signals:
 
 private:
 #if QT_VERSION >= 0x060000
-  bool mPixmapManagerInitialized;
+  bool mPixmapManagerInitialized = false;
   QTMIconManager mIconManager;
 #endif
   QTMKeyboard mKeyboard;
   QPointer<QTMOnscreenKeyboard> mOnscreenKeyboard;
-  bool mUseNewToolbar;
-  bool mUseTabWindow;
+  bool mUseNewToolbar = false;
+  bool mUseTabWindow = false;
   QPointer<QFileSystemWatcher> mCssWatcher = nullptr;
   QString mCurrentCssPath;
   QTMLocalServer mLocalServer;

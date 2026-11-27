@@ -82,8 +82,8 @@ _convert (string from, string fm_from, string fm_to) {
   call_scm_converter (f, t);
   string to;
   load_string (t, to, false);
-  if (exists (to)) remove (to);
-  if (exists (from)) remove (from);
+  if (exists (t)) remove (t);
+  if (exists (f)) remove (f);
   return to;
 }
 
@@ -95,8 +95,8 @@ _convert_to_pdf (string from, string fm_from) {
   qt_image_to_pdf (f, t);
   string to;
   load_string (t, to, false);
-  if (exists (to)) remove (to);
-  if (exists (from)) remove (from);
+  if (exists (t)) remove (t);
+  if (exists (f)) remove (f);
   return to;
 }
 
@@ -107,8 +107,8 @@ _convert_pdf_to_png (string from) {
   image_to_png (f, t);
   string to;
   load_string (t, to, false);
-  if (exists (to)) remove (to);
-  if (exists (from)) remove (from);
+  if (exists (t)) remove (t);
+  if (exists (f)) remove (f);
   return to;
 }
 

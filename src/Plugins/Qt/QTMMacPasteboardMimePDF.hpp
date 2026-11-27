@@ -47,6 +47,7 @@ public:
   QVariant convertToMime (QString const & mime, QList<QByteArray> data, QString flav)
   {
     (void) flav; (void) mime;
+    if (data.isEmpty ()) return QVariant ();
     if (data.count () > 1)
       debug_qt << "QMacPasteboardMimePDF: Cannot handle multiple member data " << LF;
     return data.first ();

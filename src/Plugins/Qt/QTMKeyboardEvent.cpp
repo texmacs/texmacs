@@ -145,7 +145,7 @@ void QTMKeyboardEvent::computeUnicodeToCork() {
       // but this format is not used for keypresses, so we must remove
       // them.
       int len= N (tstr);
-      if (len >= 1 && tstr[0] == '<' && tstr[1] != '#' && tstr[len-1] == '>') {
+      if (len >= 2 && tstr[0] == '<' && tstr[1] != '#' && tstr[len-1] == '>') {
         mTexmacsKeyCombination= tstr (1, len-1);
       }
       else {
