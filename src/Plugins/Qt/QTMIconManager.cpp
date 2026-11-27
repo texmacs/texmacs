@@ -194,12 +194,14 @@ QTMIconManager::getIcon (url file_name) {
 }
 
 void QTMIconManager::setLabelPixmap(QPointer<QLabel> label, url file_name, int width, int height) {
+  if (!label) return;
   if (get_env ("TEXMACS_PIXMAP_PATH") == "") {
-    QTimer::singleShot (1, [this, label, file_name, width, height]() {
+    QTimer::singleShot (1, label.data(), [this, label, file_name, width, height]() {
       setLabelPixmap(label, file_name, width, height);
     });
+    return;
   }
-  if (label) {
+  {
     QIcon icon= this->getIcon (file_name);
     if (width > 0 && height > 0) {
       QPixmap pixmap= icon.pixmap (width, height);
@@ -227,36 +229,42 @@ void QTMIconManager::setActionIcon(QPointer<QAction> action, url file_name) {
 }
 
 void QTMIconManager::setWindowIcon(QPointer<QMainWindow> window, url file_name) {
+  if (!window) return;
   if (get_env ("TEXMACS_PIXMAP_PATH") == "") {
-    QTimer::singleShot (1000, [this, window, file_name]() {
+    QTimer::singleShot (1000, window.data(), [this, window, file_name]() {
       setWindowIcon(window, file_name);
     });
+    return;
   }
-  if (window) {
+  {
     QIcon icon= this->getIcon (file_name);
     window->setWindowIcon (icon);
   }
 }
 
 void QTMIconManager::setTabIcon(QPointer<QTabWidget> tabwidget, int index, url file_name) {
+  if (!tabwidget) return;
   if (get_env ("TEXMACS_PIXMAP_PATH") == "") {
-    QTimer::singleShot (1, [this, tabwidget, index, file_name]() {
+    QTimer::singleShot (1, tabwidget.data(), [this, tabwidget, index, file_name]() {
       setTabIcon(tabwidget, index, file_name);
     });
+    return;
   }
-  if (tabwidget) {
+  {
     QIcon icon= this->getIcon (file_name);
     tabwidget->setTabIcon (index, icon);
   }
 }
 
 void QTMIconManager::setTabIcon(QPointer<QTMResponsiveTabWidget> tabbar, int index, url file_name) {
+  if (!tabbar) return;
   if (get_env ("TEXMACS_PIXMAP_PATH") == "") {
-    QTimer::singleShot (1, [this, tabbar, index, file_name]() {
+    QTimer::singleShot (1, tabbar.data(), [this, tabbar, index, file_name]() {
       setTabIcon(tabbar, index, file_name);
     });
+    return;
   }
-  if (tabbar) {
+  {
     QIcon icon= this->getIcon (file_name);
     tabbar->setTabIcon (index, icon);
   }
@@ -264,12 +272,14 @@ void QTMIconManager::setTabIcon(QPointer<QTMResponsiveTabWidget> tabbar, int ind
 
 
 void QTMIconManager::setToolButtonIcon(QPointer<QToolButton> button, url file_name) {
+  if (!button) return;
   if (get_env ("TEXMACS_PIXMAP_PATH") == "") {
-    QTimer::singleShot (1, [this, button, file_name]() {
+    QTimer::singleShot (1, button.data(), [this, button, file_name]() {
       setToolButtonIcon(button, file_name);
     });
+    return;
   }
-  if (button) {
+  {
     QIcon icon= this->getIcon (file_name);
     button->setIcon (icon);
   }

@@ -447,8 +447,12 @@ qt_image_size (url image, int& w, int& h) {// w, h in points
     return false;
   }
   else {
-    w= (int) rint ((((double) im.width ())*2834)/im.dotsPerMeterX());
-    h= (int) rint ((((double) im.height())*2834)/im.dotsPerMeterY());
+    int dpmx = im.dotsPerMeterX();
+    int dpmy = im.dotsPerMeterY();
+    if (dpmx <= 0) dpmx = 2834;
+    if (dpmy <= 0) dpmy = 2834;
+    w= (int) rint ((((double) im.width ())*2834)/dpmx);
+    h= (int) rint ((((double) im.height())*2834)/dpmy);
     if (DEBUG_CONVERT)
       debug_convert << "qt_image_size, found size (in dotsPerMeter): "
 		    << w << " x " << h << LF;
@@ -769,10 +773,14 @@ qt_get_date (string lan, string fm) {
     else fm = "d MMMM yyyy";
   }
   else if (fm[0] == '%') {
-    char buf[64];
+    char buf[256];
+    buf[0] = '\0';
     time_t ti;
     time (&ti);
-    strftime (buf, sizeof(buf), as_charp(fm), ::localtime(&ti));
+    struct tm* lt = ::localtime(&ti);
+    if (lt == NULL) return "";
+    c_string _fm (fm);
+    if (strftime (buf, sizeof(buf), (const char*) _fm, lt) == 0) return "";
     return buf;
   }
   QLocale loc = QLocale (to_qstring (language_to_locale(lan)));
@@ -944,29 +952,34 @@ QString fromNSUrl(const QUrl &url) {
       CFStringCreateWithCString(kCFAllocatorDefault,
                                 localFileQString.toUtf8().constData(),
                                 kCFStringEncodingUTF8);
-    CFURLRef relCFURL =
-      CFURLCreateWithFileSystemPath(kCFAllocatorDefault,
-                                    relCFStringRef,
-                                    kCFURLPOSIXPathStyle,
-                                    false); // isDirectory
-    CFErrorRef error = 0;
-    CFURLRef absCFURL =
-      CFURLCreateFilePathURL(kCFAllocatorDefault, relCFURL, &error);
-    if ( !error )
-    {
-      static const CFIndex maxAbsPathCStrBufLen = 4096;
-      char absPathCStr[maxAbsPathCStrBufLen];
-      if ( CFURLGetFileSystemRepresentation(absCFURL,
-                                            true, // resolveAgainstBase
-                                            reinterpret_cast<UInt8 *>( &absPathCStr[0] ),
-                                            maxAbsPathCStrBufLen))
-      {
-        localFileQString = QString( absPathCStr );
+    if (relCFStringRef) {
+      CFURLRef relCFURL =
+        CFURLCreateWithFileSystemPath(kCFAllocatorDefault,
+                                      relCFStringRef,
+                                      kCFURLPOSIXPathStyle,
+                                      false); // isDirectory
+      if (relCFURL) {
+        CFErrorRef error = 0;
+        CFURLRef absCFURL =
+          CFURLCreateFilePathURL(kCFAllocatorDefault, relCFURL, &error);
+        if ( !error && absCFURL )
+        {
+          static const CFIndex maxAbsPathCStrBufLen = 4096;
+          char absPathCStr[maxAbsPathCStrBufLen];
+          if ( CFURLGetFileSystemRepresentation(absCFURL,
+                                                true, // resolveAgainstBase
+                                                reinterpret_cast<UInt8 *>( &absPathCStr[0] ),
+                                                maxAbsPathCStrBufLen))
+          {
+            localFileQString = QString( absPathCStr );
+          }
+        }
+        if (absCFURL) CFRelease( absCFURL );
+        if (error) CFRelease( error );
+        CFRelease( relCFURL );
       }
+      CFRelease( relCFStringRef );
     }
-    CFRelease( absCFURL );
-    CFRelease( relCFURL );
-    CFRelease( relCFStringRef );
   }
   return localFileQString;
 }

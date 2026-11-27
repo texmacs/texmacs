@@ -21,20 +21,24 @@
 #include <QPixmap>
 
 QTMImpressIconEngine::QTMImpressIconEngine (qt_simple_widget_rep* w)
-  : wid (w) {
+  : wid (w), iconSize (0, 0) {
   // get a size hint from the widget that will be used to center the icon
-  SI sizeHintW, sizeHintH;
-  w->handle_get_size_hint (sizeHintW, sizeHintH);
-  iconSize = to_qsize (sizeHintW, sizeHintH);
+  if (w != nullptr) {
+    SI sizeHintW = 0, sizeHintH = 0;
+    w->handle_get_size_hint (sizeHintW, sizeHintH);
+    iconSize = to_qsize (sizeHintW, sizeHintH);
+  }
 }
 
 void
 QTMImpressIconEngine::paint (QPainter *painter, const QRect &rect,
 			     QIcon::Mode mode, QIcon::State state) {
   (void) mode; (void) state;
-  if (is_nil (wid)) return;
+  if (is_nil (wid) || !painter || !painter->isActive () || !painter->device ()) return;
   qt_simple_widget_rep* simple_wid = static_cast<qt_simple_widget_rep*> (wid.rep);
+  painter->save ();
   double pixel_ratio= painter->device ()->devicePixelRatio ();
+  if (pixel_ratio <= 0.0) pixel_ratio = 1.0;
   painter->scale (1/pixel_ratio, 1/pixel_ratio);
   SI pw= painter->device ()->width ();
   SI ph= painter->device ()->height ();
@@ -60,7 +64,8 @@ QTMImpressIconEngine::paint (QPainter *painter, const QRect &rect,
   the_gui->set_check_events (false);
   simple_wid->handle_repaint (&ren, r->x1, r->y2, r->x2, r->y1);
   the_gui->set_check_events (true);
-  ren.end ();
+  ren.basic_renderer_rep::end ();
+  painter->restore ();
 }
 
 QPixmap
@@ -68,9 +73,14 @@ QTMImpressIconEngine::pixmap (const QSize &size,
 			      QIcon::Mode mode, QIcon::State state) {
   // to create the pixmap, we use a QPainter that we pass to the paint method
   (void) mode; (void) state;
+  if (size.isEmpty ()) return QPixmap ();
   QPixmap pxm (size);
+  if (pxm.isNull ()) return pxm;
+  if (DEBUG_QT)
+    debug_qt << "QTMImpressIconEngine::pixmap (" << size.width() << "," << size.height() << ")\n";
   pxm.fill (Qt::transparent);
   QPainter painter (&pxm);
+  if (!painter.isActive ()) return pxm;
   paint (&painter, QRect (QPoint (0, 0), size), mode, state);
   return pxm;
 }

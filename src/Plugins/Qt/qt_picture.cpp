@@ -107,17 +107,21 @@ qt_renderer_rep::draw_picture (picture p, SI x, SI y, int alpha) {
 ******************************************************************************/
 
 qt_image_renderer_rep::qt_image_renderer_rep (picture p, double zoom):
-  qt_renderer_rep (new QPainter (), 1), pict (p)
+  qt_renderer_rep (new QPainter (), 1),
+  pict (is_nil (p) ? p : as_qt_picture (p)),
+  x1 (0), y1 (0), x2 (0), y2 (0)
 {
   zoomf  = zoom;
   shrinkf= (int) tm_round (std_shrinkf / zoomf);
   pixel  = (SI)  tm_round ((std_shrinkf * PIXEL) / zoomf);
   thicken= (shrinkf >> 1) * PIXEL;
 
-  int pw = p->get_width ();
-  int ph = p->get_height ();
-  int pox= p->get_origin_x ();
-  int poy= p->get_origin_y ();
+  if (is_nil (pict)) return;
+
+  int pw = pict->get_width ();
+  int ph = pict->get_height ();
+  int pox= pict->get_origin_x ();
+  int poy= pict->get_origin_y ();
 
   ox = pox * pixel;
   oy = poy * pixel;
@@ -133,6 +137,7 @@ qt_image_renderer_rep::qt_image_renderer_rep (picture p, double zoom):
   cy2= 0;
 
   qt_picture_rep* handle= (qt_picture_rep*) pict->get_handle ();
+  if (!handle) return;
   QImage& im (handle->pict);
 #if (QT_VERSION >= 0x040800)
   im.fill (QColor (0, 0, 0, 0));
