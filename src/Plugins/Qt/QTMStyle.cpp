@@ -34,7 +34,7 @@ QStyle*
 qtmstyle () {
   static QStyle* qtmstyle = NULL;
   if (!qtmstyle)
-    qtmstyle = new QTMStyle (qApp->style());
+    qtmstyle = new QTMStyle (qApp ? qApp->style() : nullptr);
   return qtmstyle;
 }
 
@@ -44,9 +44,9 @@ qtmstyle () {
 
 QTMProxyStyle::QTMProxyStyle (QPointer<QStyle> _base) : QStyle (), base (_base) { }
 
-inline  QPointer<QStyle> QTMProxyStyle::baseStyle() const {
+QPointer<QStyle> QTMProxyStyle::baseStyle() const {
   if (base) return base;
-  if (qApp && qApp->style()) return qApp->style();
+  if (qApp && qApp->style() && qApp->style() != this) return qApp->style();
   std_warning << "QTMProxyStyle::baseStyle() returning nullptr, this should not happen";
   return nullptr;
 }
@@ -58,7 +58,9 @@ QTMProxyStyle::layoutSpacing (QSizePolicy::ControlType control1,
                               Qt::Orientation orientation,
                               const QStyleOption *option,
                               const QWidget *widget) const {
-  return baseStyle()->layoutSpacing(control1, control2, orientation, option, widget);
+  if (QPointer<QStyle> style = baseStyle())
+    return style->layoutSpacing(control1, control2, orientation, option, widget);
+  return -1;
 }
 #endif
 
@@ -238,7 +240,7 @@ static void qtmDrawRoundedRect(QPainter *p, const QRectF &rect, qreal xRadius, q
 {
   QRectF r = rect.normalized();
   
-  if (r.isNull())
+  if (r.isEmpty())
     return;
   
   if (mode == Qt::AbsoluteSize) {
@@ -364,7 +366,8 @@ QTMStyle::drawPrimitive (PrimitiveElement element, const QStyleOption *opt, QPai
     default:
       ;
   }
-  baseStyle()->drawPrimitive(element,opt,p,widget);  
+  if (QPointer<QStyle> style = baseStyle())
+    style->drawPrimitive(element,opt,p,widget);
 }
 
 
@@ -435,7 +438,8 @@ QTMStyle::drawComplexControl (ComplexControl cc, const QStyleOptionComplex* opt,
       }
       break;
     default:
-      baseStyle()->drawComplexControl (cc, opt, p, widget);
+      if (QPointer<QStyle> style = baseStyle())
+        style->drawComplexControl (cc, opt, p, widget);
   }
 }
 
@@ -455,7 +459,8 @@ QTMStyle::sizeFromContents (ContentsType type, const QStyleOption* option, const
       break;
       
     default:
-      sz = baseStyle()->sizeFromContents(type, option, contentsSize, widget);
+      if (QPointer<QStyle> style = baseStyle())
+        sz = style->sizeFromContents(type, option, contentsSize, widget);
   }
   return sz;
 }
@@ -473,7 +478,9 @@ QTMStyle::pixelMetric (PixelMetric metric, const QStyleOption *opt, const QWidge
     default:
       ;
   }
-  return baseStyle()->pixelMetric(metric,opt,widget);
+  if (QPointer<QStyle> style = baseStyle())
+    return style->pixelMetric(metric,opt,widget);
+  return 0;
 }
 
 void
@@ -504,13 +511,14 @@ QTMStyle::drawControl (ControlElement element, const QStyleOption* option, QPain
       //painter->fillRect(option->rect, QColor (216, 216, 216));
     else if ((widget) && (widget->windowTitle() == "focus toolbar"))
       painter->fillRect(option->rect, QColor (240, 240, 240));
-    else 
-      baseStyle()->drawControl (element, option, painter, widget);
+    else if (QPointer<QStyle> style = baseStyle())
+      style->drawControl (element, option, painter, widget);
     break;
 #endif
       
     default:
-      baseStyle()->drawControl (element, option, painter, widget);
+      if (QPointer<QStyle> style = baseStyle())
+        style->drawControl (element, option, painter, widget);
   }
 }
 
@@ -523,7 +531,9 @@ QTMStyle::styleHint (StyleHint hint, const QStyleOption* option, const QWidget* 
       // However: That mechanism seems to be broken with some Qt versions. Furthermore, the Alt key is heavily
       // used within TeXmacs, so the menubar navigation gets in the way quite often.
     default:
-      return baseStyle()->styleHint (hint, option, widget, returnData);
+      if (QPointer<QStyle> style = baseStyle())
+        return style->styleHint (hint, option, widget, returnData);
+      return 0;
   }
 }
 

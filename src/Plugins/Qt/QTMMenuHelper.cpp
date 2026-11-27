@@ -262,8 +262,10 @@ QTMMinibarAction::createWidget (QWidget* parent) {
     if (!sa) continue;
     if (QWidgetAction * wa = qobject_cast<QWidgetAction*> (sa)) {
       QWidget *w = wa->requestWidget (wid);
-      w->setSizePolicy (QSizePolicy::Preferred, QSizePolicy::Expanding);
-      l->addWidget (w);
+      if (w) {
+        w->setSizePolicy (QSizePolicy::Preferred, QSizePolicy::Expanding);
+        l->addWidget (w);
+      }
     } else if (sa->text().isNull() && sa->icon().isNull()) {
       l->addSpacing(8);
     } else {
@@ -336,7 +338,8 @@ QTMMenuButton::paintEvent (QPaintEvent* e) {
   style()->drawControl (QStyle::CE_MenuItem, &option, &p, this);
     // draw the icon with a bit of inset.
   r.adjust (2, 2, -2, -2);  
-  defaultAction()->icon().paint (&p, r);
+  if (QAction* act = defaultAction())
+    act->icon().paint (&p, r);
 }
 
 /******************************************************************************
@@ -635,7 +638,8 @@ QTMLineEdit::keyPressEvent (QKeyEvent* ev)
     if (ev->modifiers() & Qt::AltModifier) key= "A-" * key;
     if (ev->modifiers() & Qt::MetaModifier) key= "C-" * key;
 #endif
-    cmd (list_object (list_object (object (s), object (key))));
+    if (!is_nil (cmd))
+      cmd (list_object (list_object (object (s), object (key))));
     return;
   }
   else if (c) {
@@ -806,7 +810,8 @@ QTMLineEdit::inputMethodEvent (QInputMethodEvent* ev) {
       ev->preeditString().isEmpty() &&
       continuous()) {
     string str= from_qstring(ev->commitString());
-    cmd (list_object (list_object (object (str), object (str))));
+    if (!is_nil (cmd))
+      cmd (list_object (list_object (object (str), object (str))));
   }
 }
 
@@ -1293,6 +1298,7 @@ void QTMScrollArea::setWidgetAndConnect (QWidget* w) {
   setWidget (w);
  
   listViews.clear();
+  if (!w) return;
   for (QTMListView* lv : w->findChildren<QTMListView*>())
     listViews.append(lv);
   
@@ -1325,10 +1331,13 @@ QTMScrollArea::scrollToSelection (const QItemSelection& sel) {
 BEGIN_SLOT
   if (sel.isEmpty())
     return;
+  const QModelIndexList idxs = sel.indexes();
+  if (idxs.isEmpty())
+    return;
 
   QTMListView* lw = qobject_cast<QTMListView*> (sender());
   if (lw) {
-    QRect r = lw->visualRect (sel.indexes().last());
+    QRect r = lw->visualRect (idxs.last());
     QRect g = lw->geometry();
     int   x = r.x() + g.x();
     int   y = r.y() + g.y();
@@ -1462,6 +1471,8 @@ QTMTreeView::currentChanged (const QModelIndex& curr, const QModelIndex& prev) {
 void
 QTMTreeView::callOnChange (const QModelIndex& index, bool mouse) {
 BEGIN_SLOT
+  if (!tmModel() || !index.isValid())
+    return;
   object arguments = mouse ? list_object ((int)QApplication::mouseButtons())
                            : list_object (-1);
     
@@ -1486,7 +1497,8 @@ BEGIN_SLOT
     arguments = cons (from_qstring (d.toString()), arguments);
     d = tmModel()->data (index, ++cnt);
   }
-  _cmd (arguments);
+  if (!is_nil (_cmd))
+    _cmd (arguments);
 END_SLOT
 }
 

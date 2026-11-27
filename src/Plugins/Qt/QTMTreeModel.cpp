@@ -79,7 +79,7 @@ QTMTreeModel::row_offset (const tree& t) const {
 
 tree
 QTMTreeModel::item_from_index (const QModelIndex& index) const {
-  if (!index.isValid()) return tree (_t_rep);
+  if (!index.isValid() || !index.internalPointer()) return tree (_t_rep);
   return tree (static_cast<tree_rep*> (index.internalPointer()));
 }
 
@@ -100,9 +100,9 @@ QTMTreeModel::index_from_item (const tree& tref) const {
 
 bool
 QTMTreeModel::hasIndex (int row, int column, const QModelIndex& parent) const {
-  (void) column;
   const tree& t = item_from_index (parent);
-  return is_compound(t) && row + row_offset(t) < N(t) && column == 0;
+  return row >= 0 && column == 0 && is_compound(t) &&
+         row + row_offset(t) >= 0 && row + row_offset(t) < N(t);
 }
 
 QModelIndex
@@ -110,7 +110,8 @@ QTMTreeModel::index (int row, int column, const QModelIndex& parent) const {
   if (!hasIndex (row, column, parent)) return QModelIndex();
   tree t = item_from_index (parent);
 
-  if (is_compound (t) && row + row_offset(t) < N(t))
+  if (row >= 0 && is_compound (t) &&
+      row + row_offset(t) >= 0 && row + row_offset(t) < N(t))
     return createIndex (row, column, t[row + row_offset(t)].rep);
   else
     return QModelIndex();
@@ -135,7 +136,9 @@ QTMTreeModel::parent (const QModelIndex& index) const {
 int
 QTMTreeModel::rowCount (const QModelIndex& parent) const {
   tree t = item_from_index (parent);
-  return is_compound (t) ? N(t) - row_offset (t) : 0;
+  if (!is_compound (t)) return 0;
+  int off = row_offset (t);
+  return (N(t) > off) ? N(t) - off : 0;
 }
 
 int
@@ -152,8 +155,8 @@ QTMTreeModel::data (const QModelIndex& index, int role) const {
   tree& t = const_cast<tree&> (tref);
   int pos = _roles.contains(L(t)) && _roles[L(t)].contains(role)
               ? _roles[L(t)][role] : -1;
-  if (role >= TMUserRole && pos > -1 && !is_atomic (t) && N(t) >= pos && 
-      is_atomic (t[pos]))
+  bool valid_pos = (pos >= 0 && is_compound (t) && pos < N(t));
+  if (role >= TMUserRole && valid_pos && is_atomic (t[pos]))
     return QVariant (to_qstring (t[pos]->label));
   
   switch (role) {
@@ -163,7 +166,7 @@ QTMTreeModel::data (const QModelIndex& index, int role) const {
     case Qt::StatusTipRole:
       if (is_atomic (t))
         return to_qstring (t->label);
-      else if (pos == -1 || !is_atomic (t[pos]))
+      else if (!valid_pos || !is_atomic (t[pos]))
         return to_qstring (as_string (L(t)));
       else
         return to_qstring (t[pos]->label);
@@ -175,7 +178,7 @@ QTMTreeModel::data (const QModelIndex& index, int role) const {
         // QPixmapCache for all files it loads.
         // It might actually be better to cache the QIcons first and return them
       url u = "$TEXMACS_PIXMAP_PATH";
-      if (pos == -1 || is_atomic (t) || !is_atomic (t[pos]))
+      if (!valid_pos || !is_atomic (t[pos]))
         u = resolve ("$TEXMACS_PIXMAP_PATH" *
                      url ("treelabel-" * as_string (L(t)) * ".xpm"));
       else
@@ -187,7 +190,7 @@ QTMTreeModel::data (const QModelIndex& index, int role) const {
     }
       break;
     case CommandRole:
-      if (pos > -1 && !is_atomic (t) && N(t) >= pos && is_atomic (t[pos]))
+      if (valid_pos && is_atomic (t[pos]))
         return QVariant (to_qstring (t[pos]->label));
       else
         return QVariant();
@@ -265,9 +268,11 @@ qt_tree_observer_rep::~qt_tree_observer_rep () {
 
 void
 qt_tree_observer_rep::announce (tree& ref, modification mod) {
-  (void) ref; (void) mod;
-  //if (mod->k != MOD_SET_CURSOR)
-  //  model->beginResetModel();
+  (void) ref;
+  if (model && mod->k != MOD_SET_CURSOR) {
+    if (reset_depth++ == 0)
+      model->beginResetModel();
+  }
   /* MOD_SET_CURSOR is announced only for TeXmacs buffers. We might want to also
    keep a pointer to a QItemSelectionModel, or maybe some QTMItemSelectionModel
    (which would allow for intermediate proxy models used by the views, as does
@@ -296,9 +301,11 @@ qt_tree_observer_rep::announce (tree& ref, modification mod) {
 
 void
 qt_tree_observer_rep::done (tree& ref, modification mod) {
-  (void) ref; (void) mod;
-  //if (mod->k != MOD_SET_CURSOR)
-  //  model->endResetModel();
+  (void) ref;
+  if (mod->k != MOD_SET_CURSOR && reset_depth > 0) {
+    if (--reset_depth == 0 && model)
+      model->endResetModel();
+  }
 }
 
 observer

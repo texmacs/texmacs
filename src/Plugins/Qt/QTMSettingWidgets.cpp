@@ -176,7 +176,7 @@ void QTMSettingSelect::addItems(const QStringList& texts) {
 }
 
 int QTMSettingSelect::currentIndex() const {
-  return mCombo->currentIndex();
+  return mCombo ? mCombo->currentIndex() : -1;
 }
 
 void QTMSettingSelect::setCurrentIndex(int index) {
@@ -332,6 +332,7 @@ void QTMSettingGroup::updateResponsiveLayout() {
 
 void QTMSettingGroup::addItem(QLayoutItem* item) {
   if (!mLayout || !item) return;
+  const bool hasContent = (item->widget() != nullptr || item->layout() != nullptr);
   if (QWidget* widget = item->widget()) {
     if (widget->parentWidget() != contentWidget())
       widget->setParent(contentWidget());
@@ -339,6 +340,7 @@ void QTMSettingGroup::addItem(QLayoutItem* item) {
     // is this a setting widget ? if not, we need to add a padding
     if (!widget->property("isSettingWidget").toBool()) {
       mLayout->addWidget(new QTMSettingWrapper(widget, contentWidget()));
+      delete item;
     } else {
       mLayout->addItem(item);
     }
@@ -347,13 +349,14 @@ void QTMSettingGroup::addItem(QLayoutItem* item) {
     QWidget* container = new QWidget(contentWidget());
     container->setLayout(layout);
     mLayout->addWidget(new QTMSettingWrapper(container, contentWidget()));
+    delete item;
   }
   else {
     // todo
     mLayout->addItem(item);
   }
 
-  if (item->widget() != nullptr || item->layout() != nullptr)
+  if (hasContent)
     mContentItems++;
 
   setVisible(mContentItems > 0);

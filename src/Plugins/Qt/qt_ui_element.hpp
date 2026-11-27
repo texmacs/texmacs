@@ -119,7 +119,7 @@ public:
   qt_glue_widget_rep (tree _col, bool _hx, bool _vx, SI _w, SI _h)
     : col (_col), hx (_hx), vx (_vx), w (_w), h (_h) { }
   
-  qt_glue_widget_rep () { }
+  qt_glue_widget_rep () : hx (false), vx (false), w (0), h (0) { }
   
   QTMPixmapOrImage render (double pixel_ratio);
   
@@ -186,14 +186,16 @@ public:
       else
         l = "";
       
-      if (filtered)
+      if (!is_nil (cmd)) {
+        if (filtered)
 #if QT_VERSION >= 0x060000
-        cmd (list_object (l, from_qstring (qwid->filter()->filterRegularExpression().pattern())));
+          cmd (list_object (l, from_qstring (qwid->filter()->filterRegularExpression().pattern())));
 #else
-        cmd (list_object (l, from_qstring (qwid->filter()->filterRegExp().pattern())));
+          cmd (list_object (l, from_qstring (qwid->filter()->filterRegExp().pattern())));
 #endif
-      else
-        cmd (list_object (l));
+        else
+          cmd (list_object (l));
+      }
     }
   }
   

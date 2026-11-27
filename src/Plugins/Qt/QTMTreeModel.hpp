@@ -37,10 +37,11 @@ class QTMTreeModel;
  */
 class qt_tree_observer_rep : public observer_rep {
   QPointer<QTMTreeModel> model;
+  int reset_depth;
 
 public:
   explicit qt_tree_observer_rep (QTMTreeModel* _model)
-  : observer_rep(), model (_model) { }
+  : observer_rep(), model (_model), reset_depth (0) { }
   virtual ~qt_tree_observer_rep ();
   
   virtual int  get_type () { return OBSERVER_WIDGET; }

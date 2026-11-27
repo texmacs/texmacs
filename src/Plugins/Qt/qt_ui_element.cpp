@@ -106,7 +106,7 @@ class qt_toggle_command_rep: public command_rep {
   
 public:
   qt_toggle_command_rep(QCheckBox* w, command c) : qwid(w), cmd(c) { }
-  void apply () { if (qwid) cmd (list_object (object (qwid->isChecked()))); }
+  void apply () { if (qwid && !is_nil (cmd)) cmd (list_object (object (qwid->isChecked()))); }
 
   tm_ostream& print (tm_ostream& out) { return out << "<command qt_toggle>"; }
 };
@@ -117,7 +117,7 @@ class qt_setting_toggle_command_rep: public command_rep {
 
 public:
   qt_setting_toggle_command_rep(QTMSettingCheckbox* w, command c) : qwid(w), cmd(c) { }
-  void apply () { if (qwid) cmd (list_object (object (qwid->isChecked()))); }
+  void apply () { if (qwid && !is_nil (cmd)) cmd (list_object (object (qwid->isChecked()))); }
 
   tm_ostream& print (tm_ostream& out) { return out << "<command qt_setting_toggle>"; }
 };
@@ -135,7 +135,7 @@ class qt_enum_command_rep: public command_rep {
 public:
   qt_enum_command_rep(QComboBox* w, command c) : qwid(w), cmd(c) {}
   void apply () { 
-    if (qwid)
+    if (qwid && !is_nil (cmd))
       cmd (list_object (object (from_qstring(qwid->currentText()))));
   }
   
@@ -149,7 +149,7 @@ class qt_setting_enum_command_rep: public command_rep {
 public:
   qt_setting_enum_command_rep(QTMSettingSelect* w, command c) : qwid(w), cmd(c) {}
   void apply () {
-    if (qwid)
+    if (qwid && !is_nil (cmd))
       cmd (list_object (object (from_qstring(qwid->currentText()))));
   }
 
@@ -708,10 +708,13 @@ qt_ui_element_rep::as_qlayoutitem (QWidget* parent_widget) {
       l->setContentsMargins (4, 0, 4, 0);
       int row= 0, col= 0;
       for (int i=0; i < N(a); i++) {
+        if (is_nil (a[i])) break;
         QLayoutItem* li = concrete(a[i])->as_qlayoutitem(parent_widget);
-        l->addItem(li, row, col);
-        col++;
-        if (col >= cols) { col = 0; row++; }
+        if (li) {
+          l->addItem(li, row, col);
+          col++;
+          if (col >= cols) { col = 0; row++; }
+        }
       }
       return l;
     }
@@ -765,8 +768,9 @@ qt_ui_element_rep::as_qlayoutitem (QWidget* parent_widget) {
       l->setContentsMargins (0, 0, 0, 0);
       l->setSpacing (0);
       for (int i = 0; i < N(arr); i++) {
+        if (is_nil (arr[i])) break;
         QLayoutItem* li = concrete(arr[i])->as_qlayoutitem(parent_widget);
-        l->addItem(li);
+        if (li) l->addItem(li);
       }
       return l;
     }
@@ -813,8 +817,8 @@ qt_ui_element_rep::as_qlayoutitem (QWidget* parent_widget) {
     case setting_enum_widget:
     case setting_group_widget:
     {
-      QWidgetItem* wi = new QWidgetItem (this->as_qwidget(parent_widget));
-      return wi;
+      QWidget* w = this->as_qwidget(parent_widget);
+      return w ? new QWidgetItem (w) : NULL;
     }
       break;
 
@@ -869,7 +873,8 @@ qt_ui_element_rep::as_qwidget (QWidget* parent_widget) {
     {
         // note that the QLayout is the same object as the QLayoutItem 
         // so no need to free the layoutitem
-      QLayout* l = this->as_qlayoutitem(parent_widget)->layout();
+      QLayoutItem* li = this->as_qlayoutitem(parent_widget);
+      QLayout* l = li ? li->layout() : nullptr;
       QWidget* w = new QWidget(parent_widget);
       if (l)
         w->setLayout(l);
@@ -893,26 +898,28 @@ qt_ui_element_rep::as_qwidget (QWidget* parent_widget) {
       T1    heights = x.x4;
       
       qwid = wid->as_qwidget(parent_widget);
-      qt_apply_tm_style (qwid, style);
-      
-      QSize minSize = qt_decode_length (widths.x1, heights.x1,
-                                        qwid->minimumSizeHint(),
-                                        qwid->fontMetrics());
-      QSize defSize = qt_decode_length (widths.x2, heights.x2,
-                                        qwid->minimumSizeHint(),
-                                        qwid->fontMetrics());
-      QSize maxSize = qt_decode_length (widths.x3, heights.x3,
-                                        qwid->minimumSizeHint(),
-                                        qwid->fontMetrics());
+      if (qwid) {
+        qt_apply_tm_style (qwid, style);
+        
+        QSize minSize = qt_decode_length (widths.x1, heights.x1,
+                                          qwid->minimumSizeHint(),
+                                          qwid->fontMetrics());
+        QSize defSize = qt_decode_length (widths.x2, heights.x2,
+                                          qwid->minimumSizeHint(),
+                                          qwid->fontMetrics());
+        QSize maxSize = qt_decode_length (widths.x3, heights.x3,
+                                          qwid->minimumSizeHint(),
+                                          qwid->fontMetrics());
 
-      if (minSize == defSize && defSize == maxSize) {        
-        qwid->setFixedSize (defSize);
-        qwid->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
-      } else {
-        qwid->setSizePolicy (QSizePolicy::Ignored, QSizePolicy::Ignored);
-        qwid->setMinimumSize (minSize);
-        qwid->setMaximumSize (maxSize);
-        qwid->resize (defSize);
+        if (minSize == defSize && defSize == maxSize) {        
+          qwid->setFixedSize (defSize);
+          qwid->setSizePolicy (QSizePolicy::Fixed, QSizePolicy::Fixed);
+        } else {
+          qwid->setSizePolicy (QSizePolicy::Ignored, QSizePolicy::Ignored);
+          qwid->setMinimumSize (minSize);
+          qwid->setMaximumSize (maxSize);
+          qwid->resize (defSize);
+        }
       }
     }
       break;
@@ -953,6 +960,7 @@ qt_ui_element_rep::as_qwidget (QWidget* parent_widget) {
       T                x = open_box<T> (load);
       qt_widget      qtw = concrete (x.x1);
       promise<widget> pw = x.x2;
+      qwid = NULL;
       
       if (qtw->type == xpm_widget) {
         url image = open_box<url> (get_payload (qtw));
@@ -980,7 +988,7 @@ qt_ui_element_rep::as_qwidget (QWidget* parent_widget) {
         qt_apply_tm_style (b, y.x2, y.x3);
         qwid = b;
       }
-      if (tm_style_sheet == "")
+      if (qwid && tm_style_sheet == "")
         qwid->setStyle (qtmstyle());
 
     }
@@ -1042,7 +1050,7 @@ qt_ui_element_rep::as_qwidget (QWidget* parent_widget) {
       typedef quartet<string, int, color, bool> T1;
       T1 y = open_box<T1>(get_payload (help, text_widget));
       QWidget* w = qtw->as_qwidget(parent_widget);
-      w->setToolTip (to_qstring (y.x1));
+      if (w) w->setToolTip (to_qstring (y.x1));
       qwid = w;
     }
       break;
@@ -1352,7 +1360,7 @@ qt_ui_element_rep::as_qwidget (QWidget* parent_widget) {
 
       QWidget* qw = w->as_qwidget(parent_widget);
       qwid = qw;
-      qwid->setObjectName (to_qstring (name));
+      if (qwid) qwid->setObjectName (to_qstring (name));
     }
       break;
       
@@ -1375,9 +1383,10 @@ qt_ui_element_rep::as_qwidget (QWidget* parent_widget) {
       QWidget* tabParent = useResponsiveTabs
         ? static_cast<QWidget*> (responsiveTw) : static_cast<QWidget*> (tw);
       
+      int n = min (N(tabs), N(bodies));
       int i;
-      for (i = 0; i < N(tabs); i++) {
-        if (is_nil (tabs[i])) break;
+      for (i = 0; i < n; i++) {
+        if (is_nil (tabs[i]) || is_nil (bodies[i])) break;
         QWidget* prelabel = concrete (tabs[i])->as_qwidget(tabParent);
         QLabel*     label = qobject_cast<QLabel*> (prelabel);
         QWidget*     body = concrete (bodies[i])->as_qwidget(tabParent);
@@ -1417,9 +1426,10 @@ qt_ui_element_rep::as_qwidget (QWidget* parent_widget) {
         useResponsiveTabs ? new QTMResponsiveTabWidget (parent_widget) : nullptr;
       QWidget* tabParent = useResponsiveTabs
         ? static_cast<QWidget*> (responsiveTw) : static_cast<QWidget*> (tw);
+      int n = min (N(icons), min (N(tabs), N(bodies)));
       int i;
-      for (i = 0; i < N(tabs); i++) {
-        if (is_nil (tabs[i])) break;
+      for (i = 0; i < n; i++) {
+        if (is_nil (tabs[i]) || is_nil (bodies[i])) break;
         QWidget* prelabel = concrete (tabs[i])->as_qwidget(tabParent);
         QLabel*     label = qobject_cast<QLabel*> (prelabel);
         QWidget*     body = concrete (bodies[i])->as_qwidget(tabParent);
@@ -1473,7 +1483,7 @@ qt_ui_element_rep::as_qwidget (QWidget* parent_widget) {
   }
   
     //qwid->setFocusPolicy (Qt::StrongFocus); // Bad idea: containers get focus
-  if (qwid->objectName().isEmpty())
+  if (qwid && qwid->objectName().isEmpty())
     qwid->setObjectName (to_qstring (type_as_string()));
   return qwid;
 }
