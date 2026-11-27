@@ -148,22 +148,19 @@
 
 (menu-bind new-file-menu
   (if (support-functionality? "tab")
-    (begin
       ("New tab" (new-document*))
       ("New document in this tab" (new-document))
       (if (support-functionality? "multiwindow")
-        ("New window"
-         (begin
-           (gui-set-next-window-as-popup)
-           (new-document*))))))
+          ("New window"
+           (begin
+             (gui-set-next-window-as-popup)
+             (new-document*)))))
   (if (not (support-functionality? "tab"))
-    (begin
       (if (window-per-buffer?)
-        ("New window" (new-document)))
+          ("New window" (new-document)))
       (if (not (window-per-buffer?))
-        (begin
           ("New document" (new-document))
-          ("New window" (new-document*))))))
+          ("New window" (new-document*))))
   ;;("Clone window" (clone-window))
   )
 
