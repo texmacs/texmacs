@@ -72,7 +72,7 @@ qt_color_picker_widget_rep::showDialog() {
 #else
     QColor _sel = QColorDialog::getColor(Qt::white);
 #endif
-    if(_sel.isValid()) {
+    if(_sel.isValid() && !is_nil (_commandAfterExecution)) {
       _commandAfterExecution (list_object (object (tree (from_qcolor (_sel)))));
     }
   }

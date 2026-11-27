@@ -127,7 +127,8 @@ qt_field_widget_rep::as_qwidget (QWidget* parent_widget) {
     cb->setSizePolicy (QSizePolicy::Expanding, QSizePolicy::Fixed);
     cb->setMinimumWidth (80);
     cb->setDuplicatesEnabled (true); 
-    cb->completer()->setCaseSensitivity (Qt::CaseSensitive);
+    if (cb->completer())
+      cb->completer()->setCaseSensitivity (Qt::CaseSensitive);
     if (N(type) == 0) cb->setObjectName ("default focus target");
     else              cb->setObjectName (to_qstring (type));
     lab->setBuddy (cb);
@@ -259,7 +260,7 @@ qt_inputs_list_widget_rep::read (slot s, blackbox val) {
   {
     check_type<int> (val, s);
     int index = open_box<int> (val);
-    if (N(children) > index)
+    if (index >= 0 && index < N(children))
       return static_cast<widget_rep*> (children[index].rep);
   }
   default:
@@ -418,6 +419,7 @@ qt_input_text_widget_rep::as_qwidget (QWidget* parent_widget) {
 void
 qt_input_text_widget_rep::commit(bool flag) {
   QTMLineEdit* le = qobject_cast<QTMLineEdit*>(qwid);
+  if (!le) return;
   widget_rep* win = qt_window_widget_rep::widget_from_qwidget (le);
 
   if (flag) {

@@ -250,7 +250,7 @@ qt_chooser_widget_rep::perform_dialog_with_qfiledialog() {
     file = "(list " * file * " " * params * ")";
   }
 
-  cmd ();
+  if (!is_nil (cmd)) cmd ();
   if (!is_nil (quit)) quit ();
 
 }
@@ -382,6 +382,6 @@ qt_chooser_widget_rep::perform_dialog () {
 
   delete dialog;
   
-  cmd ();
+  if (!is_nil (cmd)) cmd ();
   if (!is_nil (quit)) quit ();
 }

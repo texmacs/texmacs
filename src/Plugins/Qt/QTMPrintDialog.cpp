@@ -146,10 +146,10 @@ QTMPrintDialog::accept() {
   _settings->printEvenPages = evenPagesCheck->isChecked();
   _settings->paperSize      = paperSizeCombo->currentText();
   _settings->orientation    = (QTMPrinterSettings::PageOrientation)
-            orientationCombo->itemData(orderPagesCombo->currentIndex()).toInt();
+            orientationCombo->itemData(orientationCombo->currentIndex()).toInt();
   _settings->duplex         = duplexCheck->isChecked();
   _settings->blackWhite     = blackWhiteCheck->isChecked();
-  _settings->pagesPerSide   = pagesPerSideCombo->currentText().toInt();
+  _settings->pagesPerSide   = qMax(1, pagesPerSideCombo->currentText().toInt());
   _settings->pagesOrder     = (QTMPrinterSettings::PagePrintingOrder) 
              orderPagesCombo->itemData(orderPagesCombo->currentIndex()).toInt();
   _settings->fitToPage      = fitToPageCheck->isChecked();

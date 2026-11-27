@@ -384,8 +384,9 @@ CupsQTMPrinterSettings::toSystemCommand() const {
   // The page numbers refer to the output pages and not the document's original
   // pages - options like "number-up" can affect the numbering of the pages.
   if (firstPage != 0 || lastPage != 0) {
-    int f = (int)floor(firstPage / pagesPerSide);    f = (f==0) ? 1 : f;
-    int l = (int)ceil (lastPage / pagesPerSide);     l = (l==0) ? 1 : l;
+    int pps = (pagesPerSide > 0) ? pagesPerSide : 1;
+    int f = (int)floor(firstPage / pps);    f = (f==0) ? 1 : f;
+    int l = (int)ceil (lastPage / pps);     l = (l==0) ? 1 : l;
     if (firstPage > lastPage )
       _cmd += " -o outputorder=reverse";
     
@@ -537,8 +538,9 @@ WinQTMPrinterSettings::toSystemCommand() const {
   // The page numbers refer to the output pages and not the document's original
   // pages - options like "number-up" can affect the numbering of the pages.
   if (firstPage != 0 || lastPage != 0) {
-    int f = (int)floor(firstPage / pagesPerSide);    f = (f==0) ? 1 : f;
-    int l = (int)ceil (lastPage / pagesPerSide);     l = (l==0) ? 1 : l;
+    int pps = (pagesPerSide > 0) ? pagesPerSide : 1;
+    int f = (int)floor(firstPage / pps);    f = (f==0) ? 1 : f;
+    int l = (int)ceil (lastPage / pps);     l = (l==0) ? 1 : l;
     // FIXME: what happens if f > l?
     _cmd += QString(" -from %1 -to %2").arg(f).arg(l);
   }

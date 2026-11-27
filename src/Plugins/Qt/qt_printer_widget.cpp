@@ -33,7 +33,7 @@ qt_printer_widget_rep::qt_printer_widget_rep (command _cmd, url _file)
   if (!_settings)
     _settings = new WinQTMPrinterSettings();
 #endif
-  _settings->fileName = to_qstring(as_string(_file));
+  if (_settings) _settings->fileName = to_qstring(as_string(_file));
 }
 
 
@@ -80,6 +80,7 @@ qt_printer_widget_rep::plain_window_widget (string s, command q, int b) {
  */
 void
 qt_printer_widget_rep::showDialog () {
+  if (!_settings) return;
   
   QString _cmd;
   QTMPrintDialog pDialog(_settings);
