@@ -18,6 +18,7 @@
 #include "qt_utilities.hpp"
 
 #include <QNetworkReply>
+#include <QPointer>
 
 tree qt_http_from_json (string s, int mode= 0);
 
@@ -45,7 +46,7 @@ bool qt_async_http_post (string url, array<string> headers_attr,
 // async handler
 class QTMHTTPHandler: public QObject {
   Q_OBJECT
-  QNetworkReply* reply;
+  QPointer<QNetworkReply> reply;
   int* status;
   string* outbuf;
   string* errbuf;
@@ -56,7 +57,7 @@ public:
     QObject (parent), reply (nr), status (st),
     outbuf (o), errbuf (e), kill (k) {}
   ~QTMHTTPHandler () {
-    reply->deleteLater ();
+    if (reply) reply->deleteLater ();
     reply= NULL; }
 public slots:
   void onFinished ();
@@ -65,14 +66,14 @@ public slots:
 // async handler for scheme callback
 class QTMHTTPHandler_callback: public QObject {
   Q_OBJECT
-  QNetworkReply* reply;
+  QPointer<QNetworkReply> reply;
   object callback;
 public:
   QTMHTTPHandler_callback (QNetworkReply* nr, object cb,
 			   QObject* parent= NULL) :
     QObject (parent), reply (nr), callback (cb) {}
   ~QTMHTTPHandler_callback () {
-    reply->deleteLater ();
+    if (reply) reply->deleteLater ();
     reply= NULL; }
 public slots:
   void onFinished ();

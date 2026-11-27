@@ -206,10 +206,12 @@ close_all_pipes () {
 
 void
 process_all_pipes () {
-  iterator<pointer> it= iterate (pipe_link_set);
+  hashset<pointer> conns= copy (pipe_link_set);
+  iterator<pointer> it= iterate (conns);
   while (it->busy()) {
     qt_pipe_link_rep* con= (qt_pipe_link_rep*) it->next();
-    if (con->alive) con->apply_command ();
+    if (pipe_link_set->contains ((pointer) con) && con->alive)
+      con->apply_command ();
   }
   process_all_cmdlines ();
   process_all_requests ();

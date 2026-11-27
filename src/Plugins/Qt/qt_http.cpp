@@ -55,8 +55,8 @@ qt_http_post (string& ret, string url, array<string> headers_attr,
   for (int i= 0; i+1 < N(headers_attr); i += 2) {
     string name= headers_attr[i];
     string value= headers_attr[i+1];
-    request.setRawHeader (QByteArray (&name[0], N(name)),
-			  QByteArray (&value[0], N(value)));
+    request.setRawHeader (QByteArray (N(name) ? &name[0] : "", N(name)),
+			  QByteArray (N(value) ? &value[0] : "", N(value)));
   }
   QNetworkReply* reply=
     get_manager ()->post (request, QByteArray (data, n));
@@ -85,7 +85,7 @@ qt_http_post (string& ret, string url, array<string> headers_attr,
 int
 qt_http_post (string& ret, string url, array<string> headers_attr,
 	      string data) {
-  return qt_http_post (ret, url, headers_attr, &data[0], N(data));
+  return qt_http_post (ret, url, headers_attr, N(data) ? &data[0] : "", N(data));
 }
 
 // conversion from TeXmacs Json
@@ -201,7 +201,7 @@ qt_http_post (string& ret, string url, array<string> headers_attr,
 
 tree
 qt_http_from_json (string s) { 
-  QJsonDocument d= QJsonDocument::fromJson (QByteArray (&s[0], N(s)));
+  QJsonDocument d= QJsonDocument::fromJson (QByteArray (N(s) ? &s[0] : "", N(s)));
   QJsonValue j;
   const int mode= JSON_NULL | JSON_BOOLEAN | JSON_NUMBER;
   if (d.isEmpty () || d.isNull ())
@@ -215,16 +215,22 @@ qt_http_from_json (string s) {
 
 void
 QTMHTTPHandler::onFinished () {
-  if (reply == NULL)
-    *status= 0;
+  if (kill && *kill) {
+    if (reply) reply->close ();
+    this->deleteLater ();
+    return;
+  }
+  if (reply == NULL) {
+    if (status) *status= 0;
+  }
   else {
     if (reply->error() != QNetworkReply::NoError) {
-      *errbuf << from_qstring_utf8 (reply->errorString ());
-      *status= -1;
+      if (errbuf) *errbuf << from_qstring_utf8 (reply->errorString ());
+      if (status) *status= -1;
     }
     else {
-      *outbuf << from_qstring_utf8 (QString (reply->readAll ()));
-      *status= 0;
+      if (outbuf) *outbuf << from_qstring_utf8 (QString (reply->readAll ()));
+      if (status) *status= 0;
     }
     reply->close ();
   }
@@ -269,8 +275,8 @@ qt_async_http_post (string url, array<string> headers_attr,
   for (int i= 0; i+1 < N(headers_attr); i += 2) {
     string name= headers_attr[i];
     string value= headers_attr[i+1];
-    request.setRawHeader (QByteArray (&name[0], N(name)),
-			  QByteArray (&value[0], N(value)));
+    request.setRawHeader (QByteArray (N(name) ? &name[0] : "", N(name)),
+			  QByteArray (N(value) ? &value[0] : "", N(value)));
   }
   QNetworkReply* reply=
     get_manager ()->post (request, QByteArray (data, n));
@@ -302,8 +308,8 @@ qt_async_http_post (string url, array<string> headers_attr,
   for (int i= 0; i+1 < N(headers_attr); i += 2) {
     string name= headers_attr[i];
     string value= headers_attr[i+1];
-    request.setRawHeader (QByteArray (&name[0], N(name)),
-			  QByteArray (&value[0], N(value)));
+    request.setRawHeader (QByteArray (N(name) ? &name[0] : "", N(name)),
+			  QByteArray (N(value) ? &value[0] : "", N(value)));
   }
   QNetworkReply* reply=
     get_manager ()->post (request, QByteArray (data, n));
@@ -321,7 +327,7 @@ qt_async_http_post (string url, array<string> headers_attr,
 bool
 qt_async_http_post (string url, array<string> headers_attr,
 		    string data, object callback) {
-  return qt_async_http_post (url, headers_attr, &data[0], N(data),
+  return qt_async_http_post (url, headers_attr, N(data) ? &data[0] : "", N(data),
 			     callback);
 }
 

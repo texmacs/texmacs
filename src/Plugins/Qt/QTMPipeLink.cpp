@@ -45,7 +45,8 @@ BEGIN_SLOT
 END_SLOT
 }
 
-QTMPipeLink::QTMPipeLink (string cmd2) : cmd (cmd2), outbuf (""), errbuf ("") {}
+QTMPipeLink::QTMPipeLink (string cmd2)
+  : cmd (cmd2), outbuf (""), errbuf (""), feed_cmd (NULL) {}
 
 QTMPipeLink::~QTMPipeLink () {
   killProcess (1000);
